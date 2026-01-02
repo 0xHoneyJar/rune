@@ -53,9 +53,12 @@ Every component capture asks:
 | `/sigil taste [name]` | Capture single component |
 | `/sigil taste graduate [name]` | Promote Silver → Gold |
 | `/sigil taste --list` | Show tier inventory |
+| `/sigil moodboard` | Create product moodboard |
+| `/sigil moodboard [feature]` | Create feature moodboard |
 | `/sigil query [query]` | Semantic search across captures |
 | `/sigil export` | Generate JSON/MDX for showcase |
 | `/sigil showcase` | Launch local preview |
+| `/sigil update` | Update framework to latest |
 
 ## Tier System
 

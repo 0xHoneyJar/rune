@@ -1,0 +1,28 @@
+name: sigil-updating
+version: 1.0.0
+description: Update Sigil framework to latest version
+
+purpose: |
+  Refresh symlinks and update the Sigil framework installation.
+  Handles version checking, changelog display, and safe updates.
+
+commands:
+  - update
+
+outputs:
+  - .sigil-version.json (updated)
+  - .claude/skills/sigil-* (refreshed symlinks)
+  - .claude/commands/*.md (refreshed symlinks)
+
+dependencies:
+  required:
+    - name: git
+      reason: Pull latest framework version
+  optional:
+    - name: yq
+      reason: YAML parsing for version info
+      fallback: Manual version display
+
+integrations:
+  required: []
+  optional: []
