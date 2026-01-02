@@ -1,132 +1,171 @@
 ---
-name: update
-description: Update Sigil framework to latest version
-agent: sigil-updating
-agent_path: .claude/skills/sigil-updating/SKILL.md
-preflight:
-  - sigil_mounted
+name: "update"
+version: "1.0.0"
+description: |
+  Pull latest Loa framework updates from upstream repository.
+  Fetches, previews, confirms, and merges with conflict guidance.
+
+command_type: "git"
+
+arguments: []
+
+pre_flight:
+  - check: "command_succeeds"
+    command: "test -z \"$(git status --porcelain)\""
+    error: |
+      Your working tree has uncommitted changes.
+
+      Please commit or stash your changes before updating:
+      - Commit: git add . && git commit -m "WIP: save before update"
+      - Stash: git stash push -m "before loa update"
+
+      After handling your changes, run /update again.
+
+  - check: "command_succeeds"
+    command: "git remote -v | grep -qE '^(loa|upstream)'"
+    error: |
+      The Loa upstream remote is not configured.
+
+      To add it, run:
+        git remote add loa https://github.com/0xHoneyJar/loa.git
+
+      After adding the remote, run /update again.
+
+outputs:
+  - path: "git merge commit"
+    type: "git"
+    description: "Merged upstream changes"
+
+mode:
+  default: "foreground"
+  allow_background: false
 ---
 
-# /sigil update
+# Update
 
-Update the Sigil framework to the latest version.
+## Purpose
 
-## Usage
+Pull the latest Loa framework updates from the upstream repository. Safely fetches, previews changes, and merges with guidance for conflict resolution.
 
-```
-/sigil update              # Update to latest version
-/sigil update --check      # Check for updates without applying
-/sigil update --force      # Force refresh even if current
-```
-
-## Options
-
-| Option | Description |
-|--------|-------------|
-| `--check` | Show available updates without applying |
-| `--force` | Refresh symlinks even if already at latest |
-
-## What This Does
-
-1. **Fetches** latest from remote (GitHub)
-2. **Shows** changelog of what's new
-3. **Pulls** updates to `~/.sigil/sigil/`
-4. **Refreshes** skill and command symlinks
-5. **Updates** `.sigil-version.json`
-
-## Example
+## Invocation
 
 ```
-/sigil update
-
-Current version: 1.0.0
-Remote version: 1.1.0
-
-Update available: 1.0.0 → 1.1.0
-
-Changes:
---------
-feat: Add moodboard capture
-fix: Physics parsing edge case
-docs: Improve vocabulary descriptions
-
-Pulling updates...
-Refreshing symlinks...
-
-✓ Sigil updated to 1.1.0
-
-Symlinks refreshed:
-  - 5 skills
-  - 7 commands
-
-You may need to restart Claude Code to load new commands.
+/update
 ```
 
-## Check Mode
+## Prerequisites
 
-```
-/sigil update --check
+- Working tree must be clean (no uncommitted changes)
+- `loa` or `upstream` remote must be configured
 
-Current version: 1.0.0
-Latest version: 1.1.0
+## Workflow
 
-Update available!
+### Phase 1: Pre-flight Checks
 
-Changes:
-- feat: Add moodboard capture
-- fix: Physics parsing edge case
+1. Verify working tree is clean
+2. Verify upstream remote exists
 
-Run `/sigil update` to apply.
-```
+### Phase 2: Fetch Updates
 
-## Force Mode
-
-Use when symlinks are broken or you want to reset:
-
-```
-/sigil update --force
-
-Already at latest version: 1.1.0
-Forcing refresh...
-
-Symlinks refreshed:
-  - 5 skills
-  - 7 commands
+```bash
+git fetch loa main
 ```
 
-## Version File
+### Phase 3: Show Changes
 
-Updates are tracked in `.sigil-version.json`:
+- Count new commits
+- Display commit list
+- Show files that will change
 
-```json
-{
-  "version": "1.1.0",
-  "mounted_at": "2024-01-15T12:00:00Z",
-  "updated_at": "2024-02-01T12:00:00Z",
-  "sigil_home": "/Users/name/.sigil/sigil"
-}
+### Phase 4: Confirm Update
+
+Ask for confirmation before merging. Note which files will be updated vs preserved.
+
+### Phase 5: Merge Updates
+
+```bash
+git merge loa/main -m "chore: update Loa framework"
+```
+
+### Phase 6: Handle Merge Result
+
+- **Success**: Show changelog excerpt and next steps
+- **Conflicts**: List conflicted files with resolution guidance
+
+## Arguments
+
+| Argument | Description | Required |
+|----------|-------------|----------|
+| None | | |
+
+## Outputs
+
+| Path | Description |
+|------|-------------|
+| Git merge commit | Merged upstream changes |
+
+## Merge Strategy
+
+| File Location | Merge Behavior |
+|---------------|----------------|
+| `.claude/skills/` | Updated to latest Loa versions |
+| `.claude/commands/` | Updated to latest Loa versions |
+| `.claude/protocols/` | Updated to latest Loa versions |
+| `.claude/scripts/` | Updated to latest Loa versions |
+| `CLAUDE.md` | Standard merge (may conflict) |
+| `PROCESS.md` | Standard merge (may conflict) |
+| `app/` | Preserved (your code) |
+| `loa-grimoire/prd.md` | Preserved (your docs) |
+| `loa-grimoire/sdd.md` | Preserved (your docs) |
+| `loa-grimoire/analytics/` | Preserved (your data) |
+| `.loa-setup-complete` | Preserved (your setup state) |
+| `CHANGELOG.md` | Preserved (your project changelog) |
+| `README.md` | Preserved (your project readme) |
+
+## Conflict Resolution
+
+### Framework Files (`.claude/`)
+
+Recommend accepting upstream version:
+```bash
+git checkout --theirs {filename}
+```
+
+### Project Identity Files (`CHANGELOG.md`, `README.md`)
+
+These files define YOUR project, not the Loa framework. ALWAYS keep your version:
+```bash
+git checkout --ours CHANGELOG.md README.md
+```
+
+Never accept upstream versions of these files - they contain Loa's template content, not your project's history and documentation.
+
+### Project Files
+
+Manual resolution required:
+1. Open file and find conflict markers (`<<<<<<< HEAD`)
+2. Keep changes you want from both versions
+3. Remove conflict markers
+4. Save the file
+
+### After Resolving
+
+```bash
+git add .
+git commit -m "chore: update Loa framework (conflicts resolved)"
 ```
 
 ## Error Handling
 
-| Condition | Message |
-|-----------|---------|
-| Not mounted | "Sigil not mounted. Run /sigil mount first." |
-| Framework missing | "Framework not found at SIGIL_HOME" |
-| Network error | "Could not fetch from remote" |
+| Error | Cause | Resolution |
+|-------|-------|------------|
+| "Uncommitted changes" | Dirty working tree | Commit or stash changes first |
+| "Remote not configured" | Missing loa/upstream remote | Add remote with `git remote add` |
+| "Fetch failed" | Network or auth error | Check connection and remote URL |
+| "Already up to date" | No new commits | Nothing to update |
 
-## Manual Update
+## Next Steps After Update
 
-If automatic update fails:
-
-```bash
-# Update framework manually
-cd ~/.sigil/sigil && git pull
-
-# Refresh symlinks
-/sigil update --force
-```
-
-## After Updating
-
-You may need to restart Claude Code to load new commands and skills.
+- Review [Loa releases](https://github.com/0xHoneyJar/loa/releases) for new features and changes
+- Check `CLAUDE.md` for new commands or workflow updates
+- Run `/setup` if prompted by new setup requirements
