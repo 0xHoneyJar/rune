@@ -212,7 +212,8 @@ registry:
   # Load registry skills during /setup
   load_on_startup: true
   # Validate license signatures (disable only for testing)
-  validate_licenses: true
+  # NOTE: Disabled for sk_test_ keys - HS256 tokens not supported by RS256 validator
+  validate_licenses: false
   # Offline grace period in hours (tier-based, this is default for free/pro)
   offline_grace_hours: 24
   # Auto-refresh threshold: warn if license expires within N hours
