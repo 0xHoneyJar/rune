@@ -15,7 +15,7 @@ This specification defines how the Loa framework loads and validates skills from
 - RS256 (asymmetric) JWT signing - framework only needs public key
 - Built-in skills always take precedence over registry skills
 - 24-hour offline grace period (configurable by tier)
-- Skills installed to `.claude/registry/` (separate from built-in `.claude/skills/`)
+- Skills installed to `.claude/constructs/` (separate from built-in `.claude/skills/`)
 
 ---
 
@@ -55,7 +55,7 @@ This specification defines how the Loa framework loads and validates skills from
 │  │   │   └── <slug>/                                            │
 │  │   │       ├── manifest.json                                  │
 │  │   │       └── .license.json                                  │
-│  │   └── .registry-meta.json    ← Registry state cache          │
+│  │   └── .constructs-meta.json    ← Registry state cache          │
 │  ├── overrides/                 ← User customizations           │
 │  └── scripts/                                                   │
 │       └── registry-loader.sh    ← NEW: License validation       │
@@ -86,11 +86,11 @@ This specification defines how the Loa framework loads and validates skills from
    - User runs `/loa-registry install <slug>`
    - CLI authenticates with stored credentials
    - API validates subscription tier, returns files + signed license JWT
-   - CLI writes files to `.claude/registry/skills/<slug>/`
+   - CLI writes files to `.claude/constructs/skills/<slug>/`
    - CLI writes `.license.json` with JWT and metadata
 
 2. **Runtime Loading** (Framework):
-   - Loa scans `.claude/registry/skills/` for installed skills
+   - Loa scans `.claude/constructs/skills/` for installed skills
    - For each skill, calls `registry-loader.sh` to validate license
    - Valid licenses → skill loaded into available skills
    - Invalid/expired → skill skipped with warning
@@ -104,10 +104,10 @@ This specification defines how the Loa framework loads and validates skills from
 
 ## 2. Directory Structure
 
-### Project Level: `.claude/registry/`
+### Project Level: `.claude/constructs/`
 
 ```
-.claude/registry/
+.claude/constructs/
 ├── skills/
 │   └── {slug}/                    # e.g., "thj/terraform-assistant"
 │       ├── index.yaml             # Skill metadata (standard format)
@@ -122,7 +122,7 @@ This specification defines how the Loa framework loads and validates skills from
 │       ├── skills/                # Embedded skills (if any)
 │       ├── commands/              # Embedded commands (if any)
 │       └── .license.json          # Pack license
-└── .registry-meta.json            # Installation metadata
+└── .constructs-meta.json            # Installation metadata
 ```
 
 ### User Level: `~/.loa/`
@@ -204,7 +204,7 @@ This specification defines how the Loa framework loads and validates skills from
 }
 ```
 
-### `.claude/registry/.registry-meta.json`
+### `.claude/constructs/.constructs-meta.json`
 
 ```json
 {
@@ -337,7 +337,7 @@ offline_valid_until = expires_at + grace_period_hours
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ Loa scans .claude/registry/skills/ for skill directories   │
+│ Loa scans .claude/constructs/skills/ for skill directories   │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
@@ -420,7 +420,7 @@ When Loa discovers skills, it loads in this order:
 
 1. **Built-in skills** (`.claude/skills/`) - Always loaded, no validation
 2. **User overrides** (`.claude/overrides/skills/`) - Override built-in SKILL.md
-3. **Registry skills** (`.claude/registry/skills/`) - License validation required
+3. **Registry skills** (`.claude/constructs/skills/`) - License validation required
 
 **Conflict Resolution:**
 - If registry skill has same name as built-in → **Built-in wins, registry skipped**
@@ -576,10 +576,10 @@ export const SKILLS_DIR = '.claude/skills';
 export const PACKS_DIR = '.claude/packs';
 
 // New paths
-export const REGISTRY_DIR = '.claude/registry';
-export const REGISTRY_SKILLS_DIR = '.claude/registry/skills';
-export const REGISTRY_PACKS_DIR = '.claude/registry/packs';
-export const REGISTRY_META_FILE = '.claude/registry/.registry-meta.json';
+export const CONSTRUCTS_DIR = '.claude/constructs';
+export const CONSTRUCTS_SKILLS_DIR = '.claude/constructs/skills';
+export const CONSTRUCTS_PACKS_DIR = '.claude/constructs/packs';
+export const CONSTRUCTS_META_FILE = '.claude/constructs/.constructs-meta.json';
 
 // User-level paths
 export const LOA_HOME = path.join(os.homedir(), '.loa');
@@ -594,7 +594,7 @@ export const CACHE_DIR = path.join(LOA_HOME, 'cache', 'skills');
 
 ```typescript
 // Change installation target
-const skillDir = path.join(REGISTRY_SKILLS_DIR, slug);
+const skillDir = path.join(CONSTRUCTS_SKILLS_DIR, slug);
 
 // Write license with offline_valid_until
 const licenseFile: LicenseFile = {
@@ -787,12 +787,12 @@ export async function validateSkillLicense(skillDir: string): Promise<Validation
 ```bash
 #!/usr/bin/env bash
 # Registry skill license validation for Loa framework
-# Called before loading skills from .claude/registry/
+# Called before loading skills from .claude/constructs/
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REGISTRY_DIR="${SCRIPT_DIR}/../registry"
+CONSTRUCTS_DIR="${SCRIPT_DIR}/../registry"
 CONFIG_FILE="${HOME}/.loa/config.json"
 
 # Colors
@@ -846,7 +846,7 @@ validate_skill_license() {
 
 # List all registry skills with status
 list_registry_skills() {
-  local skills_dir="${REGISTRY_DIR}/skills"
+  local skills_dir="${CONSTRUCTS_DIR}/skills"
 
   if [[ ! -d "$skills_dir" ]]; then
     echo "No registry skills installed"
@@ -882,7 +882,7 @@ list_registry_skills() {
 
 # Get loadable skills (valid or in grace period)
 get_loadable_skills() {
-  local skills_dir="${REGISTRY_DIR}/skills"
+  local skills_dir="${CONSTRUCTS_DIR}/skills"
   local loadable=()
 
   if [[ ! -d "$skills_dir" ]]; then
@@ -995,7 +995,7 @@ Registry skills are installed via the `loa-registry` CLI plugin and loaded at ru
 │   │       ├── resources/
 │   │       └── .license.json
 │   ├── packs/           # Installed packs
-│   └── .registry-meta.json
+│   └── .constructs-meta.json
 └── overrides/           # User customizations
 ```
 
@@ -1003,7 +1003,7 @@ Registry skills are installed via the `loa-registry` CLI plugin and loaded at ru
 
 1. **Built-in skills** (`.claude/skills/`) - Always loaded, no validation
 2. **User overrides** (`.claude/overrides/skills/`) - Applied to built-in skills
-3. **Registry skills** (`.claude/registry/skills/`) - Loaded after license validation
+3. **Registry skills** (`.claude/constructs/skills/`) - Loaded after license validation
 
 ## License Validation
 
@@ -1119,7 +1119,7 @@ Registry skills are installed via the `loa-registry` CLI plugin:
 
 ### Directory Structure
 
-Registry skills are installed to `.claude/registry/skills/`, separate from built-in skills in `.claude/skills/`.
+Registry skills are installed to `.claude/constructs/skills/`, separate from built-in skills in `.claude/skills/`.
 
 ### License Validation
 
@@ -1283,11 +1283,11 @@ Grace periods are client-enforced (honor system):
 ### Phase 2: CLI Changes (loa-registry repo)
 
 **Sprint 17 Tasks:**
-1. Update paths to use `.claude/registry/`
+1. Update paths to use `.claude/constructs/`
 2. Add RS256 verification to license validation
 3. Implement `license` subcommand (status/refresh/validate)
 4. Update install/update/uninstall commands
-5. Add `.registry-meta.json` management
+5. Add `.constructs-meta.json` management
 6. Update tests
 
 ### Phase 3: Framework Changes (loa template repo - PR)
@@ -1335,9 +1335,9 @@ describe('Reserved Names', () => {
 
 ```typescript
 describe('Install', () => {
-  it('writes to .claude/registry/skills/');
+  it('writes to .claude/constructs/skills/');
   it('creates .license.json with offline_valid_until');
-  it('updates .registry-meta.json');
+  it('updates .constructs-meta.json');
 });
 
 describe('License Validation', () => {

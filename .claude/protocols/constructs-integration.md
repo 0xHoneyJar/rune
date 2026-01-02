@@ -23,7 +23,7 @@ The Registry Integration enables commercial skill distribution through the Loa C
 ## Directory Structure
 
 ```
-.claude/registry/
+.claude/constructs/
 ├── skills/
 │   └── {vendor}/
 │       └── {skill-slug}/
@@ -36,7 +36,7 @@ The Registry Integration enables commercial skill distribution through the Loa C
 │       ├── .license.json          # Pack license
 │       ├── manifest.yaml          # Pack manifest
 │       └── skills/                # Skills in pack
-└── .registry-meta.json            # Installation metadata
+└── .constructs-meta.json            # Installation metadata
 ```
 
 ## Skill Loading Priority
@@ -47,8 +47,8 @@ Skills are discovered and loaded in priority order:
 |----------|--------|------|------------------|
 | 1 (highest) | Local | `.claude/skills/{name}/` | No |
 | 2 | Override | `.claude/overrides/skills/{name}/` | No |
-| 3 | Registry | `.claude/registry/skills/{vendor}/{name}/` | Yes |
-| 4 (lowest) | Pack | `.claude/registry/packs/{pack}/skills/{name}/` | Yes (pack license) |
+| 3 | Registry | `.claude/constructs/skills/{vendor}/{name}/` | Yes |
+| 4 (lowest) | Pack | `.claude/constructs/packs/{pack}/skills/{name}/` | Yes (pack license) |
 
 **Conflict Resolution:**
 - Same-named skill: Higher priority wins, lower is ignored
@@ -207,7 +207,7 @@ license-validator.sh refresh-key <key-id>
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `LOA_REGISTRY_DIR` | `.claude/registry` | Registry content directory |
+| `LOA_CONSTRUCTS_DIR` | `.claude/constructs` | Registry content directory |
 | `LOA_CACHE_DIR` | `~/.loa/cache` | Cache directory for keys |
 | `LOA_REGISTRY_URL` | `https://loa-constructs-api.fly.dev/v1` | Registry API endpoint |
 | `LOA_OFFLINE` | `0` | Set to `1` for offline-only mode |
@@ -271,7 +271,7 @@ registry:
 ✗ No license found for 'vendor/skill-name'
    Registry skills require a valid license file.
 
-   Expected: .claude/registry/skills/vendor/skill-name/.license.json
+   Expected: .claude/constructs/skills/vendor/skill-name/.license.json
 ```
 
 ### Network Error (No Cache)
@@ -297,7 +297,7 @@ registry:
 
 During `/setup` command execution:
 
-1. **Skill Discovery**: Scans `.claude/registry/skills/` for installed skills
+1. **Skill Discovery**: Scans `.claude/constructs/skills/` for installed skills
 2. **License Validation**: Validates each skill's `.license.json`
 3. **Status Display**: Shows validation status with icons
 4. **Loadable Skills**: Returns paths of skills that can load (valid or grace)
@@ -313,7 +313,7 @@ done
 
 ## Registry Meta File
 
-The `.registry-meta.json` file tracks installation state:
+The `.constructs-meta.json` file tracks installation state:
 
 ```json
 {

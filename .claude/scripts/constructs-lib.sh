@@ -85,15 +85,15 @@ get_registry_url() {
 # =============================================================================
 
 # Get registry skills directory
-# Returns: Path to .claude/registry/skills
+# Returns: Path to .claude/constructs/skills
 get_registry_skills_dir() {
-    echo ".claude/registry/skills"
+    echo ".claude/constructs/skills"
 }
 
 # Get registry packs directory
-# Returns: Path to .claude/registry/packs
+# Returns: Path to .claude/constructs/packs
 get_registry_packs_dir() {
-    echo ".claude/registry/packs"
+    echo ".claude/constructs/packs"
 }
 
 # Get user cache directory
@@ -366,9 +366,9 @@ check_dependencies() {
 # =============================================================================
 
 # Get path to registry meta file
-# Returns: Path to .claude/registry/.registry-meta.json
+# Returns: Path to .claude/constructs/.constructs-meta.json
 get_registry_meta_path() {
-    echo ".claude/registry/.registry-meta.json"
+    echo ".claude/constructs/.constructs-meta.json"
 }
 
 # Initialize registry meta file if it doesn't exist

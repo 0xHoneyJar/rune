@@ -46,7 +46,7 @@
 ### Deliverables
 
 - [x] `.claude/scripts/registry-lib.sh` - Shared utility functions
-- [x] `.claude/registry/` - Directory structure created
+- [x] `.claude/constructs/` - Directory structure created
 - [x] `tests/mock_server.py` - Full mock registry server
 - [x] `tests/fixtures/` - Test data files
 - [x] `tests/unit/test_registry_lib.bats` - Unit tests for lib
@@ -89,10 +89,10 @@
   - [x] Date handling (`parse_iso_date`, `now_timestamp`)
   - [x] License helpers (`get_license_field`, `is_reserved_skill_name`)
   - [x] Output formatting (colors, icons, `print_status`)
-- [x] **T1.5** Create `.claude/registry/` directory structure
+- [x] **T1.5** Create `.claude/constructs/` directory structure
   - [x] `skills/` subdirectory
   - [x] `packs/` subdirectory
-  - [x] `.registry-meta.json` template (via `init_registry_meta()`)
+  - [x] `.constructs-meta.json` template (via `init_registry_meta()`)
 - [x] **T1.6** Implement full mock server (`mock_server.py`)
   - [x] `GET /v1/public-keys/:key_id` - Returns test public key
   - [x] `POST /v1/licenses/validate` - Validates/refreshes license
@@ -291,7 +291,7 @@
 
 - [x] Pack validation in `registry-loader.sh`
 - [x] `preload` command implementation
-- [x] `.registry-meta.json` management
+- [x] `.constructs-meta.json` management
 - [x] Pack-related tests
 
 ### Acceptance Criteria
@@ -301,7 +301,7 @@
 - [x] `preload` command acts as loading hook
 - [x] `preload` returns appropriate exit codes
 - [x] `preload` outputs warnings for grace period
-- [x] `.registry-meta.json` updated on validation
+- [x] `.constructs-meta.json` updated on validation
 - [x] Pack manifest (`manifest.json`) parsed correctly
 
 ### Technical Tasks
@@ -311,7 +311,7 @@
   - [x] Test skills-from-pack tracking
   - [x] Test `preload` exit codes
   - [x] Test `preload` warning output
-  - [x] Test `.registry-meta.json` updates
+  - [x] Test `.constructs-meta.json` updates
 - [x] **T4.2** Create pack fixtures
   - [x] `fixtures/registry/packs/test-pack/manifest.json`
   - [x] `fixtures/registry/packs/test-pack/.license.json`
@@ -326,7 +326,7 @@
   - [x] Output appropriate warnings
   - [x] Return correct exit codes
   - [x] Integrate with framework skill loading
-- [x] **T4.5** Implement `.registry-meta.json` management
+- [x] **T4.5** Implement `.constructs-meta.json` management
   - [x] Create if not exists
   - [x] Update `installed_skills` on validation
   - [x] Update `installed_packs` for packs

@@ -347,7 +347,7 @@ See `loa-grimoire/context/CLI-INSTALLATION.md` for full setup guide.
 ### Directory Structure
 
 ```
-.claude/registry/
+.claude/constructs/
 ├── skills/{vendor}/{slug}/    # Installed skills
 │   ├── .license.json          # JWT license token
 │   ├── index.yaml             # Skill metadata
@@ -364,8 +364,8 @@ See `loa-grimoire/context/CLI-INSTALLATION.md` for full setup guide.
 |----------|--------|---------|
 | 1 | Local (`.claude/skills/`) | No |
 | 2 | Override (`.claude/overrides/skills/`) | No |
-| 3 | Registry (`.claude/registry/skills/`) | Yes |
-| 4 | Pack (`.claude/registry/packs/.../skills/`) | Yes |
+| 3 | Registry (`.claude/constructs/skills/`) | Yes |
+| 4 | Pack (`.claude/constructs/packs/.../skills/`) | Yes |
 
 Local skills always win. Conflicts resolved silently by priority.
 

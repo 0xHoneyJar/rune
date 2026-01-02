@@ -21,7 +21,7 @@
 #   5 = other error
 #
 # Environment Variables:
-#   LOA_REGISTRY_DIR   - Override registry directory (default: .claude/registry)
+#   LOA_CONSTRUCTS_DIR   - Override registry directory (default: .claude/constructs)
 #   LOA_CACHE_DIR      - Override cache directory (default: ~/.loa/cache)
 #   LOA_OFFLINE        - Set to 1 for offline-only mode
 #   NO_COLOR           - Disable colored output
@@ -61,10 +61,10 @@ LICENSE_VALIDATOR="$SCRIPT_DIR/license-validator.sh"
 
 # Get registry directory (with environment override)
 get_registry_dir() {
-    if [[ -n "${LOA_REGISTRY_DIR:-}" ]]; then
-        echo "$LOA_REGISTRY_DIR"
+    if [[ -n "${LOA_CONSTRUCTS_DIR:-}" ]]; then
+        echo "$LOA_CONSTRUCTS_DIR"
     else
-        echo ".claude/registry"
+        echo ".claude/constructs"
     fi
 }
 
@@ -254,7 +254,7 @@ list_pack_skills() {
 
 # Get registry meta file path
 get_registry_meta_path() {
-    echo "$(get_registry_dir)/.registry-meta.json"
+    echo "$(get_registry_dir)/.constructs-meta.json"
 }
 
 # Initialize or read registry meta
@@ -1059,7 +1059,7 @@ update_last_check_timestamp() {
 get_registry_meta_path() {
     local registry_dir
     registry_dir=$(get_registry_dir)
-    echo "$registry_dir/.registry-meta.json"
+    echo "$registry_dir/.constructs-meta.json"
 }
 
 # Initialize registry meta file if it doesn't exist
@@ -1246,7 +1246,7 @@ Exit Codes (validate/preload):
     5 = other error
 
 Environment Variables:
-    LOA_REGISTRY_DIR   Override registry directory (.claude/registry)
+    LOA_CONSTRUCTS_DIR   Override registry directory (.claude/constructs)
     LOA_CACHE_DIR      Override cache directory (~/.loa/cache)
     LOA_OFFLINE        Set to 1 for offline-only mode
     NO_COLOR           Disable colored output
@@ -1255,9 +1255,9 @@ Examples:
     constructs-loader.sh list
     constructs-loader.sh list-packs
     constructs-loader.sh loadable | xargs -I {} echo "Loading: {}"
-    constructs-loader.sh validate .claude/registry/skills/vendor/skill
-    constructs-loader.sh validate-pack .claude/registry/packs/my-pack
-    constructs-loader.sh preload .claude/registry/skills/vendor/skill
+    constructs-loader.sh validate .claude/constructs/skills/vendor/skill
+    constructs-loader.sh validate-pack .claude/constructs/packs/my-pack
+    constructs-loader.sh preload .claude/constructs/skills/vendor/skill
 EOF
 }
 

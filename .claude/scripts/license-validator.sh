@@ -508,7 +508,7 @@ Environment Variables:
     LOA_OFFLINE        Set to 1 for offline-only mode
 
 Examples:
-    license-validator.sh validate .claude/registry/skills/vendor/skill/.license.json
+    license-validator.sh validate .claude/constructs/skills/vendor/skill/.license.json
     license-validator.sh decode "eyJhbGciOiJSUzI1NiI..."
     license-validator.sh get-public-key test-key-01
 EOF
