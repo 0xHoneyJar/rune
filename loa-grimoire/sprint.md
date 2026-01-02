@@ -122,14 +122,14 @@
 **Description**: Interview-based moodboard capture.
 
 **Acceptance Criteria**:
-- [ ] Checks for .sigil-setup-complete (preflight)
-- [ ] Uses AskUserQuestion for interview
-- [ ] Captures reference products/games
-- [ ] Captures feel descriptors by context
-- [ ] Captures anti-patterns with reasons
-- [ ] Captures key moments (high-stakes, celebrations, recovery)
-- [ ] Writes sigil-mark/moodboard.md with all captured context
-- [ ] Follow-up questions for specifics on each answer
+- [x] Checks for .sigil-setup-complete (preflight)
+- [x] Uses AskUserQuestion for interview
+- [x] Captures reference products/games
+- [x] Captures feel descriptors by context
+- [x] Captures anti-patterns with reasons
+- [x] Captures key moments (high-stakes, celebrations, recovery)
+- [x] Writes sigil-mark/moodboard.md with all captured context
+- [x] Follow-up questions for specifics on each answer
 
 **Interview Questions**:
 1. Reference products: "What apps/games inspire this product's feel?"
@@ -149,14 +149,14 @@
 **Description**: Bootstrap design system from existing codebase.
 
 **Acceptance Criteria**:
-- [ ] Checks for .sigil-setup-complete (preflight)
-- [ ] Runs detect-components.sh to find all components
-- [ ] Generates sigil-mark/inventory.md with component list
-- [ ] Infers patterns from existing code (colors, spacing, motion)
-- [ ] Uses AskUserQuestion to gather tacit knowledge
-- [ ] Generates draft sigil-mark/moodboard.md
-- [ ] Generates draft sigil-mark/rules.md
-- [ ] Marks drafts clearly as needing human review
+- [x] Checks for .sigil-setup-complete (preflight)
+- [x] Runs detect-components.sh to find all components
+- [x] Generates sigil-mark/inventory.md with component list
+- [x] Infers patterns from existing code (colors, spacing, motion)
+- [x] Uses AskUserQuestion to gather tacit knowledge
+- [x] Generates draft sigil-mark/moodboard.md
+- [x] Generates draft sigil-mark/rules.md
+- [x] Marks drafts clearly as needing human review
 
 **Interview Questions**:
 1. "What's the overall feel you're going for?"
@@ -173,10 +173,10 @@
 
 ### Sprint 2 Success Criteria
 
-- [ ] `/envision` captures moodboard through interview
-- [ ] `/inherit` scans codebase and creates drafts
-- [ ] Both produce valid moodboard.md files
-- [ ] Interview flow is natural and captures tacit knowledge
+- [x] `/envision` captures moodboard through interview
+- [x] `/inherit` scans codebase and creates drafts
+- [x] Both produce valid moodboard.md files
+- [x] Interview flow is natural and captures tacit knowledge
 
 ---
 
