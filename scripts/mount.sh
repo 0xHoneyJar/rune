@@ -1,0 +1,1 @@
+../.claude/skills/sigil-mounting/scripts/mount.sh
