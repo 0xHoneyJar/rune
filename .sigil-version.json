@@ -1,0 +1,12 @@
+{
+  "framework_version": "2.0.0",
+  "schema_version": 1,
+  "zones": {
+    "system": ".claude/",
+    "state": "sigil-mark/"
+  },
+  "integrity": {
+    "enforcement": "warn",
+    "last_verified": null
+  }
+}

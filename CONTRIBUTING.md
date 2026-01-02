@@ -1,109 +1,23 @@
-# Contributing to Loa
+# Contributing to Sigil
 
-> **This is a Template Repository**
->
-> Loa is designed to be used as a template for your own projects. If you forked or used this template to build your own product, you should be pushing to **your own repository**, not this one.
->
-> **Building your project?** Make sure your `origin` remote points to your repo, not `0xHoneyJar/loa`.
->
-> **Contributing to Loa itself?** Read on! Use the `/contribute` command for a guided contribution flow.
-
-Thank you for your interest in contributing to Loa! This document provides guidelines and information for contributors.
+Thank you for your interest in contributing to Sigil! This document provides guidelines for contributors.
 
 ## Table of Contents
 
-- [Understanding the Difference](#understanding-the-difference)
-- [Git Safety](#git-safety)
 - [Getting Started](#getting-started)
 - [Development Workflow](#development-workflow)
 - [Submitting Changes](#submitting-changes)
 - [Style Guidelines](#style-guidelines)
-- [Testing](#testing)
-- [Documentation](#documentation)
-- [Community](#community)
-
-## Understanding the Difference
-
-There are two distinct use cases for this repository:
-
-| Use Case | What You're Doing | Where You Push |
-|----------|-------------------|----------------|
-| **Using Loa** | Building your own project with Loa as the framework | Your own repository (`myorg/myproject`) |
-| **Contributing to Loa** | Improving the Loa framework itself | This repository (`0xHoneyJar/loa`) |
-
-**Most developers are "using Loa"** - they fork or template this repo to build their own products. If that's you, your workflow should push to your own repository.
-
-**Contributing to Loa** means you want to improve the framework itself - fixing bugs, adding features, or improving documentation that benefits all Loa users.
-
-## Git Safety
-
-### Check Your Remotes
-
-Before pushing, always verify your remotes are configured correctly:
-
-```bash
-git remote -v
-```
-
-**Correct setup for building YOUR project:**
-```bash
-origin    git@github.com:YOUR_ORG/YOUR_PROJECT.git (fetch)
-origin    git@github.com:YOUR_ORG/YOUR_PROJECT.git (push)
-loa       git@github.com:0xHoneyJar/loa.git (fetch)    # Optional, for updates
-```
-
-**Setup that triggers warnings (pushing to upstream):**
-```bash
-origin    git@github.com:0xHoneyJar/loa.git (fetch)
-origin    git@github.com:0xHoneyJar/loa.git (push)
-```
-
-### Fixing Misconfigured Remotes
-
-If your `origin` points to `0xHoneyJar/loa` but you're building your own project:
-
-```bash
-# Rename current origin to 'loa' (for updates)
-git remote rename origin loa
-
-# Add your own repo as origin
-git remote add origin git@github.com:YOUR_ORG/YOUR_PROJECT.git
-
-# Set your branch to track your new origin
-git branch --set-upstream-to=origin/main main
-
-# Push to your repo
-git push -u origin main
-```
-
-**Common Mistakes to Avoid**:
-- Don't push to origin without first checking `git remote -v`
-- Don't assume origin is your repo just because you cloned from a template
-- Don't delete the loa/upstream remote if you want to receive framework updates via `/update`
-
-For comprehensive remediation steps including before/after examples, see the **Git Safety Protocol** section in [CLAUDE.md](./CLAUDE.md#remediation-steps).
-
-### Using the `/contribute` Command
-
-If you **intentionally** want to contribute to Loa, use the `/contribute` command in Claude Code. This provides a guided flow that:
-
-1. Verifies your branch and remote configuration
-2. Runs pre-contribution checks (secrets scanning, tests)
-3. Ensures your commits are properly signed off (DCO)
-4. Creates a standards-compliant PR
-
-```bash
-claude
-/contribute
-```
+- [Versioning](#versioning)
+- [Release Process](#release-process)
 
 ## Getting Started
 
 ### Prerequisites
 
-- [Claude Code](https://claude.ai/code) installed and configured
-- Git 2.x or later
-- Node.js 18+ (for running tests and linting)
+- Git
+- Claude Code CLI
+- Node.js 18+ (for linting)
 
 ### Setting Up Your Development Environment
 
@@ -111,13 +25,13 @@ claude
 
 2. **Clone your fork**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/loa.git
-   cd loa
+   git clone https://github.com/YOUR_USERNAME/sigil.git
+   cd sigil
    ```
 
 3. **Add upstream remote**
    ```bash
-   git remote add upstream https://github.com/0xHoneyJar/loa.git
+   git remote add upstream https://github.com/zksoju/sigil.git
    ```
 
 4. **Create a feature branch**
@@ -125,25 +39,16 @@ claude
    git checkout -b feature/your-feature-name
    ```
 
-5. **Start Claude Code and run setup**
-   ```bash
-   claude
-   /setup
-   ```
-
 ## Development Workflow
 
 ### Branch Naming Convention
 
-Use descriptive branch names following these patterns:
-
 | Type | Pattern | Example |
 |------|---------|---------|
-| Feature | `feature/description` | `feature/add-typescript-agent` |
-| Bug fix | `fix/description` | `fix/analytics-json-parsing` |
-| Documentation | `docs/description` | `docs/update-contribution-guide` |
-| Refactor | `refactor/description` | `refactor/agent-prompt-structure` |
-| CI/Infra | `ci/description` | `ci/add-lint-workflow` |
+| Feature | `feature/description` | `feature/add-color-tokens` |
+| Bug fix | `fix/description` | `fix/zone-resolution` |
+| Documentation | `docs/description` | `docs/update-process` |
+| Refactor | `refactor/description` | `refactor/skill-structure` |
 
 ### Keeping Your Fork Updated
 
@@ -153,62 +58,27 @@ git fetch upstream
 
 # Merge upstream main into your branch
 git merge upstream/main
-
-# Or rebase (for cleaner history)
-git rebase upstream/main
 ```
-
-### Making Changes
-
-1. **Sync with upstream** before starting work
-2. **Create a feature branch** from `main`
-3. **Make focused commits** with clear messages
-4. **Test your changes** locally
-5. **Push to your fork** and create a PR
 
 ## Submitting Changes
 
 ### Pull Request Process
 
-1. **Ensure your PR addresses a single concern**
-   - One feature, one bug fix, or one documentation update per PR
-   - Large changes should be broken into smaller PRs
+1. **One PR = One concern**
+   - Single feature, bug fix, or documentation update per PR
 
 2. **Write a clear PR description**
    - What does this PR do?
    - Why is this change needed?
-   - How was it tested?
 
 3. **Link related issues**
-   - Use keywords like `Closes #123` or `Fixes #456`
+   - Use `Closes #123` or `Fixes #456`
 
 4. **Wait for CI to pass**
    - All automated checks must pass
-   - Secret scanning and security audits must pass
 
 5. **Request review**
    - At least one maintainer approval required
-   - Address review feedback promptly
-
-### Developer Certificate of Origin (DCO)
-
-All contributions to Loa must include a DCO sign-off. This certifies that you wrote the code or have the right to submit it.
-
-**Add to every commit:**
-```
-Signed-off-by: Your Name <your.email@example.com>
-```
-
-**Easiest method - use the `-s` flag:**
-```bash
-git commit -s -m "feat(agents): add code-reviewer agent"
-```
-
-**Configure git to sign-off automatically:**
-```bash
-git config user.name "Your Name"
-git config user.email "your.email@example.com"
-```
 
 ### Commit Message Guidelines
 
@@ -220,15 +90,13 @@ type(scope): short description
 Longer description if needed.
 
 Closes #123
-
-Signed-off-by: Your Name <your.email@example.com>
 ```
 
 **Types:**
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation only
-- `style`: Code style changes (formatting, etc.)
+- `style`: Code style changes
 - `refactor`: Code refactoring
 - `test`: Adding or updating tests
 - `ci`: CI/CD changes
@@ -236,184 +104,136 @@ Signed-off-by: Your Name <your.email@example.com>
 
 **Examples:**
 ```
-feat(agents): add code-reviewer agent for automated PR reviews
+feat(zones): add admin zone motion profile
 
-fix(analytics): handle missing usage.json gracefully
+fix(craft): resolve zone detection for nested paths
 
-docs(readme): add troubleshooting section for MCP setup
+docs(readme): update installation instructions
 ```
 
 ## Style Guidelines
 
-### Skills (Agents)
+### Skills (Commands)
 
 Skills live in `.claude/skills/` using a 3-level architecture:
 
 ```
 .claude/skills/{skill-name}/
 ├── index.yaml          # Level 1: Metadata (~100 tokens)
-├── SKILL.md            # Level 2: KERNEL instructions (~2000 tokens)
-└── resources/          # Level 3: References, templates, scripts
+├── SKILL.md            # Level 2: Instructions (~2000 tokens)
+└── scripts/            # Level 3: Bash utilities
 ```
 
-**Naming convention**: Use gerund form (action-ing) for skill directories:
-- `discovering-requirements` (not `prd-architect`)
-- `implementing-tasks` (not `sprint-task-implementer`)
-- `reviewing-implementations` (not `senior-tech-lead-reviewer`)
+**Naming convention**: Use `sigil-` prefix for Sigil skills:
+- `sigil-setup`
+- `sigil-envisioning`
+- `sigil-codifying`
+- `sigil-crafting`
+- `sigil-approving`
+- `sigil-inheriting`
 
-When modifying skills:
+### Commands
 
-- **index.yaml**: Keep metadata lean (~100 tokens), include triggers, examples, mcp_dependencies
-- **SKILL.md**: Core instructions only (~2000 tokens), reference resources for details
-- **resources/**: Templates, examples, and detailed reference materials
-- Maintain consistent persona and expertise level
-- Include clear phase transitions
-- Provide structured output formats
-
-### Command Definitions
-
-Commands in `.claude/commands/` use thin routing layer with YAML frontmatter:
-
-```yaml
----
-name: "command-name"
-version: "1.0.0"
-description: "What this command does"
-agent: "skill-name"              # For agent commands
-agent_path: ".claude/skills/"    # Skill directory
-mcp_source: ".claude/mcp-registry.yaml"  # Reference MCP registry
-mcp_requirements:                # Required MCPs
-  - server: "linear"
-    required: true
-pre_flight:                      # Validation checks
-  - check: "file_exists"
-    path: "some-file.md"
----
-```
-
-When creating or modifying commands:
-
-- Use clear, descriptive command names
-- Add pre-flight checks for prerequisites
-- Reference MCP registry for integrations
-- Handle error cases gracefully
-- Update CLAUDE.md with new commands
-
-### MCP Registry
-
-MCP server configurations are centralized in `.claude/mcp-registry.yaml`:
-
-```yaml
-servers:
-  linear:
-    name: "Linear"
-    description: "Issue tracking"
-    scopes: [issues, projects]
-    required_by:
-      - command: "/feedback"
-        reason: "Posts feedback to Linear"
-    setup:
-      steps: [...]
-groups:
-  essential:
-    servers: [linear, github]
-```
-
-Helper scripts for MCP operations:
-
-```bash
-.claude/scripts/mcp-registry.sh list      # List all servers
-.claude/scripts/mcp-registry.sh info <server>  # Server details
-.claude/scripts/mcp-registry.sh setup <server> # Setup instructions
-.claude/scripts/validate-mcp.sh <servers>      # Validate configuration
-```
-
-When adding MCP integrations:
-
-- Add server definition to `.claude/mcp-registry.yaml`
-- Include setup instructions with required env vars
-- Add to appropriate server groups
-- Update skills/commands that depend on it
-
-### Helper Scripts
-
-Scripts in `.claude/scripts/` follow these conventions:
-
-- **Fail fast**: `set -euo pipefail` in all scripts
-- **Parseable output**: Structured return values (e.g., `KEY|value`)
-- **Exit codes**: 0=success, 1=error, 2=invalid input
-- **No side effects**: Scripts read state, don't modify it
-- **POSIX-compatible**: Where possible for cross-platform support
+Commands in `.claude/commands/` should:
+- Have clear, concise names
+- Include pre-flight checks where needed
+- Reference the skill they invoke
 
 ### Documentation
 
-- Use clear, concise language
-- Include code examples where helpful
-- Keep line lengths reasonable (< 100 chars)
-- Update related docs when making changes
+- Keep explanations concise
+- Include code examples
+- Update CHANGELOG.md for notable changes
 
-## Testing
+## Versioning
 
-### Running Tests
+Sigil follows [Semantic Versioning](https://semver.org/):
 
-```bash
-# Run linting
-npm run lint
+- **MAJOR** (X.0.0): Breaking changes
+- **MINOR** (0.X.0): New features, backward compatible
+- **PATCH** (0.0.X): Bug fixes, backward compatible
 
-# Run all tests
-npm test
+### Version Files
 
-# Run specific test suite
-npm test -- --grep "agent"
+| File | Purpose |
+|------|---------|
+| `.sigil-version.json` | Framework version manifest |
+| `CHANGELOG.md` | Version history |
+| `README.md` | Version badge |
+
+### When to Bump Versions
+
+| Change Type | Version Bump | Example |
+|-------------|--------------|---------|
+| Breaking API change | Major | Remove command, change config format |
+| New command/feature | Minor | Add `/craft` command |
+| Bug fix | Patch | Fix zone resolution |
+| Documentation | None | Update README |
+
+## Release Process
+
+### For Maintainers
+
+1. **Prepare Release**
+   ```bash
+   # Ensure main is up to date
+   git checkout main
+   git pull origin main
+
+   # Create release branch
+   git checkout -b release/vX.Y.Z
+   ```
+
+2. **Update Version Files**
+   - Update `.sigil-version.json` with new version
+   - Update CHANGELOG.md with release notes
+   - Ensure version consistency
+
+3. **Create Release PR**
+   ```bash
+   git add .
+   git commit -m "chore: release vX.Y.Z"
+   git push origin release/vX.Y.Z
+   ```
+
+4. **After PR Merge - Tag Release**
+   ```bash
+   git checkout main
+   git pull origin main
+   git tag -a vX.Y.Z -m "Release vX.Y.Z"
+   git push origin vX.Y.Z
+   ```
+
+5. **Create GitHub Release**
+   - Go to Releases → New Release
+   - Select tag `vX.Y.Z`
+   - Title: `vX.Y.Z`
+   - Copy CHANGELOG entry as description
+   - Publish release
+
+### CHANGELOG Format
+
+Follow [Keep a Changelog](https://keepachangelog.com/):
+
+```markdown
+## [X.Y.Z] - YYYY-MM-DD
+
+### Why This Release
+
+Brief explanation of the release.
+
+### Added
+- New features
+
+### Changed
+- Modifications
+
+### Fixed
+- Bug fixes
+
+### Breaking Changes
+- What breaks (if any)
 ```
-
-### What to Test
-
-- New agent prompts should include example interactions
-- Command changes should be tested with `/command help`
-- Documentation changes should be previewed locally
-
-### CI Checks
-
-All PRs must pass:
-
-1. **Secret Scanning** - No secrets in code
-2. **Security Audit** - No critical vulnerabilities
-3. **Linting** - Code style compliance
-4. **Tests** - All tests passing
-
-## Documentation
-
-### Updating Documentation
-
-When your changes affect documentation:
-
-1. **README.md** - User-facing feature descriptions
-2. **PROCESS.md** - Workflow documentation
-3. **CLAUDE.md** - Agent and command reference
-4. **CHANGELOG.md** - Version history (maintainers will update)
-
-### Documentation Standards
-
-- Keep explanations beginner-friendly
-- Include command examples
-- Update table of contents if adding sections
-- Check for broken links
-
-## Community
-
-### Getting Help
-
-- **Issues**: Use GitHub Issues for bugs and feature requests
-- **Discussions**: Use GitHub Discussions for questions
-- **Discord**: Join our Discord for real-time chat
-
-### Recognition
-
-Contributors are recognized in:
-- GitHub contributor graphs
-- Release notes (for significant contributions)
-- Special thanks in documentation
 
 ## Types of Contributions
 
@@ -421,26 +241,30 @@ Contributors are recognized in:
 
 - Bug fixes and issue reports
 - Documentation improvements
-- New skill definitions (3-level architecture)
-- Command enhancements
-- MCP registry additions
-- Helper script improvements
-- Security improvements
-- Performance optimizations
-- Test coverage improvements
+- New skill definitions
+- Zone system enhancements
+- Motion recipe additions
+- CI/CD improvements
 
-### Before Starting Large Changes
+### Before Large Changes
 
-For significant changes (new skills, workflow modifications, architecture changes):
+For significant changes:
 
-1. **Open an issue first** to discuss the proposal
-2. **Get maintainer feedback** before implementing
-3. **Consider breaking into smaller PRs** for easier review
+1. **Open an issue first** to discuss
+2. **Get maintainer feedback**
+3. **Consider breaking into smaller PRs**
+
+## Community
+
+### Getting Help
+
+- **Issues**: Use GitHub Issues for bugs and feature requests
+- **Discussions**: Use GitHub Discussions for questions
 
 ## License
 
-By contributing to Loa, you agree that your contributions will be licensed under the [AGPL-3.0 License](LICENSE.md).
+By contributing to Sigil, you agree that your contributions will be licensed under the [MIT License](LICENSE.md).
 
 ---
 
-Thank you for contributing to Loa! Your efforts help make AI-assisted development better for everyone.
+Thank you for contributing to Sigil!

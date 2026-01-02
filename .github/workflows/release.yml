@@ -1,0 +1,116 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version from tag
+        id: get_version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Validate tag matches version files
+        run: |
+          TAG_VERSION=${{ steps.get_version.outputs.VERSION }}
+
+          # Check CHANGELOG
+          CHANGELOG_VERSION=$(grep -oP '## \[\K[0-9]+\.[0-9]+\.[0-9]+' CHANGELOG.md | head -1)
+          if [ "$TAG_VERSION" != "$CHANGELOG_VERSION" ]; then
+            echo "ERROR: Tag version ($TAG_VERSION) doesn't match CHANGELOG ($CHANGELOG_VERSION)"
+            exit 1
+          fi
+
+          # Check .sigil-version.json
+          if [ -f ".sigil-version.json" ]; then
+            JSON_VERSION=$(python3 -c "import json; print(json.load(open('.sigil-version.json'))['framework_version'])")
+            if [ "$TAG_VERSION" != "$JSON_VERSION" ]; then
+              echo "ERROR: Tag version ($TAG_VERSION) doesn't match .sigil-version.json ($JSON_VERSION)"
+              exit 1
+            fi
+          fi
+
+          echo "Version validation passed: $TAG_VERSION"
+
+      - name: Extract changelog for this version
+        id: changelog
+        run: |
+          VERSION=${{ steps.get_version.outputs.VERSION }}
+
+          # Extract the changelog section for this version
+          # Matches from ## [X.Y.Z] until the next ## [ or end of file
+          CHANGELOG=$(awk "/## \[$VERSION\]/{found=1; next} /## \[/{if(found) exit} found{print}" CHANGELOG.md)
+
+          # Handle multi-line output for GitHub Actions
+          echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.get_version.outputs.TAG }}
+          name: ${{ steps.get_version.outputs.TAG }}
+          body: |
+            ## Sigil ${{ steps.get_version.outputs.TAG }}
+
+            ${{ steps.changelog.outputs.CHANGELOG }}
+
+            ---
+
+            **Full Changelog**: https://github.com/zksoju/sigil/blob/main/CHANGELOG.md
+          draft: false
+          prerelease: ${{ contains(steps.get_version.outputs.VERSION, '-') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  validate-release:
+    name: Validate Release
+    needs: release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate release artifacts
+        run: |
+          echo "Validating release artifacts..."
+
+          # Check required files exist
+          REQUIRED_FILES=(
+            "README.md"
+            "CHANGELOG.md"
+            "CONTRIBUTING.md"
+            "INSTALLATION.md"
+            "PROCESS.md"
+            "CLAUDE.md"
+            "LICENSE.md"
+            ".sigil-version.json"
+          )
+
+          for file in "${REQUIRED_FILES[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "ERROR: Missing required file: $file"
+              exit 1
+            fi
+          done
+
+          echo "All required files present"
+          echo "Release validation passed!"

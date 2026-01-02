@@ -26,9 +26,9 @@ Closes #(issue number)
 Describe how you tested these changes:
 
 - [ ] Tested with Claude Code locally
-- [ ] Ran relevant commands (`/setup`, `/plan-and-analyze`, etc.)
-- [ ] Added/updated tests
-- [ ] All existing tests pass
+- [ ] Ran relevant Sigil commands (`/setup`, `/envision`, `/codify`, `/craft`, `/approve`)
+- [ ] Verified zone resolution works correctly
+- [ ] Checked motion recipes apply properly
 
 ## Checklist
 
@@ -36,8 +36,6 @@ Describe how you tested these changes:
 - [ ] I have performed a self-review of my code
 - [ ] I have made corresponding changes to documentation
 - [ ] My changes generate no new warnings
-- [ ] I have added tests that prove my fix/feature works
-- [ ] New and existing tests pass locally
 
 ## Documentation
 
@@ -45,6 +43,16 @@ Describe how you tested these changes:
 - [ ] CLAUDE.md updated (if applicable)
 - [ ] PROCESS.md updated (if applicable)
 - [ ] CHANGELOG.md updated (maintainers will review)
+- [ ] CONTRIBUTING.md updated (if applicable)
+
+## Version Impact
+
+What type of version bump does this PR require?
+
+- [ ] **Patch** (0.0.X) - Bug fix, no new features
+- [ ] **Minor** (0.X.0) - New feature, backward compatible
+- [ ] **Major** (X.0.0) - Breaking change
+- [ ] **None** - Documentation only, no version change
 
 ## Screenshots (if applicable)
 
