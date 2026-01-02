@@ -189,16 +189,16 @@
 **Description**: Define design rules by category through interview.
 
 **Acceptance Criteria**:
-- [ ] Checks for .sigil-setup-complete (preflight)
-- [ ] Reads moodboard.md for context
-- [ ] Uses AskUserQuestion for each category
-- [ ] Captures color tokens (light/dark)
-- [ ] Captures typography rules
-- [ ] Captures spacing conventions
-- [ ] Captures motion rules by zone
-- [ ] Captures component-specific rules
-- [ ] Writes sigil-mark/rules.md organized by category
-- [ ] Updates .sigilrc.yaml with zone definitions
+- [x] Checks for .sigil-setup-complete (preflight)
+- [x] Reads moodboard.md for context
+- [x] Uses AskUserQuestion for each category
+- [x] Captures color tokens (light/dark)
+- [x] Captures typography rules
+- [x] Captures spacing conventions
+- [x] Captures motion rules by zone
+- [x] Captures component-specific rules
+- [x] Writes sigil-mark/rules.md organized by category
+- [x] Updates .sigilrc.yaml with zone definitions
 
 **Interview Categories**:
 1. Colors: "What are your key color tokens?"
@@ -219,12 +219,12 @@
 **Description**: Path-based zone resolution for design context.
 
 **Acceptance Criteria**:
-- [ ] .sigilrc.yaml supports zones section
-- [ ] Each zone has paths (glob patterns)
-- [ ] Each zone has motion preference
-- [ ] Each zone has preferred/warned patterns
-- [ ] get-zone.sh resolves file path to zone
-- [ ] Fallback to "default" zone if no match
+- [x] .sigilrc.yaml supports zones section
+- [x] Each zone has paths (glob patterns)
+- [x] Each zone has motion preference
+- [x] Each zone has preferred/warned patterns
+- [x] get-zone.sh resolves file path to zone
+- [x] Fallback to "default" zone if no match
 
 **Files**:
 - `.claude/scripts/get-zone.sh`
@@ -235,10 +235,10 @@
 
 ### Sprint 3 Success Criteria
 
-- [ ] `/codify` captures rules through interview
-- [ ] rules.md is organized by category
-- [ ] .sigilrc.yaml has zone definitions
-- [ ] get-zone.sh correctly resolves file paths
+- [x] `/codify` captures rules through interview
+- [x] rules.md is organized by category
+- [x] .sigilrc.yaml has zone definitions
+- [x] get-zone.sh correctly resolves file paths
 
 ---
 
