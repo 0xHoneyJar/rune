@@ -93,13 +93,13 @@ jobs:
         run: |
           echo "Checking required Sigil skill definitions..."
           SKILLS=(
-            ".claude/skills/sigil-setup/SKILL.md"
-            ".claude/skills/sigil-envisioning/SKILL.md"
-            ".claude/skills/sigil-codifying/SKILL.md"
-            ".claude/skills/sigil-crafting/SKILL.md"
-            ".claude/skills/sigil-approving/SKILL.md"
-            ".claude/skills/sigil-inheriting/SKILL.md"
-            ".claude/skills/sigil-updating/SKILL.md"
+            ".claude/skills/initializing-sigil/SKILL.md"
+            ".claude/skills/envisioning-moodboard/SKILL.md"
+            ".claude/skills/codifying-rules/SKILL.md"
+            ".claude/skills/crafting-guidance/SKILL.md"
+            ".claude/skills/approving-patterns/SKILL.md"
+            ".claude/skills/inheriting-design/SKILL.md"
+            ".claude/skills/updating-framework/SKILL.md"
           )
           MISSING=0
           for skill in "${SKILLS[@]}"; do

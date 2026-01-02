@@ -124,13 +124,14 @@ Skills live in `.claude/skills/` using a 3-level architecture:
 └── scripts/            # Level 3: Bash utilities
 ```
 
-**Naming convention**: Use `sigil-` prefix for Sigil skills:
-- `sigil-setup`
-- `sigil-envisioning`
-- `sigil-codifying`
-- `sigil-crafting`
-- `sigil-approving`
-- `sigil-inheriting`
+**Naming convention**: Use gerund form (action-object):
+- `initializing-sigil`
+- `envisioning-moodboard`
+- `codifying-rules`
+- `crafting-guidance`
+- `approving-patterns`
+- `inheriting-design`
+- `updating-framework`
 
 ### Commands
 

@@ -58,7 +58,7 @@ Sigil's workflow has two paths:
 
 ### Phase 1A: Envision (`/envision`) - New Projects
 
-**Skill**: `sigil-envisioning`
+**Skill**: `envisioning-moodboard`
 
 **Goal**: Capture product moodboard through interview
 
@@ -101,7 +101,7 @@ Sigil's workflow has two paths:
 
 ### Phase 1B: Inherit (`/inherit`) - Existing Codebases
 
-**Skill**: `sigil-inheriting`
+**Skill**: `inheriting-design`
 
 **Goal**: Bootstrap design context from existing code
 
@@ -128,7 +128,7 @@ Sigil's workflow has two paths:
 
 ### Phase 2: Codify (`/codify`)
 
-**Skill**: `sigil-codifying`
+**Skill**: `codifying-rules`
 
 **Goal**: Define explicit design rules by category
 
@@ -185,7 +185,7 @@ With moodboard and rules captured, you build your product. Sigil provides contex
 
 ### Phase 4: Craft (`/craft`)
 
-**Skill**: `sigil-crafting`
+**Skill**: `crafting-guidance`
 
 **Goal**: Get design guidance during implementation
 
@@ -217,7 +217,7 @@ With moodboard and rules captured, you build your product. Sigil provides contex
 
 ### Phase 5: Approve (`/approve`)
 
-**Skill**: `sigil-approving`
+**Skill**: `approving-patterns`
 
 **Goal**: Human sign-off on design patterns
 
@@ -359,13 +359,13 @@ Sigil uses modular skills with 3-level architecture:
 
 | Skill | Purpose |
 |-------|---------|
-| `sigil-setup` | Initialize Sigil |
-| `sigil-envisioning` | Capture moodboard |
-| `sigil-codifying` | Define rules |
-| `sigil-crafting` | Provide guidance |
-| `sigil-approving` | Human sign-off |
-| `sigil-inheriting` | Bootstrap from codebase |
-| `sigil-updating` | Pull updates |
+| `initializing-sigil` | Initialize Sigil |
+| `envisioning-moodboard` | Capture moodboard |
+| `codifying-rules` | Define rules |
+| `crafting-guidance` | Provide guidance |
+| `approving-patterns` | Human sign-off |
+| `inheriting-design` | Bootstrap from codebase |
+| `updating-framework` | Pull updates |
 
 ---
 

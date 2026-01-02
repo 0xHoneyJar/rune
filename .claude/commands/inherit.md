@@ -53,7 +53,7 @@ Bootstrap Sigil design context from an existing codebase. Scans components, infe
 
 Run component detection:
 ```bash
-.claude/skills/sigil-setup/scripts/detect-components.sh
+.claude/skills/initializing-sigil/scripts/detect-components.sh
 ```
 
 For each discovered component directory, scan for:

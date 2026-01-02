@@ -37,7 +37,7 @@ Bootstrap Sigil design context from an existing codebase. Scans components, infe
 Use detect-components.sh or Glob to find components:
 
 ```bash
-.claude/skills/sigil-setup/scripts/detect-components.sh --json
+.claude/skills/initializing-sigil/scripts/detect-components.sh --json
 ```
 
 Or manually glob:

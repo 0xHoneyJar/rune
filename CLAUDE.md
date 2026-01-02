@@ -156,13 +156,13 @@ Skills follow 3-level architecture:
 
 | Skill | Purpose |
 |-------|---------|
-| `sigil-setup` | Initialize Sigil |
-| `sigil-envisioning` | Capture moodboard |
-| `sigil-codifying` | Define rules |
-| `sigil-crafting` | Provide guidance |
-| `sigil-approving` | Human sign-off |
-| `sigil-inheriting` | Bootstrap from codebase |
-| `sigil-updating` | Pull updates |
+| `initializing-sigil` | Initialize Sigil |
+| `envisioning-moodboard` | Capture moodboard |
+| `codifying-rules` | Define rules |
+| `crafting-guidance` | Provide guidance |
+| `approving-patterns` | Human sign-off |
+| `inheriting-design` | Bootstrap from codebase |
+| `updating-framework` | Pull updates |
 
 ---
 
@@ -207,6 +207,6 @@ Sigil enables craft, it doesn't police it.
 Sigil and Loa can coexist. They have separate:
 - State zones (sigil-mark/ vs loa-grimoire/)
 - Config files (.sigilrc.yaml vs .loa.config.yaml)
-- Skills (sigil-* vs others)
+- Skills (design-focused vs workflow-focused)
 
 No automatic cross-loading — developer decides when to reference design context.

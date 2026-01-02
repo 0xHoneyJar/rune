@@ -1,4 +1,4 @@
-name: sigil-inheriting
+name: inheriting-design
 description: Bootstrap design context from existing codebase
 version: "2.0.0"
 
