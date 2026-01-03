@@ -16,7 +16,7 @@ zones:
     permission: read
 ---
 
-# Sigil Crafting Skill (v3.2)
+# Sigil Crafting Skill (v3.3)
 
 ## Purpose
 
@@ -135,6 +135,29 @@ all_lenses=$(.claude/scripts/get-lens.sh)
 ```
 
 Use lens context to apply lens-specific constraints and validation.
+
+### Forced Lens Mode (--lens flag)
+
+When `--lens <lens_id>` argument is provided:
+
+1. **Override Detection**: Skip automatic lens detection
+2. **Single Lens Validation**: Only validate against the specified lens
+3. **Constraints Focus**: Show only that lens's constraints and validation rules
+
+```
+/craft components/Button.tsx --lens power_user
+```
+
+In forced lens mode:
+- Load only the specified lens from `lenses.yaml`
+- Apply only that lens's constraints
+- Skip lens stacking logic
+- Report validation against that single lens
+
+This is useful for:
+- Testing how a component works for a specific user type
+- Focusing guidance on a single persona's needs
+- Quick validation during implementation
 
 ### Decision Lock Detection
 

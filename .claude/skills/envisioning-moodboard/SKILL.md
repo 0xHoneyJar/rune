@@ -217,6 +217,8 @@ Each domain auto-suggests relevant values:
 
 ### Section 3: Lens Definitions (Lens Array)
 
+Per SDD Section 3.4, lenses represent user perspectives/avatars that interpret the same core product differently. Each lens needs: name, description, priority, constraints, and validation rules.
+
 #### Question 3.1: User Types
 
 ```
@@ -231,14 +233,105 @@ options:
     description: "Touch-first, limited screen"
   - label: "Accessibility Users"
     description: "Screen reader, keyboard-only"
+  - label: "Custom"
+    description: "Define a custom user type"
 multiSelect: true
 ```
 
-For each selected user type:
-- "What constraints matter most for [user type]?"
-- "What's the priority? (1 = most constrained, truth test)"
+#### Question 3.2: Lens Details (Per Selected User Type)
 
-#### Question 3.2: Immutable Properties
+For EACH selected user type, conduct detailed interview:
+
+**Question 3.2.1: Lens Name**
+```
+question: "What should we call this lens? (e.g., 'power_user', 'newcomer')"
+header: "Name"
+```
+
+Use lowercase with underscores for the ID.
+
+**Question 3.2.2: Lens Description**
+```
+question: "Who does this lens represent? Describe the target user."
+header: "Description"
+```
+
+Capture:
+- Who they are (daily active users, first-time visitors, etc.)
+- What they're optimizing for (efficiency, learning, accessibility)
+- Their context (desktop, mobile, assistive technology)
+
+**Question 3.2.3: Priority**
+```
+question: "What priority is this lens? (1 = most constrained, used as truth test)"
+header: "Priority"
+options:
+  - label: "1 - Truth Test"
+    description: "Most constrained lens - if it breaks here, it's rejected"
+  - label: "2 - High Priority"
+    description: "Important to validate, but not the ultimate test"
+  - label: "3 - Standard"
+    description: "Normal priority validation"
+  - label: "4 - Low Priority"
+    description: "Nice to have, not critical"
+multiSelect: false
+```
+
+**Note**: The lens with priority 1 is the "truth test" - assets that fail in this lens are rejected.
+
+**Question 3.2.4: Constraints**
+```
+question: "What constraints apply to this lens? List the key requirements."
+header: "Constraints"
+```
+
+For each constraint, capture:
+- Constraint ID (e.g., `keyboard_shortcuts`)
+- Description (e.g., "All actions accessible via keyboard")
+- Required (true/false - is this mandatory?)
+
+Example prompts:
+- "What MUST work for this user type?"
+- "What would break their experience if missing?"
+
+**Common constraints by lens type:**
+- Power Users: keyboard_shortcuts, dense_display, batch_operations
+- Newcomers: clear_onboarding, contextual_help, forgiving_interactions
+- Mobile: touch_targets, responsive_layout, reduced_data
+- Accessibility: screen_reader, high_contrast, reduced_motion
+
+**Question 3.2.5: Validation Rules**
+```
+question: "What validation rules should we check for this lens?"
+header: "Validation"
+```
+
+Capture specific checks that can be performed:
+- "All interactive elements have tabindex" (for keyboard users)
+- "Touch targets >= 44px" (for mobile)
+- "ARIA labels on all interactive elements" (for accessibility)
+- "No jargon without explanation" (for newcomers)
+
+These become actionable validation criteria during `/craft`.
+
+#### Question 3.3: Lens Stacking
+
+```
+question: "Can lenses be combined? Select allowed combinations."
+header: "Stacking"
+options:
+  - label: "Power User + Accessibility"
+    description: "Keyboard experts using screen readers"
+  - label: "Newcomer + Mobile"
+    description: "First-time mobile users"
+  - label: "Mobile + Accessibility"
+    description: "Mobile users with assistive needs"
+  - label: "No stacking"
+    description: "Lenses are mutually exclusive"
+multiSelect: true
+```
+
+#### Question 3.4: Immutable Properties
 
 ```
 question: "What properties should NEVER vary between user types?"
@@ -250,10 +343,14 @@ options:
     description: "Business rules don't change per user"
   - label: "Data Integrity"
     description: "Data handling is consistent"
+  - label: "API Contracts"
+    description: "Request/response shapes are identical"
   - label: "Custom"
     description: "Specify your own"
 multiSelect: true
 ```
+
+These properties remain constant across ALL lenses - lenses only affect presentation, never core behavior.
 
 ## Output Generation
 
@@ -348,6 +445,7 @@ Write to `sigil-mark/lens-array/lenses.yaml`:
 # Lens Array — User Persona Definitions
 # Multiple truths coexist on top of core
 # Generated through /envision interview
+# Schema: SDD Section 3.4
 
 version: "1.0"
 generated_by: "/envision"
@@ -359,27 +457,87 @@ lenses:
     description: "Experienced users optimizing for efficiency"
     priority: 1  # Lower = more constrained = truth test
 
+    target_audience:
+      - "Daily active users"
+      - "Keyboard-first users"
+      - "High-volume transaction users"
+
     constraints:
       - id: "keyboard_shortcuts"
         description: "All actions accessible via keyboard"
         required: true
 
+      - id: "dense_display"
+        description: "Information-dense layouts preferred"
+        required: false
+
+      - id: "batch_operations"
+        description: "Bulk actions available"
+        required: true
+
     validation:
       - "All interactive elements have tabindex"
+      - "No hover-only interactions"
+      - "Shortcuts documented in UI"
+
+  newcomer:
+    name: "Newcomer"
+    description: "First-time users needing guidance"
+    priority: 2
+
+    target_audience:
+      - "New signups"
+      - "Infrequent users"
+      - "Users from competing products"
+
+    constraints:
+      - id: "clear_onboarding"
+        description: "Guided first experience"
+        required: true
+
+      - id: "contextual_help"
+        description: "Tooltips and help available"
+        required: true
+
+      - id: "forgiving_interactions"
+        description: "Undo available for destructive actions"
+        required: true
+
+    validation:
+      - "Help button visible on every screen"
+      - "No jargon without explanation"
+      - "Confirmation for destructive actions"
 
   # Additional lenses from interview...
 
 immutable_properties:
-  description: "Properties that cannot vary between lenses"
+  description: |
+    These properties MUST be identical across all lenses.
+    Lenses only affect presentation, never core behavior.
   properties:
-    - name: "security"
     - name: "core_logic"
+      description: "Business rules and calculations"
+    - name: "security"
+      description: "Authentication, authorization, encryption"
     - name: "data_integrity"
+      description: "Validation rules, constraints"
+    - name: "api_contracts"
+      description: "Request/response shapes"
 
 stacking:
-  allowed_combinations: []
+  description: "Lenses can be combined for specific scenarios"
+  allowed_combinations:
+    - ["power_user"]
+    - ["newcomer"]
+    - ["mobile"]
+    - ["accessibility"]
+    - ["power_user", "accessibility"]
+    - ["newcomer", "mobile"]
+    - ["mobile", "accessibility"]
+
   conflict_resolution:
-    priority_order: []
+    priority_order: ["accessibility", "power_user", "newcomer", "mobile"]
+    rule: "When lenses conflict, higher priority wins"
 ```
 
 ## Handling Existing State

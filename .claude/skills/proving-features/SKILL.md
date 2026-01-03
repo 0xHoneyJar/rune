@@ -27,6 +27,51 @@ The Proving Grounds ensure:
 - Edge cases are discovered before canonization
 - Graduation requires demonstrated stability
 
+## Important: Monitors Are Manual Check-Ins
+
+**Monitors in Sigil are NOT automated systems.** They are structured prompts for manual check-ins during the proving period.
+
+### What Monitors Actually Do
+
+1. **Define what to check** - Each monitor specifies a metric and threshold
+2. **Prompt for updates** - The agent reminds you to check these metrics
+3. **Record observations** - You manually update the status based on your checks
+
+### Why Manual?
+
+Sigil is a design governance framework, not a monitoring infrastructure. It provides:
+- Structure for what to validate
+- A record of observations
+- A checklist for graduation eligibility
+
+It does NOT:
+- Connect to external APIs
+- Automatically poll services
+- Run background processes
+
+### Manual Monitoring Workflow
+
+**Example: 7-day proving period for "new-checkout-flow"**
+
+**Day 1:** Feature deployed to testnet
+- Agent: "new-checkout-flow is now being proved. Check in on monitors daily."
+
+**Day 3:** Manual check-in
+- You: `/prove new-checkout-flow --status`
+- Agent: "How are the monitors looking? Update any that have changed."
+- You: "tx_success_rate is at 99.5%, all green"
+- Agent: Updates record with green status
+
+**Day 5:** Issue detected
+- You: `/prove new-checkout-flow --update tx_success_rate yellow`
+- Agent: Records yellow status, asks for context
+- You: "Seeing some timeouts on high-volume transactions"
+- Agent: Logs as P2 violation with context
+
+**Day 7:** Final check
+- You: `/graduate new-checkout-flow`
+- Agent: Reviews all monitor statuses, asks for sign-off
+
 ## Pre-Flight Checks
 
 1. **Sigil Setup**: Verify `.sigil-setup-complete` exists

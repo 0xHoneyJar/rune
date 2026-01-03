@@ -234,10 +234,10 @@ The agent will now {BLOCK | WARN on} any change that matches:
 Protection Rule:
   "{protection_rule}"
 
-To de-canonize this flaw in the future, run:
-  /de-canonize FLAW-{id}
-
-This requires 70% community approval and Taste Owner sign-off.
+De-canonization process:
+  - Requires 70% community approval via /consult
+  - Requires Taste Owner sign-off via /approve
+  - Update canon-of-flaws.yaml status to DE_CANONIZED
 
 Next steps:
   - /craft will respect this flaw during implementation

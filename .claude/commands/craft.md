@@ -1,6 +1,6 @@
 ---
 name: "craft"
-version: "0.3.2"
+version: "0.3.3"
 description: |
   Provide design guidance during implementation.
   Loads moodboard, rules, values, flaws, lenses, and locked decisions.
@@ -13,6 +13,11 @@ arguments:
     type: "string"
     required: false
     description: "File path for zone detection or question about design"
+
+  - name: "--lens"
+    type: "string"
+    required: false
+    description: "Force validation in a specific lens (e.g., --lens power_user)"
 
 pre_flight:
   - check: "file_exists"
@@ -46,6 +51,8 @@ Warns about violations but never refuses. Human is always accountable.
 /craft
 /craft components/Button.tsx
 /craft "How should loading states work?"
+/craft components/Button.tsx --lens power_user
+/craft --lens accessibility
 ```
 
 ## Prerequisites
@@ -104,6 +111,7 @@ Based on context and question:
 | Argument | Description | Required |
 |----------|-------------|----------|
 | `context` | File path or design question | No |
+| `--lens` | Force validation in specific lens (e.g., `power_user`) | No |
 
 ## Outputs
 

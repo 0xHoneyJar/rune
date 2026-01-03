@@ -23,9 +23,9 @@ Sigil v3 is a Constitutional Design Framework with four pillars: Soul Binder, Le
 
 > From prd.md: "Progressive strictness allows greenfield projects to grow without friction"
 
-**Total Sprints:** 6
-**Sprint Duration:** 2.5 days each
-**Estimated Total:** 15 working days
+**Total Sprints:** 7
+**Sprint Duration:** 2.5 days each (Sprint 7: 1 day)
+**Estimated Total:** 16 working days
 
 ---
 
@@ -39,6 +39,7 @@ Sigil v3 is a Constitutional Design Framework with four pillars: Soul Binder, Le
 | 4 | Consultation Chamber | `/consult`, decision locking, three-tier authority | Sprint 3 |
 | 5 | Proving Grounds | `/prove`, `/graduate`, monitoring framework | Sprint 4 |
 | 6 | Polish & Documentation | Tests, migration guide, documentation | Sprint 5 |
+| 7 | Review Feedback Fixes | `/unlock`, `/de-canonize`, lens interview, polish | Sprint 6 |
 
 ---
 
@@ -482,12 +483,17 @@ Sprint 5 ───────────────────────�
    │  Proving: /prove, /graduate, monitors                                    │
    │                                                                           │
    ▼                                                                           │
-Sprint 6 ─────────────────────────────────────────────────────────────────────┘
+Sprint 6 ─────────────────────────────────────────────────────────────────────┤
+   │                                                                           │
+   │  Polish: Tests, docs, migration                                           │
+   │                                                                           │
+   ▼                                                                           │
+Sprint 7 ─────────────────────────────────────────────────────────────────────┘
    │
-   │  Polish: Tests, docs, migration
+   │  Review Fixes: /unlock, /de-canonize, lens interview
    │
    ▼
-   🚀 Release v3.0.0
+   🚀 Release v0.3.0
 ```
 
 ---
@@ -539,5 +545,126 @@ Sprint 6 ───────────────────────�
 
 ---
 
+---
+
+## Sprint 7: Review Feedback Fixes
+
+**Duration:** 1 day
+**Theme:** Address implementation gaps from v0.3 external review
+**Review Reference:** `loa-grimoire/context/sigil-v3-implementation-review.md`
+
+### Sprint Goal
+
+Address all high-priority gaps identified in the external review (B+ grade, 91% PRD compliance). Bring implementation to full compliance with PRD and SDD specifications.
+
+### Review Summary
+
+External review identified:
+- **Grade:** B+ (91% PRD compliance)
+- **High Priority Gaps:** 3 issues (blocking full compliance)
+- **Medium Priority Gaps:** 3 issues (quality improvements)
+
+### Deliverables
+
+- [ ] `/unlock` command created and routed to `unlocking-decisions` skill
+- [ ] `/de-canonize` command created OR references removed from `/canonize` output
+- [ ] Lens capture interview questions added to `/envision` skill
+- [ ] `--lens` flag added to `/craft` command (medium priority)
+- [ ] Poll templates added to `consulting-decisions` skill (medium priority)
+- [ ] Monitors documented as manual check-ins (medium priority)
+
+### Acceptance Criteria
+
+> From external review: "Missing /unlock command referenced in SDD but not implemented"
+> From external review: "No lens capture interview questions in /envision"
+
+**High Priority (Must Fix):**
+- [ ] Running `/unlock <decision-id>` triggers time-based unlock flow
+- [ ] `/canonize` output either uses `/de-canonize` command OR removes reference
+- [ ] `/envision` includes interview questions for lens definitions per SDD §3.4
+- [ ] Lens interview captures: name, description, priority, constraints, validation rules
+
+**Medium Priority (Should Fix):**
+- [ ] `/craft --lens power_user` forces validation in specific lens
+- [ ] `/consult` outputs proper poll templates for strategic tier
+- [ ] `/prove` documents monitors as manual check-ins, not automated
+
+### Technical Tasks
+
+**Task 7.1: Create /unlock Command (HIGH - 1 hour)**
+- [ ] Create `.claude/commands/unlock.md` with frontmatter
+- [ ] Route to existing `unlocking-decisions` internal skill
+- [ ] Verify skill path in `.claude/skills/unlocking-decisions/`
+- [ ] Test unlock flow for expired decision lock
+
+**Task 7.2: Handle /de-canonize Reference (HIGH - 2 hours)**
+- [ ] Option A: Create `/de-canonize` command and skill
+  - Create `.claude/commands/de-canonize.md`
+  - Create `.claude/skills/de-canonizing-flaws/index.yaml`
+  - Create `.claude/skills/de-canonizing-flaws/SKILL.md`
+- [ ] Option B: Remove reference from `/canonize` output
+  - Update `.claude/skills/canonizing-flaws/SKILL.md`
+  - Remove "Use /de-canonize to reverse" text
+
+**Task 7.3: Add Lens Interview to /envision (HIGH - 4 hours)**
+- [ ] Update `.claude/skills/envisioning-moodboard/SKILL.md`
+- [ ] Add lens definition interview section per SDD §3.4
+- [ ] Interview questions for each lens:
+  - "Who is this lens representing?" (name/description)
+  - "What priority does this lens have?" (1 = truth test)
+  - "What constraints apply to this lens?" (accessibility, performance, etc.)
+  - "What validation rules should apply?" (specific checks)
+- [ ] Ensure lens definitions saved to `sigil-mark/lens-array/lenses.yaml`
+
+**Task 7.4: Add --lens Flag to /craft (MEDIUM - 1 hour)**
+- [ ] Update `.claude/commands/craft.md` to accept `--lens` argument
+- [ ] Update `.claude/skills/crafting-guidance/SKILL.md` to parse lens flag
+- [ ] When `--lens X` provided, force validation in that lens only
+
+**Task 7.5: Add Poll Templates to /consult (MEDIUM - 1 hour)**
+- [ ] Update `.claude/skills/consulting-decisions/SKILL.md`
+- [ ] Add Discord poll template for strategic tier
+- [ ] Add Slack poll template for strategic tier
+- [ ] Add Twitter poll template for strategic tier
+
+**Task 7.6: Document Monitor Expectations (MEDIUM - 30 min)**
+- [ ] Update `.claude/skills/proving-features/SKILL.md`
+- [ ] Clarify monitors are manual check-in prompts, not automated
+- [ ] Add example of manual monitoring workflow
+
+### Dependencies
+
+- Sprint 1-6: All previous sprints completed
+- Existing `unlocking-decisions` skill must exist (verify)
+
+### Risks & Mitigation
+
+| Risk | Probability | Impact | Mitigation |
+|------|-------------|--------|------------|
+| `unlocking-decisions` skill missing | Low | Medium | Check if exists; create if needed |
+| Lens interview too long | Medium | Low | Keep questions focused; allow skip |
+| `/de-canonize` scope unclear | Medium | Low | Start with remove; add later if needed |
+
+### Success Metrics
+
+- All high-priority gaps closed (100%)
+- External review grade improves to A (95%+ compliance)
+- `/unlock` command functional
+- Lens interview generates valid `lenses.yaml`
+
+### Effort Estimates
+
+| Task | Priority | Effort | Status |
+|------|----------|--------|--------|
+| 7.1: /unlock command | HIGH | 1 hour | Pending |
+| 7.2: /de-canonize handling | HIGH | 2 hours | Pending |
+| 7.3: Lens interview | HIGH | 4 hours | Pending |
+| 7.4: --lens flag | MEDIUM | 1 hour | Pending |
+| 7.5: Poll templates | MEDIUM | 1 hour | Pending |
+| 7.6: Monitor docs | MEDIUM | 30 min | Pending |
+| **Total** | | **9.5 hours** | |
+
+---
+
 *Generated by Sprint Planner Agent*
-*Sigil v3: Culture is the Reality. Code is Just the Medium.*
+*Sigil v0.3: Culture is the Reality. Code is Just the Medium.*
