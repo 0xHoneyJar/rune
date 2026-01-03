@@ -180,36 +180,36 @@ Implement the Lens Array pillar with user persona definitions, constrained lens 
 
 ### Deliverables
 
-- [ ] `lenses.yaml` schema implemented
-- [ ] `/envision` extended to define lenses
-- [ ] Lens validation logic (most constrained = truth test)
-- [ ] Immutable properties enforcement across lenses
-- [ ] `/craft` updated for lens-aware guidance
-- [ ] `get-lens.sh` helper for lens detection
+- [x] `lenses.yaml` schema implemented
+- [x] `/envision` extended to define lenses
+- [x] Lens validation logic (most constrained = truth test)
+- [x] Immutable properties enforcement across lenses
+- [x] `/craft` updated for lens-aware guidance
+- [x] `get-lens.sh` helper for lens detection
 
 ### Acceptance Criteria
 
 > From prd.md FR-4: "Validation runs in most constrained lens first"
 > From prd.md FR-5: "Agent blocks lens variations that modify immutable properties"
 
-- [ ] `/envision` creates lens definitions in `sigil-mark/lens-array/lenses.yaml`
-- [ ] Each lens has: name, description, priority, constraints, validation rules
-- [ ] Lens with lowest priority number is the truth test
-- [ ] Validation fails if asset breaks in constrained lens
-- [ ] Immutable properties (security, core logic) cannot vary between lenses
-- [ ] `/craft` detects current lens and applies appropriate constraints
+- [x] `/envision` creates lens definitions in `sigil-mark/lens-array/lenses.yaml`
+- [x] Each lens has: name, description, priority, constraints, validation rules
+- [x] Lens with lowest priority number is the truth test
+- [x] Validation fails if asset breaks in constrained lens
+- [x] Immutable properties (security, core logic) cannot vary between lenses
+- [x] `/craft` detects current lens and applies appropriate constraints
 
 ### Technical Tasks
 
-- [ ] Create `lenses.yaml` JSON Schema for validation
-- [ ] Update `.claude/skills/envisioning-moodboard/SKILL.md` for lens definition interview
-- [ ] Create lens definition interview questions (per SDD §3.4)
-- [ ] Create `.claude/scripts/get-lens.sh` helper
-- [ ] Implement lens stacking rules (allowed combinations)
-- [ ] Implement conflict resolution (priority order)
-- [ ] Create internal skill for lens validation (validating-lenses)
-- [ ] Update `.claude/skills/crafting-guidance/SKILL.md` for lens awareness
-- [ ] Add lens context to `/craft` output
+- [x] Create `lenses.yaml` JSON Schema for validation
+- [x] Update `.claude/skills/envisioning-moodboard/SKILL.md` for lens definition interview
+- [x] Create lens definition interview questions (per SDD §3.4)
+- [x] Create `.claude/scripts/get-lens.sh` helper
+- [x] Implement lens stacking rules (allowed combinations)
+- [x] Implement conflict resolution (priority order)
+- [x] Create internal skill for lens validation (validating-lenses)
+- [x] Update `.claude/skills/crafting-guidance/SKILL.md` for lens awareness
+- [x] Add lens context to `/craft` output
 
 ### Dependencies
 
