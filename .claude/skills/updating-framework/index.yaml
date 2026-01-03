@@ -1,6 +1,6 @@
 name: updating-framework
 description: Pull latest Sigil framework and refresh symlinks
-version: "2.0.0"
+version: "0.2.0"
 
 triggers:
   - "/update"

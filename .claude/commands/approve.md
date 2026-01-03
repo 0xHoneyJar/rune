@@ -1,6 +1,6 @@
 ---
 name: "approve"
-version: "2.0.0"
+version: "0.2.0"
 description: |
   Human review and sign-off on design patterns.
   Records approval in rules.md with date and approver.

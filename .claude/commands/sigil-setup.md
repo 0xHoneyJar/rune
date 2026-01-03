@@ -1,8 +1,8 @@
 ---
 name: "sigil-setup"
-version: "3.0.0"
+version: "0.3.0"
 description: |
-  Initialize Sigil v3 Constitutional Design Framework on a repository.
+  Initialize Sigil v0.3 Constitutional Design Framework on a repository.
   Creates four-pillar directory structure and configuration files.
 
 command_type: "wizard"
@@ -12,7 +12,7 @@ arguments: []
 pre_flight:
   - check: "file_not_exists"
     path: ".sigil-setup-complete"
-    error: "Sigil v3 setup already completed. Edit .sigilrc.yaml to modify settings."
+    error: "Sigil v0.3 setup already completed. Edit .sigilrc.yaml to modify settings."
 
 outputs:
   # Core state files
@@ -82,17 +82,17 @@ mode:
   allow_background: false
 ---
 
-# Sigil v3 Setup
+# Sigil v0.3 Setup
 
 ## Purpose
 
-Initialize Sigil v3 Constitutional Design Framework on a repository. Creates the four-pillar directory structure, configuration files, and prepares for design capture through interviews.
+Initialize Sigil v0.3 Constitutional Design Framework on a repository. Creates the four-pillar directory structure, configuration files, and prepares for design capture through interviews.
 
 ## Philosophy
 
 > "Culture is the Reality. Code is Just the Medium."
 
-Sigil v3 is a constitutional framework that protects both intended soul (Immutable Values) and emergent soul (Canon of Flaws).
+Sigil v0.3 is a constitutional framework that protects both intended soul (Immutable Values) and emergent soul (Canon of Flaws).
 
 ## Invocation
 
@@ -110,7 +110,7 @@ See: `.claude/skills/initializing-sigil/SKILL.md` for full workflow details.
 
 1. **Pre-flight**: Check if already setup
 2. **Detect**: Find component directories
-3. **Create**: Build v3 directory structure (4 pillars)
+3. **Create**: Build v0.3 directory structure (4 pillars)
 4. **Configure**: Initialize `.sigilrc.yaml` with strictness: discovery
 5. **Report**: Show completion message with next steps
 

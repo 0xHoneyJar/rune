@@ -1,17 +1,24 @@
 # Sigil
 
-Design context framework for AI-assisted development.
+Constitutional Design Framework for AI-assisted development.
 
-> "Make the right path easy. Make the wrong path visible. Don't make the wrong path impossible."
+> "Culture is the Reality. Code is Just the Medium."
 
 ## What is Sigil?
 
-Sigil captures and preserves design decisions so AI agents can make consistent UI choices. It solves the problem of design drift when building with Claude Code.
+Sigil v0.3 is a constitutional framework that protects both intended soul (Immutable Values) and emergent soul (Canon of Flaws). It captures and preserves design decisions so AI agents can make consistent UI choices.
+
+**Four Pillars:**
+1. **Soul Binder** - Protects values and emergent behaviors (Canon of Flaws)
+2. **Lens Array** - Supports multiple user truths with persona-based validation
+3. **Consultation Chamber** - Layered decision authority (poll/consult/dictate)
+4. **Proving Grounds** - Scale validation before production graduation
 
 **Core Features:**
 - **Moodboard** - Capture product feel, references, and anti-patterns
 - **Design Rules** - Define colors, typography, spacing, motion by zone
 - **Zone System** - Path-based context for different areas of your app
+- **Progressive Strictness** - Discovery → Guiding → Enforcing → Strict
 - **Human Approval** - All validation is human review, not automation
 
 ## Installation
@@ -48,15 +55,24 @@ claude
 
 ## Commands
 
+### Core Commands
 | Command | Purpose | Output |
 |---------|---------|--------|
-| `/setup` | Initialize Sigil | sigil-mark/, .sigilrc.yaml |
-| `/envision` | Capture product moodboard | moodboard.md |
+| `/setup` | Initialize Sigil v0.3 | sigil-mark/, .sigilrc.yaml |
+| `/envision` | Capture product moodboard + values + lenses | moodboard.md, immutable-values.yaml, lenses.yaml |
 | `/codify` | Define design rules | rules.md |
 | `/craft` | Get design guidance | Conversational |
 | `/approve` | Human review and sign-off | Approval record |
 | `/inherit` | Bootstrap from existing code | Draft moodboard, rules, inventory |
 | `/update` | Pull framework updates | Updated symlinks |
+
+### v0.3 Commands (Constitutional Features)
+| Command | Purpose | Output |
+|---------|---------|--------|
+| `/canonize` | Protect emergent behaviors | canon-of-flaws.yaml |
+| `/consult` | Start decision consultation | decisions/{id}.yaml |
+| `/prove` | Register feature for proving | proving-grounds/active/{feature}.yaml |
+| `/graduate` | Graduate feature to canon | canon/graduated/{feature}.yaml |
 
 ## Workflow
 
@@ -72,7 +88,7 @@ claude
 
 ## Directory Structure
 
-After setup:
+After setup (v0.3 four-pillar architecture):
 
 ```
 your-repo/
@@ -80,10 +96,26 @@ your-repo/
 │   ├── commands/      # Symlinked commands
 │   └── skills/        # Symlinked skills
 ├── sigil-mark/        # Your design context
-│   ├── moodboard.md   # Product feel, references
-│   ├── rules.md       # Design rules by category
-│   └── inventory.md   # Component list
-├── .sigilrc.yaml      # Zone configuration
+│   ├── moodboard.md           # Product feel, references
+│   ├── rules.md               # Design rules by category
+│   ├── inventory.md           # Component list
+│   ├── soul-binder/           # Pillar 1: Values + Flaws
+│   │   ├── immutable-values.yaml
+│   │   ├── canon-of-flaws.yaml
+│   │   └── visual-soul.yaml
+│   ├── lens-array/            # Pillar 2: User personas
+│   │   └── lenses.yaml
+│   ├── consultation-chamber/  # Pillar 3: Decisions
+│   │   ├── config.yaml
+│   │   └── decisions/
+│   ├── proving-grounds/       # Pillar 4: Feature proving
+│   │   ├── config.yaml
+│   │   └── active/
+│   ├── canon/                 # Graduated features
+│   │   └── graduated/
+│   └── audit/                 # Override logging
+│       └── overrides.yaml
+├── .sigilrc.yaml      # Zone configuration + strictness
 ├── .sigil-version.json
 └── .sigil-setup-complete
 ```
@@ -105,6 +137,22 @@ zones:
   marketing:
     paths: ["src/features/marketing/**"]
     motion: "playful"
+```
+
+## Strictness Levels
+
+Sigil v0.3 introduces progressive strictness:
+
+| Level | Behavior |
+|-------|----------|
+| `discovery` | All suggestions, no blocks (default) |
+| `guiding` | Warnings on violations |
+| `enforcing` | Blocks on protected flaws/values |
+| `strict` | Blocks on all violations |
+
+Configure in `.sigilrc.yaml`:
+```yaml
+strictness: "discovery"
 ```
 
 ## Philosophy
@@ -136,7 +184,9 @@ Sigil and [Loa](https://github.com/0xHoneyJar/loa) can coexist on the same repo:
 
 ## Version
 
-2.0.0
+0.3.0 (Constitutional Design Framework)
+
+See [CHANGELOG.md](CHANGELOG.md) for release history.
 
 ## License
 

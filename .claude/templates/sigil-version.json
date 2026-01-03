@@ -1,6 +1,6 @@
 {
-  "version": "3.0.0",
-  "schema_version": "3.0",
+  "version": "0.3.0",
+  "schema_version": "0.3",
   "setup_at": null,
   "pillars": {
     "soul_binder": true,

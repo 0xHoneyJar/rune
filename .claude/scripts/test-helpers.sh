@@ -1,5 +1,5 @@
 #!/bin/sh
-# test-helpers.sh — Test all Sigil v3 helper scripts
+# test-helpers.sh — Test all Sigil v0.3 helper scripts
 # Usage: test-helpers.sh [--verbose]
 # Returns: 0 if all pass, 1 if any fail
 
@@ -33,7 +33,7 @@ log_fail() {
     fi
 }
 
-echo "=== Sigil v3 Helper Script Tests ==="
+echo "=== Sigil v0.3 Helper Script Tests ==="
 echo ""
 
 # ============================================

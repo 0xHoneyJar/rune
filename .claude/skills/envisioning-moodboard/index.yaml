@@ -1,6 +1,6 @@
 name: envisioning-moodboard
 description: Capture product moodboard, immutable values, and lens definitions through interview
-version: "3.0.0"
+version: "0.3.0"
 
 triggers:
   - "/envision"

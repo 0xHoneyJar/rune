@@ -120,7 +120,7 @@ validate_required_fields() {
 }
 
 # Main validation
-echo "=== Sigil v3 Schema Validation ==="
+echo "=== Sigil v0.3 Schema Validation ==="
 echo ""
 
 # Check if sigil-mark exists

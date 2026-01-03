@@ -1,6 +1,6 @@
 ---
 name: "plan-and-analyze"
-version: "2.0.0"
+version: "0.2.0"
 description: |
   Launch PRD discovery with automatic context ingestion.
   Reads existing documentation from loa-grimoire/context/ before interviewing.

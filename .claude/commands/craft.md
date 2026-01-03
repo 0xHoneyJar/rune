@@ -1,6 +1,6 @@
 ---
 name: "craft"
-version: "3.2.0"
+version: "0.3.2"
 description: |
   Provide design guidance during implementation.
   Loads moodboard, rules, values, flaws, lenses, and locked decisions.

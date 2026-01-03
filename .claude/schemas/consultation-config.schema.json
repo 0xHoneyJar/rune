@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "sigil-v3/consultation-config",
+  "$id": "sigil-v0.3/consultation-config",
   "title": "Consultation Chamber Config Schema",
   "description": "Consultation Chamber - Decision authority configuration",
   "type": "object",

@@ -1,6 +1,6 @@
 ---
 name: "inherit"
-version: "2.0.0"
+version: "0.2.0"
 description: |
   Bootstrap design system from existing codebase.
   Scans components, infers patterns, and creates draft moodboard and rules.

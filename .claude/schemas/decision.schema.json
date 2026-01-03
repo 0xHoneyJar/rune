@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "sigil-v3/decision",
+  "$id": "sigil-v0.3/decision",
   "title": "Decision Record Schema",
   "description": "Consultation Chamber - Individual decision record",
   "type": "object",

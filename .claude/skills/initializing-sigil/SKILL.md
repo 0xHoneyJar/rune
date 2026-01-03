@@ -16,17 +16,17 @@ zones:
     permission: read
 ---
 
-# Sigil v3 Setup Skill
+# Sigil v0.3 Setup Skill
 
 ## Purpose
 
-Initialize Sigil v3 Constitutional Design Framework on a repository. Creates the four-pillar directory structure, configuration files, and prepares for design capture through interviews.
+Initialize Sigil v0.3 Constitutional Design Framework on a repository. Creates the four-pillar directory structure, configuration files, and prepares for design capture through interviews.
 
 ## Philosophy
 
 > "Culture is the Reality. Code is Just the Medium."
 
-Sigil v3 is a constitutional framework that protects both intended soul (Immutable Values) and emergent soul (Canon of Flaws). This setup creates the foundation for the four pillars:
+Sigil v0.3 is a constitutional framework that protects both intended soul (Immutable Values) and emergent soul (Canon of Flaws). This setup creates the foundation for the four pillars:
 
 1. **Soul Binder** — Protects values and emergent behaviors
 2. **Lens Array** — Supports multiple user truths
@@ -51,9 +51,9 @@ Scan for common component directory patterns:
 
 Use Glob or the detect-components.sh script.
 
-### Step 2: Create v3 Directory Structure
+### Step 2: Create v0.3 Directory Structure
 
-Create the complete Sigil v3 directory tree:
+Create the complete Sigil v0.3 directory tree:
 
 ```bash
 # Core state directory
@@ -293,12 +293,12 @@ overrides: []
 
 ### Step 9: Create Configuration
 
-Create `.sigilrc.yaml` with v3 schema:
+Create `.sigilrc.yaml` with v0.3 schema:
 ```yaml
-# Sigil v3 Configuration
+# Sigil v0.3 Configuration
 # Constitutional Design Framework
 
-version: "3.0"
+version: "0.3"
 
 # Progressive strictness level
 # discovery: All suggestions, no blocks
@@ -346,8 +346,8 @@ proving:
 
 Create `.sigil-setup-complete`:
 ```
-Sigil v3 setup completed at [timestamp]
-Framework version: 3.0.0
+Sigil v0.3 setup completed at [timestamp]
+Framework version: 0.3.0
 Strictness: discovery
 
 Next steps:
@@ -359,8 +359,8 @@ Next steps:
 Create/update `.sigil-version.json`:
 ```json
 {
-  "version": "3.0.0",
-  "schema_version": "3.0",
+  "version": "0.3.0",
+  "schema_version": "0.3",
   "setup_at": "[timestamp]",
   "pillars": {
     "soul_binder": true,
@@ -375,7 +375,7 @@ Create/update `.sigil-version.json`:
 
 Output:
 ```
-Sigil v3 Setup Complete
+Sigil v0.3 Setup Complete
 
 Constitutional Design Framework initialized with four pillars:
   1. Soul Binder (sigil-mark/soul-binder/)
@@ -413,7 +413,7 @@ Philosophy: "Culture is the Reality. Code is Just the Medium."
 ## Idempotency
 
 If already set up:
-1. Warn user that v3 setup already complete
+1. Warn user that v0.3 setup already complete
 2. Show current strictness level
 3. Offer options:
    - Refresh directory structure (add missing directories)

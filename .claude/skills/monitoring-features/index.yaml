@@ -1,6 +1,6 @@
 name: monitoring-features
 description: Update monitor status for proving features
-version: "3.0.0"
+version: "0.3.0"
 
 triggers: []  # Internal skill, not user-invoked
 

@@ -1,6 +1,6 @@
 ---
 name: "translate-ride"
-version: "2.0.0"
+version: "0.2.0"
 description: |
   Enterprise-grade translation of /ride Ground Truth artifacts into executive
   communications. Enforces synthesis protection, agentic memory, factual

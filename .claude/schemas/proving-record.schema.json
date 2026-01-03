@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "sigil-v3/proving-record",
+  "$id": "sigil-v0.3/proving-record",
   "title": "Proving Record Schema",
   "description": "Proving Grounds - Individual feature proving record",
   "type": "object",

@@ -1,5 +1,5 @@
 #!/bin/sh
-# get-strictness.sh — Return current Sigil v3 strictness level
+# get-strictness.sh — Return current Sigil v0.3 strictness level
 #
 # Usage: ./get-strictness.sh [config_path]
 #

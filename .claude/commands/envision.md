@@ -1,6 +1,6 @@
 ---
 name: "envision"
-version: "2.0.0"
+version: "0.2.0"
 description: |
   Interview-based moodboard capture for Sigil design context.
   Captures product feel, references, anti-patterns, and key moments.

@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "sigil-v3/sigilrc",
+  "$id": "sigil-v0.3/sigilrc",
   "title": "Sigil Configuration Schema",
-  "description": ".sigilrc.yaml - Main Sigil v3 configuration file",
+  "description": ".sigilrc.yaml - Main Sigil v0.3 configuration file",
   "type": "object",
   "required": ["version", "strictness"],
   "properties": {

@@ -1,6 +1,6 @@
 name: canonizing-flaws
 description: Register and protect emergent behaviors in the Canon of Flaws
-version: "3.0.0"
+version: "0.3.0"
 
 triggers:
   - "/canonize"

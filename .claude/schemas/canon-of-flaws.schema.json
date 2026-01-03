@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "sigil-v3/canon-of-flaws",
+  "$id": "sigil-v0.3/canon-of-flaws",
   "title": "Canon of Flaws Schema",
   "description": "Soul Binder - Protected emergent behaviors",
   "type": "object",

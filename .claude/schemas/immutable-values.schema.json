@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "sigil-v3/immutable-values",
+  "$id": "sigil-v0.3/immutable-values",
   "title": "Immutable Values Schema",
   "description": "Soul Binder - Core principles that hard-block violations",
   "type": "object",

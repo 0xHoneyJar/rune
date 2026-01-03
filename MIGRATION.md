@@ -1,13 +1,13 @@
-# Sigil v2 → v3 Migration Guide
+# Sigil 0.2 → 0.3 Migration Guide
 
-This guide covers migrating from Sigil v2 (zone-based design context) to Sigil v3 (Constitutional Design Framework).
+This guide covers migrating from Sigil 0.2 (zone-based design context) to Sigil 0.3 (Constitutional Design Framework).
 
 ## Overview
 
-Sigil v3 introduces the four-pillar architecture:
+Sigil 0.3 introduces the four-pillar architecture:
 
-| Pillar | Purpose | v2 Equivalent |
-|--------|---------|---------------|
+| Pillar | Purpose | 0.2 Equivalent |
+|--------|---------|----------------|
 | **Soul Binder** | Immutable values + Canon of Flaws | Moodboard (partial) |
 | **Lens Array** | User persona validation | Zones (partial) |
 | **Consultation Chamber** | Decision authority layers | New |
@@ -16,25 +16,25 @@ Sigil v3 introduces the four-pillar architecture:
 ## Prerequisites
 
 - Backup your existing `sigil-mark/` directory
-- Have access to your v2 `.sigilrc.yaml` and `sigil-mark/` state
+- Have access to your 0.2 `.sigilrc.yaml` and `sigil-mark/` state
 
 ## Migration Steps
 
-### Step 1: Backup v2 State
+### Step 1: Backup 0.2 State
 
 ```bash
 # Create backup
-cp -r sigil-mark sigil-mark-v2-backup
-cp .sigilrc.yaml .sigilrc-v2-backup.yaml
+cp -r sigil-mark sigil-mark-0.2-backup
+cp .sigilrc.yaml .sigilrc-0.2-backup.yaml
 ```
 
-### Step 2: Run v3 Setup
+### Step 2: Run 0.3 Setup
 
 ```
 /setup
 ```
 
-This creates the v3 directory structure without overwriting existing files:
+This creates the 0.3 directory structure without overwriting existing files:
 
 ```
 sigil-mark/
@@ -72,15 +72,15 @@ The interview captures:
    - Define enforcement levels (block/warn/suggest)
 
 2. **User Lenses** → `lens-array/lenses.yaml`
-   - Map v2 zones to user personas
+   - Map 0.2 zones to user personas
    - Define constraints per lens
 
 ### Step 4: Map Zones to Lenses
 
-V2 zones become v3 lenses with persona context:
+0.2 zones become 0.3 lenses with persona context:
 
-| V2 Zone | V3 Lens | Priority | Constraints |
-|---------|---------|----------|-------------|
+| 0.2 Zone | 0.3 Lens | Priority | Constraints |
+|----------|----------|----------|-------------|
 | `critical` | `power_user` | 1 (truth test) | Accessibility, performance |
 | `marketing` | `new_visitor` | 3 | Visual appeal |
 | `admin` | `admin_user` | 2 | Efficiency, density |
@@ -88,19 +88,19 @@ V2 zones become v3 lenses with persona context:
 Example mapping in `.sigilrc.yaml`:
 
 ```yaml
-# V2 (zones)
+# 0.2 (zones)
 zones:
   critical:
     paths: ["src/features/checkout/**"]
     motion: "deliberate"
 
-# V3 (lenses)
+# 0.3 (lenses)
 # Move to sigil-mark/lens-array/lenses.yaml
 ```
 
 ### Step 5: Configure Strictness
 
-V3 has progressive strictness levels:
+0.3 has progressive strictness levels:
 
 | Level | Behavior |
 |-------|----------|
@@ -113,27 +113,27 @@ Start with `discovery` and increase as needed:
 
 ```yaml
 # .sigilrc.yaml
-version: "3.0"
+version: "0.3"
 strictness: "discovery"
 ```
 
 ### Step 6: Migrate Rejections to Canon of Flaws
 
-V2 rejections become v3 protected behaviors:
+0.2 rejections become 0.3 protected behaviors:
 
 ```yaml
-# V2 (.sigilrc.yaml)
+# 0.2 (.sigilrc.yaml)
 rejections:
   - pattern: "Spinner"
     reason: "Creates anxiety in critical zones"
 
-# V3 (sigil-mark/soul-binder/canon-of-flaws.yaml)
+# 0.3 (sigil-mark/soul-binder/canon-of-flaws.yaml)
 # Run: /canonize "spinner-free loading"
 ```
 
 ### Step 7: Define Taste Owners
 
-New in v3 — define who owns design decisions:
+New in 0.3 — define who owns design decisions:
 
 ```yaml
 # .sigilrc.yaml
@@ -161,9 +161,9 @@ domains:
 
 ### Commands
 
-| V2 Command | V3 Command | Notes |
-|------------|------------|-------|
-| `/setup` | `/setup` | Creates v3 structure |
+| 0.2 Command | 0.3 Command | Notes |
+|-------------|-------------|-------|
+| `/setup` | `/setup` | Creates 0.3 structure |
 | `/envision` | `/envision` | Extended for values + lenses |
 | `/codify` | `/codify` | Same (design rules) |
 | `/craft` | `/craft` | Now respects flaws + lenses |
@@ -185,15 +185,15 @@ domains:
 
 ## Rollback
 
-If you need to rollback to v2:
+If you need to rollback to 0.2:
 
 ```bash
-# Restore v2 state
+# Restore 0.2 state
 rm -rf sigil-mark
-mv sigil-mark-v2-backup sigil-mark
-mv .sigilrc-v2-backup.yaml .sigilrc.yaml
+mv sigil-mark-0.2-backup sigil-mark
+mv .sigilrc-0.2-backup.yaml .sigilrc.yaml
 
-# Remove v3 markers
+# Remove 0.3 markers
 rm .sigil-setup-complete
 rm .sigil-version.json
 ```
@@ -234,5 +234,5 @@ For issues or questions:
 
 | Version | Date | Notes |
 |---------|------|-------|
-| 3.0.0 | 2026-01-02 | Constitutional Design Framework |
-| 2.0.0 | Previous | Zone-based design context |
+| 0.3.0 | 2026-01-02 | Constitutional Design Framework |
+| 0.2.0 | Previous | Zone-based design context |

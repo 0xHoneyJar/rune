@@ -1,6 +1,6 @@
 name: crafting-guidance
 description: Provide design guidance with value/flaw/lens awareness during implementation
-version: "3.1.0"
+version: "0.3.1"
 
 triggers:
   - "/craft"

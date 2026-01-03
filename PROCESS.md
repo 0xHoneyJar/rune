@@ -1,18 +1,31 @@
 # Development Process
 
-This document outlines the Sigil workflow for capturing and maintaining design context in AI-assisted development.
+This document outlines the Sigil v0.3 workflow for capturing and maintaining design context in AI-assisted development.
 
-> "Make the right path easy. Make the wrong path visible. Don't make the wrong path impossible."
+> "Culture is the Reality. Code is Just the Medium."
 
 ## Philosophy
 
-Sigil doesn't enforce taste via CI blocking. It enables culture through:
+Sigil v0.3 is a constitutional framework that protects both intended soul (Immutable Values) and emergent soul (Canon of Flaws). It enables culture through:
 
-- **Recipes** — Make good patterns easy to use
-- **Warnings** — Make bad patterns visible (not blocked)
-- **Human Review** — Taste owners approve, not bots
+- **Soul Protection** — Both intended and emergent soul are protected
+- **Multiple Truths** — Different users can have different valid experiences (Lenses)
+- **Layered Authority** — Not every decision needs community input (Consultation Chamber)
+- **Prove at Scale** — Features must demonstrate stability before becoming canonical
+- **Human Accountability** — All automated decisions can be overridden (with logging)
 
 Systems that block will be bypassed. Systems that enable will be adopted.
+
+---
+
+## Four Pillars
+
+| Pillar | Directory | Purpose |
+|--------|-----------|---------|
+| Soul Binder | `soul-binder/` | Protects values and emergent behaviors |
+| Lens Array | `lens-array/` | Supports multiple user truths |
+| Consultation Chamber | `consultation-chamber/` | Layered decision authority |
+| Proving Grounds | `proving-grounds/` | Scale validation before production |
 
 ---
 
@@ -251,6 +264,105 @@ With moodboard and rules captured, you build your product. Sigil provides contex
 
 ---
 
+## v0.3 Constitutional Commands
+
+### Canonize (`/canonize`)
+
+**Skill**: `canonizing-flaws`
+
+**Goal**: Protect emergent behaviors that users love
+
+**Process**:
+1. Identify a behavior that emerged organically
+2. Document why it matters
+3. Register in Canon of Flaws
+
+**Command**:
+```bash
+/canonize "double-click submit"
+```
+
+**Output**: `sigil-mark/soul-binder/canon-of-flaws.yaml`
+
+---
+
+### Consult (`/consult`)
+
+**Skill**: `consulting-decisions`
+
+**Goal**: Start a consultation process for design decisions
+
+**Layers**:
+| Layer | Process | Authority |
+|-------|---------|-----------|
+| Strategic | Community poll | Binding vote |
+| Direction | Sentiment gathering | Taste Owner decides |
+| Execution | None | Taste Owner dictates |
+
+**Command**:
+```bash
+/consult "new onboarding flow"
+```
+
+**Output**: `sigil-mark/consultation-chamber/decisions/{id}.yaml`
+
+---
+
+### Prove (`/prove`)
+
+**Skill**: `proving-features`
+
+**Goal**: Register a feature for proving period
+
+**Domains**: defi, creative, community, games, general
+
+**Command**:
+```bash
+/prove token-swap --domain defi
+```
+
+**Output**: `sigil-mark/proving-grounds/active/{feature}.yaml`
+
+---
+
+### Graduate (`/graduate`)
+
+**Skill**: `graduating-features`
+
+**Goal**: Graduate a proven feature to the Living Canon
+
+**Requirements**:
+- All monitors green
+- No P1 violations
+- Taste Owner sign-off
+
+**Command**:
+```bash
+/graduate token-swap
+```
+
+**Output**: `sigil-mark/canon/graduated/{feature}.yaml`
+
+---
+
+## Strictness Levels
+
+Sigil v0.3 has progressive strictness:
+
+| Level | Behavior |
+|-------|----------|
+| `discovery` | All suggestions, no blocks (default) |
+| `guiding` | Warnings on violations |
+| `enforcing` | Blocks on protected flaws/values |
+| `strict` | Blocks on all violations |
+
+Configure in `.sigilrc.yaml`:
+```yaml
+strictness: "discovery"
+```
+
+---
+
 ## Zone System
 
 Zones define design context by file path. They're configured in `.sigilrc.yaml`:
@@ -321,27 +433,35 @@ Example response:
 
 ## State Zone Structure
 
-All design context lives in `sigil-mark/`:
+All design context lives in `sigil-mark/` (v0.3 four-pillar architecture):
 
 ```
 sigil-mark/
-├── moodboard.md      # Product feel
-│   ├── Reference Products
-│   ├── Feel Descriptors
-│   ├── Anti-Patterns
-│   └── Key Moments
+├── moodboard.md              # Product feel
+├── rules.md                  # Design rules by category
+├── inventory.md              # Component list
 │
-├── rules.md          # Design rules
-│   ├── Colors
-│   ├── Typography
-│   ├── Spacing
-│   ├── Motion
-│   ├── Components
-│   └── Approvals
+├── soul-binder/              # Pillar 1: Values + Flaws
+│   ├── immutable-values.yaml # Core values (hard-block violations)
+│   ├── canon-of-flaws.yaml   # Protected emergent behaviors
+│   └── visual-soul.yaml      # Grit signatures
 │
-└── inventory.md      # Component list
-    ├── All components with paths
-    └── Zone assignments
+├── lens-array/               # Pillar 2: User personas
+│   └── lenses.yaml           # Multi-truth validation
+│
+├── consultation-chamber/     # Pillar 3: Decisions
+│   ├── config.yaml           # Decision authority config
+│   └── decisions/            # Individual decision records
+│
+├── proving-grounds/          # Pillar 4: Feature proving
+│   ├── config.yaml           # Monitor configuration
+│   └── active/               # Features currently proving
+│
+├── canon/                    # Graduated features
+│   └── graduated/
+│
+└── audit/                    # Override logging
+    └── overrides.yaml
 ```
 
 ---
@@ -357,15 +477,28 @@ Sigil uses modular skills with 3-level architecture:
 └── scripts/            # Bash utilities
 ```
 
+### Core Skills
 | Skill | Purpose |
 |-------|---------|
-| `initializing-sigil` | Initialize Sigil |
-| `envisioning-moodboard` | Capture moodboard |
+| `initializing-sigil` | Initialize Sigil v0.3 |
+| `envisioning-moodboard` | Capture moodboard + values + lenses |
 | `codifying-rules` | Define rules |
 | `crafting-guidance` | Provide guidance |
 | `approving-patterns` | Human sign-off |
 | `inheriting-design` | Bootstrap from codebase |
 | `updating-framework` | Pull updates |
+
+### v0.3 Skills
+| Skill | Purpose |
+|-------|---------|
+| `canonizing-flaws` | Protect emergent behaviors |
+| `consulting-decisions` | Start decision consultation |
+| `proving-features` | Register feature for proving |
+| `graduating-features` | Graduate feature to canon |
+| `validating-lenses` | Validate across user lenses |
+| `locking-decisions` | Lock decisions after outcome |
+| `unlocking-decisions` | Unlock decisions early |
+| `monitoring-features` | Update proving monitors |
 
 ---
 
@@ -449,3 +582,5 @@ Sigil uses modular skills with 3-level architecture:
 - **[README.md](README.md)** - Quick start guide
 - **[INSTALLATION.md](INSTALLATION.md)** - Detailed installation guide
 - **[CLAUDE.md](CLAUDE.md)** - Agent protocol reference
+- **[MIGRATION.md](MIGRATION.md)** - Migration from v0.2 to v0.3
+- **[CHANGELOG.md](CHANGELOG.md)** - Version history

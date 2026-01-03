@@ -1,6 +1,6 @@
 ---
 name: "prove"
-version: "3.0.0"
+version: "0.3.0"
 description: "Register a feature for proving period with domain-specific monitors"
 skill: "proving-features"
 command_type: "interview"

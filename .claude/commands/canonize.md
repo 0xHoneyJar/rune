@@ -1,6 +1,6 @@
 ---
 name: "canonize"
-version: "3.0.0"
+version: "0.3.0"
 description: "Register an emergent behavior in the Canon of Flaws"
 skill: "canonizing-flaws"
 command_type: "interview"

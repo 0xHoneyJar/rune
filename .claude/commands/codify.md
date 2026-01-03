@@ -1,6 +1,6 @@
 ---
 name: "codify"
-version: "2.0.0"
+version: "0.2.0"
 description: |
   Define design rules by category through interview.
   Captures colors, typography, spacing, motion, and component rules.

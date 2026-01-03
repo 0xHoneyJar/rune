@@ -1,6 +1,6 @@
 name: consulting-decisions
 description: Start a consultation process with three-tier decision authority
-version: "3.0.0"
+version: "0.3.0"
 
 triggers:
   - "/consult"

@@ -5,11 +5,11 @@ All notable changes to Sigil will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [3.0.0] - 2026-01-02
+## [0.3.0] - 2026-01-02
 
 ### Why This Release
 
-**Sigil v3** introduces the Constitutional Design Framework — a four-pillar architecture that protects both intended soul (Immutable Values) and emergent soul (Canon of Flaws). V3 adds layered decision authority, user persona validation, and feature proving at scale.
+**Sigil 0.3** introduces the Constitutional Design Framework — a four-pillar architecture that protects both intended soul (Immutable Values) and emergent soul (Canon of Flaws). This release adds layered decision authority, user persona validation, and feature proving at scale.
 
 > "Culture is the Reality. Code is Just the Medium."
 
@@ -90,7 +90,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   └── audit/                 # Override logging
   ```
 
-- **Configuration Schema**: Updated `.sigilrc.yaml` for v3
+- **Configuration Schema**: Updated `.sigilrc.yaml` for 0.3
   - Added `strictness` field
   - Added `taste_owners` configuration
   - Added `domains` for proving monitors
@@ -99,15 +99,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking Changes
 
-- **v2 → v3 Migration Required**
+- **0.2 → 0.3 Migration Required**
   - Zones replaced by Lenses (user personas)
   - Rejections replaced by Canon of Flaws
   - New strictness levels control blocking behavior
-  - See `MIGRATION-V3.md` for migration steps
+  - See `MIGRATION.md` for migration steps
 
 ### Philosophy
 
-Sigil v3 follows constitutional design principles:
+Sigil 0.3 follows constitutional design principles:
 
 1. **Soul Protection**: Both intended and emergent soul are protected
 2. **Multiple Truths**: Different users can have different valid experiences
@@ -117,13 +117,13 @@ Sigil v3 follows constitutional design principles:
 
 ---
 
-## [2.0.0] - 2026-01-02
+## [0.2.0] - 2026-01-02
 
 ### Why This Release
 
-**Sigil v2** is a complete reimagining of the framework. The original v1 was built on top of Loa's enterprise workflow patterns. V2 strips away that complexity to focus purely on what Sigil does best: **capturing and preserving design context for AI-assisted development**.
+**Sigil 0.2** is a complete reimagining of the framework. The original 0.1 was built on top of Loa's enterprise workflow patterns. 0.2 strips away that complexity to focus purely on what Sigil does best: **capturing and preserving design context for AI-assisted development**.
 
-This is a breaking change from v1, but a much simpler, cleaner foundation.
+This is a breaking change from 0.1, but a much simpler, cleaner foundation.
 
 ### Added
 
@@ -176,21 +176,21 @@ This is a breaking change from v1, but a much simpler, cleaner foundation.
 
 ### Breaking Changes
 
-- **v1 → v2 Migration**: This is a complete rewrite
-  - Old v1 commands are replaced with new v2 commands
+- **0.1 → 0.2 Migration**: This is a complete rewrite
+  - Old 0.1 commands are replaced with new 0.2 commands
   - State zone changed from mixed structure to `sigil-mark/`
   - Configuration changed to `.sigilrc.yaml`
 
 ### Coexistence with Loa
 
-Sigil v2 can coexist with Loa on the same repository:
+Sigil 0.2 can coexist with Loa on the same repository:
 - Separate state zones (`sigil-mark/` vs `loa-grimoire/`)
 - Separate configs (`.sigilrc.yaml` vs `.loa.config.yaml`)
 - No command conflicts
 
 ---
 
-## [1.0.0] - 2025-12-20
+## [0.1.0] - 2025-12-20
 
 ### Added
 
@@ -198,6 +198,6 @@ Sigil v2 can coexist with Loa on the same repository:
 - Design context capture commands
 - Basic moodboard and rules structure
 
-[3.0.0]: https://github.com/zksoju/sigil/releases/tag/v3.0.0
-[2.0.0]: https://github.com/zksoju/sigil/releases/tag/v2.0.0
-[1.0.0]: https://github.com/zksoju/sigil/releases/tag/v1.0.0
+[0.3.0]: https://github.com/0xHoneyJar/sigil/releases/tag/v0.3.0
+[0.2.0]: https://github.com/0xHoneyJar/sigil/releases/tag/v0.2.0
+[0.1.0]: https://github.com/0xHoneyJar/sigil/releases/tag/v0.1.0

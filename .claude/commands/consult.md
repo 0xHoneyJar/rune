@@ -1,6 +1,6 @@
 ---
 name: "consult"
-version: "3.0.0"
+version: "0.3.0"
 description: "Start a consultation process for a design decision"
 skill: "consulting-decisions"
 command_type: "interview"

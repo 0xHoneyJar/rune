@@ -1,6 +1,6 @@
 ---
 name: "graduate"
-version: "3.0.0"
+version: "0.3.0"
 description: "Graduate a feature from proving to the Living Canon"
 skill: "graduating-features"
 command_type: "interview"

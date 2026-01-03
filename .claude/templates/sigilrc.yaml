@@ -1,7 +1,7 @@
-# Sigil v3 Configuration
+# Sigil v0.3 Configuration
 # Constitutional Design Framework
 
-version: "3.0"
+version: "0.3"
 
 # Progressive strictness level
 # discovery: All suggestions, no blocks

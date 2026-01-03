@@ -13,7 +13,7 @@ zones:
     permission: read
 ---
 
-# Sigil Envisioning Skill (v3)
+# Sigil Envisioning Skill (v0.3)
 
 ## Purpose
 
