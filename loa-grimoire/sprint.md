@@ -243,40 +243,40 @@ Implement the Consultation Chamber pillar with three-tier decision authority (st
 
 ### Deliverables
 
-- [ ] `/consult` command and skill implemented
-- [ ] Decision record schema implemented
-- [ ] Three-tier layer detection (strategic/direction/execution)
-- [ ] Decision locking mechanism
-- [ ] Time-based unlock checking
-- [ ] Integration with `/craft` for locked decision awareness
+- [x] `/consult` command and skill implemented
+- [x] Decision record schema implemented
+- [x] Three-tier layer detection (strategic/direction/execution)
+- [x] Decision locking mechanism
+- [x] Time-based unlock checking
+- [x] Integration with `/craft` for locked decision awareness
 
 ### Acceptance Criteria
 
 > From prd.md FR-6: "Layer determined by decision scope"
 > From prd.md FR-7: "System tracks decision dates"
 
-- [ ] `/consult` determines appropriate tier for decision
-- [ ] Strategic tier outputs poll format for community channels
-- [ ] Direction tier creates comparison and sentiment gathering template
-- [ ] Execution tier informs user this is Taste Owner decision
-- [ ] Decisions saved to `sigil-mark/consultation-chamber/decisions/{id}.yaml`
-- [ ] Locked decisions show lock status when queried
-- [ ] Time-based unlock available after configured duration
-- [ ] `/craft` warns/blocks when touching locked decisions
+- [x] `/consult` determines appropriate tier for decision
+- [x] Strategic tier outputs poll format for community channels
+- [x] Direction tier creates comparison and sentiment gathering template
+- [x] Execution tier informs user this is Taste Owner decision
+- [x] Decisions saved to `sigil-mark/consultation-chamber/decisions/{id}.yaml`
+- [x] Locked decisions show lock status when queried
+- [x] Time-based unlock available after configured duration
+- [x] `/craft` warns/blocks when touching locked decisions
 
 ### Technical Tasks
 
-- [ ] Create decision record schema (per SDD §3.5)
-- [ ] Create `.claude/skills/consulting-decisions/index.yaml`
-- [ ] Create `.claude/skills/consulting-decisions/SKILL.md`
-- [ ] Create `.claude/commands/consult.md`
-- [ ] Implement layer detection algorithm (per SDD §6.7)
-- [ ] Create internal skill `locking-decisions`
-- [ ] Create internal skill `unlocking-decisions`
-- [ ] Create `.claude/scripts/check-decision.sh` helper
-- [ ] Update consultation-chamber config schema
-- [ ] Update `/craft` to respect decision locks
-- [ ] Implement lock message format (per SDD lock specification)
+- [x] Create decision record schema (per SDD §3.5)
+- [x] Create `.claude/skills/consulting-decisions/index.yaml`
+- [x] Create `.claude/skills/consulting-decisions/SKILL.md`
+- [x] Create `.claude/commands/consult.md`
+- [x] Implement layer detection algorithm (per SDD §6.7)
+- [x] Create internal skill `locking-decisions`
+- [x] Create internal skill `unlocking-decisions`
+- [x] Create `.claude/scripts/check-decision.sh` helper
+- [x] Update consultation-chamber config schema
+- [x] Update `/craft` to respect decision locks
+- [x] Implement lock message format (per SDD lock specification)
 
 ### Dependencies
 
