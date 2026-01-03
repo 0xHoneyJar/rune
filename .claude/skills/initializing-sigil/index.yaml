@@ -1,24 +1,57 @@
 name: initializing-sigil
-description: Initialize Sigil on a repository
-version: "2.0.0"
+description: Initialize Sigil v3 Constitutional Design Framework on a repository
+version: "3.0.0"
 
 triggers:
-  - "/setup"
+  - "/sigil-setup"
 
 examples:
-  - input: "/setup"
-    description: "Initialize Sigil on current repo"
+  - input: "/sigil-setup"
+    description: "Initialize Sigil v3 on current repo"
 
 inputs: []
 
 outputs:
+  # Core state files
   - path: sigil-mark/moodboard.md
-    description: Empty moodboard template
+    description: Product feel, references, anti-patterns
   - path: sigil-mark/rules.md
-    description: Empty rules template
+    description: Design rules by category
   - path: sigil-mark/inventory.md
-    description: Empty inventory file
+    description: Component inventory
+
+  # Soul Binder (Pillar 1)
+  - path: sigil-mark/soul-binder/immutable-values.yaml
+    description: Core values with enforcement rules
+  - path: sigil-mark/soul-binder/canon-of-flaws.yaml
+    description: Protected emergent behaviors
+  - path: sigil-mark/soul-binder/visual-soul.yaml
+    description: Grit signatures for cultural validation
+
+  # Lens Array (Pillar 2)
+  - path: sigil-mark/lens-array/lenses.yaml
+    description: User persona lens definitions
+
+  # Consultation Chamber (Pillar 3)
+  - path: sigil-mark/consultation-chamber/config.yaml
+    description: Consultation process configuration
+  - path: sigil-mark/consultation-chamber/decisions/
+    description: Decision records with locks
+
+  # Proving Grounds (Pillar 4)
+  - path: sigil-mark/proving-grounds/config.yaml
+    description: Monitor configuration
+  - path: sigil-mark/proving-grounds/active/
+    description: Features currently proving
+
+  # Canon and Audit
+  - path: sigil-mark/canon/graduated/
+    description: Features that passed proving
+  - path: sigil-mark/audit/overrides.yaml
+    description: Human override log
+
+  # Configuration
   - path: .sigilrc.yaml
-    description: Zone configuration with detected paths
+    description: Framework configuration (strictness, taste owners, domains)
   - path: .sigil-setup-complete
     description: Setup completion marker

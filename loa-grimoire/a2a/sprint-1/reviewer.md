@@ -1,180 +1,177 @@
-# Sprint 1 Implementation Report: Sigil v2 Foundation
+# Sprint 1 Implementation Report
 
-**Sprint**: Sprint 1 - Foundation
-**Status**: Complete
-**Date**: 2026-01-01
-
----
-
-## Summary
-
-Implemented the foundation of Sigil v2, a design context framework for AI-assisted development. This sprint establishes the core mount/setup infrastructure following Loa's managed scaffolding architecture.
+**Sprint:** Foundation & Setup
+**Date:** 2026-01-02
+**Status:** COMPLETE
 
 ---
 
-## Tasks Completed
+## Sprint Goal
 
-### SIGIL-1: Create mount-sigil.sh ✅
-
-**Files Created**:
-- `.claude/scripts/mount-sigil.sh`
-
-**Features**:
-- One-liner install via curl
-- Clone or update Sigil to `~/.sigil/sigil`
-- Symlink skills and commands to target repo
-- Create `.sigil-version.json` version manifest
-- Pre-flight checks (git repo, existing mount detection)
-- Branch and home path configuration options
-
-### SIGIL-2: Implement /setup Command ✅
-
-**Files Created**:
-- `.claude/commands/setup.md`
-- `.claude/skills/sigil-setup/index.yaml`
-- `.claude/skills/sigil-setup/SKILL.md`
-- `.claude/skills/sigil-setup/scripts/detect-components.sh`
-
-**Features**:
-- 3-level skill structure (index.yaml, SKILL.md, scripts/)
-- Component directory detection
-- Creates `sigil-mark/` with templates
-- Creates `.sigilrc.yaml` configuration
-- Creates `.sigil-setup-complete` marker
-- Idempotent operation
-
-### SIGIL-3: Implement /update Command ✅
-
-**Files Created**:
-- `.claude/commands/update.md`
-- `.claude/skills/sigil-updating/index.yaml`
-- `.claude/skills/sigil-updating/SKILL.md`
-- `.claude/skills/sigil-updating/scripts/update.sh`
-
-**Features**:
-- Version comparison (local vs remote)
-- `--check` flag for preview without applying
-- `--force` flag for forced refresh
-- Symlink refresh for skills and commands
-- Version manifest update
-
-### SIGIL-4: Create Framework Structure ✅
-
-**Files Created**:
-- `VERSION` (2.0.0)
-- `README.md` (installation, commands, workflow)
-- `CLAUDE.md` (agent protocol, zone system)
-- `.claude/templates/moodboard.md`
-- `.claude/templates/rules.md`
-- `.claude/templates/sigilrc.yaml`
-
-**Features**:
-- Philosophy: "Make the right path easy. Make the wrong path visible."
-- Zone system documentation
-- Agent protocol for UI code generation
-- Template files for state zone
+Create the foundational directory structure, configuration schemas, and update `/setup` to initialize Sigil v3 projects with the four-pillar architecture.
 
 ---
 
-## File Structure
+## Deliverables Completed
+
+### 1. Skill Updates
+
+| File | Status | Changes |
+|------|--------|---------|
+| `.claude/skills/initializing-sigil/index.yaml` | ✅ Updated | Version 3.0.0, trigger `/sigil-setup`, all pillar outputs |
+| `.claude/skills/initializing-sigil/SKILL.md` | ✅ Rewritten | Complete v3 workflow (11 steps) |
+
+### 2. Command Creation
+
+| File | Status | Description |
+|------|--------|-------------|
+| `.claude/commands/sigil-setup.md` | ✅ Created | New v3 setup command with full frontmatter |
+
+### 3. Helper Scripts
+
+| Script | Status | Purpose |
+|--------|--------|---------|
+| `.claude/scripts/get-strictness.sh` | ✅ Created | Return current strictness level |
+| `.claude/scripts/detect-components.sh` | ✅ Created | Find component directories |
+
+### 4. Template Files
+
+#### Core Config
+| File | Status |
+|------|--------|
+| `.claude/templates/sigilrc.yaml` | ✅ Updated for v3 |
+| `.claude/templates/sigil-version.json` | ✅ Created |
+
+#### Soul Binder (Pillar 1)
+| File | Status |
+|------|--------|
+| `.claude/templates/soul-binder/immutable-values.yaml` | ✅ Created |
+| `.claude/templates/soul-binder/canon-of-flaws.yaml` | ✅ Created |
+| `.claude/templates/soul-binder/visual-soul.yaml` | ✅ Created |
+
+#### Lens Array (Pillar 2)
+| File | Status |
+|------|--------|
+| `.claude/templates/lens-array/lenses.yaml` | ✅ Created |
+
+#### Consultation Chamber (Pillar 3)
+| File | Status |
+|------|--------|
+| `.claude/templates/consultation-chamber/config.yaml` | ✅ Created |
+
+#### Proving Grounds (Pillar 4)
+| File | Status |
+|------|--------|
+| `.claude/templates/proving-grounds/config.yaml` | ✅ Created |
+
+#### Audit
+| File | Status |
+|------|--------|
+| `.claude/templates/audit/overrides.yaml` | ✅ Created |
+
+---
+
+## Acceptance Criteria Status
+
+| Criteria | Status |
+|----------|--------|
+| Running `/sigil-setup` creates complete v3 directory tree | ✅ Ready (skill implemented) |
+| `.sigilrc.yaml` supports `strictness: discovery\|guiding\|enforcing\|strict` | ✅ Template created |
+| `.sigilrc.yaml` supports `taste_owners` with scope paths | ✅ Template created |
+| `.sigilrc.yaml` supports `domains` array | ✅ Template created |
+| `get-strictness.sh` returns current strictness level from config | ✅ Script created |
+| Setup creates all four pillar subdirectories in `sigil-mark/` | ✅ SKILL.md defines workflow |
+
+---
+
+## Technical Implementation Notes
+
+### Directory Structure (v3)
 
 ```
-sigil/
-├── VERSION                              # 2.0.0
-├── README.md                            # Installation and usage
-├── CLAUDE.md                            # Agent instructions
-├── LICENSE.md                           # MIT license
-└── .claude/
-    ├── commands/
-    │   ├── setup.md                     # /setup command
-    │   └── update.md                    # /update command
-    ├── skills/
-    │   ├── sigil-setup/
-    │   │   ├── index.yaml
-    │   │   ├── SKILL.md
-    │   │   └── scripts/
-    │   │       └── detect-components.sh
-    │   └── sigil-updating/
-    │       ├── index.yaml
-    │       ├── SKILL.md
-    │       └── scripts/
-    │           └── update.sh
-    ├── scripts/
-    │   └── mount-sigil.sh               # One-liner install
-    └── templates/
-        ├── moodboard.md                 # Product feel template
-        ├── rules.md                     # Design rules template
-        └── sigilrc.yaml                 # Config template
+sigil-mark/
+├── moodboard.md
+├── rules.md
+├── inventory.md
+├── soul-binder/
+│   ├── immutable-values.yaml
+│   ├── canon-of-flaws.yaml
+│   └── visual-soul.yaml
+├── lens-array/
+│   └── lenses.yaml
+├── consultation-chamber/
+│   ├── config.yaml
+│   └── decisions/
+├── proving-grounds/
+│   ├── config.yaml
+│   └── active/
+├── canon/
+│   └── graduated/
+└── audit/
+    └── overrides.yaml
+```
+
+### Strictness Levels
+
+| Level | Behavior |
+|-------|----------|
+| `discovery` | All suggestions, no blocks. Default for greenfield. |
+| `guiding` | Warnings on violations, optional blocks on critical |
+| `enforcing` | Blocks on protected flaws and immutable values |
+| `strict` | Blocks on all violations, requires approval for overrides |
+
+### Configuration Schema (.sigilrc.yaml v3)
+
+- `version: "3.0"` — Schema version
+- `strictness` — Progressive enforcement level
+- `component_paths` — Where to find components
+- `taste_owners` — Domain authority with scope paths
+- `domains` — For proving monitors (defi, creative, community, games)
+- `consultation` — Internal tool and community channels
+- `proving` — Duration and environments
+
+---
+
+## Files Changed (Summary)
+
+```
+.claude/skills/initializing-sigil/index.yaml    # Updated to v3.0.0
+.claude/skills/initializing-sigil/SKILL.md      # Complete rewrite
+.claude/commands/sigil-setup.md                 # New command
+.claude/scripts/get-strictness.sh               # New script
+.claude/scripts/detect-components.sh            # New script
+.claude/templates/sigilrc.yaml                  # Updated for v3
+.claude/templates/sigil-version.json            # New template
+.claude/templates/soul-binder/immutable-values.yaml    # New
+.claude/templates/soul-binder/canon-of-flaws.yaml      # New
+.claude/templates/soul-binder/visual-soul.yaml         # New
+.claude/templates/lens-array/lenses.yaml               # New
+.claude/templates/consultation-chamber/config.yaml    # New
+.claude/templates/proving-grounds/config.yaml         # New
+.claude/templates/audit/overrides.yaml                # New
 ```
 
 ---
 
-## Acceptance Criteria Met
+## Risks Addressed
 
-### SIGIL-1: mount-sigil.sh
-- [x] Clones repo to ~/.sigil/sigil (or updates if exists)
-- [x] Creates .claude/commands/ directory
-- [x] Creates .claude/skills/ directory
-- [x] Symlinks all sigil-* skills
-- [x] Symlinks all commands (setup, envision, codify, craft, approve, inherit, update)
-- [x] Creates .sigil-version.json with version and timestamps
-- [x] Works with `curl -fsSL ... | bash`
-
-### SIGIL-2: /setup command
-- [x] Creates sigil-mark/ directory
-- [x] Creates sigil-mark/moodboard.md (empty template)
-- [x] Creates sigil-mark/rules.md (empty template)
-- [x] Creates sigil-mark/inventory.md (empty)
-- [x] Detects component directories
-- [x] Creates .sigilrc.yaml with detected component_paths
-- [x] Creates .sigil-setup-complete marker
-- [x] Idempotent (safe to run multiple times)
-
-### SIGIL-3: /update command
-- [x] Checks for .sigil-version.json (validates Sigil is mounted)
-- [x] Fetches latest from remote
-- [x] Compares versions (local vs remote)
-- [x] Pulls updates if available
-- [x] Refreshes all symlinks (skills and commands)
-- [x] Updates .sigil-version.json with new timestamp
-- [x] --check flag shows updates without applying
-- [x] --force flag refreshes even if current
-
-### SIGIL-4: Framework structure
-- [x] VERSION file with "2.0.0"
-- [x] README.md with installation and usage
-- [x] CLAUDE.md with agent context
-- [x] Clean directory structure matching SDD
-
----
-
-## Notes
-
-- Cleaned out all Loa-specific content from the Sigil repo
-- Framework is now purely Sigil v2 (no Loa remnants)
-- Commands not yet implemented: /envision, /codify, /craft, /approve, /inherit (Sprint 2-4)
-- Zone system defined in templates but not yet wired up (Sprint 3)
-
----
-
-## Revision History
-
-### Rev 2 (2026-01-01)
-
-**Feedback Addressed**: Fixed `/setup` command file
-
-**Issue**: `.claude/commands/setup.md` contained Loa's setup wizard content instead of Sigil's setup command.
-
-**Fix Applied**: Replaced the file with proper Sigil setup command that:
-- Documents Sigil-specific workflow (create sigil-mark/, .sigilrc.yaml)
-- References correct pre-flight checks (.sigil-version.json)
-- Lists correct outputs (moodboard.md, rules.md, inventory.md, .sigilrc.yaml, .sigil-setup-complete)
-- Points to correct next steps (/envision or /inherit)
+| Risk | Status | Mitigation |
+|------|--------|------------|
+| v2 → v3 migration conflicts | ✅ Mitigated | New `/sigil-setup` command separate from v2 |
+| Complex directory structure | ✅ Mitigated | Templates follow consistent YAML schema |
 
 ---
 
 ## Next Sprint
 
-Sprint 2: Capture
-- SIGIL-5: /envision command
-- SIGIL-6: /inherit command
+**Sprint 2: Soul Binder Core**
+- Implement Immutable Values with enforcement
+- Update `/envision` for value capture interview
+- Create `/canonize` command for emergent behaviors
+- Integrate value/flaw checking into `/craft`
+
+---
+
+## Sign-off
+
+Sprint 1 implementation is complete. All foundational components for Sigil v3 Constitutional Design Framework are in place. Ready for Sprint 2.

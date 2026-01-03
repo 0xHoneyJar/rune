@@ -1,74 +1,46 @@
-version: "1.0"
+# Sigil v3 Configuration
+# Constitutional Design Framework
 
-# Where to find components
+version: "3.0"
+
+# Progressive strictness level
+# discovery: All suggestions, no blocks
+# guiding: Warnings on violations, optional blocks on critical
+# enforcing: Blocks on protected flaws and immutable values
+# strict: Blocks on all violations, requires approval for overrides
+strictness: "discovery"
+
+# Detected component paths
 component_paths:
   - "components/"
-  - "app/components/"
-  - "src/components/"
+  # - "app/components/"
+  # - "src/components/"
 
-# Zone definitions (path-based)
-# Use /codify to populate paths through interview
-zones:
-  critical:
-    # High-stakes actions: checkout, claims, transactions
-    paths: []
-    # Example paths (uncomment and customize):
-    # - "src/features/checkout/**"
-    # - "src/features/claim/**"
-    # - "app/(app)/transactions/**"
-    motion: "deliberate"
-    timing: "800ms+"
-    patterns:
-      prefer:
-        - "deliberate-entrance"
-        - "confirmation-flow"
-        - "skeleton-loading"
-      warn:
-        - "instant-transition"
-        - "playful-bounce"
-        - "spinner"
+# Taste Owners with domain authority
+taste_owners:
+  design:
+    name: "Design Lead"
+    placeholder: "@design-lead"
+    scope:
+      - "sigil-mark/**"
+      - "src/components/**"
 
-  marketing:
-    # Showcase, landing pages, promotional content
-    paths: []
-    # Example paths (uncomment and customize):
-    # - "src/features/marketing/**"
-    # - "app/(marketing)/**"
-    # - "src/features/showcase/**"
-    motion: "playful"
-    timing: "variable"
-    patterns:
-      prefer:
-        - "playful-bounce"
-        - "attention-grab"
-        - "stagger-reveal"
-      warn:
-        - "instant-transition"
+# Domain for proving monitors
+domains: []
+  # - "defi"
+  # - "creative"
+  # - "community"
+  # - "games"
 
-  admin:
-    # Internal tools, settings, utility screens
-    paths: []
-    # Example paths (uncomment and customize):
-    # - "src/features/admin/**"
-    # - "app/admin/**"
-    # - "src/features/settings/**"
-    motion: "snappy"
-    timing: "<200ms"
-    patterns:
-      prefer:
-        - "snappy-transition"
-        - "instant-feedback"
-      warn:
-        - "deliberate-entrance"
-        - "playful-bounce"
+# Consultation configuration
+consultation:
+  internal_tool: null  # "linear" | "notion" | etc.
+  community_channels: []
 
-# Global rejections - patterns to avoid everywhere
-# Use /codify to add rejections through interview
-rejections: []
-# Example rejections (uncomment and customize):
-# - pattern: "Spinner"
-#   reason: "Creates anxiety in critical zones"
-#   exceptions: ["admin/**"]
-# - pattern: "instant-transition"
-#   reason: "Feels jarring, prefer animated transitions"
-#   exceptions: []
+# Proving configuration
+proving:
+  default_duration_days: 7
+  environments:
+    testnet: false
+    staging: false
+    beta: false

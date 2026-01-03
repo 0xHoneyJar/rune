@@ -5,6 +5,7 @@ zones:
       - sigil-mark/
       - .sigilrc.yaml
       - .sigil-setup-complete
+      - .sigil-version.json
     permission: read-write
   app:
     paths:
@@ -15,16 +16,28 @@ zones:
     permission: read
 ---
 
-# Sigil Setup Skill
+# Sigil v3 Setup Skill
 
 ## Purpose
 
-Initialize Sigil design context framework on a repository. Detects component directories, creates state files, and prepares for design capture.
+Initialize Sigil v3 Constitutional Design Framework on a repository. Creates the four-pillar directory structure, configuration files, and prepares for design capture through interviews.
+
+## Philosophy
+
+> "Culture is the Reality. Code is Just the Medium."
+
+Sigil v3 is a constitutional framework that protects both intended soul (Immutable Values) and emergent soul (Canon of Flaws). This setup creates the foundation for the four pillars:
+
+1. **Soul Binder** — Protects values and emergent behaviors
+2. **Lens Array** — Supports multiple user truths
+3. **Consultation Chamber** — Layered decision authority
+4. **Proving Grounds** — Scale validation before production
 
 ## Pre-Flight Checks
 
-1. **Sigil Mounted**: Verify `.sigil-version.json` exists
-2. **Not Already Setup**: Check for `.sigil-setup-complete` (warn if exists)
+1. **Not Already Setup**: Check for `.sigil-setup-complete`
+   - If exists, warn and offer refresh options
+   - Never overwrite existing state files
 
 ## Workflow
 
@@ -36,15 +49,34 @@ Scan for common component directory patterns:
 - `src/components/`
 - `src/features/**/components/`
 
-Use the detect-components.sh script or manual Glob search.
+Use Glob or the detect-components.sh script.
 
-### Step 2: Create State Directory
+### Step 2: Create v3 Directory Structure
 
-Create `sigil-mark/` with empty templates:
+Create the complete Sigil v3 directory tree:
 
 ```bash
+# Core state directory
 mkdir -p sigil-mark
+
+# Soul Binder (Pillar 1)
+mkdir -p sigil-mark/soul-binder
+
+# Lens Array (Pillar 2)
+mkdir -p sigil-mark/lens-array
+
+# Consultation Chamber (Pillar 3)
+mkdir -p sigil-mark/consultation-chamber/decisions
+
+# Proving Grounds (Pillar 4)
+mkdir -p sigil-mark/proving-grounds/active
+
+# Canon and Audit
+mkdir -p sigil-mark/canon/graduated
+mkdir -p sigil-mark/audit
 ```
+
+### Step 3: Create Core State Files
 
 Copy templates from `.claude/templates/`:
 - `moodboard.md` → `sigil-mark/moodboard.md`
@@ -52,82 +84,307 @@ Copy templates from `.claude/templates/`:
 
 Create empty `sigil-mark/inventory.md`.
 
-### Step 3: Create Configuration
+### Step 4: Create Soul Binder Files
 
-Create `.sigilrc.yaml` with detected component paths.
-
-Template structure:
+Create `sigil-mark/soul-binder/immutable-values.yaml`:
 ```yaml
+# Soul Binder — Immutable Values
+# Core principles that hard-block violations
+# Generated through /envision interview
+
+version: "1.0"
+generated_by: null  # Set by /envision
+generated_at: null
+
+values: {}
+  # Values will be populated by /envision interview
+  # Example:
+  # security:
+  #   name: "Security First"
+  #   type: "shared"
+  #   enforcement:
+  #     level: "block"
+```
+
+Create `sigil-mark/soul-binder/canon-of-flaws.yaml`:
+```yaml
+# Soul Binder — Canon of Flaws
+# Protected emergent behaviors
+# Register new flaws with /canonize
+
+version: "1.0"
+last_updated: null
+
+flaws: []
+  # Flaws registered through /canonize interview
+  # Example:
+  # - id: "FLAW-001"
+  #   name: "Double-Click Submit"
+  #   status: "PROTECTED"
+
+canonization_criteria:
+  usage_threshold_percent: 5
+  requires_community_attachment: true
+```
+
+Create `sigil-mark/soul-binder/visual-soul.yaml`:
+```yaml
+# Soul Binder — Visual Soul
+# Grit signatures for cultural validation
+# Detects "Play-Doh" problem (too smooth, too clean)
+
+version: "1.0"
+generated_at: null
+
+grit_signatures: {}
+  # Defined through /codify interview
+
+anti_patterns: []
+  # Patterns that fail cultural check
+```
+
+### Step 5: Create Lens Array Files
+
+Create `sigil-mark/lens-array/lenses.yaml`:
+```yaml
+# Lens Array — User Persona Definitions
+# Multiple truths coexist on top of core
+# Define through /envision interview
+
+version: "1.0"
+generated_at: null
+
+lenses: {}
+  # Lenses defined through /envision interview
+  # Example:
+  # power_user:
+  #   name: "Power User"
+  #   priority: 1  # Lower = more constrained = truth test
+  #   constraints: [...]
+
+immutable_properties:
+  description: "Properties that cannot vary between lenses"
+  properties:
+    - name: "core_logic"
+    - name: "security"
+    - name: "data_integrity"
+
+stacking:
+  allowed_combinations: []
+  conflict_resolution:
+    priority_order: []
+```
+
+### Step 6: Create Consultation Chamber Files
+
+Create `sigil-mark/consultation-chamber/config.yaml`:
+```yaml
+# Consultation Chamber — Decision Authority
+# Poll strategic, consult direction, dictate execution
+
 version: "1.0"
 
+layers:
+  strategic:
+    description: "Major features, pivots"
+    process: "community_poll"
+    authority: "binding_vote"
+
+  direction:
+    description: "Visual style, tone"
+    process: "sentiment_gathering"
+    authority: "taste_owner"
+
+  execution:
+    description: "Pixel-level details"
+    process: "none"
+    authority: "taste_owner_dictates"
+
+lock:
+  default_duration_days: 90
+  unlock_requires: "new_consultation"
+```
+
+### Step 7: Create Proving Grounds Files
+
+Create `sigil-mark/proving-grounds/config.yaml`:
+```yaml
+# Proving Grounds — Scale Validation
+# Prove features before production graduation
+
+version: "1.0"
+
+default_duration_days: 7
+
+graduation_requires:
+  - all_monitors_green
+  - no_p1_violations
+  - taste_owner_signoff
+
+monitors: []
+  # Configured based on domain in .sigilrc.yaml
+  # DeFi: tvl_changes, transaction_patterns, exploit_detection
+  # Creative: performance, crash_rate, export_success
+  # Community: engagement, reports, load_patterns
+```
+
+### Step 8: Create Audit Files
+
+Create `sigil-mark/audit/overrides.yaml`:
+```yaml
+# Audit Log — Human Overrides
+# Tracks when humans override agent recommendations
+
+version: "1.0"
+
+overrides: []
+  # Each override logs:
+  # - timestamp
+  # - violation_type
+  # - reasoning
+  # - user
+```
+
+### Step 9: Create Configuration
+
+Create `.sigilrc.yaml` with v3 schema:
+```yaml
+# Sigil v3 Configuration
+# Constitutional Design Framework
+
+version: "3.0"
+
+# Progressive strictness level
+# discovery: All suggestions, no blocks
+# guiding: Warnings on violations, optional blocks on critical
+# enforcing: Blocks on protected flaws and immutable values
+# strict: Blocks on all violations, requires approval for overrides
+strictness: "discovery"
+
+# Detected component paths
 component_paths:
   - "components/"        # Add detected paths
-  - "app/components/"
+  # - "src/components/"
 
-zones:
-  critical:
-    paths: []
-    motion: "deliberate"
-    patterns:
-      prefer: ["deliberate-entrance"]
-      warn: ["instant-transition"]
+# Taste Owners with domain authority
+taste_owners:
+  design:
+    name: "Design Lead"
+    placeholder: "@design-lead"
+    scope:
+      - "sigil-mark/**"
+      - "src/components/**"
 
-  marketing:
-    paths: []
-    motion: "playful"
-    patterns:
-      prefer: ["playful-bounce"]
+# Domain for proving monitors
+domains: []
+  # - "defi"
+  # - "creative"
+  # - "community"
+  # - "games"
 
-  admin:
-    paths: []
-    motion: "snappy"
+# Consultation configuration
+consultation:
+  internal_tool: null  # "linear" | "notion" | etc.
+  community_channels: []
 
-rejections: []
+# Proving configuration
+proving:
+  default_duration_days: 7
+  environments:
+    testnet: false
+    staging: false
+    beta: false
 ```
 
-### Step 4: Create Marker
+### Step 10: Create Marker and Version Files
 
-Create `.sigil-setup-complete` marker file:
-
+Create `.sigil-setup-complete`:
 ```
-Sigil setup completed at [timestamp]
+Sigil v3 setup completed at [timestamp]
+Framework version: 3.0.0
+Strictness: discovery
+
+Next steps:
+  - /envision to capture product soul and define values
+  - /codify to define design rules
+  - /canonize to protect emergent behaviors
 ```
 
-### Step 5: Report Success
+Create/update `.sigil-version.json`:
+```json
+{
+  "version": "3.0.0",
+  "schema_version": "3.0",
+  "setup_at": "[timestamp]",
+  "pillars": {
+    "soul_binder": true,
+    "lens_array": true,
+    "consultation_chamber": true,
+    "proving_grounds": true
+  }
+}
+```
+
+### Step 11: Report Success
 
 Output:
-- List of detected component paths
-- Created files
-- Next steps (/envision or /inherit)
+```
+Sigil v3 Setup Complete
+
+Constitutional Design Framework initialized with four pillars:
+  1. Soul Binder (sigil-mark/soul-binder/)
+     - immutable-values.yaml
+     - canon-of-flaws.yaml
+     - visual-soul.yaml
+
+  2. Lens Array (sigil-mark/lens-array/)
+     - lenses.yaml
+
+  3. Consultation Chamber (sigil-mark/consultation-chamber/)
+     - config.yaml
+     - decisions/
+
+  4. Proving Grounds (sigil-mark/proving-grounds/)
+     - config.yaml
+     - active/
+
+Configuration:
+  - .sigilrc.yaml (strictness: discovery)
+  - Detected component paths: [list]
+
+Strictness Level: discovery
+  All suggestions, no blocks. Perfect for greenfield projects.
+  Increase with: Edit .sigilrc.yaml strictness field.
+
+Next steps:
+  - /envision → Capture product soul, define values and lenses
+  - /codify → Define design rules
+  - /craft → Get design guidance during implementation
+
+Philosophy: "Culture is the Reality. Code is Just the Medium."
+```
 
 ## Idempotency
 
 If already set up:
-1. Warn user that setup already complete
-2. Offer to refresh symlinks only
-3. Never overwrite existing state files
+1. Warn user that v3 setup already complete
+2. Show current strictness level
+3. Offer options:
+   - Refresh directory structure (add missing directories)
+   - View current configuration
+   - Proceed to /envision
 
-## Output Format
+Never overwrite existing state files (values, flaws, lenses, decisions).
 
-```
-Sigil Setup Complete
+## Error Handling
 
-Detected component paths:
-  - components/
-  - src/features/**/components/
-
-Created:
-  - sigil-mark/moodboard.md (template)
-  - sigil-mark/rules.md (template)
-  - sigil-mark/inventory.md (empty)
-  - .sigilrc.yaml (configuration)
-  - .sigil-setup-complete (marker)
-
-Next steps:
-  - New project: /envision to capture product feel
-  - Existing codebase: /inherit to bootstrap from components
-```
+| Error | Cause | Resolution |
+|-------|-------|------------|
+| "Setup already complete" | `.sigil-setup-complete` exists | Offer refresh or proceed to /envision |
+| "Cannot detect components" | No standard component paths | Proceed with empty paths; user can edit .sigilrc.yaml |
+| "Permission denied" | File system issue | Check directory permissions |
 
 ## Scripts
 
 - `detect-components.sh`: Find component directories in codebase
+- `get-strictness.sh`: Return current strictness level from .sigilrc.yaml
