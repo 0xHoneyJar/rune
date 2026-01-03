@@ -310,39 +310,39 @@ Implement the Proving Grounds pillar with feature registration, domain-specific 
 
 ### Deliverables
 
-- [ ] `/prove` command and skill implemented
-- [ ] `/graduate` command and skill implemented
-- [ ] Proving status schema implemented
-- [ ] Monitor framework (domain-configurable)
-- [ ] Graduation requirements checking
-- [ ] Integration with Living Canon
+- [x] `/prove` command and skill implemented
+- [x] `/graduate` command and skill implemented
+- [x] Proving status schema implemented
+- [x] Monitor framework (domain-configurable)
+- [x] Graduation requirements checking
+- [x] Integration with Living Canon
 
 ### Acceptance Criteria
 
 > From prd.md FR-8: "Monitors run throughout proving period"
 > From prd.md FR-9: "Graduation requires sign-off from Taste Owner"
 
-- [ ] `/prove <feature>` registers feature in `sigil-mark/proving-grounds/active/`
-- [ ] Proving record includes: monitors, duration, status, violations
-- [ ] Monitors configurable by domain (DeFi, Creative, Community, Games)
-- [ ] `/graduate <feature>` checks: duration complete, monitors green, no P1s
-- [ ] Graduation requires explicit Taste Owner sign-off
-- [ ] Graduated features moved to `sigil-mark/canon/graduated/`
+- [x] `/prove <feature>` registers feature in `sigil-mark/proving-grounds/active/`
+- [x] Proving record includes: monitors, duration, status, violations
+- [x] Monitors configurable by domain (DeFi, Creative, Community, Games)
+- [x] `/graduate <feature>` checks: duration complete, monitors green, no P1s
+- [x] Graduation requires explicit Taste Owner sign-off
+- [x] Graduated features moved to `sigil-mark/canon/graduated/`
 
 ### Technical Tasks
 
-- [ ] Create proving status schema (per SDD §3.6)
-- [ ] Create `.claude/skills/proving-features/index.yaml`
-- [ ] Create `.claude/skills/proving-features/SKILL.md`
-- [ ] Create `.claude/commands/prove.md`
-- [ ] Create `.claude/skills/graduating-features/index.yaml`
-- [ ] Create `.claude/skills/graduating-features/SKILL.md`
-- [ ] Create `.claude/commands/graduate.md`
-- [ ] Implement monitor definitions by domain
-- [ ] Create `.claude/scripts/get-monitors.sh` helper
-- [ ] Implement graduation eligibility checking
-- [ ] Create internal skill `monitoring-features`
-- [ ] Update proving-grounds config schema
+- [x] Create proving status schema (per SDD §3.6)
+- [x] Create `.claude/skills/proving-features/index.yaml`
+- [x] Create `.claude/skills/proving-features/SKILL.md`
+- [x] Create `.claude/commands/prove.md`
+- [x] Create `.claude/skills/graduating-features/index.yaml`
+- [x] Create `.claude/skills/graduating-features/SKILL.md`
+- [x] Create `.claude/commands/graduate.md`
+- [x] Implement monitor definitions by domain
+- [x] Create `.claude/scripts/get-monitors.sh` helper
+- [x] Implement graduation eligibility checking
+- [x] Create internal skill `monitoring-features`
+- [x] Update proving-grounds config schema
 
 ### Dependencies
 
