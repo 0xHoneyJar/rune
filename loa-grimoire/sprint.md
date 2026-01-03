@@ -114,39 +114,39 @@ Implement the Soul Binder pillar with interview-generated immutable values, the 
 
 ### Deliverables
 
-- [ ] `immutable-values.yaml` schema implemented
-- [ ] `canon-of-flaws.yaml` schema implemented
-- [ ] `/envision` updated to capture values through interview
-- [ ] `/canonize` command and skill implemented
-- [ ] Value violation detection in `/craft`
-- [ ] Protected flaw blocking in enforcing/strict modes
+- [x] `immutable-values.yaml` schema implemented
+- [x] `canon-of-flaws.yaml` schema implemented
+- [x] `/envision` updated to capture values through interview
+- [x] `/canonize` command and skill implemented
+- [x] Value violation detection in `/craft`
+- [x] Protected flaw blocking in enforcing/strict modes
 
 ### Acceptance Criteria
 
 > From prd.md FR-1: "Block-level violations prevent agent from proceeding"
 > From prd.md FR-2: "Agent detects changes affecting protected flaws"
 
-- [ ] `/envision` interviews user about core values (shared + project-specific)
-- [ ] Values saved to `sigil-mark/soul-binder/immutable-values.yaml`
-- [ ] `/canonize` interviews user about emergent behavior
-- [ ] Flaw saved to `sigil-mark/soul-binder/canon-of-flaws.yaml` with PROTECTED status
-- [ ] `/craft` checks values and warns/blocks based on strictness
-- [ ] Protected flaw violations BLOCK in enforcing/strict modes
-- [ ] All blocks show escape hatch for human override
+- [x] `/envision` interviews user about core values (shared + project-specific)
+- [x] Values saved to `sigil-mark/soul-binder/immutable-values.yaml`
+- [x] `/canonize` interviews user about emergent behavior
+- [x] Flaw saved to `sigil-mark/soul-binder/canon-of-flaws.yaml` with PROTECTED status
+- [x] `/craft` checks values and warns/blocks based on strictness
+- [x] Protected flaw violations BLOCK in enforcing/strict modes
+- [x] All blocks show escape hatch for human override
 
 ### Technical Tasks
 
-- [ ] Create `immutable-values.yaml` JSON Schema for validation
-- [ ] Create `canon-of-flaws.yaml` JSON Schema for validation
-- [ ] Update `.claude/skills/envisioning-moodboard/SKILL.md` for value capture
-- [ ] Create `.claude/skills/canonizing-flaws/index.yaml`
-- [ ] Create `.claude/skills/canonizing-flaws/SKILL.md` (per SDD §4.3)
-- [ ] Create `.claude/commands/canonize.md`
-- [ ] Create `.claude/scripts/check-flaw.sh` helper
-- [ ] Update `.claude/skills/crafting-guidance/SKILL.md` for value/flaw checking
-- [ ] Implement block message format per SDD §6.2
-- [ ] Implement warning message format per SDD §6.3
-- [ ] Create override logging to `sigil-mark/audit/overrides.yaml`
+- [x] Create `immutable-values.yaml` JSON Schema for validation
+- [x] Create `canon-of-flaws.yaml` JSON Schema for validation
+- [x] Update `.claude/skills/envisioning-moodboard/SKILL.md` for value capture
+- [x] Create `.claude/skills/canonizing-flaws/index.yaml`
+- [x] Create `.claude/skills/canonizing-flaws/SKILL.md` (per SDD §4.3)
+- [x] Create `.claude/commands/canonize.md`
+- [x] Create `.claude/scripts/check-flaw.sh` helper
+- [x] Update `.claude/skills/crafting-guidance/SKILL.md` for value/flaw checking
+- [x] Implement block message format per SDD §6.2
+- [x] Implement warning message format per SDD §6.3
+- [x] Create override logging to `sigil-mark/audit/overrides.yaml`
 
 ### Dependencies
 
