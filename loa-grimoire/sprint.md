@@ -1207,5 +1207,736 @@ Sprint 12 ───────────────────────�
 
 ---
 
+---
+
+# Sprint Plan: Sigil v11 — Soul Engine
+
+**Version:** 1.0
+**Date:** 2026-01-03
+**Author:** Sprint Planner Agent
+**PRD Reference:** loa-grimoire/prd.md (v3.0)
+**SDD Reference:** loa-grimoire/sdd.md (v2.0)
+**Branch:** feature/constitutional-design-framework
+
+---
+
+## Executive Summary
+
+Sigil v11 is the **Soul Engine** — a complete reimagining from v0.4. Key changes:
+- **No SQLite**: YAML files only
+- **No Vite Workbench**: Lightweight HUD overlay
+- **Immutable Kernel**: physics.yaml, sync.yaml, fidelity-ceiling.yaml that lock after `/codify --lock`
+- **Fidelity Ceiling**: The "Mod Ghost Rule" — block outputs that exceed Gold Standard
+- **8 Named Agents**: Explicit agent architecture with Claude Code skills
+
+**User Decisions:**
+- **Team:** Solo developer (1 dev)
+- **Sprint Count:** 7 sprints (thorough breakdown)
+
+**Primary KPI:** <30 min to first `/craft`
+
+**Total Sprints:** 7
+**Sprint Duration:** 1 week each
+**Estimated Total:** 7 weeks
+
+---
+
+## v11 Sprint Overview
+
+| Sprint | Theme | Key Deliverables | Dependencies |
+|--------|-------|------------------|--------------|
+| 13 | Kernel Foundation | physics.yaml, sync.yaml, fidelity-ceiling.yaml, kernel lock mechanism | v0.4 complete |
+| 14 | Soul Layer | materials.yaml, zones.yaml, tensions.yaml, essence.yaml | Sprint 13 |
+| 15 | Core Agent Skills | envisioning-soul, codifying-materials, mapping-zones, crafting-components | Sprint 14 |
+| 16 | Validation Agents | validating-fidelity, gardening-entropy, fidelity report generation | Sprint 15 |
+| 17 | Governance Agents | approving-patterns, greenlighting-concepts, taste-owners.yaml | Sprint 16 |
+| 18 | HUD Overlay | @sigil/hud package, useTensions hook, CSS variable runtime | Sprint 17 |
+| 19 | Integration & Polish | CLAUDE.md generation, mount script, documentation, testing | Sprint 18 |
+
+---
+
+## Sprint 13: Kernel Foundation
+
+**Duration:** 1 week
+**Theme:** Create immutable kernel layer
+
+### Sprint Goal
+
+Establish the immutable kernel layer with physics primitives, sync strategies, and fidelity ceiling. Implement the lock mechanism that prevents modification after `/codify --lock`.
+
+### Deliverables
+
+- [x] `sigil-mark/kernel/physics.yaml` with all primitives
+- [x] `sigil-mark/kernel/sync.yaml` with strategy definitions
+- [x] `sigil-mark/kernel/fidelity-ceiling.yaml` with constraints
+- [x] Kernel lock mechanism in codifying-materials skill
+- [x] `.sigil-version.json` with kernel lock tracking
+- [x] TypeScript types for kernel schemas
+
+### Acceptance Criteria
+
+> From PRD: "Kernel is IMMUTABLE after /codify --lock"
+> From SDD: "Lock timestamp and locker recorded"
+
+- [x] `physics.yaml` defines: light (refract, diffuse, flat), weight, motion, feedback, surface
+- [x] `sync.yaml` defines: server_tick, crdt, lww, local_only with keywords
+- [x] `fidelity-ceiling.yaml` defines: era, constraints, forbidden_techniques, detection patterns
+- [x] Lock mechanism sets `locked: true` on all kernel files
+- [x] Locked files cannot be modified (skill-level enforcement)
+- [x] `.sigil-version.json` tracks `kernel_locked: true` and timestamp
+
+### Technical Tasks
+
+**Task 13.1: Physics YAML Schema (4 hours)**
+- [ ] Create `physics.yaml` with light primitives
+- [ ] Add weight primitives (weightless, light, heavy, none)
+- [ ] Add motion primitives (instant, linear, ease, spring, deliberate)
+- [ ] Add feedback primitives (highlight, lift, depress, glow, xp_drop)
+- [ ] Add surface primitives (transparent, translucent, solid)
+- [ ] Include CSS templates for each primitive
+
+**Task 13.2: Sync YAML Schema (3 hours)**
+- [ ] Create `sync.yaml` with server_tick strategy
+- [ ] Add crdt strategy with keywords
+- [ ] Add lww strategy with keywords
+- [ ] Add local_only strategy
+- [ ] Define UI behavior rules for each strategy
+
+**Task 13.3: Fidelity Ceiling Schema (4 hours)**
+- [ ] Create `fidelity-ceiling.yaml` with era field
+- [ ] Add visual constraints (gradients, shadows, borders)
+- [ ] Add animation constraints (max duration, forbidden)
+- [ ] Add typography constraints (font families, min size)
+- [ ] Add forbidden_techniques array
+- [ ] Add detection patterns with regex
+
+**Task 13.4: Lock Mechanism (4 hours)**
+- [ ] Implement `lockKernel()` function
+- [ ] Update all kernel files with `locked: true`
+- [ ] Record `locked_at` and `locked_by`
+- [ ] Update `.sigil-version.json`
+- [ ] Add lock validation on kernel reads
+
+**Task 13.5: TypeScript Types (2 hours)**
+- [ ] Create PhysicsKernel interface
+- [ ] Create SyncKernel interface
+- [ ] Create FidelityCeiling interface
+- [ ] Create Zod schemas for validation
+
+### Dependencies
+
+- v0.4 Sprint 12 complete
+- Existing sigil-mark/ directory structure from `/setup`
+
+### Risks & Mitigation
+
+| Risk | Probability | Impact | Mitigation |
+|------|-------------|--------|------------|
+| Lock bypass attempts | Low | High | Skill-level enforcement, version file check |
+| Overly restrictive constraints | Medium | Medium | Zone exceptions for marketing |
+
+### Success Metrics
+
+- All kernel YAML files validate against TypeScript types
+- Lock mechanism prevents modification
+- Version file correctly tracks lock state
+
+---
+
+## Sprint 14: Soul Layer
+
+**Duration:** 1 week
+**Theme:** Implement writable soul state
+
+### Sprint Goal
+
+Create the writable soul layer with materials that compose kernel primitives, zones with path mappings, tensions with real-time CSS variables, and essence with soul statement.
+
+### Deliverables
+
+- [ ] `sigil-mark/soul/materials.yaml` with Glass, Clay, Machinery
+- [ ] `sigil-mark/soul/zones.yaml` with path-based mappings
+- [ ] `sigil-mark/soul/tensions.yaml` with 4 axes
+- [ ] `sigil-mark/soul/essence.yaml` with soul statement
+- [ ] Tension presets (Linear, Airbnb, Nintendo, OSRS)
+- [ ] Zone detection algorithm
+
+### Acceptance Criteria
+
+> From PRD: "Materials compose kernel primitives"
+> From SDD: "Materials define physics, not just styles"
+
+- [ ] Materials reference kernel primitives only (no custom physics)
+- [ ] Each material has: primitives, forbidden patterns, css_base
+- [ ] Zones have: material, sync, motion, paths, patterns
+- [ ] Tensions have: default, current, zone_overrides, presets
+- [ ] Essence has: soul statement, invariants
+- [ ] Zone detection matches file path to zone config
+
+### Technical Tasks
+
+**Task 14.1: Materials YAML (4 hours)**
+- [ ] Create Glass material (light: refract, weight: weightless)
+- [ ] Create Clay material (light: diffuse, weight: heavy)
+- [ ] Create Machinery material (light: flat, weight: none)
+- [ ] Add forbidden patterns for each material
+- [ ] Add css_base templates
+
+**Task 14.2: Zones YAML (3 hours)**
+- [ ] Create critical zone (clay + server_tick)
+- [ ] Create transactional zone (machinery + lww)
+- [ ] Create exploratory zone (glass + lww)
+- [ ] Create marketing zone (clay + fidelity overrides)
+- [ ] Create default zone
+
+**Task 14.3: Tensions YAML (3 hours)**
+- [ ] Create tension schema with 0-100 scale
+- [ ] Add default tensions (all 50)
+- [ ] Add zone_overrides structure
+- [ ] Add presets (Linear, Airbnb, Nintendo, OSRS)
+
+**Task 14.4: Essence YAML (2 hours)**
+- [ ] Create soul statement field
+- [ ] Add invariants array
+- [ ] Add anti-patterns section
+- [ ] Add key moments section
+
+**Task 14.5: Zone Detection (4 hours)**
+- [ ] Implement detectZone() function
+- [ ] Match file path against zone patterns
+- [ ] Detect from prompt keywords as fallback
+- [ ] Support explicit --zone override
+- [ ] Return default zone if no match
+
+### Dependencies
+
+- Sprint 13: Kernel files must exist for material references
+
+### Risks & Mitigation
+
+| Risk | Probability | Impact | Mitigation |
+|------|-------------|--------|------------|
+| Material references invalid primitives | Low | Medium | Validate against kernel on load |
+| Zone detection false positives | Medium | Low | Conservative keyword matching |
+
+### Success Metrics
+
+- Materials only reference existing kernel primitives
+- Zone detection 90%+ accurate on test paths
+- Presets apply correctly
+
+---
+
+## Sprint 15: Core Agent Skills
+
+**Duration:** 1 week
+**Theme:** Implement core agent skills
+
+### Sprint Goal
+
+Create the 4 core agent skills: envisioning-soul (Soul Keeper), codifying-materials (Material Smith), mapping-zones (Zone Architect), and crafting-components (Apprentice Smith).
+
+### Deliverables
+
+- [ ] `.claude/skills/envisioning-soul/` with SKILL.md and index.yaml
+- [ ] `.claude/skills/codifying-materials/` with SKILL.md and index.yaml
+- [ ] `.claude/skills/mapping-zones/` with SKILL.md and index.yaml
+- [ ] `.claude/skills/crafting-components/` with SKILL.md and index.yaml
+- [ ] Command files for /envision, /codify, /material, /zone, /craft
+- [ ] Context injection XML template
+
+### Acceptance Criteria
+
+> From PRD: "8 agents with clear roles and commands"
+> From SDD: "Context injection happens BEFORE generation"
+
+- [ ] `/envision` conducts interview and creates essence.yaml
+- [ ] `/codify` defines materials and can lock kernel with `--lock`
+- [ ] `/zone` configures path-based zone mappings
+- [ ] `/craft` injects context before generation
+- [ ] Context XML includes zone, material, fidelity, tensions
+- [ ] Constitution check runs after generation
+
+### Technical Tasks
+
+**Task 15.1: envisioning-soul Skill (4 hours)**
+- [ ] Create index.yaml with metadata
+- [ ] Create SKILL.md with interview workflow
+- [ ] Add soul statement capture
+- [ ] Add anti-pattern detection
+- [ ] Add key moments capture
+- [ ] Output to essence.yaml and moodboard.md
+
+**Task 15.2: codifying-materials Skill (4 hours)**
+- [ ] Create index.yaml with commands (codify, material)
+- [ ] Create SKILL.md with material definition workflow
+- [ ] Add kernel primitive validation
+- [ ] Add lock mechanism (`--lock` flag)
+- [ ] Output to materials.yaml
+
+**Task 15.3: mapping-zones Skill (3 hours)**
+- [ ] Create index.yaml with zone command
+- [ ] Create SKILL.md with zone configuration workflow
+- [ ] Add path scanning for feature directories
+- [ ] Add material and sync assignment
+- [ ] Output to zones.yaml
+
+**Task 15.4: crafting-components Skill (6 hours)**
+- [ ] Create index.yaml with craft command
+- [ ] Create SKILL.md with context injection workflow
+- [ ] Implement zone detection integration
+- [ ] Implement context XML generation
+- [ ] Implement constitution check
+- [ ] Add --zone, --material, --tension flags
+
+**Task 15.5: Command Files (2 hours)**
+- [ ] Create /envision command
+- [ ] Create /codify command
+- [ ] Create /material command
+- [ ] Create /zone command
+- [ ] Create /craft command
+
+### Dependencies
+
+- Sprint 14: Soul layer files must exist for skills to read/write
+
+### Risks & Mitigation
+
+| Risk | Probability | Impact | Mitigation |
+|------|-------------|--------|------------|
+| Context injection ignored by LLM | Medium | High | Robust XML format, validation agent |
+| Interview fatigue | Medium | Medium | Keep questions focused |
+
+### Success Metrics
+
+- All 5 commands executable
+- Context injection produces valid XML
+- Constitution check detects violations
+
+---
+
+## Sprint 16: Validation Agents
+
+**Duration:** 1 week
+**Theme:** Implement fidelity validation
+
+### Sprint Goal
+
+Create the validation agents: validating-fidelity (Fidelity Guardian) and gardening-entropy (Gardener). Implement the fidelity report generation and paper cut tracking.
+
+### Deliverables
+
+- [ ] `.claude/skills/validating-fidelity/` with SKILL.md
+- [ ] `.claude/skills/gardening-entropy/` with SKILL.md
+- [ ] Fidelity validation engine (pattern matching)
+- [ ] `sigil-mark/workbench/fidelity-report.yaml` generation
+- [ ] `sigil-mark/workbench/paper-cuts.yaml` tracking
+- [ ] /validate and /garden commands
+
+### Acceptance Criteria
+
+> From PRD: "Block outputs that exceed Gold Standard"
+> From SDD: "Pattern matchers for forbidden techniques"
+
+- [ ] `/validate` checks code against fidelity ceiling
+- [ ] Forbidden techniques blocked with error severity
+- [ ] Gradient/shadow/animation limits warned
+- [ ] Fidelity report generated with violation list
+- [ ] `/garden` tracks paper cuts with 3:1 ratio analysis
+- [ ] Paper cuts categorized and prioritized
+
+### Technical Tasks
+
+**Task 16.1: validating-fidelity Skill (6 hours)**
+- [ ] Create index.yaml with validate command
+- [ ] Create SKILL.md with validation workflow
+- [ ] Implement checkGradients() function
+- [ ] Implement checkShadows() function
+- [ ] Implement checkAnimations() function
+- [ ] Implement checkForbiddenTechniques() function
+- [ ] Implement checkMaterial() function
+- [ ] Implement checkSync() function
+
+**Task 16.2: Pattern Matchers (4 hours)**
+- [ ] Create techniquePatterns regex map
+- [ ] Add pattern for 3D transforms
+- [ ] Add pattern for mesh gradients
+- [ ] Add pattern for particles/confetti
+- [ ] Add pattern for neumorphism
+- [ ] Add gradient stop counter
+
+**Task 16.3: Fidelity Report (3 hours)**
+- [ ] Create fidelity-report.yaml schema
+- [ ] Generate report with summary
+- [ ] Include violation details (file, line, type, severity)
+- [ ] Add suggestions for fixes
+
+**Task 16.4: gardening-entropy Skill (4 hours)**
+- [ ] Create index.yaml with garden command
+- [ ] Create SKILL.md with paper cut workflow
+- [ ] Implement paper cut detection
+- [ ] Track 3:1 ratio (fixes to features)
+- [ ] Generate paper-cuts.yaml
+
+**Task 16.5: Command Files (1 hour)**
+- [ ] Create /validate command
+- [ ] Create /garden command
+
+### Dependencies
+
+- Sprint 15: crafting-components must exist for post-generation validation
+
+### Risks & Mitigation
+
+| Risk | Probability | Impact | Mitigation |
+|------|-------------|--------|------------|
+| False positive violations | Medium | Medium | Conservative patterns, human review |
+| Fidelity too restrictive | Medium | Medium | Zone exceptions |
+
+### Success Metrics
+
+- Forbidden techniques correctly blocked
+- Fidelity report generated with all violations
+- 3:1 ratio correctly calculated
+
+---
+
+## Sprint 17: Governance Agents
+
+**Duration:** 1 week
+**Theme:** Implement governance layer
+
+### Sprint Goal
+
+Create the governance agents: approving-patterns (Taste Owner) and greenlighting-concepts (Pollster). Implement taste owner authority and concept polling.
+
+### Deliverables
+
+- [ ] `.claude/skills/approving-patterns/` with SKILL.md
+- [ ] `.claude/skills/greenlighting-concepts/` with SKILL.md
+- [ ] `sigil-mark/governance/taste-owners.yaml`
+- [ ] `sigil-mark/governance/approvals.yaml`
+- [ ] `sigil-mark/governance/polls.yaml`
+- [ ] /approve and /greenlight commands
+
+### Acceptance Criteria
+
+> From PRD: "Visuals dictated, never polled"
+> From PRD: "Poll concepts, not pixels"
+
+- [ ] Taste owners registered with scope (paths, domains)
+- [ ] `/approve` creates sign-off record
+- [ ] Approvals tracked with timestamp and owner
+- [ ] `/greenlight` creates concept poll (never visual)
+- [ ] Polls have 70% threshold
+- [ ] Visual decisions blocked from polling
+
+### Technical Tasks
+
+**Task 17.1: approving-patterns Skill (4 hours)**
+- [ ] Create index.yaml with approve command
+- [ ] Create SKILL.md with approval workflow
+- [ ] Implement sign-off recording
+- [ ] Add timestamp and owner tracking
+- [ ] Output to approvals.yaml
+
+**Task 17.2: Taste Owners YAML (2 hours)**
+- [ ] Create taste-owners.yaml schema
+- [ ] Add owner registration (name, scope, placeholder)
+- [ ] Add domain authority mapping
+
+**Task 17.3: greenlighting-concepts Skill (4 hours)**
+- [ ] Create index.yaml with greenlight command
+- [ ] Create SKILL.md with polling workflow
+- [ ] Implement concept validation (block visual polls)
+- [ ] Add poll template generation
+- [ ] Output to polls.yaml
+
+**Task 17.4: Polls YAML (2 hours)**
+- [ ] Create polls.yaml schema
+- [ ] Track poll question, threshold, status
+- [ ] Record votes and result
+
+**Task 17.5: Archaeology (2 hours)**
+- [ ] Create archaeology.yaml for rejection history
+- [ ] Track rejected patterns with rationale
+- [ ] Link to decision records
+
+**Task 17.6: Command Files (1 hour)**
+- [ ] Create /approve command
+- [ ] Create /greenlight command
+
+### Dependencies
+
+- Sprint 16: Validation must exist for pattern approval
+
+### Risks & Mitigation
+
+| Risk | Probability | Impact | Mitigation |
+|------|-------------|--------|------------|
+| Visual decisions accidentally polled | Low | High | Strict concept validation |
+| Approval workflow too slow | Medium | Low | Streamlined single-owner path |
+
+### Success Metrics
+
+- Taste owners correctly scoped
+- Approvals tracked with full audit trail
+- Visual polls blocked
+
+---
+
+## Sprint 18: HUD Overlay
+
+**Duration:** 1 week
+**Theme:** Build runtime HUD
+
+### Sprint Goal
+
+Create the lightweight HUD overlay that replaces the Vite Workbench. Implement tension sliders with real-time CSS variable updates.
+
+### Deliverables
+
+- [ ] `sigil-hud/` package structure
+- [ ] `<SigilHUD />` React component
+- [ ] useTensions hook with CSS variable updates
+- [ ] useMaterial hook
+- [ ] useZone hook
+- [ ] TensionSlider, MaterialPicker, FidelityStatus components
+
+### Acceptance Criteria
+
+> From PRD: "HUD overlay instead of standalone Workbench"
+> From SDD: "Zero production footprint"
+
+- [ ] HUD only renders in development (process.env.NODE_ENV)
+- [ ] Toggle button shows/hides panel
+- [ ] Tension sliders update CSS variables in <16ms
+- [ ] Material picker overrides current zone material
+- [ ] Fidelity status shows validation state
+- [ ] Changes persist to YAML
+
+### Technical Tasks
+
+**Task 18.1: Package Structure (3 hours)**
+- [ ] Create sigil-hud/ directory
+- [ ] Create package.json with peer dependencies
+- [ ] Configure TypeScript
+- [ ] Set up build pipeline
+
+**Task 18.2: SigilHUD Component (4 hours)**
+- [ ] Create main component with portal
+- [ ] Implement toggle button
+- [ ] Implement HUDPanel with tabs
+- [ ] Add position prop (bottom-right, etc.)
+- [ ] Add dev-only rendering check
+
+**Task 18.3: useTensions Hook (4 hours)**
+- [ ] Create useTensions hook
+- [ ] Load tensions from YAML
+- [ ] Implement applyTensionVariables() with mapRange
+- [ ] Add debounced YAML save
+- [ ] Return tensions, updateTension
+
+**Task 18.4: useMaterial Hook (2 hours)**
+- [ ] Create useMaterial hook
+- [ ] Detect zone from current path
+- [ ] Return material and physics
+- [ ] Allow override
+
+**Task 18.5: UI Components (4 hours)**
+- [ ] Create TensionSlider component
+- [ ] Create MaterialPicker component
+- [ ] Create FidelityStatus component
+- [ ] Style with Tailwind
+
+### Dependencies
+
+- Sprint 14: Soul layer (tensions.yaml) must exist
+
+### Risks & Mitigation
+
+| Risk | Probability | Impact | Mitigation |
+|------|-------------|--------|------------|
+| HUD appears in production | Low | High | Strict NODE_ENV check |
+| CSS variable performance | Low | Medium | RAF throttle |
+
+### Success Metrics
+
+- HUD toggles correctly
+- Tension slider updates in <16ms
+- YAML persistence works
+
+---
+
+## Sprint 19: Integration & Polish
+
+**Duration:** 1 week
+**Theme:** Finalize and document
+
+### Sprint Goal
+
+Complete CLAUDE.md generation, mount script, comprehensive documentation, and testing. Ensure <30 min to first `/craft`.
+
+### Deliverables
+
+- [ ] CLAUDE.md auto-generation from sigil-mark/
+- [ ] Mount script for existing repos
+- [ ] Complete command documentation
+- [ ] Integration tests for all skills
+- [ ] Updated README.md
+- [ ] Migration guide from v0.4
+
+### Acceptance Criteria
+
+> From PRD: "<30 min to first /craft"
+> From SDD: "CLAUDE.md auto-generated from sigil-mark/"
+
+- [ ] `sigil sync` generates valid CLAUDE.md
+- [ ] CLAUDE.md includes Three Laws, materials, zones, fidelity
+- [ ] Mount script works on existing NextJS project
+- [ ] All 10 commands documented
+- [ ] Time to first `/craft` <30 min on fresh project
+
+### Technical Tasks
+
+**Task 19.1: CLAUDE.md Generation (6 hours)**
+- [ ] Create generateClaudeMd() function
+- [ ] Include Three Laws section
+- [ ] Include materials from materials.yaml
+- [ ] Include zones from zones.yaml
+- [ ] Include fidelity constraints
+- [ ] Include agent protocol
+
+**Task 19.2: Mount Script (4 hours)**
+- [ ] Create mount command
+- [ ] Detect existing components
+- [ ] Suggest zone mappings
+- [ ] Create sigil-mark/ structure
+- [ ] Generate initial CLAUDE.md
+
+**Task 19.3: Documentation (4 hours)**
+- [ ] Document all 10 commands
+- [ ] Create quick start guide
+- [ ] Document The Three Laws
+- [ ] Document agent roles
+
+**Task 19.4: Testing (4 hours)**
+- [ ] Create integration tests for /setup → /craft flow
+- [ ] Test kernel lock mechanism
+- [ ] Test fidelity validation
+- [ ] Test zone detection
+
+**Task 19.5: Migration Guide (2 hours)**
+- [ ] Document v0.4 → v11 changes
+- [ ] Provide migration steps
+- [ ] Note breaking changes
+
+### Dependencies
+
+- Sprints 13-18: All components must be complete
+
+### Risks & Mitigation
+
+| Risk | Probability | Impact | Mitigation |
+|------|-------------|--------|------------|
+| >30 min to first /craft | Medium | High | Streamline setup flow |
+| CLAUDE.md context leak | Medium | Medium | Robust template |
+
+### Success Metrics
+
+- CLAUDE.md generated with all sections
+- First /craft in <30 min
+- All tests pass
+
+---
+
+## v11 Risk Register
+
+| ID | Risk | Sprint | Probability | Impact | Mitigation |
+|----|------|--------|-------------|--------|------------|
+| R13 | Kernel lock bypass | 13 | Low | High | Skill-level enforcement |
+| R14 | Material invalid primitives | 14 | Low | Medium | Validate against kernel |
+| R15 | Context injection ignored | 15 | Medium | High | Robust XML, validation |
+| R16 | False positive violations | 16 | Medium | Medium | Conservative patterns |
+| R17 | Visual polls slip through | 17 | Low | High | Strict validation |
+| R18 | HUD in production | 18 | Low | High | NODE_ENV check |
+| R19 | >30 min adoption | 19 | Medium | High | Streamline setup |
+
+---
+
+## v11 Success Metrics Summary
+
+| Metric | Target | Sprint |
+|--------|--------|--------|
+| Kernel lock enforced | 100% | 13 |
+| Material physics correct | 3 materials | 14 |
+| Context injection works | Valid XML | 15 |
+| Fidelity validation | 95% accuracy | 16 |
+| Approval tracking | Full audit | 17 |
+| HUD performance | <16ms updates | 18 |
+| Time to first /craft | <30 min | 19 |
+
+---
+
+## v11 Dependencies Map
+
+```
+Sprint 13 ────────────────────────────────────────────────────────────────────┐
+   │                                                                           │
+   │  Kernel Foundation: physics.yaml, sync.yaml, fidelity-ceiling.yaml      │
+   │                                                                           │
+   ▼                                                                           │
+Sprint 14 ────────────────────────────────────────────────────────────────────┤
+   │                                                                           │
+   │  Soul Layer: materials.yaml, zones.yaml, tensions.yaml, essence.yaml    │
+   │                                                                           │
+   ▼                                                                           │
+Sprint 15 ────────────────────────────────────────────────────────────────────┤
+   │                                                                           │
+   │  Core Agents: envisioning, codifying, mapping, crafting                  │
+   │                                                                           │
+   ▼                                                                           │
+Sprint 16 ────────────────────────────────────────────────────────────────────┤
+   │                                                                           │
+   │  Validation Agents: validating-fidelity, gardening-entropy               │
+   │                                                                           │
+   ▼                                                                           │
+Sprint 17 ────────────────────────────────────────────────────────────────────┤
+   │                                                                           │
+   │  Governance Agents: approving-patterns, greenlighting-concepts           │
+   │                                                                           │
+   ▼                                                                           │
+Sprint 18 ────────────────────────────────────────────────────────────────────┤
+   │                                                                           │
+   │  HUD Overlay: @sigil/hud, useTensions, CSS variables                     │
+   │                                                                           │
+   ▼                                                                           │
+Sprint 19 ────────────────────────────────────────────────────────────────────┘
+   │
+   │  Integration & Polish: CLAUDE.md, mount, docs, tests
+   │
+   ▼
+   🚀 Release v11.0.0
+```
+
+---
+
+## Appendix: v11 PRD Feature Mapping
+
+| PRD Feature | Priority | Sprint | Status |
+|-------------|----------|--------|--------|
+| FR-1: Kernel Layer | P0 | 13 | Planned |
+| FR-2: Fidelity Ceiling | P0 | 13, 16 | Planned |
+| FR-3: Material Core | P0 | 14 | Planned |
+| FR-4: Interaction Router | P0 | 13-14 | Planned |
+| FR-5: Tension System | P0 | 14, 18 | Planned |
+| FR-6: Gardener Protocol | P1 | 16 | Planned |
+| FR-7: Taste Owner Governance | P0 | 17 | Planned |
+| FR-8: Greenlight Polling | P1 | 17 | Planned |
+| FR-9: HUD Overlay | P0 | 18 | Planned |
+| 8 Agent Skills | P0 | 15-17 | Planned |
+
+---
+
 *Generated by Sprint Planner Agent*
-*Sigil v0.4: A Studio, not a Factory. Craft, not just consistency.*
+*Sigil v11: Studio OS, Not Sovereign. Poll concepts, dictate pixels.*

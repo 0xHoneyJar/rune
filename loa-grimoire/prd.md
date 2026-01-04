@@ -1,10 +1,10 @@
-# Product Requirements Document: Sigil v0.4 — Soul Engine
+# Product Requirements Document: Sigil v11 — Soul Engine
 
-**Version:** 2.0
-**Date:** 2026-01-02
-**Author:** PRD Architect Agent (Interview-Updated)
+**Version:** 3.0
+**Date:** 2026-01-03
+**Author:** PRD Architect Agent (v11 Update)
 **Status:** Draft
-**Branch:** feature/soul-engine
+**Branch:** feature/constitutional-design-framework
 
 ---
 
@@ -12,39 +12,48 @@
 
 1. [Executive Summary](#executive-summary)
 2. [Problem Statement](#problem-statement)
-3. [Goals & Success Metrics](#goals--success-metrics)
-4. [User Personas & Use Cases](#user-personas--use-cases)
-5. [Functional Requirements](#functional-requirements)
-6. [Non-Functional Requirements](#non-functional-requirements)
-7. [Architecture Overview](#architecture-overview)
-8. [The Six Systems](#the-six-systems)
-9. [Command Design](#command-design)
-10. [Configuration System](#configuration-system)
-11. [Scope & Prioritization](#scope--prioritization)
-12. [Success Criteria](#success-criteria)
-13. [Risks & Mitigation](#risks--mitigation)
-14. [Interview Findings](#interview-findings)
-15. [Appendix](#appendix)
+3. [The Three Laws](#the-three-laws)
+4. [Goals & Success Metrics](#goals--success-metrics)
+5. [User Personas & Use Cases](#user-personas--use-cases)
+6. [Functional Requirements](#functional-requirements)
+7. [The 8 Agents](#the-8-agents)
+8. [Non-Functional Requirements](#non-functional-requirements)
+9. [Architecture Overview](#architecture-overview)
+10. [The Kernel](#the-kernel)
+11. [Command Design](#command-design)
+12. [Configuration System](#configuration-system)
+13. [Scope & Prioritization](#scope--prioritization)
+14. [Success Criteria](#success-criteria)
+15. [Risks & Mitigation](#risks--mitigation)
+16. [Interview Findings](#interview-findings)
+17. [Appendix](#appendix)
 
 ---
 
 ## Executive Summary
 
-Sigil v0.4 is the **Soul Engine** — a complete evolution from v0.3 Constitutional Design Framework. It merges the governance concepts of v0.3 with a runtime-aware architecture that brings Material physics, Interaction routing, and Tension controls into the development workflow.
+Sigil v11 is the **Soul Engine** — a design craft framework that gives AI agents the physics, constraints, and taste authority needed to generate UI with soul. It is **not** a governance bureaucracy—it is a workshop.
 
-> **Philosophy:** "A Studio, not a Factory. Craft, not just consistency."
+> **Philosophy:** "Studio OS, Not Sovereign."
+>
+> *"You are an apprentice in 2007. You do not know what Ambient Occlusion is."*
 
-The Soul Engine addresses a fundamental insight: design systems fail because they treat the **symptom** (inconsistent outputs) rather than the **disease** (tacit knowledge trapped in people's heads, lack of physics-based constraints, and missing feedback loops).
+The Soul Engine addresses a fundamental insight: design systems fail because they create **bureaucracy** instead of **craft**. Sigil v11 provides:
+- **Immutable Kernel**: Physics primitives that cannot be changed after lock
+- **Fidelity Ceiling**: "Better" is often "worse" — block improvements that exceed the Gold Standard
+- **8 Specialized Agents**: Each with clear role and command
+- **Taste Owner Authority**: Visuals dictated, never polled
+- **Challenge Period**: 24hr window with Trust Score governance
 
-**Key Evolution from v0.3:**
-- **Material Core**: Glass, Clay, Machinery as physics models (not just styles)
-- **Interaction Router**: Sync by intent (CRDT, LWW, Server-Tick)
-- **Tension System**: Real-time feel adjustment (Playfulness, Weight, Density, Speed)
-- **Gardener Protocol**: 3:1 paper cuts to features (quality over quantity)
-- **Convergence Studio**: Multi-role craft with role-per-session
-- **Soul Binder**: Bidirectional AI-human context with local learning
+**Key Evolution from v0.4:**
+- **Kernel Layer**: Immutable physics.yaml, sync.yaml, fidelity-ceiling.yaml
+- **Fidelity Ceiling**: The "Mod Ghost Rule" — protects the jank that constitutes soul
+- **8 Named Agents**: Soul Keeper, Material Smith, Zone Architect, Apprentice Smith, Fidelity Guardian, Gardener, Taste Owner, Pollster
+- **Challenge Period**: Integrity changes auto-deploy but can be challenged
+- **Trust Score**: Earned/lost based on deployment accuracy
+- **HUD instead of Workbench**: Lightweight overlay instead of standalone app
 
-**Core Principle:** Feel like playing with a toy, not a cop watching over. Progressive disclosure guides users through use-case paths, like Runescape's open-world exploration with hints.
+**Core Principle:** Poll concepts, dictate pixels. Community votes on "should this exist?" — never "what color?"
 
 ---
 
@@ -52,52 +61,111 @@ The Soul Engine addresses a fundamental insight: design systems fail because the
 
 ### The Problem
 
-Design systems fail to prevent inconsistency because they treat the **symptom** (inconsistent outputs) rather than the **disease** (tacit knowledge trapped in people's heads). Traditional approaches assume:
+Design systems fail because they create **bureaucracy** instead of **workshops**. Traditional approaches assume:
 
-| Assumption | Reality |
-|------------|---------|
-| Documentation = Governance | Writing rules doesn't enforce them |
-| Consistency = Matching specs | Consistency = Matching the *feel* |
-| Styles are sufficient | Materials need physics, not just tokens |
-| All sync is the same | Money needs server-tick, text needs CRDT |
-| One role per person | Small teams wear multiple hats per session |
-| More features = better | 3:1 paper cuts to features = better |
+| Wrong (Bureaucracy) | Right (Workshop) |
+|---------------------|------------------|
+| Poll everything | Poll concepts only |
+| Committees decide visuals | Taste Owner dictates visuals |
+| Flag "low quality" as bad | Flag "high fidelity" as bad |
+| Advisory feedback | Context injection |
+| 26 commands | 10 commands |
+| "Integrity" bypass loophole | 24hr Challenge Period |
+
+### The Mod Ghost Rule
+
+When Mod Ghost joined Jagex, he created objectively "better" assets:
+- Smoother gradients
+- Higher polygon counts
+- More detailed textures
+
+**The community rejected them because they didn't look like 2007.**
+
+The Fidelity Ceiling protects the "jank" that constitutes the soul. An AI optimizing for "quality" will destroy the soul.
 
 ### User Pain Points
 
+- **AI generates "too good" output**: Modern gradients, 3D effects — wrong for the product
 - **No physics-based constraints**: Buttons "feel" wrong despite correct colors
+- **Design by committee**: Polling pixels destroys craft
 - **Sync strategy mismatch**: Optimistic UI for money transfers causes bugs
-- **Tension conflicts**: "Playful" and "fast" instructions contradict
 - **Paper cut debt**: Features ship while polish rots
-- **Cross-functional friction**: Designers and engineers speak different languages
 - **AI context leakage**: Claude ignores Sigil config in complex prompts
 
-### Current State (Sigil v0.3)
+### Current State (v0.4)
 
-Sigil v0.3 provides:
-- Soul Binder (values + flaws)
-- Lens Array (personas)
-- Consultation Chamber (decisions)
-- Proving Grounds (feature validation)
-- Progressive strictness (4 levels)
+Sigil v0.4 provides:
+- Material Core (Glass, Clay, Machinery)
+- Tension System (Playfulness, Weight, Density, Speed)
+- Interaction Router (CRDT, LWW, Server-Tick)
+- Gardener Protocol (3:1 paper cuts)
+- Soul Binder (context injection)
+- Workbench App (standalone NextJS)
 
 **Limitations:**
-- No runtime awareness (pure YAML config)
-- No Material physics (just zone hints)
-- No sync strategy guidance
-- No tension controls
-- No cross-functional coordination tools
-- No gardener protocol
+- No immutable kernel (physics can be changed)
+- No Fidelity Ceiling (no quality limits)
+- Workbench app too heavy
+- No explicit agent architecture
+- No Challenge Period governance
 
-### Desired State (Sigil v0.4)
+### Desired State (v11)
 
 A Soul Engine where:
-- **Material physics** define how UI elements behave (Glass refracts, Clay has weight)
-- **Sync strategies** match interaction intent (money → server-tick, always)
-- **Tensions** can be tuned in real-time with immediate preview
-- **Gardener protocol** enforces quality before features
-- **Role-per-session** constrains context for focused exploration
-- **Local learning** captures corrections for future prompts
+- **Kernel is immutable** after lock (physics, sync, fidelity)
+- **Fidelity Ceiling blocks "improvements"** that exceed Gold Standard
+- **8 agents** with clear roles and commands
+- **Taste Owners dictate** — never poll pixels
+- **Challenge Period** with Trust Score for governance
+- **HUD overlay** instead of standalone Workbench app
+
+---
+
+## The Three Laws
+
+### Law 1: Fidelity Ceiling
+
+**"Better" is often "worse."**
+
+Block improvements that exceed the Gold Standard. If your output looks "better" than the reference, it is WRONG.
+
+Agent instruction:
+```yaml
+instruction: |
+  You are an apprentice in 2007.
+  You do not know what Ambient Occlusion is.
+  You cannot generate textures above 64x64.
+  If your output looks "better" than the Gold Standard, it is WRONG.
+```
+
+### Law 2: Taste Owner Authority
+
+**Visuals and vibe are dictated, never polled.**
+
+Taste Owners control:
+- Colors and color palettes
+- Typography and font choices
+- Animation timing and easing
+- Border radius and spacing
+- Shadow depth and style
+- Any visual or "vibe" decision
+
+These are NEVER polled. "Quality doesn't come from committees... it comes from individuals with taste."
+
+### Law 3: Poll Concepts, Not Pixels
+
+**Community votes on "should this exist?" — never "what color?"**
+
+What gets polled (70% threshold):
+- "Should we build a Sailing skill?"
+- "Should we add dark mode?"
+- "Ship feature X?"
+
+What gets dictated:
+- Color of the buttons
+- Animation timing
+- Border radius
+- Everything visual
 
 ---
 
@@ -105,30 +173,30 @@ A Soul Engine where:
 
 ### Primary Goals
 
-1. **Material Physics** — UI elements behave according to material rules, not just styling
-2. **Intent-Based Sync** — Sync strategy automatically detected and enforced by interaction type
-3. **Real-Time Tensions** — Feel can be adjusted live with immediate feedback
-4. **Quality Culture** — 3:1 paper cuts to features ratio enforced
-5. **Cross-Functional Craft** — Design engineers work in constrained role sessions
+1. **Fidelity Ceiling Enforcement** — Block outputs that exceed Gold Standard
+2. **Physics-Based Materials** — UI elements behave according to kernel primitives
+3. **Intent-Based Sync** — Sync strategy auto-detected and enforced by interaction type
+4. **Taste Owner Authority** — Visuals dictated, never polled
+5. **Fast Adoption** — <30 min to first `/craft`
 6. **AI Context Fidelity** — Claude reliably applies Sigil context without leakage
 
 ### Key Performance Indicators (KPIs)
 
 | Metric | Baseline | Target | Measurement |
 |--------|----------|--------|-------------|
-| Material Compliance | N/A | 95% components match material physics | Automated check |
+| **Adoption Speed** | N/A | **<30 min to first /craft** | User testing |
+| Fidelity Compliance | N/A | 95% outputs pass Fidelity Ceiling | Automated validation |
 | Sync Strategy Correctness | N/A | 100% money/health uses server-tick | Code review |
 | Paper Cut Ratio | N/A | 3:1 fixes to features | PR analysis |
 | AI Context Application | N/A | 90% prompts correctly apply Sigil | User feedback |
-| Adoption Friction | N/A | <30 min to first /craft | User testing |
 
 ### Constraints (Interview-Derived)
 
 - **React-first, port later**: Core runtime in React, Vue/Svelte/vanilla future work
 - **NextJS/Tailwind/Shadcn opinionated**: Optimized for this stack, OSS-extensible
+- **HUD overlay, not standalone app**: Simplify from full Workbench
 - **PR comment only (CI)**: Gardener is advisory, not blocking
 - **Local context for learning**: Corrections saved locally, memory services future
-- **Qualitative feedback for small communities**: Replace polls with interviews <1000 users
 
 ---
 
@@ -142,15 +210,15 @@ A Soul Engine where:
 - Goals: Ship craft without context-switching between "designer mode" and "engineer mode"
 
 **Behaviors:**
-- Wears different hats per session (role-per-session)
-- Tunes tensions while coding
+- Uses AI to generate UI with proper physics constraints
+- Tunes tensions while coding (via HUD)
 - Fixes paper cuts before features
-- Uses AI to accelerate, not replace judgment
+- Expects AI to respect Fidelity Ceiling
 
 **Pain Points:**
-- Context bleeding between roles
-- AI ignoring design context
+- AI generating "too polished" output
 - No physics-based constraints
+- Context bleeding between materials
 
 ---
 
@@ -162,13 +230,14 @@ A Soul Engine where:
 - Goals: Maintain soul without being a bottleneck
 
 **Behaviors:**
-- Approves/overrides with pair (Founder Mode requires second Taste Owner)
-- Sets tension presets for the product
-- Adjudicates cross-boundary paper cuts
+- Dictates visual decisions (never polls)
+- Approves patterns via `/approve`
+- Challenges integrity claims via Challenge Period
+- Has Trust Score affecting deployment privileges
 
 **Pain Points:**
-- 2am rage-decisions (Founder Mode guardrails)
 - Design-by-committee on execution details
+- "Integrity" claims that are actually content changes
 - Losing context when decisions need revisiting
 
 ---
@@ -178,17 +247,16 @@ A Soul Engine where:
 **Demographics:**
 - Role: PM, exec, or community manager
 - Technical Proficiency: Low—views, doesn't edit
-- Goals: Understand product soul without breaking it
+- Goals: Participate in concept polls without breaking things
 
 **Behaviors:**
-- Uses Workbench in sandbox mode (experiment without persisting)
-- Views component library and tension states
+- Votes on Greenlight polls (concepts only)
+- Views but doesn't modify visual decisions
 - Provides qualitative feedback
 
 **Pain Points:**
-- Breaking things by accident
-- Not understanding technical constraints
-- Feeling excluded from design process
+- Being asked about pixel-level decisions
+- Not understanding why visuals aren't polled
 
 ---
 
@@ -200,123 +268,208 @@ A Soul Engine where:
 **Preconditions:** Existing NextJS project
 **Flow:**
 1. Run mounting procedure (CLI or script)
-2. System bootstraps Workbench app in repo
+2. System creates `sigil-mark/` with kernel files
 3. System creates `.sigilrc.yaml` with detected zone mappings
 4. User runs `/envision` to capture soul
 5. System generates Claude context (CLAUDE.md update)
 
-**Postconditions:** Project has Soul Engine active
+**Postconditions:** Project has Soul Engine active with immutable kernel
 **Acceptance Criteria:**
-- [ ] Workbench app accessible at localhost
+- [ ] Kernel files (physics.yaml, sync.yaml, fidelity-ceiling.yaml) created
 - [ ] Claude context correctly injected
-- [ ] Material detection working for zones
+- [ ] 8 agent skills available
 
 ---
 
-#### UC-2: Tune Tensions in Workbench
+#### UC-2: Generate UI with Fidelity Ceiling
 
 **Actor:** Design Engineer
-**Preconditions:** Soul Engine mounted
+**Preconditions:** Soul Engine mounted, Fidelity Ceiling defined
 **Flow:**
-1. Open Workbench app
-2. Navigate to component or flow
-3. Adjust tension sliders (Playfulness, Weight, Density, Speed)
-4. See live preview update
-5. Optionally: Commit tension preset to codebase
+1. Run `/craft "Create a checkout button"`
+2. Crafting agent receives kernel constraints
+3. Agent generates button matching Gold Standard
+4. If output exceeds fidelity (too polished), validation warns
+5. User approves or requests adjustment
 
-**Postconditions:** Tensions adjusted with immediate feedback
+**Postconditions:** Button matches soul, not "better" than reference
 **Acceptance Criteria:**
-- [ ] Sliders affect CSS variables in real-time
-- [ ] Preview shows actual component behavior
-- [ ] Presets can be saved
+- [ ] Generated output respects Fidelity Ceiling
+- [ ] Validation agent flags violations
+- [ ] No mesh gradients, 3D transforms, or forbidden techniques
 
 ---
 
-#### UC-3: Declare Sync Strategy for Novel Feature
+#### UC-3: Validate Fidelity Compliance
 
 **Actor:** Design Engineer
-**Preconditions:** Building feature with unclear sync requirements
+**Preconditions:** UI generated, Fidelity Ceiling defined
 **Flow:**
-1. Interaction Router cannot classify keywords
-2. System prompts for explicit declaration
-3. User selects: CRDT, LWW, or Server-Tick
-4. System registers declaration in config
-5. Future uses of this pattern auto-classify
+1. Run `/validate`
+2. Validating agent checks against Gold Standard
+3. Agent flags any violations (too many gradient stops, excessive animation)
+4. User reviews violations
+5. Fix or request exception via Taste Owner
 
-**Postconditions:** Novel feature has explicit sync strategy
+**Postconditions:** Fidelity compliance verified
 **Acceptance Criteria:**
-- [ ] Unknown interactions require declaration (no guessing)
-- [ ] Declaration persisted for future reference
-- [ ] Warnings shown if strategy mismatched
+- [ ] All constraint violations flagged
+- [ ] Forbidden techniques blocked
+- [ ] Exception path available for approved cases
 
 ---
 
-#### UC-4: Enforce 3:1 Paper Cut Ratio
+#### UC-4: Challenge an Integrity Claim
 
-**Actor:** Design Engineer
-**Preconditions:** Feature PR submitted
+**Actor:** Taste Owner
+**Preconditions:** Change deployed claiming "Integrity" status
 **Flow:**
-1. Gardener bot analyzes PR
-2. Counts paper cuts fixed vs features added
-3. Posts PR comment with ratio analysis
-4. If ratio < 3:1, suggests paper cuts to fix
-5. Merge decision remains human
+1. Change auto-deploys (Integrity claims are fast-tracked)
+2. Change appears in Challenge Dashboard
+3. Taste Owner reviews and flags as "Content" (not Integrity)
+4. Change immediately reverts
+5. Deployer loses Trust Score
 
-**Postconditions:** Quality ratio visible, not blocked
+**Postconditions:** False Integrity claim reverted, Trust Score adjusted
 **Acceptance Criteria:**
-- [ ] PR comment shows paper cut analysis
-- [ ] Suggestions link to specific paper cuts
-- [ ] No blocking—advisory only
+- [ ] Challenge Period active for 24 hours
+- [ ] Taste Owner can flag Content vs Integrity
+- [ ] Trust Score decreases on false claims
+- [ ] Immediate revert on Content flag
 
 ---
 
 ## Functional Requirements
 
-### FR-1: Material Core
+### FR-1: Kernel Layer (Immutable)
 
 **Priority:** P0 (Must Have)
-**Description:** Define UI physics, not just styles. Three materials with distinct behaviors.
+**Description:** Immutable physics primitives that define the laws of the UI universe. Cannot be changed after `/codify --lock`.
 
-**Materials:**
+**Files:**
+- `sigil-mark/kernel/physics.yaml` — Light, Weight, Motion, Feedback primitives
+- `sigil-mark/kernel/sync.yaml` — CRDT, LWW, Server-Tick definitions
+- `sigil-mark/kernel/fidelity-ceiling.yaml` — Gold Standard constraints
 
-| Material | Feel | Physics | Use For |
-|----------|------|---------|---------|
-| **Glass** | Light, translucent | Refraction, blur, depth parallax | Exploratory, discovery |
-| **Clay** | Warm, tactile | Weight, soft shadows, spring motion | Critical actions, marketing |
-| **Machinery** | Instant, precise | Zero-latency, step transitions | Command palettes, data tables |
+**Physics Primitives:**
+
+| Category | Primitives |
+|----------|------------|
+| **Light** | refract, diffuse, flat, reflect |
+| **Weight** | weightless, light, heavy, none |
+| **Motion** | instant, linear, ease, spring, step, deliberate |
+| **Feedback** | none, highlight, lift, depress, glow, ripple, pulse, xp_drop |
+| **Surface** | transparent, translucent, solid, textured |
 
 **Behavior:**
-- Auto-detect material from zone (configurable in `.sigilrc.yaml`)
-- Component-level override available
-- Material blending rules: Auto-detect hierarchy (container/overlay relationships)
-- Each material has forbidden patterns (e.g., Machinery forbids bounce effects)
+- Kernel is **IMMUTABLE** after `/codify --lock`
+- Materials compose kernel primitives (cannot create new physics)
+- Lock timestamp and locker recorded
 
 **Acceptance Criteria:**
-- [ ] Three materials implemented with distinct physics
-- [ ] Zone-to-material mapping configurable
-- [ ] Blending rules auto-detected for overlays
-- [ ] Forbidden patterns warn, not block
+- [ ] Physics primitives defined with CSS templates
+- [ ] Sync strategies defined with UI behavior
+- [ ] Fidelity constraints block forbidden techniques
+- [ ] Lock mechanism prevents modification
 
 ---
 
-### FR-2: Interaction Router
+### FR-2: Fidelity Ceiling
+
+**Priority:** P0 (Must Have)
+**Description:** Block outputs that exceed the Gold Standard. "Better" is often "worse."
+
+**Constraints:**
+
+| Category | Limit | Forbidden |
+|----------|-------|-----------|
+| **Gradients** | Max 2 stops | Mesh, conic with >3 stops |
+| **Shadows** | Max 3 layers | Colored shadows, inset on buttons |
+| **Animation** | Max 800ms | 3D transforms, particles, confetti (unless approved) |
+| **Typography** | Max 2 font families | Decorative fonts in UI, <12px fonts |
+| **Borders** | Max 2px width | Dashed, dotted, gradient borders |
+| **Border Radius** | Max 16px | Asymmetric radius |
+
+**Agent Instruction:**
+```yaml
+instruction: |
+  You are an apprentice in {{era}}.
+  You do not know what {{forbidden_techniques}} are.
+  If your output looks "better" than the Gold Standard, it is WRONG.
+```
+
+**Forbidden Techniques:**
+- Ambient Occlusion
+- Mesh Gradients
+- 3D Transforms
+- Particle Systems
+- Motion Blur
+- Morphing Animations
+- Glassmorphism with grain
+- Claymorphism
+- Neumorphism
+
+**Acceptance Criteria:**
+- [ ] Agent instruction injected with forbidden techniques
+- [ ] Validation detects constraint violations
+- [ ] Forbidden patterns blocked, not just warned
+- [ ] Marketing zone has relaxed constraints
+
+---
+
+### FR-3: Material Core
+
+**Priority:** P0 (Must Have)
+**Description:** Three materials that compose kernel primitives.
+
+**Materials:**
+
+| Material | Primitives | Use For |
+|----------|------------|---------|
+| **Glass** | light: refract, weight: weightless, motion: ease, feedback: glow | Exploratory, discovery |
+| **Clay** | light: diffuse, weight: heavy, motion: spring, feedback: lift/depress | Critical actions, marketing |
+| **Machinery** | light: flat, weight: none, motion: instant, feedback: highlight | Command palettes, data tables |
+
+**Behavior:**
+- Materials compose kernel primitives (not custom physics)
+- Zone-to-material mapping in `.sigilrc.yaml`
+- Each material has forbidden patterns
+- Custom materials via `/material` register
+
+**Acceptance Criteria:**
+- [ ] Three materials with distinct physics compositions
+- [ ] Zone-to-material mapping configurable
+- [ ] Forbidden patterns enforced per material
+- [ ] Custom material registration available
+
+---
+
+### FR-4: Interaction Router
 
 **Priority:** P0 (Must Have)
 **Description:** Map sync strategy to interaction intent, not data type.
 
 **Strategies:**
 
-| Strategy | When | UI Feedback |
-|----------|------|-------------|
-| **CRDT** | Collaborative text | Presence cursors, subtle sync indicator |
-| **LWW** | Property state | Optimistic (instant), no sync indicator |
-| **Server-Tick** | High stakes | Pending state, confirmation animation |
+| Strategy | Use Case | UI Behavior |
+|----------|----------|-------------|
+| **server_tick** | Money, trades, inventory | NEVER optimistic, show pending |
+| **crdt** | Documents, chat, comments | Optimistic, show presence |
+| **lww** | Preferences, toggles, positions | Instant local, background sync |
+| **local_only** | Modals, dropdowns, hover | No sync needed |
+
+**Keyword Classification:**
+
+| Strategy | Keywords |
+|----------|----------|
+| server_tick | trade, transfer, buy, sell, claim, money, wallet, health, inventory, payment |
+| crdt | edit, type, write, comment, message, document, collaborative |
+| lww | move, toggle, select, preference, position, setting |
 
 **Behavior:**
-- Keyword classification for common patterns
-- **Unknown interactions require explicit declaration** (no guessing)
-- Server-tick rate is operation-severity based (configurable per risk level)
-- Confirmation animation is material-dependent (not always XP-drop style)
+- Unknown interactions require explicit declaration (no guessing)
+- Server-tick NEVER uses optimistic UI
+- Confirmation animation is material-dependent
 
 **Acceptance Criteria:**
 - [ ] Common patterns auto-classified by keywords
@@ -326,51 +479,49 @@ A Soul Engine where:
 
 ---
 
-### FR-3: Tension System
+### FR-5: Tension System
 
 **Priority:** P0 (Must Have)
-**Description:** Real-time adjustable feel parameters with immediate preview.
+**Description:** Real-time adjustable feel parameters.
 
 **Tensions (0-100 each):**
 
 | Tension | Low | High | Affects |
 |---------|-----|------|---------|
-| **Playfulness** | Serious, professional | Playful, fun | Animation bounce, color saturation, border radius |
-| **Weight** | Light, airy | Heavy, grounded | Shadow depth, font weight, padding |
-| **Density** | Spacious, minimal | Dense, information-rich | Spacing, font size, information per screen |
-| **Speed** | Deliberate, measured | Instant, snappy | Transition duration, loading behavior |
+| **Playfulness** | Serious, professional | Playful, fun | Animation bounce, color saturation |
+| **Weight** | Light, airy | Heavy, grounded | Shadow depth, font weight |
+| **Density** | Spacious, minimal | Dense, rich | Spacing, information per screen |
+| **Speed** | Deliberate, measured | Instant, snappy | Transition duration |
 
 **Behavior:**
 - Tensions affect CSS variables in real-time
-- **Allow weird states** for innovative exploration
-- Presets available for established products (Linear, Airbnb, Nintendo, OSRS)
-- Soft constraints: no hard limits on combinations
+- Allow weird states for innovation
+- Presets for established products (Linear, Airbnb, Nintendo, OSRS)
 
 **Acceptance Criteria:**
 - [ ] Four tension sliders with 0-100 range
 - [ ] CSS variables update in real-time
-- [ ] Weird combinations allowed (high playfulness + high speed)
-- [ ] Presets available for common product styles
+- [ ] Weird combinations allowed
+- [ ] Presets available
 
 ---
 
-### FR-4: Gardener Protocol
+### FR-6: Gardener Protocol
 
 **Priority:** P1 (Should Have)
 **Description:** Maintain quality through continuous polish. 3:1 paper cuts to features.
 
 **Paper Cut Categories:**
-- Spacing drift (padding inconsistencies)
-- Color drift (hardcoded hex values)
-- Animation inconsistency (timing off-spec)
-- Component duplication (similar code)
-- Accessibility gaps (missing ARIA)
+- Spacing drift
+- Color drift
+- Animation inconsistency
+- Component duplication
+- Accessibility gaps
 
 **Behavior:**
-- **Design engineers adjudicate cross-boundary paper cuts** (no role separation)
 - Gardener bot posts PR comment with analysis
-- **Advisory, not blocking** — humans decide if debt is acceptable
-- Paper cut threshold configurable
+- Advisory, not blocking
+- Design engineers adjudicate cross-boundary paper cuts
 
 **Acceptance Criteria:**
 - [ ] Paper cuts detected automatically
@@ -380,126 +531,124 @@ A Soul Engine where:
 
 ---
 
-### FR-5: Convergence Studio
-
-**Priority:** P1 (Should Have)
-**Description:** Multi-role craft with role-per-session.
-
-**Roles:**
-
-| Role | Powers |
-|------|--------|
-| **Taste Owner** | Veto, tension control, override constraints |
-| **Designer** | Propose directions, create artifacts |
-| **Researcher** | Usability tests, user insight |
-| **Engineer** | Feasibility, performance |
-| **Gamifier** | Engagement loops, depth rewards |
-
-**Behavior:**
-- **Role-per-session** constrains context (e.g., "Today you're the Researcher")
-- One person can hold multiple roles across sessions
-- Small teams (2 people) can still use all roles
-- Phases: Diverge → Converge → Polish → Validate
-
-**Acceptance Criteria:**
-- [ ] Roles defined with clear powers
-- [ ] Session can declare active role
-- [ ] Role context injected into Claude prompts
-- [ ] Role switching logged
-
----
-
-### FR-6: Soul Binder (Updated)
+### FR-7: Taste Owner Governance
 
 **Priority:** P0 (Must Have)
-**Description:** Bidirectional context injection with human override and local learning.
+**Description:** Visual decisions dictated by Taste Owners, never polled.
 
-**Injection Layers:**
-1. Material physics
-2. Essence invariants (values)
-3. Zone context
-4. Tension state
-5. Role context (from Convergence Studio)
+**Taste Owner Controls:**
+- All visual and "vibe" decisions
+- Material selection
+- Tension presets
+- Pattern approvals
+- Challenge Period flags
 
-**Human Override Behavior:**
-- Flag issues in generated output
-- Provide correction
-- **Correction saved to local context file** (e.g., `.sigil/corrections.yaml`)
-- Future prompts include corrections
-- Memory services for cross-session learning: future work
+**Challenge Period:**
+- Integrity changes auto-deploy
+- 24hr challenge window
+- Taste Owner can flag as "Content" → immediate revert
+- False Integrity claims reduce Trust Score
+
+**Trust Score:**
+- Initial: 100
+- On false Integrity: -10
+- On successful Integrity: +1
+- Minimum to deploy: 50
 
 **Acceptance Criteria:**
-- [ ] All layers injected into Claude context
-- [ ] Override workflow functional
-- [ ] Corrections persisted locally
-- [ ] Future prompts reference corrections
+- [ ] Taste Owners registered with scope
+- [ ] Challenge Period active for 24 hours
+- [ ] Trust Score system functional
+- [ ] Content flag causes immediate revert
 
 ---
 
-### FR-7: Founder Mode (Updated)
+### FR-8: Greenlight Polling (Concepts Only)
 
 **Priority:** P1 (Should Have)
-**Description:** Full override capability with guardrails.
+**Description:** Community polls for concepts, never pixels.
 
-**Behavior:**
-- **Pair required**: Founder Mode requires a second Taste Owner to confirm
-- Scope limits: Can override components but not global invariants (accessibility, security)
-- All overrides logged to audit trail
-- No cooling-off period for solo action (pair requirement handles this)
+**What Gets Polled:**
+- "Should we build feature X?" (70% threshold)
+- "Should we ship feature X?" (70% threshold)
+- Major direction changes
+
+**What NEVER Gets Polled:**
+- Colors, fonts, animation timing
+- Border radius, spacing, shadows
+- Any visual decision
 
 **Acceptance Criteria:**
-- [ ] Founder Mode requires second Taste Owner
-- [ ] Global invariants cannot be overridden
-- [ ] Audit trail captures all overrides
-- [ ] Clear UI for pair confirmation
+- [ ] Poll command available for concepts
+- [ ] 70% threshold enforced
+- [ ] Visual decisions blocked from polling
+- [ ] Poll results recorded
 
 ---
 
-### FR-8: Governance Model (Updated)
-
-**Priority:** P1 (Should Have)
-**Description:** Layered authority with Visual Lock and qualitative feedback.
-
-**Visual Lock:**
-- Visuals are NEVER polled (design-by-committee kills quality)
-- **Split rule: WCAG compliance is mandatory, aesthetics are Taste Owner decision**
-- Accessibility requirements bypass Visual Lock
-
-**Polling for Small Communities:**
-- **Qualitative over quantitative** for communities <1000 users
-- Replace polls with user interviews and feedback synthesis
-- Only use binding polls when community reaches critical mass
-
-**Acceptance Criteria:**
-- [ ] Visual Lock implemented with accessibility exception
-- [ ] Qualitative feedback tools for small communities
-- [ ] Binding polls only for strategic decisions at scale
-
----
-
-### FR-9: Artifact Workbench
+### FR-9: HUD Overlay
 
 **Priority:** P0 (Must Have)
-**Description:** Standalone NextJS app for previewing components with tension controls.
-
-**Form:**
-- **Standalone NextJS app bootstrapped per repo**
-- HUD tool handles settings edits
-- Workbench focuses on component/flow preview
-- **Sandbox mode** for non-technical stakeholders (experiment without persisting)
+**Description:** Lightweight overlay for tension controls and material preview. Replaces standalone Workbench app.
 
 **Features:**
-- Live preview with hot reload
 - Tension sliders with immediate effect
 - Material selection override
-- Component library browser
-- Flow visualization
+- Fidelity validation status
+- Paper cut indicator
+- Sandbox mode for stakeholders
+
+**Behavior:**
+- Overlay on existing app (not separate app)
+- Toggleable via keyboard shortcut
+- Changes persist or sandbox (configurable)
 
 **Acceptance Criteria:**
-- [ ] NextJS app template created
-- [ ] Bootstrapping script for new repos
-- [ ] Sandbox mode for stakeholders
-- [ ] HUD separate for settings edits
+- [ ] HUD overlay toggleable
+- [ ] Tension sliders functional
+- [ ] Sandbox mode available
+- [ ] No separate app required
+
+---
+
+## The 8 Agents
+
+| # | Agent | Role | Command |
+|---|-------|------|---------|
+| 1 | envisioning-soul | Soul Keeper | `/envision` |
+| 2 | codifying-materials | Material Smith | `/codify`, `/material` |
+| 3 | mapping-zones | Zone Architect | `/zone` |
+| 4 | crafting-components | Apprentice Smith | `/craft` |
+| 5 | validating-fidelity | Fidelity Guardian | `/validate` |
+| 6 | gardening-entropy | Gardener | `/garden` |
+| 7 | approving-patterns | Taste Owner | `/approve` |
+| 8 | greenlighting-concepts | Pollster | `/greenlight` |
+
+### Agent Descriptions
+
+**1. envisioning-soul (Soul Keeper)**
+Captures product soul through interview. Defines essence, anti-patterns, key moments.
+
+**2. codifying-materials (Material Smith)**
+Defines materials by composing kernel primitives. Locks kernel when ready.
+
+**3. mapping-zones (Zone Architect)**
+Configures path-based design zones. Maps zones to materials and sync strategies.
+
+**4. crafting-components (Apprentice Smith)**
+Generates UI components with context injection. Respects Fidelity Ceiling.
+
+**5. validating-fidelity (Fidelity Guardian)**
+Checks generated output against Gold Standard. Blocks violations.
+
+**6. gardening-entropy (Gardener)**
+Tracks paper cuts and enforces 3:1 rule. Posts PR analysis.
+
+**7. approving-patterns (Taste Owner)**
+Signs off on patterns. Dictates visual decisions.
+
+**8. greenlighting-concepts (Pollster)**
+Runs community polls for concepts only. Never polls pixels.
 
 ---
 
@@ -507,23 +656,24 @@ A Soul Engine where:
 
 ### Performance
 - Tension slider updates in <16ms (60fps)
-- Workbench preview hot reload in <500ms
+- HUD overlay hot reload in <100ms
 - Material detection in <100ms
-- No blocking on Claude cold start
+- Fidelity validation in <500ms
 
 ### Scalability
 - Support projects with 1000+ components
 - Tension system works with any component library
-- Material physics extensible (add new materials)
+- Custom materials via register command
 
 ### Security
 - No secrets in configuration files
 - Sandbox mode prevents accidental changes
 - Audit trail for all Taste Owner actions
+- Trust Score prevents abuse
 
 ### Reliability
 - Framework works offline after initial setup
-- Graceful degradation if Workbench unavailable
+- Graceful degradation if HUD unavailable
 - Local context survives Claude session restarts
 
 ### Compatibility
@@ -538,134 +688,145 @@ A Soul Engine where:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                         SIGIL SOUL ENGINE v0.4                              │
+│                        SIGIL SOUL ENGINE v11                                 │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │  THE WORKBENCH (Where Craft Happens)                                 │   │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌────────────┐  │   │
-│  │  │ Artifact    │  │ Tension     │  │ Founder     │  │ Gardener   │  │   │
-│  │  │ Preview     │  │ Controls    │  │ Mode        │  │ Dashboard  │  │   │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  └────────────┘  │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                              │                                               │
-│                              │ Soul Calls                                    │
-│                              ▼                                               │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │  THE SOUL LAYER (What Defines the Feel)                              │   │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌────────────┐  │   │
-│  │  │ Material    │  │ Soul        │  │ Interaction │  │ Convergence│  │   │
-│  │  │ Core        │  │ Binder      │  │ Router      │  │ Studio     │  │   │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  └────────────┘  │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                              │                                               │
-│                              │ Runtime Calls                                 │
-│                              ▼                                               │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │  THE RUNTIME (React Hooks + CSS Variables)                           │   │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                  │   │
-│  │  │ useTensions │  │ useMaterial │  │ useSync     │                  │   │
-│  │  │             │  │             │  │ Hooks       │                  │   │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘                  │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                                                                              │
+│  AGENTS (8)                                                                  │
+│  ┌────────────┐ ┌────────────┐ ┌────────────┐ ┌────────────┐               │
+│  │envisioning │ │codifying   │ │mapping     │ │crafting    │               │
+│  │-soul       │ │-materials  │ │-zones      │ │-components │               │
+│  └────────────┘ └────────────┘ └────────────┘ └────────────┘               │
+│  ┌────────────┐ ┌────────────┐ ┌────────────┐ ┌────────────┐               │
+│  │validating  │ │gardening   │ │approving   │ │greenlighting│              │
+│  │-fidelity   │ │-entropy    │ │-patterns   │ │-concepts   │               │
+│  └────────────┘ └────────────┘ └────────────┘ └────────────┘               │
+├─────────────────────────────────────────────────────────────────────────────┤
+│  SOUL LAYER                                                                  │
+│  Materials │ Zones │ Sync Router │ Context Injector │ Tensions              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│  KERNEL (Immutable)                                                          │
+│  Physics Primitives │ Sync Primitives │ Fidelity Ceiling                    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│  GOVERNANCE                                                                  │
+│  Taste Owner (dictates) │ Greenlight (polls concepts) │ Challenge Period    │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## The Six Systems
+## The Kernel
 
-### 1. Material Core
+The Kernel is the immutable foundation of Sigil. After `/codify --lock`, these files cannot be modified.
 
-**Purpose:** Define UI physics, not just styles.
+### Zone Model
 
-**Materials:**
-- **Glass**: Light, translucent (VisionOS, iOS) — exploratory zones
-- **Clay**: Warm, tactile (Airbnb, OSRS) — critical zones, trust
-- **Machinery**: Instant, precise (Linear, TE) — command palettes, data
+| Zone | Path | Owner | Permission |
+|------|------|-------|------------|
+| **Kernel** | `sigil-mark/kernel/` | Framework | IMMUTABLE after lock |
+| **Soul** | `sigil-mark/soul/` | Project | Read/Write |
+| **Workbench** | `sigil-mark/workbench/` | Project | Read/Write |
+| **Governance** | `sigil-mark/governance/` | Taste Owner | Dictate only |
 
-**Key Decision:** Material blending uses auto-detect hierarchy. Overlaid components inherit container material unless explicitly overridden.
+### Kernel Files
 
-### 2. Interaction Router
+**physics.yaml** — The laws of physics
+```yaml
+light:
+  refract: { blur: 20, opacity: 0.7 }
+  diffuse: { shadow_layers: 3 }
+  flat: { background: "#0A0A0A" }
 
-**Purpose:** Map sync strategy to interaction intent.
+weight:
+  weightless: { hover: "translateY(-1px)" }
+  heavy: { hover: "translateY(-3px)", shadow_scale: 1.3 }
+  none: { }
 
-**Strategies:**
-- **CRDT**: Collaborative text (Yjs)
-- **LWW**: Property state (optimistic)
-- **Server-Tick**: High stakes (pending → confirm)
+motion:
+  instant: { duration_ms: 0, easing: "step-end" }
+  spring: { duration_ms: 300, easing: "cubic-bezier(0.34, 1.56, 0.64, 1)" }
+  deliberate: { duration_ms: 800 }
 
-**Key Decision:** Unknown interactions require explicit declaration. No guessing.
+feedback:
+  highlight: { background: "rgba(255,255,255,0.05)" }
+  lift: { transform: "translateY(-2px)" }
+  xp_drop: { animation: "rise 1500ms ease-out" }
+```
 
-### 3. Tension System
+**sync.yaml** — Sync strategies
+```yaml
+server_tick:
+  keywords: [trade, transfer, buy, sell, money, wallet, health]
+  ui_behavior: "pending_state"
+  optimistic: false
 
-**Purpose:** Real-time adjustable feel parameters.
+crdt:
+  keywords: [edit, type, write, comment, document]
+  ui_behavior: "presence_cursors"
+  optimistic: true
 
-**Axes:** Playfulness, Weight, Density, Speed (0-100 each)
+lww:
+  keywords: [move, toggle, select, preference]
+  ui_behavior: "instant"
+  optimistic: true
+```
 
-**Key Decision:** Allow weird states for innovation. Presets help for established products.
+**fidelity-ceiling.yaml** — Quality limits
+```yaml
+constraints:
+  gradients:
+    max_stops: 2
+    forbidden: ["mesh", "conic with >3 stops"]
+  shadows:
+    max_layers: 3
+    forbidden: ["colored shadows"]
+  animation:
+    max_duration_ms: 800
+    forbidden: ["3D transforms", "particles", "confetti"]
 
-### 4. Gardener Protocol
-
-**Purpose:** Maintain quality through continuous polish.
-
-**Rule:** 3:1 paper cuts to features.
-
-**Key Decision:** Design engineers cross boundaries (no role separation for paper cut adjudication). CI is advisory only (PR comment, not blocking).
-
-### 5. Convergence Studio
-
-**Purpose:** Multi-role craft, not insular execution.
-
-**Roles:** Taste Owner, Designer, Researcher, Engineer, Gamifier
-
-**Key Decision:** Role-per-session constrains context. One person can hold multiple roles across sessions.
-
-### 6. Soul Binder
-
-**Purpose:** Bidirectional context injection with learning.
-
-**Key Decision:** Local context file for corrections. Memory services are future work.
+forbidden_techniques:
+  - "Ambient Occlusion"
+  - "Mesh Gradients"
+  - "3D Transforms"
+  - "Particle Systems"
+  - "Neumorphism"
+```
 
 ---
 
 ## Command Design
 
-### Progressive Disclosure
+### The 10 Commands
 
-Commands use progressive disclosure — show only relevant commands based on context.
+| Command | Agent | Purpose |
+|---------|-------|---------|
+| `/setup` | - | Initialize Sigil |
+| `/envision` | envisioning-soul | Capture product soul |
+| `/codify` | codifying-materials | Define materials, lock kernel |
+| `/material` | codifying-materials | Register custom material |
+| `/zone` | mapping-zones | Configure zones |
+| `/craft` | crafting-components | Generate with injection |
+| `/validate` | validating-fidelity | Check Fidelity Ceiling |
+| `/garden` | gardening-entropy | Manage paper cuts |
+| `/approve` | approving-patterns | Taste Owner sign-off |
+| `/greenlight` | greenlighting-concepts | Community polling |
+
+### Progressive Disclosure
 
 ```
 ┌─ Starting a project?
-│  └─ /setup → /envision → Creates Workbench + Claude context
+│  └─ /setup → /envision → /codify
 │
 ├─ During development?
-│  ├─ /craft → Get design guidance with material + tension context
-│  ├─ /workbench → Open artifact preview with tension controls
-│  └─ /role <name> → Set session role for focused exploration
+│  ├─ /craft → Generate with context injection
+│  ├─ /zone → Configure design zones
+│  └─ /validate → Check Fidelity Ceiling
 │
 ├─ Quality maintenance?
-│  ├─ /garden → See paper cut debt and suggestions
+│  ├─ /garden → See paper cut debt
 │  └─ /approve → Sign off on patterns
 │
 └─ Governance?
-   ├─ /consult → Start consultation (layer-appropriate)
-   └─ /founder → Pair-confirmed override
+   └─ /greenlight → Poll concepts (never pixels)
 ```
-
-### Core Commands (Consolidated)
-
-| Command | Purpose | Output |
-|---------|---------|--------|
-| `/setup` | Initialize Soul Engine + Workbench | Directory structure, NextJS app |
-| `/envision` | Capture soul (materials, tensions, values) | Config files, Claude context |
-| `/craft` | Get design guidance | Material + tension-aware recommendations |
-| `/workbench` | Open artifact preview | Browser opens Workbench app |
-| `/role` | Set session role | Role context injected |
-| `/garden` | Show paper cut analysis | Debt report with suggestions |
-| `/approve` | Human sign-off | Approval record |
-| `/founder` | Pair-confirmed override | Audit trail entry |
 
 ---
 
@@ -678,38 +839,36 @@ project/
 ├── CLAUDE.md                        # Claude context (auto-updated)
 ├── .sigilrc.yaml                    # Soul Engine configuration
 ├── .sigil-setup-complete            # Setup marker
-├── .sigil/
-│   └── corrections.yaml             # Local learning from overrides
-│
-├── sigil-workbench/                 # Standalone NextJS app
-│   ├── package.json
-│   ├── app/
-│   │   ├── page.tsx                 # Workbench home
-│   │   └── components/
-│   │       ├── TensionControls.tsx
-│   │       └── ArtifactPreview.tsx
-│   └── ...
 │
 └── sigil-mark/                      # Soul state
+    ├── kernel/                      # IMMUTABLE after lock
+    │   ├── physics.yaml            # Light, weight, motion, feedback
+    │   ├── sync.yaml               # CRDT, LWW, Server-Tick
+    │   └── fidelity-ceiling.yaml   # Gold Standard constraints
     ├── soul/
-    │   ├── material-core.yaml       # Material physics definitions
-    │   ├── interaction-router.yaml  # Sync strategy mappings
-    │   ├── essence.yaml             # Soul statement, invariants
-    │   ├── tensions.yaml            # Current tension state
-    │   └── paper-cuts.yaml          # Paper cut queue
+    │   ├── essence.yaml            # Soul statement, invariants
+    │   ├── materials.yaml          # Material compositions
+    │   ├── zones.yaml              # Path-based zones
+    │   └── tensions.yaml           # Current tension state
+    ├── workbench/
+    │   ├── paper-cuts.yaml         # Entropy tracking
+    │   └── fidelity-report.yaml    # Validation results
     ├── governance/
-    │   ├── charter.yaml             # Separation of powers
-    │   └── decisions/               # Decision records
-    └── inventory.md                 # Component inventory
+    │   ├── taste-owners.yaml       # Named authorities
+    │   ├── approvals.yaml          # Sign-off records
+    │   ├── polls.yaml              # Greenlight polls
+    │   └── archaeology.yaml        # Rejection history
+    ├── moodboard.md                # References, anti-patterns
+    └── gold-standard/              # Reference assets
 ```
 
 ### Configuration Format
 
 **`.sigilrc.yaml`:**
 ```yaml
-version: "0.4"
+version: "11"
 
-# Material defaults by zone
+# Design zones
 zones:
   critical:
     material: "clay"
@@ -730,74 +889,66 @@ zones:
     paths:
       - "src/features/discovery/**"
 
-# Tension presets
+  marketing:
+    material: "clay"
+    sync: "local_only"
+    paths:
+      - "src/features/landing/**"
+
+# Tension defaults
 tensions:
   default:
     playfulness: 50
     weight: 50
     density: 50
     speed: 50
-  presets:
-    - name: "linear"
-      playfulness: 20
-      weight: 30
-      density: 70
-      speed: 95
-    - name: "airbnb"
-      playfulness: 50
-      weight: 60
-      density: 40
-      speed: 50
 
 # Gardener settings
 gardener:
   paper_cut_threshold: 10
   three_to_one_rule: true
-  enforcement: "advisory"  # advisory | blocking (advisory only for now)
+  enforcement: "advisory"
 
 # Governance
 governance:
-  visual_lock: true
-  accessibility_override: true  # WCAG bypasses visual lock
-  polling_threshold: 1000       # Below this, use qualitative feedback
-
-# Founder Mode
-founder_mode:
-  pair_required: true
-  invariant_protection: ["accessibility", "security"]
+  challenge_period_hours: 24
+  polling_threshold: 70
+  trust_score_initial: 100
 ```
 
 ---
 
 ## Scope & Prioritization
 
-### Sprint 0: Claude Integration + Mounting (First Build)
+### Sprint 0: Kernel + Skills (First Build)
 
 **Priority:** P0 — This is the first thing to build.
 
-1. **Claude context update** — CLAUDE.md with Soul Engine prompt
-2. **Mounting procedure** — Script to bootstrap onto existing repo
-3. **See it in action** — Iterate after real usage
+1. **Kernel files** — physics.yaml, sync.yaml, fidelity-ceiling.yaml
+2. **8 agent skills** — Each with index.yaml and SKILL.md
+3. **Claude context update** — CLAUDE.md with Soul Engine prompt
+4. **Mount script** — Bootstrap onto existing repo
 
-### In Scope (v0.4 MVP)
+### In Scope (v11 MVP)
 
-1. **Material Core** — Three materials with physics
-2. **Interaction Router** — CRDT, LWW, Server-Tick with explicit declaration
-3. **Tension System** — Four axes with CSS variable output
-4. **Soul Binder** — Context injection with local learning
-5. **Workbench App** — NextJS app with tension controls
-6. **Gardener Protocol** — Paper cut analysis (PR comment only)
-7. **Founder Mode** — Pair-confirmed overrides
+1. **Kernel Layer** — Immutable physics primitives
+2. **Fidelity Ceiling** — Gold Standard constraints
+3. **Material Core** — Three materials composing kernel
+4. **Interaction Router** — CRDT, LWW, Server-Tick
+5. **Tension System** — Four axes with CSS variables
+6. **8 Agent Skills** — Full agent architecture
+7. **Taste Owner Governance** — Challenge Period + Trust Score
+8. **HUD Overlay** — Lightweight alternative to Workbench
 
-### In Scope (v0.5 Future)
+### In Scope (v12 Future)
 
-- **Convergence Studio** — Full role system
-- **Governance Model** — Qualitative feedback tools
+- **Greenlight Polling** — Full community polling system
 - **Memory Services** — Cross-session learning
 - **Framework Ports** — Vue, Svelte, vanilla
 
 ### Explicitly Out of Scope
 
+- **Standalone Workbench app**: Replaced by HUD overlay
 - **Figma sync**: Code is source of truth
 - **Automated blocking CI**: Advisory only
 - **Non-Claude agents**: Built for Claude
@@ -807,16 +958,16 @@ founder_mode:
 
 | Feature | Priority | Effort | Impact |
 |---------|----------|--------|--------|
+| Kernel Files | P0 | M | Critical |
+| 8 Agent Skills | P0 | L | Critical |
 | Claude Integration | P0 | S | Critical |
-| Mounting Procedure | P0 | S | Critical |
+| Fidelity Ceiling | P0 | M | High |
 | Material Core | P0 | M | High |
 | Tension System | P0 | M | High |
-| Interaction Router | P0 | M | High |
-| Workbench App | P0 | L | High |
-| Soul Binder (Local) | P0 | M | High |
+| HUD Overlay | P0 | M | High |
+| Taste Owner Governance | P1 | M | Medium |
 | Gardener Protocol | P1 | M | Medium |
-| Founder Mode | P1 | S | Medium |
-| Convergence Studio | P2 | M | Medium |
+| Greenlight Polling | P2 | M | Medium |
 
 ---
 
@@ -824,25 +975,26 @@ founder_mode:
 
 ### Launch Criteria
 
+- [ ] Kernel files created and lockable
+- [ ] 8 agent skills functional
 - [ ] Claude context correctly applies Material + Tension + Zone
-- [ ] Mounting procedure works on existing NextJS repo
-- [ ] Workbench app shows live preview with tension sliders
-- [ ] Server-tick interactions never use optimistic UI
-- [ ] Paper cut analysis posts to PRs
+- [ ] Fidelity Ceiling blocks forbidden techniques
+- [ ] HUD overlay functional with tension sliders
+- [ ] <30 min to first `/craft`
 
-### Failure Modes to Avoid (Interview-Derived)
+### Failure Modes to Avoid
 
-1. **Too complex to adopt** — Progressive disclosure essential
-2. **AI ignores context** — Context must be reliably injected
-3. **Taste gets diluted** — Founder Mode guardrails
-4. **Confusion on how to use** — Use-case paths, not documentation walls
+1. **AI ignores Fidelity Ceiling** — Context must include constraints
+2. **Too complex to adopt** — Progressive disclosure essential
+3. **Pixels get polled** — Strict separation of concept vs visual
+4. **Kernel not immutable** — Lock mechanism must work
 
 ### Post-Launch Success (30 days)
 
 - [ ] 3+ projects using Soul Engine
-- [ ] <30 min time to first /craft
+- [ ] **<30 min time to first /craft** (primary KPI)
+- [ ] 95% outputs pass Fidelity Ceiling
 - [ ] 3:1 paper cut ratio maintained
-- [ ] No server-tick optimistic UI bugs
 
 ---
 
@@ -850,53 +1002,39 @@ founder_mode:
 
 | Risk | Probability | Impact | Mitigation |
 |------|-------------|--------|------------|
-| Complexity overwhelming adoption | High | High | Progressive disclosure, use-case paths |
-| AI ignoring Sigil context | Medium | High | Robust context injection, testing |
-| Taste dilution from flexibility | Medium | Medium | Founder Mode guardrails, pair required |
-| Runtime performance overhead | Low | Medium | Optimize CSS variable updates |
+| AI ignores Fidelity Ceiling | Medium | High | Robust context injection, validation agent |
+| Fidelity Ceiling too restrictive | Medium | Medium | Exceptions for marketing zone |
+| Challenge Period slows deployment | Low | Medium | Trust Score fast-tracks experienced deployers |
+| Complexity overwhelming adoption | High | High | Progressive disclosure, 10 commands only |
 | React-only limits adoption | Medium | Low | OSS-extensible for community ports |
 
 ---
 
 ## Interview Findings
 
-The following decisions were made through in-depth interview:
+### v11 Update Decisions (2026-01-03)
 
-### Architecture Decisions
+1. **Primary KPI**: Adoption speed (<30 min to first /craft)
+2. **Stack**: React/NextJS/Tailwind/Shadcn opinionated (same as v0.4)
+3. **Workbench**: Simplified to HUD overlay (not standalone app)
+4. **Sprint 0**: Kernel files + 8 agent skills
 
-1. **v0.3 → v0.4 Merge**: Start fresh — v0.4 is Soul Engine with v0.3 concepts restructured
-2. **Material Conflicts**: Auto-detect hierarchy (container/overlay)
-3. **Tick Rate**: Operation-severity based (designer decides intent)
-4. **Tension Conflicts**: Allow weird states for innovation
+### Retained from v0.4
 
-### Team & Governance Decisions
+- Material physics (Glass, Clay, Machinery)
+- Tension system (Playfulness, Weight, Density, Speed)
+- Interaction Router (CRDT, LWW, Server-Tick)
+- Gardener Protocol (3:1 paper cuts)
+- React-first, port later
 
-5. **Paper Cut Adjudication**: Design engineers cross boundaries (no role separation)
-6. **Founder Mode**: Pair required (second Taste Owner confirms)
-7. **Small Teams**: Role-per-session constrains context
-8. **Accessibility vs Visual Lock**: WCAG mandatory, aesthetics = Taste Owner
-9. **Poll Threshold**: Qualitative over quantitative for <1000 users
+### New in v11
 
-### Technical Decisions
-
-10. **Unknown Sync**: Require explicit declaration (no guessing)
-11. **Workbench Form**: Standalone NextJS app per repo
-12. **AI Learning**: Local context file for now
-13. **Framework Scope**: React-first, port later
-14. **Stack**: NextJS/Tailwind/Shadcn opinionated, OSS-extensible
-15. **CI Integration**: PR comment only (advisory)
-
-### UX Decisions
-
-16. **Primary User**: Both AI and humans equally
-17. **XP Drop Style**: Abstract to material-dependent confirmation
-18. **Learning Curve**: Progressive disclosure like Runescape exploration
-19. **Commands**: Consolidate where possible, use-case paths
-20. **Stakeholder Access**: Sandbox mode (experiment without persisting)
-
-### First Build
-
-21. **Priority**: Claude integration and mounting procedure onto existing codebase
+- **Kernel Layer**: Immutable physics.yaml, sync.yaml, fidelity-ceiling.yaml
+- **Fidelity Ceiling**: "Mod Ghost Rule" — block outputs exceeding Gold Standard
+- **8 Named Agents**: Explicit agent architecture
+- **Challenge Period**: 24hr window with Trust Score
+- **HUD Overlay**: Replaces standalone Workbench app
+- **The Three Laws**: Fidelity Ceiling, Taste Owner Authority, Poll Concepts Not Pixels
 
 ---
 
@@ -905,29 +1043,22 @@ The following decisions were made through in-depth interview:
 ### A. Material Physics Reference
 
 **Glass:**
-```css
-background: rgba(255, 255, 255, 0.7);
-backdrop-filter: blur(20px) saturate(180%);
-border: 1px solid rgba(255, 255, 255, 0.2);
 ```
-Forbidden: Solid backgrounds, hard shadows
+Light: refract │ Weight: weightless │ Motion: ease │ Feedback: glow
+```
+Forbidden: Solid backgrounds, hard shadows, spring animations
 
 **Clay:**
-```css
-background: linear-gradient(135deg, #FAFAF9 0%, #F5F5F4 100%);
-border-radius: 16px;
-box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.08);
 ```
-Forbidden: Flat design, instant state changes
+Light: diffuse │ Weight: heavy │ Motion: spring │ Feedback: lift, depress
+```
+Forbidden: Flat design, instant transitions, pure gray backgrounds
 
 **Machinery:**
-```css
-background: #0A0A0A;
-color: #FAFAFA;
-border: 1px solid #2A2A2A;
-transition: none;
 ```
-Forbidden: Fade-in animations, bounce effects, loading spinners
+Light: flat │ Weight: none │ Motion: instant │ Feedback: highlight
+```
+Forbidden: Fade-in, bounce, spinners, gradients, shadows
 
 ### B. Tension Presets
 
@@ -938,33 +1069,44 @@ Forbidden: Fade-in animations, bounce effects, loading spinners
 | Nintendo | 80 | 50 | 30 | 60 |
 | OSRS | 30 | 70 | 60 | 40 |
 
-### C. Sync Strategy Keywords
+### C. Fidelity Ceiling Constraints
 
-**Server-Tick (highest priority):**
+| Category | Max | Forbidden |
+|----------|-----|-----------|
+| Gradient stops | 2 | Mesh, conic >3 stops |
+| Shadow layers | 3 | Colored, inset on buttons |
+| Animation duration | 800ms | 3D, particles, confetti |
+| Font families | 2 | Decorative in UI |
+| Border width | 2px | Dashed, dotted, gradient |
+| Border radius | 16px | Asymmetric |
+
+### D. Sync Strategy Keywords
+
+**server_tick (highest priority):**
 trade, transfer, buy, sell, attack, claim, money, currency, balance, wallet, health, hp, inventory, item, withdraw, deposit, payment, transaction, combat, competitive
 
-**CRDT:**
-edit, type, write, comment, message, document, text, draft, note, content, description, body, collaborative, shared
+**crdt:**
+edit, type, write, comment, message, document, text, draft, note, content, collaborative, shared
 
-**LWW:**
-move, toggle, select, preference, status, position, state, setting, config, option, choice, switch
+**lww:**
+move, toggle, select, preference, status, position, state, setting, config, option
 
-### D. References
+**local_only:**
+modal, dropdown, hover, tooltip, menu, popup
+
+### E. References
 
 **Product Inspirations:**
-- OSRS: Tick-based physics, community governance, nostalgia preservation
-- Linear: Local-first sync, keyboard-first UI, gardening over roadmaps
-- Airbnb 2025: Skeuomorphism as functional navigation, tactile warmth
-- Teenage Engineering: Muscle memory, analog friction, zero-latency
-- Uniswap v4: Hooks architecture, curated permissionless
+- OSRS: Tick-based physics, community governance, Mod Ghost Rule
+- Linear: Taste Owners, gardening over roadmaps
+- Airbnb: Skeuomorphism as functional navigation, tactile warmth
+- Teenage Engineering: Muscle memory, analog friction
 
-**Technical:**
-- Yjs: CRDT implementation
-- Framer Motion: Spring physics
-- CSS Custom Properties: Tension variables
+**The Green Pixel Incident:**
+OSRS players once rioted over a single green pixel. This is why visuals are NEVER polled. Taste Owners absorb the neuroticism so the product can ship.
 
 ---
 
 *Generated by PRD Architect Agent*
-*Interview Date: 2026-01-02*
-*Sigil v0.4: A Studio, not a Factory. Craft, not just consistency.*
+*v11 Update: 2026-01-03*
+*Sigil v11: Studio OS, Not Sovereign. Poll concepts, dictate pixels.*
