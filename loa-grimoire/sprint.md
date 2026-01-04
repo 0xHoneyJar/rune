@@ -1526,61 +1526,61 @@ Create the validation agents: validating-fidelity (Fidelity Guardian) and garden
 
 ### Deliverables
 
-- [ ] `.claude/skills/validating-fidelity/` with SKILL.md
-- [ ] `.claude/skills/gardening-entropy/` with SKILL.md
-- [ ] Fidelity validation engine (pattern matching)
-- [ ] `sigil-mark/workbench/fidelity-report.yaml` generation
-- [ ] `sigil-mark/workbench/paper-cuts.yaml` tracking
-- [ ] /validate and /garden commands
+- [x] `.claude/skills/validating-fidelity/` with SKILL.md
+- [x] `.claude/skills/gardening-entropy/` with SKILL.md
+- [x] Fidelity validation engine (pattern matching)
+- [x] `sigil-mark/workbench/fidelity-report.yaml` generation
+- [x] `sigil-mark/workbench/paper-cuts.yaml` tracking
+- [x] /validate and /garden commands
 
 ### Acceptance Criteria
 
 > From PRD: "Block outputs that exceed Gold Standard"
 > From SDD: "Pattern matchers for forbidden techniques"
 
-- [ ] `/validate` checks code against fidelity ceiling
-- [ ] Forbidden techniques blocked with error severity
-- [ ] Gradient/shadow/animation limits warned
-- [ ] Fidelity report generated with violation list
-- [ ] `/garden` tracks paper cuts with 3:1 ratio analysis
-- [ ] Paper cuts categorized and prioritized
+- [x] `/validate` checks code against fidelity ceiling
+- [x] Forbidden techniques blocked with error severity
+- [x] Gradient/shadow/animation limits warned
+- [x] Fidelity report generated with violation list
+- [x] `/garden` tracks paper cuts with 3:1 ratio analysis
+- [x] Paper cuts categorized and prioritized
 
 ### Technical Tasks
 
 **Task 16.1: validating-fidelity Skill (6 hours)**
-- [ ] Create index.yaml with validate command
-- [ ] Create SKILL.md with validation workflow
-- [ ] Implement checkGradients() function
-- [ ] Implement checkShadows() function
-- [ ] Implement checkAnimations() function
-- [ ] Implement checkForbiddenTechniques() function
-- [ ] Implement checkMaterial() function
-- [ ] Implement checkSync() function
+- [x] Create index.yaml with validate command
+- [x] Create SKILL.md with validation workflow
+- [x] Implement checkGradients() function
+- [x] Implement checkShadows() function
+- [x] Implement checkAnimations() function
+- [x] Implement checkForbiddenTechniques() function
+- [x] Implement checkMaterial() function
+- [x] Implement checkSync() function
 
 **Task 16.2: Pattern Matchers (4 hours)**
-- [ ] Create techniquePatterns regex map
-- [ ] Add pattern for 3D transforms
-- [ ] Add pattern for mesh gradients
-- [ ] Add pattern for particles/confetti
-- [ ] Add pattern for neumorphism
-- [ ] Add gradient stop counter
+- [x] Create techniquePatterns regex map
+- [x] Add pattern for 3D transforms
+- [x] Add pattern for mesh gradients
+- [x] Add pattern for particles/confetti
+- [x] Add pattern for neumorphism
+- [x] Add gradient stop counter
 
 **Task 16.3: Fidelity Report (3 hours)**
-- [ ] Create fidelity-report.yaml schema
-- [ ] Generate report with summary
-- [ ] Include violation details (file, line, type, severity)
-- [ ] Add suggestions for fixes
+- [x] Create fidelity-report.yaml schema
+- [x] Generate report with summary
+- [x] Include violation details (file, line, type, severity)
+- [x] Add suggestions for fixes
 
 **Task 16.4: gardening-entropy Skill (4 hours)**
-- [ ] Create index.yaml with garden command
-- [ ] Create SKILL.md with paper cut workflow
-- [ ] Implement paper cut detection
-- [ ] Track 3:1 ratio (fixes to features)
-- [ ] Generate paper-cuts.yaml
+- [x] Create index.yaml with garden command
+- [x] Create SKILL.md with paper cut workflow
+- [x] Implement paper cut detection
+- [x] Track 3:1 ratio (fixes to features)
+- [x] Generate paper-cuts.yaml
 
 **Task 16.5: Command Files (1 hour)**
-- [ ] Create /validate command
-- [ ] Create /garden command
+- [x] Create /validate command
+- [x] Create /garden command
 
 ### Dependencies
 
