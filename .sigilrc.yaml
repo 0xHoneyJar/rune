@@ -1,0 +1,168 @@
+# Sigil Configuration
+# Project-owned, never overwritten by framework updates
+
+version: "11.0"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PROJECT METADATA
+# ═══════════════════════════════════════════════════════════════════════════════
+
+project:
+  name: "Sigil Framework"
+  era: "2007"  # Fidelity ceiling era (OSRS reference)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# COMPONENT DISCOVERY
+# Where to find React/Vue/Svelte components
+# ═══════════════════════════════════════════════════════════════════════════════
+
+component_paths:
+  - "components/**"
+  - "src/components/**"
+  - "app/components/**"
+  - "packages/*/src/**"
+  - "src/features/**/components/**"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# DEFAULT MATERIAL
+# Which material to use when zone doesn't specify
+# ═══════════════════════════════════════════════════════════════════════════════
+
+defaults:
+  material: "clay"
+  sync: "lww"
+  tensions:
+    playfulness: 50
+    weight: 50
+    density: 50
+    speed: 50
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ZONE CONFIGURATION
+# Path-based design zones
+# ═══════════════════════════════════════════════════════════════════════════════
+
+zones:
+  critical:
+    paths:
+      - "src/features/checkout/**"
+      - "src/features/claim/**"
+      - "src/features/trade/**"
+      - "src/features/wallet/**"
+    material: "clay"
+    sync: "server_tick"
+    motion: "deliberate"
+    patterns:
+      prefer:
+        - "deliberate-entrance"
+        - "confirmation-flow"
+        - "pending-state"
+      warn:
+        - "instant-transition"
+        - "optimistic-update"
+
+  transactional:
+    paths:
+      - "src/features/dashboard/**"
+      - "src/features/settings/**"
+      - "src/features/admin/**"
+    material: "machinery"
+    sync: "lww"
+    motion: "instant"
+    patterns:
+      prefer:
+        - "instant-feedback"
+        - "keyboard-navigation"
+
+  exploratory:
+    paths:
+      - "src/features/explore/**"
+      - "src/features/browse/**"
+      - "src/features/discover/**"
+    material: "glass"
+    sync: "lww"
+    motion: "flowing"
+    patterns:
+      prefer:
+        - "smooth-scroll"
+        - "hover-preview"
+
+  marketing:
+    paths:
+      - "src/features/landing/**"
+      - "src/features/marketing/**"
+      - "app/(marketing)/**"
+    material: "clay"
+    sync: "local_only"
+    motion: "expressive"
+    patterns:
+      prefer:
+        - "scroll-animation"
+        - "parallax"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TASTE OWNERS
+# Named authorities who dictate visual decisions
+# ═══════════════════════════════════════════════════════════════════════════════
+
+taste_owners:
+  - handle: "@zksoju"
+    name: "Design Lead"
+    scope: ["**/*"]
+    authority: ["materials", "tensions", "motion", "colors", "typography"]
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# GREENLIGHT CONFIGURATION
+# Community polling settings
+# ═══════════════════════════════════════════════════════════════════════════════
+
+greenlight:
+  enabled: true
+  threshold: 0.70  # 70% to pass
+  duration_days: 7
+  min_participation: 10
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# GARDENING CONFIGURATION
+# Paper cut tracking settings
+# ═══════════════════════════════════════════════════════════════════════════════
+
+gardening:
+  three_to_one_rule: true
+  debt_threshold: 10
+  auto_scan: true
+  scan_on_commit: false
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# REJECTIONS
+# Patterns that should trigger warnings
+# ═══════════════════════════════════════════════════════════════════════════════
+
+rejections:
+  - pattern: "Spinner"
+    reason: "Creates anxiety in critical zones"
+    exceptions: ["admin/**"]
+
+  - pattern: "optimistic"
+    reason: "Dangerous for server_tick sync strategy"
+    exceptions: []
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# INTEGRATIONS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+integrations:
+  loa:
+    enabled: true
+    auto_inject: true  # Inject sigil context during /implement
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ENFORCEMENT
+# How strict to be about violations
+# ═══════════════════════════════════════════════════════════════════════════════
+
+enforcement:
+  fidelity_ceiling: "warn"  # block | warn | disabled
+  sync_strategy: "block"     # Always block sync violations (safety)
+  invariants: "block"        # block | warn
+  paper_cuts: "warn"         # block | warn | disabled
