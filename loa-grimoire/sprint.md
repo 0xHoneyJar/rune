@@ -1612,59 +1612,59 @@ Create the governance agents: approving-patterns (Taste Owner) and greenlighting
 
 ### Deliverables
 
-- [ ] `.claude/skills/approving-patterns/` with SKILL.md
-- [ ] `.claude/skills/greenlighting-concepts/` with SKILL.md
-- [ ] `sigil-mark/governance/taste-owners.yaml`
-- [ ] `sigil-mark/governance/approvals.yaml`
-- [ ] `sigil-mark/governance/polls.yaml`
-- [ ] /approve and /greenlight commands
+- [x] `.claude/skills/approving-patterns/` with SKILL.md
+- [x] `.claude/skills/greenlighting-concepts/` with SKILL.md
+- [x] `sigil-mark/governance/taste-owners.yaml`
+- [x] `sigil-mark/governance/approvals.yaml`
+- [x] `sigil-mark/governance/greenlight.yaml`
+- [x] /approve and /greenlight commands
 
 ### Acceptance Criteria
 
 > From PRD: "Visuals dictated, never polled"
 > From PRD: "Poll concepts, not pixels"
 
-- [ ] Taste owners registered with scope (paths, domains)
-- [ ] `/approve` creates sign-off record
-- [ ] Approvals tracked with timestamp and owner
-- [ ] `/greenlight` creates concept poll (never visual)
-- [ ] Polls have 70% threshold
-- [ ] Visual decisions blocked from polling
+- [x] Taste owners registered with scope (paths, domains)
+- [x] `/approve` creates sign-off record
+- [x] Approvals tracked with timestamp and owner
+- [x] `/greenlight` creates concept poll (never visual)
+- [x] Polls have 70% threshold
+- [x] Visual decisions blocked from polling
 
 ### Technical Tasks
 
 **Task 17.1: approving-patterns Skill (4 hours)**
-- [ ] Create index.yaml with approve command
-- [ ] Create SKILL.md with approval workflow
-- [ ] Implement sign-off recording
-- [ ] Add timestamp and owner tracking
-- [ ] Output to approvals.yaml
+- [x] Create index.yaml with approve command
+- [x] Create SKILL.md with approval workflow
+- [x] Implement sign-off recording
+- [x] Add timestamp and owner tracking
+- [x] Output to approvals.yaml
 
 **Task 17.2: Taste Owners YAML (2 hours)**
-- [ ] Create taste-owners.yaml schema
-- [ ] Add owner registration (name, scope, placeholder)
-- [ ] Add domain authority mapping
+- [x] Create taste-owners.yaml schema
+- [x] Add owner registration (name, scope, placeholder)
+- [x] Add domain authority mapping
 
 **Task 17.3: greenlighting-concepts Skill (4 hours)**
-- [ ] Create index.yaml with greenlight command
-- [ ] Create SKILL.md with polling workflow
-- [ ] Implement concept validation (block visual polls)
-- [ ] Add poll template generation
-- [ ] Output to polls.yaml
+- [x] Create index.yaml with greenlight command
+- [x] Create SKILL.md with polling workflow
+- [x] Implement concept validation (block visual polls)
+- [x] Add poll template generation
+- [x] Output to greenlight.yaml
 
-**Task 17.4: Polls YAML (2 hours)**
-- [ ] Create polls.yaml schema
-- [ ] Track poll question, threshold, status
-- [ ] Record votes and result
+**Task 17.4: Greenlight YAML (2 hours)**
+- [x] Create greenlight.yaml schema
+- [x] Track poll question, threshold, status
+- [x] Record votes and result
 
 **Task 17.5: Archaeology (2 hours)**
-- [ ] Create archaeology.yaml for rejection history
-- [ ] Track rejected patterns with rationale
-- [ ] Link to decision records
+- [x] Create archaeology.yaml for rejection history
+- [x] Track rejected patterns with rationale
+- [x] Link to decision records
 
 **Task 17.6: Command Files (1 hour)**
-- [ ] Create /approve command
-- [ ] Create /greenlight command
+- [x] Create /approve command
+- [x] Create /greenlight command
 
 ### Dependencies
 

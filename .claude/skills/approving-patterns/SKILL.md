@@ -1,220 +1,316 @@
----
-zones:
-  state:
-    paths:
-      - sigil-mark/rules.md
-      - sigil-mark/moodboard.md
-      - .sigilrc.yaml
-    permission: read-write
-  config:
-    paths:
-      - .sigil-setup-complete
-    permission: read
----
+# Sigil Agent: Approving Patterns
 
-# Sigil Approving Skill
+> "Quality doesn't come from committees. It comes from individuals with taste."
 
-## Purpose
+## Role
 
-Record human sign-off on design patterns. Presents context for review and records approval in rules.md.
+**Taste Owner** — Dictates visual and vibe decisions. Does NOT poll. Signs off on patterns.
 
-## Pre-Flight Checks
+## Commands
 
-1. **Sigil Setup**: Verify `.sigil-setup-complete` exists
-2. **Rules Exist**: Verify `sigil-mark/rules.md` exists
-3. **Target Provided**: Ensure component/pattern name was given
+```
+/approve [pattern]         # Sign off on pattern
+/approve --list            # List pending approvals
+/approve --history         # Show approval history
+/approve --challenge [id]  # Challenge an integrity change
+/approve --unlock [id]     # Unlock approved pattern for modification
+```
+
+## Outputs
+
+| Path | Description |
+|------|-------------|
+| `sigil-mark/governance/taste-owners.yaml` | Owner registry |
+| `sigil-mark/governance/approvals.yaml` | Approval records |
+
+## The Taste Owner Protocol
+
+This is the "Dictatorship of Craft" model:
+
+| Committees Decide | Taste Owners Dictate |
+|-------------------|----------------------|
+| "Should we build X?" | "What color is X?" |
+| "Ship this feature?" | "How bouncy is the animation?" |
+| Major direction | Every visual detail |
+
+**Taste Owners are named individuals, not anonymous voters.**
 
 ## Workflow
 
-### Step 1: Parse Target
-
-Extract the component or pattern name from the argument:
-- `Button` → Component approval
-- `"motion in checkout"` → Pattern approval
-- `CartSummary` → Component approval
-
-### Step 2: Load Context
-
-Read relevant context:
+### Pattern Approval
 
 ```
-sigil-mark/rules.md
-├── Find rules mentioning target
-├── Check Components section
-└── Check Motion section
+/approve "Primary button style"
 
-sigil-mark/moodboard.md
-├── Check if target mentioned
-└── Get feel context
+Pattern Approval Request
 
-.sigilrc.yaml
-├── Check zones for target path
-└── Get pattern preferences
+Pattern: Primary button style
+Scope: **/Button.tsx, **/PrimaryButton.tsx
+
+Current implementation:
+  bg-blue-600 hover:bg-blue-700
+  shadow-md hover:shadow-lg
+  transition-all duration-300
+  spring easing
+  rounded-lg
+
+Checks:
+  Material: clay
+  Physics: spring motion
+  Fidelity: within ceiling
+  Zone compliance: all zones
+
+As Taste Owner, do you approve this pattern?
+
+[approve] [reject] [modify]
 ```
 
-### Step 3: Present for Review
+### Approval Record
 
-Format:
+When approved:
+```yaml
+# Added to sigil-mark/governance/approvals.yaml
 
-```markdown
-## Approving: [Target]
-
-### Applicable Rules
-
-[List any rules from rules.md that mention or apply to target]
-
-### Zone Context
-
-Zone: [zone if determinable]
-Motion: [motion style]
-Preferred: [patterns]
-Avoid: [patterns]
-
-### Current Status
-
-[Check if already approved in Approvals section]
+approvals:
+  - id: "APPR-2025-001"
+    pattern: "Primary button style"
+    scope: "**/Button.tsx"
+    approved_by: "@taste-owner"
+    approved_at: "2025-01-15T10:30:00Z"
+    material: "clay"
+    notes: "Blue gradient with spring animation"
+    locked: true
 ```
 
-### Step 4: Collect Decision
+### Rejection
+
+When rejected:
+```
+/approve "Animated card hover"
+
+Pattern Approval Request
+
+Pattern: Animated card hover
+Current: 3D rotate on hover
+
+REJECTED
+
+Reason: "3D transforms violate fidelity ceiling. Use lift instead."
+
+Suggested modification:
+- Remove: transform: rotateY(5deg)
+- Add: transform: translateY(-4px)
+- Add: box-shadow increase
+
+Re-submit after modification.
+```
+
+### Challenge Period
+
+For integrity changes (auto-deployed):
+
+```
+/approve --challenge INTG-001
+
+Challenge: INTG-001
+
+Change: "Fixed button alignment"
+Deployed: 2 hours ago
+Claimed as: Integrity (no poll needed)
+
+Review the change:
+- Modified: src/components/Button.tsx
+- Diff: [show diff]
+
+Is this truly Integrity or is it Content?
+
+INTEGRITY criteria:
+- Bug fix with no visual change
+- Performance improvement
+- Security patch
+- Accessibility fix
+
+CONTENT criteria:
+- New visual element
+- Changed animation
+- Layout change
+- New feature
+
+Your judgment: [integrity] [content]
+```
+
+If challenged as Content:
+```
+CHALLENGE UPHELD
+
+Change INTG-001 has been REVERTED.
+
+Reason: Taste Owner ruled this as Content, not Integrity.
+
+The change must now go through:
+1. Taste Owner approval, OR
+2. Greenlight poll (if major)
+
+Deployer trust score: 90 -> 80 (-10)
+```
+
+## Authority Scope
+
+Taste Owners have absolute authority over:
 
 ```yaml
-question: "Approve [target] as matching your design system?"
-header: "Approve"
-options:
-  - label: "Approve"
-    description: "Confirm this follows the design system"
-  - label: "Reject"
-    description: "Flag for revision"
-  - label: "Skip"
-    description: "Review later"
-multiSelect: false
+visual_authority:
+  - "Colors and palettes"
+  - "Typography choices"
+  - "Animation timing and easing"
+  - "Border radius and spacing"
+  - "Shadow depth and style"
+  - "Icon style and weight"
+  - "Motion style"
+  - "Component aesthetics"
+  - "Interaction feel"
+  - "Micro-interactions"
+  - "Loading states"
+  - "Error states"
+  - "Empty states"
 ```
 
-**If Approved**, ask for approver:
+Taste Owners do NOT control:
 
 ```yaml
-question: "Who is approving this?"
-header: "Approver"
-options:
-  - label: "Me (developer)"
-    description: "Self-approval for iteration"
-  - label: "Design lead"
-    description: "Formal design approval"
-  - label: "Team consensus"
-    description: "Approved by team"
-  - label: "I'll specify"
-    description: "Enter custom name"
-multiSelect: false
+requires_poll:
+  - "New major features"
+  - "Feature removal"
+  - "Product direction"
+  - "Pricing changes"
 ```
 
-**If Rejected**, ask for reason:
+## Trust Score System
 
 ```yaml
-question: "What needs to change?"
-header: "Feedback"
-options:
-  - label: "Motion timing"
-    description: "Animation speed or easing"
-  - label: "Visual style"
-    description: "Colors, spacing, typography"
-  - label: "Pattern choice"
-    description: "Wrong pattern for context"
-  - label: "I'll specify"
-    description: "Custom feedback"
-multiSelect: true
+trust_score:
+  initial: 100
+
+  events:
+    false_integrity_claim: -10
+    successful_integrity: +1
+    approved_pattern_reverted: -5
+
+  thresholds:
+    can_deploy: 50
+    can_approve: 70
+    full_authority: 90
 ```
 
-### Step 5: Update rules.md
+## Bulk Approval
 
-#### For Approval
-
-Find or create the Approvals section:
-
-```markdown
-## Approvals
-
-| Component | Approved | Date | By |
-|-----------|----------|------|----|
-| [target] | Yes | [date] | [approver] |
-```
-
-If target already exists, update the row.
-
-#### For Rejection
-
-Add to a Pending Review section:
-
-```markdown
-## Pending Review
-
-| Component | Status | Date | Notes |
-|-----------|--------|------|-------|
-| [target] | Needs revision | [date] | [feedback] |
-```
-
-### Step 6: Confirm
+For reviewing multiple patterns:
 
 ```
-Approval Recorded!
+/approve --list
 
-Component: [target]
-Status: [Approved/Rejected/Skipped]
-Date: [date]
-By: [approver]
+Pending Approvals:
 
-Updated: sigil-mark/rules.md
+1. [PENDING] Card shadow system
+   Scope: **/Card.tsx
+   Submitted: 2 days ago
+
+2. [PENDING] Modal backdrop blur
+   Scope: **/Modal.tsx
+   Submitted: 1 day ago
+
+3. [PENDING] Toast animation
+   Scope: **/Toast.tsx
+   Submitted: today
+
+Review all? [1/2/3/all/skip]
 ```
 
-## Handling Existing Approvals
+## Locked Patterns
 
-If target is already in Approvals:
+Approved patterns are LOCKED. To modify:
+
+```
+/approve --unlock "Primary button style"
+
+UNLOCK REQUEST
+
+Pattern: Primary button style
+Approved: 2025-01-15
+By: @taste-owner
+
+Unlocking allows modification but:
+- Requires re-approval after changes
+- Logs the unlock event
+- Notifies original approver
+
+Reason for unlock:
+> Brand refresh requires color change
+
+[unlock] [cancel]
+```
+
+## Integration with /craft
+
+When `/craft` generates a component:
+
+1. Check if pattern exists in approvals
+2. If approved: use approved pattern
+3. If not approved: generate and flag for review
+
+```python
+def check_approval(component_type, zone):
+    approvals = load_approvals()
+
+    for approval in approvals:
+        if matches(component_type, approval.scope):
+            return {
+                "approved": True,
+                "pattern": approval.pattern,
+                "use_this": approval.implementation
+            }
+
+    return {
+        "approved": False,
+        "requires_review": True
+    }
+```
+
+## Taste Owner Registration
 
 ```yaml
-question: "[Target] was already approved on [date]. What would you like to do?"
-header: "Existing"
-options:
-  - label: "Re-approve"
-    description: "Update with new approval"
-  - label: "Revoke"
-    description: "Remove approval"
-  - label: "Keep existing"
-    description: "Leave as is"
-multiSelect: false
+# sigil-mark/governance/taste-owners.yaml
+
+version: "1.0"
+
+owners:
+  - name: "@taste-owner"
+    scope:
+      - "**/*.tsx"
+      - "**/*.css"
+    authority: "full"
+    trust_score: 100
+    registered_at: "2025-01-15"
 ```
 
-## Approvals Table Format
+## Success Criteria
 
-```markdown
-## Approvals
-
-| Component | Approved | Date | By |
-|-----------|----------|------|----|
-| Button | Yes | 2026-01-01 | Design lead |
-| Modal | Yes | 2026-01-01 | Team consensus |
-| CartSummary | Yes | 2026-01-01 | Me (developer) |
-```
+- [ ] Taste Owners are registered
+- [ ] Approval workflow works
+- [ ] Challenge period enforced
+- [ ] Locked patterns protected
+- [ ] Trust scores tracked
+- [ ] Integration with /craft complete
 
 ## Error Handling
 
-| Error | Response |
-|-------|----------|
-| No target provided | "Please specify what to approve: `/approve Button`" |
-| rules.md not found | "No rules found. Run `/codify` first to create design rules." |
-| Target not found | Proceed anyway - can approve new patterns |
+| Situation | Response |
+|-----------|----------|
+| No taste owner registered | Prompt to register one |
+| Pattern not found | List similar patterns |
+| Insufficient trust score | Block action with explanation |
+| Challenge period expired | Cannot challenge |
 
-## Philosophy
+## Next Step
 
-> "Human accountability, not automated validation"
-
-This command does NOT:
-- Run automated checks
-- Validate code against rules
-- Block implementation
-
-This command DOES:
-- Present context for human review
-- Record the human decision
-- Create an audit trail
-- Enable iteration with self-approval
-
-The human is always accountable for design decisions.
+After `/approve`: Pattern is locked and enforced across codebase.
