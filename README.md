@@ -158,7 +158,7 @@ This is NOT a design problem. The delay IS the trust.
 
 Options:
 1. Accept the physics (recommended for money)
-2. Handoff to Loa: /consult "Should checkout be client_authoritative?"
+2. Handoff to Loa for architectural review (see Best Practice #6)
 3. Add loading feedback within physics constraints
 ```
 
@@ -220,16 +220,36 @@ Sigil handles design physics. When you hit structural issues, hand off to Loa:
 | Problem | Owner |
 |---------|-------|
 | "Button feels wrong" | Sigil (`/craft`) |
-| "Should checkout be optimistic?" | Loa (`/consult`) |
+| "Should checkout be optimistic?" | Loa (architectural decision) |
 | "Animation is too slow" | Sigil (`/craft`) |
-| "Do we need real-time updates?" | Loa (`/consult`) |
+| "Do we need real-time updates?" | Loa (architectural decision) |
 
-The handoff is explicit:
+**The handoff workflow:**
+
+When Sigil detects a structural issue, it generates a handoff document:
+
 ```
 /craft "checkout feels slow"
-→ DIAGNOSIS: This is architecture, not design
-→ Handoff: /consult "Evaluate sync strategy for checkout"
+
+DIAGNOSIS: Physics conflict detected.
+This is NOT a design problem—it's architecture.
+
+The claim button is in critical zone (server_authoritative).
+Changing this requires an architectural decision.
+
+HANDOFF TO LOA:
+1. Create: loa-grimoire/context/sigil-handoff.md
+2. Run: /plan-and-analyze
+3. Loa will evaluate sync strategy options
 ```
+
+The handoff document (`sigil-handoff.md`) contains:
+- Current physics constraints
+- The conflict detected
+- Options to evaluate
+- Impact of each option
+
+Loa ingests this via `/plan-and-analyze` and produces architectural recommendations.
 
 ## Quick Start
 
@@ -326,7 +346,8 @@ Physics requires pending state and discrete tick (600ms).
 This is NOT a design problem. This is architecture.
 
 Handoff to Loa:
-/consult "Evaluate if checkout should remain server_authoritative"
+→ Create loa-grimoire/context/sigil-handoff.md with conflict details
+→ Run /plan-and-analyze to evaluate sync strategy options
 ```
 
 ## Repository Structure
