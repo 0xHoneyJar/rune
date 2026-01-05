@@ -1,540 +1,517 @@
-# Sprint Plan: Sigil v0.5 — Design Physics Engine
+# Sprint Plan: Sigil v1.0
 
-**Version:** 0.5.0
-**Date:** 2026-01-04
-**Author:** Sprint Planner Agent
-**PRD Reference:** loa-grimoire/prd.md
-**SDD Reference:** loa-grimoire/sdd.md
-
----
-
-## Executive Summary
-
-Sigil v0.5 is a Design Physics Engine that gives AI agents physics constraints for consistent design decisions. This replaces v0.4 Soul Engine with a simpler, more focused architecture: 9 skills, 9 commands, physics enforcement.
-
-**Philosophy:** "Physics, not opinions. Constraints, not debates."
-
-**Key Concepts:**
-- Temporal Governor (discrete 600ms vs continuous 0ms)
-- Budgets (cognitive, visual, complexity)
-- Fidelity Ceiling (Mod Ghost Rule)
-- Hammer/Chisel toolkit (diagnose then execute)
-- Loa handoff (structural issues → Loa)
-
-**Total Sprints:** 6
-**Sprint Duration:** ~1 day each (solo developer with AI)
-**MVP:** Sprints 1-4
+**Version:** 1.0
+**Created:** 2026-01-04
+**Team:** Solo (Claude only)
+**Priority:** Core first, Workbench last
 
 ---
 
-## Sprint Overview
+## Overview
 
-| Sprint | Theme | Key Deliverables | Dependencies |
-|--------|-------|------------------|--------------|
-| 1 | Foundation | sigil-mark/ structure, core/ schemas | None |
-| 2 | Resonance | Materials, zones, tensions, templates | Sprint 1 |
-| 3 | Setup Flow | /sigil-setup, /envision commands | Sprint 2 |
-| 4 | Core Commands | /codify, /map, /craft with Hammer/Chisel | Sprint 3 |
-| 5 | Validation | /validate, /approve, /greenlight | Sprint 4 |
-| 6 | Maintenance | /garden, mount system, integration test | Sprint 5 |
+This plan implements Sigil v1.0 Design Physics Engine in 12 sprints. The architecture follows the SDD's four-layer model (Core → Resonance → Memory → Taste Key) with the Workbench as the final integration layer.
+
+### Sprint Sequence
+
+| Phase | Sprints | Focus |
+|-------|---------|-------|
+| Foundation | 1-2 | Project scaffold, state zone, core YAML schemas |
+| Core Engine | 3-5 | Physics validation, zone detection, materials |
+| Commands | 6-9 | 8 commands (/envision, /codify, /map, /craft, etc.) |
+| Toolkit | 10 | Hammer/Chisel diagnostic system |
+| Workbench | 11-12 | 4-panel tmux environment, scripts |
 
 ---
 
-## Sprint 1: Foundation & State Zone ✅ COMPLETED
+## Sprint 1: Project Scaffold & State Zone
 
-**Goal:** Create sigil-mark/ directory structure and core YAML schemas
+**Goal:** Create directory structure and core YAML templates
 
 ### Tasks
 
-#### S1-T1: Create State Zone Structure ✅
-**Description:** Create sigil-mark/ directory with all subdirectories
+- [ ] **S1-T1: Create sigil-mark directory structure**
+  - Create `sigil-mark/core/`, `sigil-mark/resonance/`, `sigil-mark/memory/`, `sigil-mark/taste-key/`
+  - Create subdirectories: `memory/eras/`, `memory/decisions/`, `memory/mutations/active/`, `memory/graveyard/`, `taste-key/rulings/`
+  - **Acceptance:** All directories exist per SDD §5.1
 
-**Acceptance Criteria:**
-- [x] `sigil-mark/core/` exists
-- [x] `sigil-mark/resonance/` exists
-- [x] `sigil-mark/memory/eras/` exists
-- [x] `sigil-mark/memory/decisions/` exists
-- [x] `sigil-mark/memory/mutations/active/` exists
-- [x] `sigil-mark/memory/graveyard/` exists
-- [x] `sigil-mark/taste-key/rulings/` exists
+- [ ] **S1-T2: Create core YAML templates**
+  - Create `sigil-mark/core/sync.yaml` with Temporal Governor schema
+  - Create `sigil-mark/core/budgets.yaml` with cognitive/visual/complexity limits
+  - Create `sigil-mark/core/fidelity.yaml` with Mod Ghost Rule ceiling
+  - Create `sigil-mark/core/lens.yaml` with HD/SD rendering layers
+  - **Acceptance:** All core YAML files valid, match SDD §4.1-4.4
 
-**Effort:** Small
+- [ ] **S1-T3: Create resonance YAML templates**
+  - Create `sigil-mark/resonance/essence.yaml` template (populated by /envision)
+  - Create `sigil-mark/resonance/materials.yaml` with clay/machinery/glass defaults
+  - Create `sigil-mark/resonance/zones.yaml` with 5 zone definitions
+  - Create `sigil-mark/resonance/tensions.yaml` with default sliders
+  - **Acceptance:** All resonance YAML files valid, match PRD §4.3
 
----
+- [ ] **S1-T4: Create .claude directory structure**
+  - Create `.claude/commands/` directory
+  - Create `.claude/skills/` directory
+  - Create `.claude/scripts/` directory
+  - **Acceptance:** Claude Code skill structure ready
 
-#### S1-T2: Implement Temporal Governor Schema ✅
-**Description:** Create sync.yaml with tick modes and authority
+- [ ] **S1-T5: Create mount-sigil.sh script**
+  - Implement directory creation
+  - Implement symlink setup for skills/commands/scripts
+  - Create `.sigil-setup-complete` marker
+  - Display next steps message
+  - **Acceptance:** Script runs in <30s, creates all required structure
 
-**Acceptance Criteria:**
-- [x] Discrete tick mode: 600ms, heavy, rhythmic
-- [x] Continuous tick mode: 0ms, instant, fluid
-- [x] Server-authoritative: NO optimistic updates
-- [x] Client-authoritative: optimistic expected
-- [x] Collaborative: CRDT with conflict resolution
-- [x] Zone mapping for temporal_governor
-- [x] Physics violations defined as IMPOSSIBLE
-
-**Effort:** Medium
-
----
-
-#### S1-T3: Implement Budget Schema ✅
-**Description:** Create budgets.yaml with cognitive, visual, complexity limits
-
-**Acceptance Criteria:**
-- [x] Cognitive: interactive_elements (5→30), decisions (2→10), text_density
-- [x] Visual: color_count (5), animation_count (1→5), depth_layers (4)
-- [x] Complexity: props (10), variants (12), dependencies (8)
-- [x] Enforcement rules: BLOCK with Taste Key override
-
-**Effort:** Small
+### Deliverables
+- Complete `sigil-mark/` directory structure
+- All YAML template files
+- `mount-sigil.sh` script
+- `.claude/` directory structure
 
 ---
 
-#### S1-T4: Implement Fidelity Ceiling Schema ✅
-**Description:** Create fidelity.yaml with Mod Ghost Rule
+## Sprint 2: Core Physics Engine
 
-**Acceptance Criteria:**
-- [x] Gradients: 2 stops max
-- [x] Shadows: 3 layers max
-- [x] Animation: 800ms max
-- [x] Blur: 16px max
-- [x] Border-radius: 24px max
-- [x] Agent rules: "Generate at ceiling, not above"
-
-**Effort:** Small
-
----
-
-#### S1-T5: Implement Lens Registry Schema ✅
-**Description:** Create lens.yaml with rendering layers
-
-**Acceptance Criteria:**
-- [x] Vanilla: default, core fidelity
-- [x] High-fidelity: opt-in, cannot change geometry
-- [x] Utility: opt-in, additive only
-- [x] Accessibility: highest priority, reduced motion
-- [x] CSS variable mapping
-
-**Effort:** Small
-
----
-
-### Sprint 1 Deliverables
-- Complete sigil-mark/ structure
-- All core/ YAML files: sync.yaml, budgets.yaml, fidelity.yaml, lens.yaml
-
----
-
-## Sprint 2: Resonance Layer ✅ COMPLETED
-
-**Goal:** Implement product tuning layer with materials, zones, tensions
+**Goal:** Implement physics validation logic (IMPOSSIBLE/BLOCK/WARN hierarchy)
 
 ### Tasks
 
-#### S2-T1: Implement Materials Schema ✅
-**Description:** Create materials.yaml with clay, machinery, glass
+- [ ] **S2-T1: Create validating-fidelity skill structure**
+  - Create `.claude/skills/validating-fidelity/index.yaml`
+  - Create `.claude/skills/validating-fidelity/SKILL.md`
+  - **Acceptance:** Skill loads in Claude Code
 
-**Acceptance Criteria:**
-- [x] Clay: diffuse, heavy, spring(120/14), depress
-- [x] Machinery: flat, none, instant, highlight
-- [x] Glass: refract, weightless, ease(200/20), glow
-- [x] CSS implications for each material
-- [x] Zone affinity mappings
-- [x] Selection guide by action type
+- [ ] **S2-T2: Implement Temporal Governor validation**
+  - Detect server_authoritative zones
+  - Block optimistic UI patterns in server_authoritative
+  - Return IMPOSSIBLE for physics violations
+  - **Acceptance:** Optimistic UI in critical zone returns IMPOSSIBLE
 
-**Effort:** Medium
+- [ ] **S2-T3: Implement Budget validation**
+  - Count interactive elements in component
+  - Compare against zone budget limits
+  - Return BLOCK for budget violations
+  - **Acceptance:** 8 elements in critical zone (max 5) returns BLOCK
 
----
+- [ ] **S2-T4: Implement Fidelity validation**
+  - Check gradient stops, shadow layers, animation duration
+  - Compare against fidelity ceiling
+  - Return BLOCK for fidelity violations
+  - **Acceptance:** 4 gradient stops (max 2) returns BLOCK
 
-#### S2-T2: Implement Zones Schema ✅
-**Description:** Create zones.yaml with path-based physics
+- [ ] **S2-T5: Create /validate command**
+  - Create `.claude/commands/validate.md`
+  - Route to validating-fidelity skill
+  - **Acceptance:** `/validate path/to/file.tsx` works
 
-**Acceptance Criteria:**
-- [x] Critical: server_authoritative, discrete, clay, 5 elements
-- [x] Transactional: client_authoritative, continuous, machinery, 12 elements
-- [x] Exploratory: client_authoritative, continuous, glass, 20 elements
-- [x] Marketing: client_authoritative, continuous, glass, 15 elements
-- [x] Default zone fallback
-- [x] Glob path patterns
-- [x] Tension overrides per zone
-
-**Effort:** Medium
-
----
-
-#### S2-T3: Implement Tensions Schema ✅
-**Description:** Create tensions.yaml with tuning sliders
-
-**Acceptance Criteria:**
-- [x] Playfulness: 0-100 (serious ↔ fun)
-- [x] Weight: 0-100 (light ↔ heavy)
-- [x] Density: 0-100 (spacious ↔ dense)
-- [x] Speed: 0-100 (slow ↔ fast)
-- [x] Zone presets
-- [x] CSS mapping
-- [x] Conflict resolution rules
-
-**Effort:** Small
+### Deliverables
+- `validating-fidelity` skill
+- `/validate` command
+- Physics validation logic (IMPOSSIBLE/BLOCK/WARN)
 
 ---
 
-#### S2-T4: Implement Essence Template ✅
-**Description:** Create essence.yaml template (populated by /envision)
+## Sprint 3: Zone Detection System
 
-**Acceptance Criteria:**
-- [x] Product identity: name, tagline
-- [x] Soul statement with invariants
-- [x] Reference products: games, apps, physical
-- [x] Feel descriptors by context
-- [x] Anti-patterns section
-- [x] Key moments
-
-**Effort:** Small
-
----
-
-#### S2-T5: Implement Era-1 Template ✅
-**Description:** Create memory/eras/era-1.yaml
-
-**Acceptance Criteria:**
-- [x] Era id, name, dates
-- [x] Context sections
-- [x] Truths with evidence
-- [x] Deprecated list
-- [x] Transition triggers
-
-**Effort:** Small
-
----
-
-#### S2-T6: Implement Taste Key Template ✅
-**Description:** Create taste-key/holder.yaml
-
-**Acceptance Criteria:**
-- [x] Holder fields
-- [x] Authority (absolute vs cannot_override)
-- [x] Process (greenlight, execution, integrity)
-- [x] Philosophy
-- [x] Succession rules
-
-**Effort:** Small
-
----
-
-### Sprint 2 Deliverables
-- Complete resonance/ YAML files
-- Era-1 and Taste Key templates
-- Ready for command implementation
-
----
-
-## Sprint 3: Setup & Envision Commands ✅ COMPLETED
-
-**Goal:** Implement /sigil-setup and /envision commands
+**Goal:** Implement file path to zone resolution
 
 ### Tasks
 
-#### S3-T1: Create initializing-sigil Skill ✅
-**Description:** Skill for /sigil-setup command
+- [ ] **S3-T1: Create sigil-detect-zone.sh script**
+  - Read zones from `sigil-mark/resonance/zones.yaml`
+  - Match file path against glob patterns
+  - Return zone name (or "default")
+  - **Acceptance:** `sigil-detect-zone.sh src/features/checkout/Button.tsx` returns "critical"
 
-**Acceptance Criteria:**
-- [x] index.yaml with metadata
-- [x] SKILL.md with setup workflow
-- [x] Pre-flight checks
-- [x] Creates sigil-mark/ structure
-- [x] Copies core/ templates
-- [x] Creates .sigil-setup-complete marker
+- [ ] **S3-T2: Create mapping-zones skill structure**
+  - Create `.claude/skills/mapping-zones/index.yaml`
+  - Create `.claude/skills/mapping-zones/SKILL.md`
+  - **Acceptance:** Skill loads in Claude Code
 
-**Effort:** Medium
+- [ ] **S3-T3: Implement /map command**
+  - Create `.claude/commands/map.md`
+  - Interview for zone path patterns
+  - Update `sigil-mark/resonance/zones.yaml`
+  - **Acceptance:** `/map` captures zone definitions interactively
 
----
+- [ ] **S3-T4: Integrate zone detection into validation**
+  - Load zone physics from zones.yaml
+  - Apply zone-specific budgets
+  - Apply zone-specific material
+  - **Acceptance:** Validation uses zone context
 
-#### S3-T2: Create sigil-setup Command ✅
-**Description:** Command file for /sigil-setup
-
-**Acceptance Criteria:**
-- [x] .claude/commands/sigil-setup.md exists
-- [x] References initializing-sigil skill
-- [x] Documents workflow
-
-**Effort:** Small
-
----
-
-#### S3-T3: Create envisioning-soul Skill ✅
-**Description:** Skill for /envision command (product soul interview)
-
-**Acceptance Criteria:**
-- [x] index.yaml with metadata
-- [x] SKILL.md with interview phases
-- [x] Questions for each essence section
-- [x] Writes to resonance/essence.yaml
-- [x] Uses AskUserQuestion
-
-**Effort:** Large
+### Deliverables
+- `sigil-detect-zone.sh` script
+- `mapping-zones` skill
+- `/map` command
+- Zone-aware validation
 
 ---
 
-#### S3-T4: Create envision Command ✅
-**Description:** Command file for /envision
+## Sprint 4: Materials System
 
-**Acceptance Criteria:**
-- [x] .claude/commands/envision.md exists
-- [x] References envisioning-soul skill
-
-**Effort:** Small
-
----
-
-### Sprint 3 Deliverables
-- /sigil-setup command working
-- /envision command working
-
----
-
-## Sprint 4: Codify, Map, and Craft Commands (MVP) ✅ COMPLETED
-
-**Goal:** Implement core design commands
+**Goal:** Implement material physics (clay, machinery, glass)
 
 ### Tasks
 
-#### S4-T1: Create codifying-materials Skill ✅
-**Description:** Skill for /codify command
+- [ ] **S4-T1: Create codifying-materials skill structure**
+  - Create `.claude/skills/codifying-materials/index.yaml`
+  - Create `.claude/skills/codifying-materials/SKILL.md`
+  - **Acceptance:** Skill loads in Claude Code
 
-**Acceptance Criteria:**
-- [x] index.yaml
-- [x] SKILL.md with material workflow
-- [x] Updates resonance/materials.yaml
-- [x] Validates against core physics
+- [ ] **S4-T2: Implement material physics definitions**
+  - Define clay: heavy, spring motion, depress feedback
+  - Define machinery: no weight, instant motion, highlight feedback
+  - Define glass: weightless, ease motion, glow feedback
+  - **Acceptance:** materials.yaml matches PRD §4.3
 
-**Effort:** Medium
+- [ ] **S4-T3: Implement /codify command**
+  - Create `.claude/commands/codify.md`
+  - Interview for material customization
+  - Update `sigil-mark/resonance/materials.yaml`
+  - **Acceptance:** `/codify` allows material tuning
 
----
+- [ ] **S4-T4: Integrate materials into craft output**
+  - Include material physics in generation context
+  - Apply spring config for clay
+  - Apply timing for glass
+  - Apply instant for machinery
+  - **Acceptance:** Generated code includes material-appropriate motion
 
-#### S4-T2: Create codify Command ✅
-**Effort:** Small
-
----
-
-#### S4-T3: Create mapping-zones Skill ✅
-**Description:** Skill for /map command
-
-**Acceptance Criteria:**
-- [x] index.yaml
-- [x] SKILL.md with zone workflow
-- [x] Updates resonance/zones.yaml
-- [x] Validates path patterns
-
-**Effort:** Medium
-
----
-
-#### S4-T4: Create map Command ✅
-**Effort:** Small
+### Deliverables
+- `codifying-materials` skill
+- `/codify` command
+- Material-aware generation
 
 ---
 
-#### S4-T5: Create crafting-components Skill with Hammer/Chisel ✅
-**Description:** Skill for /craft command with sub-tools
+## Sprint 5: Essence System
 
-**Acceptance Criteria:**
-- [x] index.yaml
-- [x] SKILL.md with tool selection algorithm
-- [x] tools/hammer.md: diagnosis workflow
-- [x] tools/chisel.md: execution workflow
-- [x] Physics context loading
-- [x] Violation checking
-- [x] Loa handoff generation
-- [x] **The Linear Test passes:**
-  - "The claim button feels slow" → Hammer diagnoses, not immediate bandaid
-  - Checks zone physics before suggesting optimistic UI
-  - Routes structural issues to Loa
-
-**Effort:** Large
-
----
-
-#### S4-T6: Create craft Command ✅
-**Effort:** Small
-
----
-
-### Sprint 4 Deliverables
-- /codify, /map, /craft commands working
-- Hammer/Chisel toolkit functional
-- **MVP COMPLETE**
-
----
-
-## Sprint 5: Validation & Approval Commands ✅ COMPLETED
-
-**Goal:** Implement validation pipeline
+**Goal:** Implement product soul capture
 
 ### Tasks
 
-#### S5-T1: Create validating-fidelity Skill ✅
-**Description:** Skill for /validate command
+- [ ] **S5-T1: Create envisioning-soul skill structure**
+  - Create `.claude/skills/envisioning-soul/index.yaml`
+  - Create `.claude/skills/envisioning-soul/SKILL.md`
+  - **Acceptance:** Skill loads in Claude Code
 
-**Acceptance Criteria:**
-- [x] Checks physics violations (IMPOSSIBLE)
-- [x] Checks budget violations (BLOCK with override)
-- [x] Checks fidelity violations (BLOCK with override)
-- [x] Checks drift (WARN)
-- [x] Generates violation report
+- [ ] **S5-T2: Implement essence interview flow**
+  - Ask about reference products (what to feel like)
+  - Ask about anti-patterns (what to never do)
+  - Ask about key moments (claim, success, error)
+  - **Acceptance:** Interview captures product soul
 
-**Effort:** Medium
+- [ ] **S5-T3: Implement /envision command**
+  - Create `.claude/commands/envision.md`
+  - Route to envisioning-soul skill
+  - Generate `sigil-mark/resonance/essence.yaml`
+  - **Acceptance:** `/envision` produces essence.yaml
 
----
+- [ ] **S5-T4: Integrate essence into craft context**
+  - Load essence during /craft
+  - Include references in output
+  - Warn on anti-pattern matches
+  - **Acceptance:** /craft respects essence
 
-#### S5-T2: Create validate Command ✅
-**Effort:** Small
-
----
-
-#### S5-T3: Create approving-patterns Skill ✅
-**Description:** Skill for /approve command (Taste Key rulings)
-
-**Acceptance Criteria:**
-- [x] Checks Taste Key holder
-- [x] Creates rulings in taste-key/rulings/
-- [x] Can override budget/fidelity
-- [x] Cannot override physics
-
-**Effort:** Medium
+### Deliverables
+- `envisioning-soul` skill
+- `/envision` command
+- Essence-aware generation
 
 ---
 
-#### S5-T4: Create approve Command ✅
-**Effort:** Small
+## Sprint 6: Craft Command
 
----
-
-#### S5-T5: Create greenlighting-concepts Skill ✅
-**Description:** Skill for /greenlight command
-
-**Acceptance Criteria:**
-- [x] Distinguishes concept from execution approval
-- [x] Records greenlighted concepts
-
-**Effort:** Small
-
----
-
-#### S5-T6: Create greenlight Command ✅
-**Effort:** Small
-
----
-
-### Sprint 5 Deliverables
-- /validate, /approve, /greenlight commands working
-
----
-
-## Sprint 6: Garden & Mount System ✅ COMPLETED
-
-**Goal:** Implement maintenance and distribution
+**Goal:** Implement main generation command with physics context
 
 ### Tasks
 
-#### S6-T1: Create gardening-entropy Skill ✅
-**Description:** Skill for /garden command
+- [ ] **S6-T1: Create crafting-components skill structure**
+  - Create `.claude/skills/crafting-components/index.yaml`
+  - Create `.claude/skills/crafting-components/SKILL.md`
+  - **Acceptance:** Skill loads in Claude Code
 
-**Acceptance Criteria:**
-- [x] Detects drift from essence
-- [x] Reviews active mutations
-- [x] Promotes to canon or graveyard
-- [x] Flags stale decisions
-- [x] Era transition detection
+- [ ] **S6-T2: Implement /craft command**
+  - Create `.claude/commands/craft.md`
+  - Accept component description and target path
+  - Resolve zone from path
+  - Load physics context
+  - **Acceptance:** `/craft "button" src/features/checkout/` works
 
-**Effort:** Medium
+- [ ] **S6-T3: Implement physics context header**
+  - Display zone, material, temporal, sync, tensions
+  - Display budget usage
+  - Use SDD §8.1 format
+  - **Acceptance:** Output includes physics context
 
----
+- [ ] **S6-T4: Implement constraint application**
+  - Apply sync constraints (no optimistic in server_authoritative)
+  - Apply material physics (spring for clay)
+  - Stay within budgets
+  - **Acceptance:** Generated code respects all constraints
 
-#### S6-T2: Create garden Command ✅
-**Effort:** Small
-
----
-
-#### S6-T3: Update Mount Script for v4 ✅
-**Description:** Update mount-sigil.sh
-
-**Acceptance Criteria:**
-- [x] SIGIL_SKILLS array: 9 skills
-- [x] SIGIL_COMMANDS array: 9 commands
-- [x] Creates sigil-mark/ on mount
-- [x] Copies core/ templates
-- [x] Creates .sigil-version.json with 4.0.0
-
-**Effort:** Medium
+### Deliverables
+- `crafting-components` skill
+- `/craft` command
+- Physics-aware generation
 
 ---
 
-#### S6-T4: Update CLAUDE.md for v4 ✅
-**Description:** Update agent instructions
+## Sprint 7: Approval & Greenlight System
 
-**Acceptance Criteria:**
-- [x] Documents 9 commands
-- [x] Documents physics concepts
-- [x] Documents Hammer/Chisel
-- [x] Documents Loa handoff
+**Goal:** Implement Taste Key authority commands
 
-**Effort:** Medium
+### Tasks
 
----
+- [ ] **S7-T1: Create approving-patterns skill structure**
+  - Create `.claude/skills/approving-patterns/index.yaml`
+  - Create `.claude/skills/approving-patterns/SKILL.md`
+  - **Acceptance:** Skill loads in Claude Code
 
-#### S6-T5: Integration Testing ✅
-**Description:** Test full workflow
+- [ ] **S7-T2: Implement /approve command**
+  - Create `.claude/commands/approve.md`
+  - Record Taste Key rulings
+  - Store in `sigil-mark/taste-key/rulings/`
+  - **Acceptance:** `/approve` creates ruling record
 
-**Acceptance Criteria:**
-- [x] Mount works
-- [x] /sigil-setup creates structure
-- [x] /envision captures essence
-- [x] /codify defines materials
-- [x] /map defines zones
-- [x] /craft generates with physics
-- [x] /validate catches violations
-- [x] /approve records rulings
-- [x] /greenlight records concepts
-- [x] /garden detects drift
+- [ ] **S7-T3: Create greenlighting-concepts skill structure**
+  - Create `.claude/skills/greenlighting-concepts/index.yaml`
+  - Create `.claude/skills/greenlighting-concepts/SKILL.md`
+  - **Acceptance:** Skill loads in Claude Code
 
-**Effort:** Large
+- [ ] **S7-T4: Implement /greenlight command**
+  - Create `.claude/commands/greenlight.md`
+  - Record concept approvals
+  - Store in `sigil-mark/memory/decisions/`
+  - **Acceptance:** `/greenlight` creates decision record
 
----
+- [ ] **S7-T5: Implement holder.yaml**
+  - Create `sigil-mark/taste-key/holder.yaml`
+  - Define who holds Taste Key authority
+  - **Acceptance:** Holder can be queried
 
-### Sprint 6 Deliverables
-- /garden command working
-- Mount system updated
-- **v0.5.0 RELEASE READY**
-
----
-
-## Summary
-
-### The 9 Skills
-1. `initializing-sigil` → /sigil-setup
-2. `envisioning-soul` → /envision
-3. `codifying-materials` → /codify
-4. `mapping-zones` → /map
-5. `crafting-components` → /craft
-6. `validating-fidelity` → /validate
-7. `approving-patterns` → /approve
-8. `greenlighting-concepts` → /greenlight
-9. `gardening-entropy` → /garden
-
-### MVP (Sprints 1-4)
-- State zone structure
-- Core physics schemas
-- Resonance layer
-- /sigil-setup, /envision, /codify, /map, /craft
-
-### Post-MVP (Sprints 5-6)
-- /validate, /approve, /greenlight
-- /garden
-- Mount system
+### Deliverables
+- `approving-patterns` skill
+- `greenlighting-concepts` skill
+- `/approve` and `/greenlight` commands
+- Taste Key ruling system
 
 ---
 
-## v0.5.0 Released
+## Sprint 8: Garden Command (Drift Detection)
 
-All 6 sprints completed and approved.
+**Goal:** Implement entropy detection and drift reporting
+
+### Tasks
+
+- [ ] **S8-T1: Create gardening-entropy skill structure**
+  - Create `.claude/skills/gardening-entropy/index.yaml`
+  - Create `.claude/skills/gardening-entropy/SKILL.md`
+  - **Acceptance:** Skill loads in Claude Code
+
+- [ ] **S8-T2: Implement inflation tracking**
+  - Count components per zone
+  - Track growth over time
+  - Store in `sigil-mark/memory/`
+  - **Acceptance:** Inflation metrics recorded
+
+- [ ] **S8-T3: Implement /garden command**
+  - Create `.claude/commands/garden.md`
+  - Report inflation trends
+  - Alert on threshold violations
+  - Recommend review cadence
+  - **Acceptance:** `/garden` produces drift report
+
+- [ ] **S8-T4: Implement stale decision detection**
+  - Check age of decisions in `sigil-mark/memory/decisions/`
+  - Flag decisions older than era boundary
+  - **Acceptance:** Old decisions flagged
+
+### Deliverables
+- `gardening-entropy` skill
+- `/garden` command
+- Drift detection system
+
+---
+
+## Sprint 9: Memory & Era System
+
+**Goal:** Implement era-versioned decision tracking
+
+### Tasks
+
+- [ ] **S9-T1: Implement era management**
+  - Create era schema in `sigil-mark/memory/eras/`
+  - Define era boundaries
+  - Support era transitions
+  - **Acceptance:** Eras can be created and queried
+
+- [ ] **S9-T2: Implement mutations sandbox**
+  - Create active mutation tracking
+  - Support experiment tagging
+  - **Acceptance:** Mutations can be tracked
+
+- [ ] **S9-T3: Implement graveyard archive**
+  - Move failed experiments to graveyard
+  - Record failure reasons
+  - **Acceptance:** Failed experiments archived with context
+
+- [ ] **S9-T4: Integrate memory into craft context**
+  - Load relevant decisions during /craft
+  - Reference era context
+  - **Acceptance:** /craft respects historical decisions
+
+### Deliverables
+- Era management system
+- Mutations sandbox
+- Graveyard archive
+- Memory-aware generation
+
+---
+
+## Sprint 10: Hammer/Chisel Toolkit
+
+**Goal:** Implement diagnostic toolkit for /craft
+
+### Tasks
+
+- [ ] **S10-T1: Create Hammer tool**
+  - Create `.claude/skills/crafting-components/tools/hammer.md`
+  - Implement clarifying question flow
+  - Route to correct destination (Chisel, Loa, /approve)
+  - **Acceptance:** Hammer investigates before solving
+
+- [ ] **S10-T2: Create Chisel tool**
+  - Create `.claude/skills/crafting-components/tools/chisel.md`
+  - Implement quick aesthetic execution
+  - Apply physics constraints automatically
+  - **Acceptance:** Chisel executes measurable changes
+
+- [ ] **S10-T3: Implement tool selection algorithm**
+  - Detect chisel patterns (px, ms, specific properties)
+  - Detect hammer patterns (feels, seems, looks)
+  - Default to Hammer for ambiguous input
+  - **Acceptance:** Tool selection matches SDD §6.1
+
+- [ ] **S10-T4: Implement Loa handoff protocol**
+  - Generate handoff document when structural issue detected
+  - Write to `loa-grimoire/context/sigil-handoff.md`
+  - Include diagnosis, constraints, requirements
+  - **Acceptance:** Structural issues route to Loa
+
+### Deliverables
+- Hammer diagnostic tool
+- Chisel execution tool
+- Tool selection logic
+- Loa handoff protocol
+
+---
+
+## Sprint 11: Workbench Foundation
+
+**Goal:** Implement core Workbench scripts
+
+### Tasks
+
+- [ ] **S11-T1: Create sigil-tensions.sh script**
+  - Read tensions from zones.yaml
+  - Display as ASCII progress bars
+  - Auto-refresh every 2 seconds
+  - **Acceptance:** Tensions display in terminal
+
+- [ ] **S11-T2: Create sigil-validate.sh script**
+  - Watch for file changes (fswatch)
+  - Run validation on change
+  - Display Pass/Fail status
+  - **Acceptance:** Real-time validation in terminal
+
+- [ ] **S11-T3: Handle fallbacks**
+  - Graceful degradation if fswatch missing
+  - Manual mode if Chrome MCP unavailable
+  - **Acceptance:** Works without optional deps
+
+### Deliverables
+- `sigil-tensions.sh` script
+- `sigil-validate.sh` script
+- Fallback handling
+
+---
+
+## Sprint 12: Workbench Integration
+
+**Goal:** Complete 4-panel Workbench environment
+
+### Tasks
+
+- [ ] **S12-T1: Create sigil-workbench.sh script**
+  - Check prerequisites (tmux, claude, fswatch)
+  - Create tmux session with 4 panes
+  - Launch Claude in pane 0
+  - Launch tensions in pane 2
+  - Launch validation in pane 3
+  - **Acceptance:** Workbench launches with all panels
+
+- [ ] **S12-T2: Integrate Chrome MCP panel**
+  - Display placeholder in pane 1
+  - Document Chrome MCP usage
+  - **Acceptance:** Chrome preview documented
+
+- [ ] **S12-T3: Update mount-sigil.sh**
+  - Symlink all scripts
+  - Verify all commands work
+  - **Acceptance:** Full installation works
+
+- [ ] **S12-T4: Create README and documentation**
+  - Quick start guide (<5 min)
+  - Command reference
+  - Workbench usage
+  - **Acceptance:** New user can start in <5 min
+
+- [ ] **S12-T5: Final validation**
+  - Run all commands end-to-end
+  - Verify clean removal (`rm -rf sigil-mark/`)
+  - Verify no daemon, no database, no hooks
+  - **Acceptance:** All PRD §9 criteria pass
+
+### Deliverables
+- `sigil-workbench.sh` script
+- Complete Workbench environment
+- Updated `mount-sigil.sh`
+- Documentation
+- Final validation
+
+---
+
+## Risk Mitigation
+
+| Risk | Mitigation |
+|------|------------|
+| fswatch unavailable | Fallback to manual `/validate` |
+| Chrome MCP unavailable | Fallback to manual browser refresh |
+| tmux complexity | Document individual command mode |
+| Hot reload issues | Support manual refresh |
+
+---
+
+## Success Criteria
+
+From PRD §9:
+
+- [ ] `mount-sigil.sh` works on macOS and Linux
+- [ ] All 8 commands implemented and documented
+- [ ] Hammer investigates (never jumps to solution)
+- [ ] Physics violations are IMPOSSIBLE (cannot generate)
+- [ ] Workbench launches with 4 panels
+- [ ] Live preview updates in <1s
+- [ ] Component scoring visible (Pass/Fail)
+- [ ] Clean removal via `rm -rf sigil-mark/`
+- [ ] README has <5 min quickstart
+- [ ] No daemon, no database, no hooks
+
+---
+
+## Next Step
+
+```
+/implement sprint-1
+```

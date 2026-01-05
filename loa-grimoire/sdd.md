@@ -1,4 +1,4 @@
-# Software Design Document: Sigil v4
+# Software Design Document: Sigil v1.0
 
 **Version:** 1.0
 **Status:** Draft
@@ -9,38 +9,37 @@
 
 ## Executive Summary
 
-Sigil v4 is a Design Physics Engine implemented as a Claude Code skill framework. It provides 8 specialized skills that give AI agents physics constraints for consistent design decisions. Sigil coexists with Loa (workflow framework) via a handoff protocol for structural issues.
+Sigil v1.0 is a Design Physics Engine implemented as a Claude Code skill framework with a real-time Workbench environment. It provides 8 specialized commands that give AI agents physics constraints for consistent design decisions. The Workbench enables live preview, real-time validation, and visual tension monitoring.
+
+### Key Decisions
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| Workbench launch | Standalone script | Simplicity, no Claude Code integration complexity |
+| Tensions panel | Simple text (ASCII) | Minimal dependencies, works everywhere |
+| Scoring | Pass/Fail only | Reduces complexity, clear actionable output |
 
 ### Architecture Overview
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                         SIGIL v4                                     │
-│                   Design Physics Engine                              │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                 │
-│  │   COMMANDS  │  │   SKILLS    │  │   STATE     │                 │
-│  │   (8 total) │  │   (8 total) │  │ sigil-mark/ │                 │
-│  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘                 │
-│         │                │                │                         │
-│         └────────────────┼────────────────┘                         │
-│                          │                                          │
-│  ┌───────────────────────┴───────────────────────┐                 │
-│  │              PHYSICS ENGINE                    │                 │
-│  │  ┌─────────┐ ┌─────────┐ ┌─────────┐         │                 │
-│  │  │Temporal │ │ Budget  │ │Fidelity │         │                 │
-│  │  │Governor │ │ Engine  │ │ Ceiling │         │                 │
-│  │  └─────────┘ └─────────┘ └─────────┘         │                 │
-│  └───────────────────────────────────────────────┘                 │
-│                          │                                          │
-│                          ▼                                          │
-│  ┌───────────────────────────────────────────────┐                 │
-│  │              LOA HANDOFF                       │                 │
-│  │  When issue is structural → generate context   │                 │
-│  └───────────────────────────────────────────────┘                 │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
+│                         SIGIL WORKBENCH                              │
+│                    tmux with 4 panes                                 │
+├─────────────────────────────┬───────────────────────────────────────┤
+│      CLAUDE PANEL           │         CHROME VIEW                   │
+│  Claude Code CLI            │    Chrome MCP live preview            │
+├─────────────────────────────┼───────────────────────────────────────┤
+│      TENSIONS PANEL         │         VALIDATION PANEL              │
+│  ASCII progress bars        │    Real-time file watcher             │
+└─────────────────────────────┴───────────────────────────────────────┘
+                                        │
+┌───────────────────────────────────────┴───────────────────────────────┐
+│                         SIGIL ENGINE                                   │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │
+│  │   COMMANDS  │  │   SKILLS    │  │   STATE     │  │  VALIDATOR  │  │
+│  │   (8 total) │  │   (8 total) │  │ sigil-mark/ │  │   (watcher) │  │
+│  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘  │
+└───────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -85,13 +84,285 @@ Sigil and Loa are separate frameworks that coexist:
 | Skills | 8 design-focused | Workflow-focused |
 | Commands | 8 design commands | Workflow commands |
 
-**Handoff Protocol:** When Sigil diagnoses a structural issue (not UI), it generates context for Loa.
+**Handoff Protocol:** When Sigil diagnoses a structural issue (not UI), it generates context for Loa via `loa-grimoire/context/sigil-handoff.md`.
 
 ---
 
-## 2. Component Design
+## 2. Workbench Architecture
 
-### 2.1 The 8 Skills
+### 2.1 Overview
+
+The Workbench is a tmux-based environment launched via `sigil-workbench.sh`:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│  SIGIL WORKBENCH v1.0                                     [session] │
+├─────────────────────────────┬───────────────────────────────────────┤
+│                             │                                       │
+│  $ claude                   │                                       │
+│                             │         [Chrome MCP Preview]          │
+│  /craft ConfirmButton       │                                       │
+│  src/features/checkout/     │    ┌───────────────────────────┐      │
+│                             │    │                           │      │
+│  🔨 Loading physics...      │    │    [ Claim 1,234 TOKENS ] │      │
+│                             │    │                           │      │
+│  Zone: critical             │    │    Pending...             │      │
+│  Material: clay             │    │                           │      │
+│  Sync: server_authoritative │    └───────────────────────────┘      │
+│                             │                                       │
+├─────────────────────────────┼───────────────────────────────────────┤
+│  TENSIONS [critical zone]   │  VALIDATION                           │
+│                             │                                       │
+│  Weight      ████████░░ 80  │  Physics:   ✓ PASS                    │
+│  Speed       ███░░░░░░░ 30  │  Sync:      ✓ server_authoritative    │
+│  Playfulness ██░░░░░░░░ 20  │  Budgets:   ✓ 3/5 elements            │
+│  Density     █████░░░░░ 50  │  Fidelity:  ✓ within ceiling          │
+│                             │  Material:  ✓ clay physics            │
+│  [Auto-refresh: ON]         │                                       │
+│                             │  Status: READY FOR /approve           │
+└─────────────────────────────┴───────────────────────────────────────┘
+```
+
+### 2.2 Panel Architecture
+
+#### Claude Panel (Top-Left)
+
+**Purpose:** Claude Code CLI for `/craft` commands
+
+**Implementation:**
+```bash
+# Pane 0: Claude Code
+tmux send-keys -t sigil:0.0 'claude' Enter
+```
+
+**Features:**
+- Full Claude Code CLI
+- All 8 Sigil commands available
+- Hammer/Chisel toolkit
+- Zone context in output
+
+#### Chrome Panel (Top-Right)
+
+**Purpose:** Live preview via Chrome MCP
+
+**Implementation:**
+```bash
+# Pane 1: Chrome preview
+# Uses existing claude-in-chrome MCP connection
+# Hot reload via dev server websocket
+```
+
+**Features:**
+- Live component preview
+- Auto-refresh on file change
+- Uses existing Chrome MCP extension
+- Falls back to manual refresh if MCP unavailable
+
+#### Tensions Panel (Bottom-Left)
+
+**Purpose:** Display current zone tensions as ASCII progress bars
+
+**Implementation:**
+```bash
+#!/usr/bin/env bash
+# sigil-tensions.sh - Display tensions in terminal
+
+while true; do
+  clear
+  echo "TENSIONS [$(get_current_zone) zone]"
+  echo ""
+
+  # Read tensions from zone or defaults
+  tensions=$(yq '.zones.'$(get_current_zone)'.tension_overrides // .zones.default.tensions' sigil-mark/resonance/zones.yaml)
+
+  # Display as ASCII bars
+  for tension in weight speed playfulness density; do
+    value=$(echo "$tensions" | yq ".$tension // 50")
+    bar=$(printf '█%.0s' $(seq 1 $((value / 10))))
+    empty=$(printf '░%.0s' $(seq 1 $((10 - value / 10))))
+    printf "%-12s %s%s %d\n" "$tension" "$bar" "$empty" "$value"
+  done
+
+  echo ""
+  echo "[Auto-refresh: ON]"
+
+  # Refresh every 2 seconds
+  sleep 2
+done
+```
+
+**Output Format:**
+```
+TENSIONS [critical zone]
+
+Weight      ████████░░ 80
+Speed       ███░░░░░░░ 30
+Playfulness ██░░░░░░░░ 20
+Density     █████░░░░░ 50
+
+[Auto-refresh: ON]
+```
+
+#### Validation Panel (Bottom-Right)
+
+**Purpose:** Real-time physics validation via file watcher
+
+**Implementation:**
+```bash
+#!/usr/bin/env bash
+# sigil-validate.sh - Real-time validation watcher
+
+# Watch for file changes
+fswatch -o src/ components/ app/ | while read; do
+  clear
+  echo "VALIDATION"
+  echo ""
+
+  # Get current file (most recently modified)
+  current_file=$(find src components app -name "*.tsx" -mmin -1 2>/dev/null | head -1)
+
+  if [ -z "$current_file" ]; then
+    echo "Watching for changes..."
+    continue
+  fi
+
+  # Detect zone
+  zone=$(sigil-detect-zone "$current_file")
+
+  # Run validation
+  result=$(sigil-validate "$current_file")
+
+  # Display results
+  echo "File: $(basename $current_file)"
+  echo "Zone: $zone"
+  echo ""
+
+  # Physics check
+  if echo "$result" | grep -q "physics:pass"; then
+    echo "Physics:   ✓ PASS"
+  else
+    echo "Physics:   ✗ IMPOSSIBLE VIOLATION"
+  fi
+
+  # Sync check
+  sync_mode=$(echo "$result" | grep "sync:" | cut -d: -f2)
+  echo "Sync:      ✓ $sync_mode"
+
+  # Budget check
+  elements=$(echo "$result" | grep "elements:" | cut -d: -f2)
+  max=$(echo "$result" | grep "max_elements:" | cut -d: -f2)
+  if [ "$elements" -le "$max" ]; then
+    echo "Budgets:   ✓ $elements/$max elements"
+  else
+    echo "Budgets:   ✗ $elements/$max elements (BLOCK)"
+  fi
+
+  # Fidelity check
+  if echo "$result" | grep -q "fidelity:pass"; then
+    echo "Fidelity:  ✓ within ceiling"
+  else
+    echo "Fidelity:  ⚠ exceeds ceiling (BLOCK)"
+  fi
+
+  # Material check
+  material=$(echo "$result" | grep "material:" | cut -d: -f2)
+  echo "Material:  ✓ $material physics"
+
+  echo ""
+
+  # Overall status
+  if echo "$result" | grep -q "status:pass"; then
+    echo "Status: READY FOR /approve"
+  elif echo "$result" | grep -q "status:block"; then
+    echo "Status: BLOCKED - needs Taste Key ruling"
+  else
+    echo "Status: IMPOSSIBLE - physics violation"
+  fi
+done
+```
+
+### 2.3 Launch Script
+
+```bash
+#!/usr/bin/env bash
+# sigil-workbench.sh - Launch Sigil Workbench
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(pwd)"
+
+# Check prerequisites
+check_prerequisites() {
+  command -v tmux >/dev/null 2>&1 || { echo "tmux required"; exit 1; }
+  command -v claude >/dev/null 2>&1 || { echo "Claude Code required"; exit 1; }
+  command -v fswatch >/dev/null 2>&1 || { echo "fswatch required (brew install fswatch)"; exit 1; }
+  [ -f ".sigil-setup-complete" ] || { echo "Run /sigil-setup first"; exit 1; }
+}
+
+# Create tmux session
+create_session() {
+  # Kill existing session if present
+  tmux kill-session -t sigil 2>/dev/null || true
+
+  # Create new session with 4 panes
+  tmux new-session -d -s sigil -n workbench
+
+  # Split into 4 panes (2x2 grid)
+  tmux split-window -h -t sigil:workbench
+  tmux split-window -v -t sigil:workbench.0
+  tmux split-window -v -t sigil:workbench.1
+
+  # Pane 0 (top-left): Claude Code
+  tmux send-keys -t sigil:workbench.0 'claude' Enter
+
+  # Pane 1 (top-right): Chrome placeholder (MCP handles this)
+  tmux send-keys -t sigil:workbench.1 'echo "Chrome preview via MCP. Run /craft to see component."' Enter
+
+  # Pane 2 (bottom-left): Tensions display
+  tmux send-keys -t sigil:workbench.2 "$SCRIPT_DIR/sigil-tensions.sh" Enter
+
+  # Pane 3 (bottom-right): Validation watcher
+  tmux send-keys -t sigil:workbench.3 "$SCRIPT_DIR/sigil-validate.sh" Enter
+
+  # Select Claude pane
+  tmux select-pane -t sigil:workbench.0
+}
+
+# Main
+check_prerequisites
+create_session
+
+echo "Sigil Workbench started. Attaching..."
+tmux attach-session -t sigil
+```
+
+### 2.4 File Watcher (Validation)
+
+**Tool:** `fswatch` (cross-platform)
+
+**Installation:**
+```bash
+# macOS
+brew install fswatch
+
+# Linux
+sudo apt-get install fswatch
+```
+
+**Watched Paths:**
+- `src/`
+- `components/`
+- `app/`
+- Any paths in `.sigilrc.yaml` component_paths
+
+**Debounce:** 500ms to avoid rapid refreshes
+
+---
+
+## 3. Component Design
+
+### 3.1 The 8 Skills
 
 | # | Skill | Command | Purpose |
 |---|-------|---------|---------|
@@ -104,7 +375,7 @@ Sigil and Loa are separate frameworks that coexist:
 | 7 | `approving-patterns` | `/approve` | Taste Key rulings on patterns |
 | 8 | `greenlighting-concepts` | `/greenlight` | Concept approval before building |
 
-### 2.2 Skill Structure
+### 3.2 Skill Structure
 
 Each skill follows Claude Code conventions:
 
@@ -126,7 +397,7 @@ Each skill follows Claude Code conventions:
     └── chisel.md       # Execute aesthetics
 ```
 
-### 2.3 Command Structure
+### 3.3 Command Structure
 
 Each command is a markdown file:
 
@@ -134,28 +405,11 @@ Each command is a markdown file:
 .claude/commands/{command}.md
 ```
 
-**Example: craft.md**
-```markdown
-# Craft
-
-## Purpose
-Generate and refine UI components within physics constraints.
-
-## Agent
-Launches `crafting-components` skill.
-
-## Workflow
-1. Load physics context from sigil-mark/
-2. Select tool (Hammer or Chisel)
-3. Generate/refine component
-4. Validate against constraints
-```
-
 ---
 
-## 3. Physics Engine
+## 4. Physics Engine
 
-### 3.1 Temporal Governor
+### 4.1 Temporal Governor
 
 **Implementation:** `sigil-mark/core/sync.yaml`
 
@@ -173,7 +427,7 @@ temporal_governor:
       authority: client_authoritative
 ```
 
-**Agent Behavior:**
+**Validation Logic:**
 ```python
 def check_temporal_physics(zone, proposed_ui):
     if zone.authority == "server_authoritative":
@@ -185,7 +439,7 @@ def check_temporal_physics(zone, proposed_ui):
     return Valid()
 ```
 
-### 3.2 Budget Engine
+### 4.2 Budget Engine
 
 **Implementation:** `sigil-mark/core/budgets.yaml`
 
@@ -194,12 +448,13 @@ budgets:
   cognitive:
     interactive_elements:
       critical: 5
-      transactional: 12
+      transactional: 8
       exploratory: 20
-      admin: 30
+      marketing: 15
+      admin: 25
 ```
 
-**Agent Behavior:**
+**Validation Logic:**
 ```python
 def check_budget(zone, component):
     budget = load_budget(zone)
@@ -212,51 +467,34 @@ def check_budget(zone, component):
     return Valid()
 ```
 
-### 3.3 Fidelity Ceiling
+### 4.3 Fidelity Ceiling
 
 **Implementation:** `sigil-mark/core/fidelity.yaml`
 
 ```yaml
 fidelity:
   ceiling:
-    constraints:
-      gradients: { max_stops: 2 }
-      shadows: { max_layers: 3 }
-      animation: { max_duration_ms: 800 }
-      blur: { max_radius_px: 16 }
-      border_radius: { max_px: 24 }
+    gradients: { max_stops: 2 }
+    shadows: { max_layers: 3 }
+    animation: { max_duration_ms: 800 }
+    blur: { max_radius_px: 16 }
+    border_radius: { max_px: 24 }
 ```
 
-**Agent Behavior:**
-```python
-def check_fidelity(component):
-    ceiling = load_fidelity_ceiling()
-    violations = []
+### 4.4 Violation Hierarchy
 
-    if component.gradient_stops > ceiling.gradients.max_stops:
-        violations.append(CeilingViolation("gradients"))
-    if component.shadow_layers > ceiling.shadows.max_layers:
-        violations.append(CeilingViolation("shadows"))
-    # ... etc
-
-    return violations
-```
-
-### 3.4 Violation Hierarchy
-
-```python
-class ViolationType(Enum):
-    PHYSICS = "IMPOSSIBLE"      # Cannot generate
-    BUDGET = "BLOCK"            # Taste Key can override
-    FIDELITY = "BLOCK"          # Taste Key can override
-    DRIFT = "WARN"              # Proceed, flagged
-```
+| Type | Severity | Override | Workbench Display |
+|------|----------|----------|-------------------|
+| Physics | IMPOSSIBLE | None | ✗ IMPOSSIBLE VIOLATION |
+| Budget | BLOCK | Taste Key | ✗ X/Y elements (BLOCK) |
+| Fidelity | BLOCK | Taste Key | ⚠ exceeds ceiling (BLOCK) |
+| Drift | WARN | None needed | ⚠ drift detected |
 
 ---
 
-## 4. Data Architecture
+## 5. Data Architecture
 
-### 4.1 State Zone Structure
+### 5.1 State Zone Structure
 
 ```
 sigil-mark/
@@ -273,28 +511,17 @@ sigil-mark/
 │   └── tensions.yaml          # Tuning sliders (0-100)
 │
 ├── memory/                     # Era-versioned history
-│   ├── eras/                  # Era definitions
-│   │   └── era-{n}.yaml
-│   ├── decisions/             # Era-versioned decisions
-│   │   └── {decision-id}.yaml
-│   ├── mutations/             # Experimental sandbox
-│   │   └── active/
-│   │       └── {mutation-id}.yaml
-│   └── graveyard/             # Failed experiments
-│       └── {mutation-id}.yaml
+│   ├── eras/
+│   ├── decisions/
+│   ├── mutations/active/
+│   └── graveyard/
 │
-├── taste-key/                  # Authority
-│   ├── holder.yaml            # Who holds the key
-│   └── rulings/               # Taste Key decisions
-│       └── {ruling-id}.yaml
-│
-└── .sigil/                     # Framework (symlinked)
-    ├── commands/
-    ├── skills/
-    └── scripts/
+└── taste-key/                  # Authority
+    ├── holder.yaml
+    └── rulings/
 ```
 
-### 4.2 YAML Schemas
+### 5.2 YAML Schemas
 
 **Zone Definition:**
 ```yaml
@@ -306,9 +533,6 @@ zones:
       sync: server_authoritative
       tick: discrete
       material: clay
-    rules:
-      - "Server confirms before state changes"
-      - "No optimistic updates"
     paths:
       - "**/checkout/**"
       - "**/claim/**"
@@ -318,6 +542,7 @@ zones:
     tension_overrides:
       weight: 80
       speed: 30
+      playfulness: 20
 ```
 
 **Material Definition:**
@@ -333,51 +558,13 @@ materials:
     spring_config:
       stiffness: 120
       damping: 14
-    css_implications:
-      box_shadow: "0 2px 4px rgba(0,0,0,0.1)"
-      transition: "transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1)"
-```
-
-**Era Definition:**
-```yaml
-# memory/eras/era-1.yaml
-era:
-  id: 1
-  name: "The Flat Era"
-  started: "2024-01-01"
-  ended: null
-  truths:
-    - statement: "Animation is latency"
-      evidence: "Bundle size constraints"
-  deprecated: []
-  transition:
-    triggers: |
-      This era ends when user base matures,
-      device performance allows richer animation,
-      industry shifts toward warmth/depth.
-```
-
-**Mutation Definition:**
-```yaml
-# memory/mutations/active/bouncy-claim.yaml
-mutation:
-  id: "bouncy-claim-button"
-  breaks: "deliberate-timing decision"
-  status: "dogfooding"
-  created: "2026-01-01"
-  expires: "2026-01-12"
-  success_criteria:
-    - metric: "completion_rate"
-      threshold: ">= 94%"
-    - metric: "trust_score"
-      threshold: ">= 4.0"
 ```
 
 ---
 
-## 5. Craft Toolkit Design
+## 6. Craft Toolkit Design
 
-### 5.1 Tool Selection Algorithm
+### 6.1 Tool Selection Algorithm
 
 ```python
 def select_tool(user_input: str) -> Tool:
@@ -387,16 +574,13 @@ def select_tool(user_input: str) -> Tool:
     chisel_patterns = [
         r'\d+px',           # "4px", "16px"
         r'\d+ms',           # "200ms", "800ms"
-        r'\d+%',            # "50%", "100%"
         'padding', 'margin', 'shadow', 'border',
-        'lighter', 'darker', 'bigger', 'smaller',
     ]
 
     # Hammer patterns (ambiguous, feeling-based)
     hammer_patterns = [
         'feels', 'seems', 'looks',
-        'trustworthy', 'heavy', 'light', 'fast', 'slow',
-        'how should', 'what if', 'should we',
+        'trustworthy', 'heavy', 'fast', 'slow',
         "doesn't feel right", "something's off",
     ]
 
@@ -409,7 +593,7 @@ def select_tool(user_input: str) -> Tool:
     return Hammer()
 ```
 
-### 5.2 Hammer Workflow
+### 6.2 Hammer Workflow
 
 ```
 INPUT: Ambiguous symptom
@@ -418,21 +602,11 @@ INPUT: Ambiguous symptom
 ┌─────────────────────────────────────┐
 │  1. CLARIFYING QUESTION             │
 │  "What kind of slow?"               │
-│  a) Response time                   │
-│  b) Animation speed                 │
-│  c) Confirmation delay              │
 └─────────────────────────────────────┘
          │
          ▼
 ┌─────────────────────────────────────┐
-│  2. DIAGNOSTIC QUESTION             │
-│  "How long is 'too long'?"          │
-│  "Is it consistent?"                │
-└─────────────────────────────────────┘
-         │
-         ▼
-┌─────────────────────────────────────┐
-│  3. ROOT CAUSE DETERMINATION        │
+│  2. ROOT CAUSE DETERMINATION        │
 │  ├─ Aesthetic → Route to Chisel     │
 │  ├─ Structural → Generate Loa handoff│
 │  ├─ Taste → Route to /approve       │
@@ -440,157 +614,47 @@ INPUT: Ambiguous symptom
 └─────────────────────────────────────┘
 ```
 
-### 5.3 Chisel Workflow
-
-```
-INPUT: Clear aesthetic fix
-         │
-         ▼
-┌─────────────────────────────────────┐
-│  1. LOAD PHYSICS CONTEXT            │
-│  Zone: critical                     │
-│  Material: clay                     │
-│  Constraints: max 800ms animation   │
-└─────────────────────────────────────┘
-         │
-         ▼
-┌─────────────────────────────────────┐
-│  2. CHECK CONSTRAINTS               │
-│  ├─ Within limits → Execute         │
-│  └─ Exceeds limits → Offer options  │
-└─────────────────────────────────────┘
-         │
-         ▼
-┌─────────────────────────────────────┐
-│  3. EXECUTE                         │
-│  Quick change, minimal ceremony     │
-│  Show before/after                  │
-└─────────────────────────────────────┘
-```
-
-### 5.4 Loa Handoff Protocol
+### 6.3 Loa Handoff Protocol
 
 When Hammer diagnoses a structural issue:
 
 ```yaml
-# Generated handoff context
-handoff:
-  from: sigil
-  to: loa
-  timestamp: "2026-01-04T12:00:00Z"
-
-  problem:
-    symptom: "Claim button feels laggy"
-    diagnosis: "Envio indexer latency (3-4s)"
-
-  investigation:
-    questions_asked:
-      - q: "What kind of lag?"
-        a: "Takes too long to confirm"
-      - q: "How long?"
-        a: "3-4 seconds consistently"
-      - q: "Where is time spent?"
-        a: "Envio indexer"
-
-  constraints:
-    zone: "critical"
-    sync: "server_authoritative"
-    physics_note: "Cannot use optimistic UI in this zone"
-
-  target:
-    current: "3-4s confirmation"
-    goal: "<500ms confirmation"
-
-  sigil_constraints: |
-    Whatever solution Loa implements, Sigil requires:
-    - No optimistic UI (server must confirm first)
-    - Pending state must be visible
-    - If latency cannot be fixed, make wait feel intentional
-```
-
+# loa-grimoire/context/sigil-handoff.md
+---
+from: sigil
+to: loa
+timestamp: "2026-01-04T12:00:00Z"
 ---
 
-## 6. Lens Architecture
+## Problem
 
-### 6.1 Layer Separation
+**Symptom:** Claim button feels laggy
+**Diagnosis:** Envio indexer latency (3-4s)
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                      LENS LAYER                                      │
-│  Optional rendering enhancements (user opt-in)                       │
-│  - Lighting, shadows, post-processing                               │
-│  - Can exceed fidelity ceiling                                       │
-│  - Togglable without breaking functionality                         │
-└─────────────────────────────────────────────────────────────────────┘
-                              │
-                        (renders on top of)
-                              │
-┌─────────────────────────────────────────────────────────────────────┐
-│                      CORE LAYER                                      │
-│  The "truth" - geometry, colors, logic, state                       │
-│  - At fidelity ceiling (never above)                                │
-│  - Server-authoritative in critical zones                           │
-│  - Must work with lens disabled                                     │
-└─────────────────────────────────────────────────────────────────────┘
-```
+## Investigation
 
-### 6.2 Lens Types
+| Question | Answer |
+|----------|--------|
+| What kind of lag? | Takes too long to confirm |
+| How long? | 3-4 seconds consistently |
 
-```yaml
-# core/lens.yaml
-lens:
-  types:
-    vanilla:
-      is_default: true
-      description: "Gold standard. Core fidelity."
-      rendering:
-        lighting: baked
-        shadows: none
+## Sigil Constraints
 
-    high_fidelity:
-      requires_opt_in: true
-      description: "117HD style. Visual enhancement."
-      constraint: "Cannot change geometry"
-      rendering:
-        lighting: dynamic
-        shadows: real_time
+- Zone: critical
+- Sync: server_authoritative
+- Physics note: Cannot use optimistic UI
 
-    utility:
-      requires_opt_in: true
-      description: "RuneLite style. Overlays, markers."
-      constraint: "Additive only"
+## Target
 
-    accessibility:
-      priority: highest
-      description: "High contrast, reduced motion."
-      rendering:
-        contrast: high
-        motion: reduced
-```
+- Current: 3-4s confirmation
+- Goal: <500ms confirmation
 
-### 6.3 CSS Implementation
+## Requirements
 
-```css
-/* Core layer (vanilla) */
-:root {
-  --shadow: none;
-  --border-radius: 4px;
-  --animation-duration: 300ms;
-}
-
-/* Lens: high_fidelity */
-:root[data-lens="high_fidelity"] {
-  --shadow: 0 4px 12px rgba(0,0,0,0.15);
-  --border-radius: 8px;
-  --animation-duration: 400ms;
-}
-
-/* Lens: accessibility (highest priority) */
-:root[data-lens="accessibility"] {
-  --shadow: none;
-  --animation-duration: 0ms;
-  --focus-outline: 3px solid blue;
-}
+Whatever solution Loa implements, Sigil requires:
+- No optimistic UI (server must confirm first)
+- Pending state must be visible
+- If latency cannot be fixed, make wait feel intentional
 ```
 
 ---
@@ -605,8 +669,8 @@ def detect_zone(file_path: str) -> Zone:
 
     zones = load_yaml("resonance/zones.yaml")
 
-    # Priority order: critical > transactional > exploratory > marketing > default
-    for zone_name in ["critical", "transactional", "exploratory", "marketing"]:
+    # Priority order
+    for zone_name in ["critical", "transactional", "exploratory", "marketing", "admin"]:
         zone = zones.get(zone_name)
         if not zone:
             continue
@@ -623,215 +687,40 @@ def detect_zone(file_path: str) -> Zone:
     return zones.get("default", DEFAULT_ZONE)
 ```
 
-### 7.2 Zone Context Loading
-
-```python
-def load_physics_context(file_path: str) -> PhysicsContext:
-    """Load complete physics context for a file path."""
-
-    # 1. Detect zone
-    zone = detect_zone(file_path)
-
-    # 2. Load zone physics
-    sync = load_yaml("core/sync.yaml")
-    budgets = load_yaml("core/budgets.yaml")
-    fidelity = load_yaml("core/fidelity.yaml")
-
-    # 3. Load material
-    materials = load_yaml("resonance/materials.yaml")
-    material = materials.get(zone.physics.material)
-
-    # 4. Load tensions (with zone overrides)
-    tensions = load_yaml("resonance/tensions.yaml")
-    for key, value in zone.tension_overrides.items():
-        tensions[key] = value
-
-    return PhysicsContext(
-        zone=zone,
-        sync=sync,
-        material=material,
-        budgets=budgets,
-        fidelity=fidelity,
-        tensions=tensions
-    )
-```
-
----
-
-## 8. Memory System
-
-### 8.1 Era Versioning
-
-Decisions are tagged with era context:
-
-```yaml
-# memory/decisions/loading-states.yaml
-decision:
-  id: "loading-states"
-  rulings:
-    - era: 1
-      verdict: "skeleton"
-      rationale: "Fast perceived performance"
-
-    - era: 2
-      verdict: "text-pending-in-critical"
-      rationale: "Skeletons confused users in critical zones"
-      context: "User trust more important than perceived speed"
-```
-
-### 8.2 Mutation Lifecycle
-
-```
-┌─────────────┐
-│  PROPOSED   │ ← Breaks existing decision/pattern
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│  DOGFOODING │ ← Internal testing
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│   EXPIRES   │ ← Success criteria evaluated
-└──────┬──────┘
-       │
-   ┌───┴───┐
-   │       │
-   ▼       ▼
-┌─────┐  ┌─────────┐
-│CANON│  │GRAVEYARD│
-└─────┘  └─────────┘
-  ↓           ↓
-Promoted  Training data
-to truth  for future
-```
-
-### 8.3 Graveyard as Training Data
-
-Failed mutations become training data:
-
-```yaml
-# memory/graveyard/bouncy-claim.yaml
-mutation:
-  id: "bouncy-claim-button"
-  status: "failed"
-  failure_reason: "Trust score dropped to 3.2 (threshold: 4.0)"
-  lessons:
-    - "Playful animations reduce trust in critical zones"
-    - "Even subtle bounce reads as 'unserious'"
-  archived: "2026-01-12"
-```
-
----
-
-## 9. Mount System
-
-### 9.1 Mount Script
+### 7.2 Zone CLI Tool
 
 ```bash
 #!/usr/bin/env bash
-# mount-sigil.sh - Mount Sigil v4 on a repository
+# sigil-detect-zone.sh - Detect zone for a file path
 
-SIGIL_HOME="${SIGIL_HOME:-$HOME/.sigil/sigil}"
-SIGIL_SKILLS=(
-  "envisioning-soul"
-  "codifying-materials"
-  "mapping-zones"
-  "crafting-components"
-  "validating-fidelity"
-  "gardening-entropy"
-  "approving-patterns"
-  "greenlighting-concepts"
-)
+FILE_PATH="$1"
 
-# Create .claude directories
-mkdir -p .claude/skills .claude/commands
+# Load zones
+ZONES_FILE="sigil-mark/resonance/zones.yaml"
 
-# Symlink Sigil skills
-for skill in "${SIGIL_SKILLS[@]}"; do
-  ln -sf "$SIGIL_HOME/.claude/skills/$skill" ".claude/skills/$skill"
+# Check each zone's patterns
+for zone in critical transactional exploratory marketing admin; do
+  patterns=$(yq ".zones.$zone.paths[]" "$ZONES_FILE" 2>/dev/null)
+
+  for pattern in $patterns; do
+    # Convert glob to regex
+    regex=$(echo "$pattern" | sed 's/\*\*/.*/' | sed 's/\*/.*/g')
+
+    if echo "$FILE_PATH" | grep -qE "$regex"; then
+      echo "$zone"
+      exit 0
+    fi
+  done
 done
 
-# Symlink Sigil commands
-for cmd in envision codify map craft validate garden approve greenlight; do
-  ln -sf "$SIGIL_HOME/.claude/commands/${cmd}.md" ".claude/commands/${cmd}.md"
-done
-
-# Create sigil-mark if not exists
-mkdir -p sigil-mark/{core,resonance,memory,taste-key}
-
-echo "Sigil v4 mounted. Run /envision to start."
-```
-
-### 9.2 Version Tracking
-
-```json
-// .sigil-version.json
-{
-  "version": "4.0.0",
-  "mounted_at": "2026-01-04T12:00:00Z",
-  "updated_at": "2026-01-04T12:00:00Z",
-  "sigil_home": "/Users/soju/.sigil/sigil",
-  "branch": "main"
-}
+echo "default"
 ```
 
 ---
 
-## 10. Integration Points
+## 8. Output Formats
 
-### 10.1 Sigil ↔ Loa Boundary
-
-| Scenario | Handler | Handoff |
-|----------|---------|---------|
-| UI feels slow | Sigil (Hammer) | If structural → Loa |
-| Animation timing | Sigil (Chisel) | None |
-| API latency | Loa | None |
-| Component styling | Sigil (Craft) | None |
-| Database query | Loa | None |
-| Zone physics question | Sigil | None |
-
-### 10.2 Agent Protocol
-
-Before generating any UI code:
-
-```python
-def agent_protocol(file_path: str, user_request: str):
-    # 1. Check for Sigil setup
-    if not exists("sigil-mark/"):
-        return "Run /sigil-setup first"
-
-    # 2. Load physics context
-    context = load_physics_context(file_path)
-
-    # 3. Select tool
-    tool = select_tool(user_request)
-
-    # 4. If Hammer, diagnose first
-    if isinstance(tool, Hammer):
-        diagnosis = tool.diagnose(user_request)
-        if diagnosis.is_structural:
-            return generate_loa_handoff(diagnosis)
-        if diagnosis.is_aesthetic:
-            tool = Chisel()
-
-    # 5. Check violations before generating
-    violations = check_all_violations(context, proposed_output)
-    if violations.has_physics_violation:
-        return block_with_explanation(violations)
-    if violations.has_budget_violation:
-        return offer_override_or_alternatives(violations)
-
-    # 6. Generate with physics context header
-    return generate_with_context(context, tool, user_request)
-```
-
----
-
-## 11. Output Formats
-
-### 11.1 Physics Context Header
+### 8.1 Physics Context Header
 
 ```
 🎛️ SIGIL RESONANCE
@@ -849,143 +738,143 @@ Cognitive: 3/5 interactive elements ✓
 Visual: 1/1 animations ✓
 
 ─────────────────────────────────────────────────────────────────
-
-GENERATING...
 ```
 
-### 11.2 Violation Output
+### 8.2 Validation Output (Workbench)
 
-**Physics Violation (IMPOSSIBLE):**
+**Pass:**
 ```
-❌ PHYSICS VIOLATION — IMPOSSIBLE
-═══════════════════════════════════════════════════════════════
+VALIDATION
 
-VIOLATION: Optimistic UI in server_authoritative zone
-
-This is not a style preference. It is a physics violation.
-You cannot exceed the speed of light.
-You cannot show state before the server confirms in this zone.
-
+File: ConfirmButton.tsx
 Zone: critical
-Sync: server_authoritative
-Constraint: "Server confirms before state changes"
 
-─────────────────────────────────────────────────────────────────
+Physics:   ✓ PASS
+Sync:      ✓ server_authoritative
+Budgets:   ✓ 3/5 elements
+Fidelity:  ✓ within ceiling
+Material:  ✓ clay physics
 
-The delay IS the trust.
-This violation CANNOT be overridden.
+Status: READY FOR /approve
 ```
 
-**Budget Violation (Override Available):**
+**Block:**
 ```
-⚠️ BUDGET VIOLATION — COGNITIVE OVERLOAD
-═══════════════════════════════════════════════════════════════
+VALIDATION
 
+File: ConfirmButton.tsx
 Zone: critical
-Budget: 5 interactive elements max
-Found: 12 interactive elements
 
-"A screen with 50 perfect buttons is still bad design."
+Physics:   ✓ PASS
+Sync:      ✓ server_authoritative
+Budgets:   ✗ 8/5 elements (BLOCK)
+Fidelity:  ✓ within ceiling
+Material:  ✓ clay physics
 
-─────────────────────────────────────────────────────────────────
+Status: BLOCKED - needs Taste Key ruling
+```
 
-OPTIONS:
-[Remove elements] [Request Taste Key override]
+**Impossible:**
+```
+VALIDATION
+
+File: ConfirmButton.tsx
+Zone: critical
+
+Physics:   ✗ IMPOSSIBLE VIOLATION
+           Optimistic UI in server_authoritative zone
+
+Status: IMPOSSIBLE - physics violation
 ```
 
 ---
 
-## 12. Development Workflow
+## 9. Scripts Manifest
 
-### 12.1 Sigil Setup Flow
+### 9.1 Core Scripts
 
-```
-/sigil-setup
-     │
-     ▼
-Creates sigil-mark/ structure
-     │
-     ▼
-/envision (interview for product soul)
-     │
-     ▼
-Creates resonance/essence.yaml
-     │
-     ▼
-/codify (define materials)
-     │
-     ▼
-Updates resonance/materials.yaml
-     │
-     ▼
-/map (define zones)
-     │
-     ▼
-Updates resonance/zones.yaml
-     │
-     ▼
-Ready for /craft
-```
+| Script | Purpose | Location |
+|--------|---------|----------|
+| `mount-sigil.sh` | Initialize Sigil on repo | `.claude/scripts/` |
+| `sigil-workbench.sh` | Launch Workbench | `.claude/scripts/` |
+| `sigil-tensions.sh` | Display tensions panel | `.claude/scripts/` |
+| `sigil-validate.sh` | Real-time validation | `.claude/scripts/` |
+| `sigil-detect-zone.sh` | Zone detection CLI | `.claude/scripts/` |
 
-### 12.2 Build Flow
+### 9.2 Mount Script
 
-```
-/greenlight (concept approval)
-     │
-     ▼
-/craft (generate component)
-     │
-     ├─ Hammer (if ambiguous)
-     │      │
-     │      ▼
-     │   Diagnose → Route
-     │
-     └─ Chisel (if clear)
-            │
-            ▼
-       Execute quickly
-            │
-            ▼
-/validate (check violations)
-     │
-     ▼
-/approve (Taste Key sign-off)
-```
+```bash
+#!/usr/bin/env bash
+# mount-sigil.sh - Mount Sigil v1.0 on a repository
 
-### 12.3 Maintain Flow
+SIGIL_HOME="${SIGIL_HOME:-$HOME/.sigil/sigil}"
 
-```
-/garden
-     │
-     ├─ Detect drift
-     │
-     ├─ Review mutations
-     │      │
-     │      ├─ Promote to canon
-     │      └─ Archive to graveyard
-     │
-     └─ Flag stale decisions
+# Create directories
+mkdir -p .claude/skills .claude/commands .claude/scripts
+mkdir -p sigil-mark/{core,resonance,memory/{eras,decisions,mutations/active,graveyard},taste-key/rulings}
+
+# Symlink skills
+for skill in envisioning-soul codifying-materials mapping-zones crafting-components \
+             validating-fidelity gardening-entropy approving-patterns greenlighting-concepts; do
+  ln -sf "$SIGIL_HOME/.claude/skills/$skill" ".claude/skills/$skill"
+done
+
+# Symlink commands
+for cmd in envision codify map craft validate garden approve greenlight; do
+  ln -sf "$SIGIL_HOME/.claude/commands/${cmd}.md" ".claude/commands/${cmd}.md"
+done
+
+# Symlink scripts
+for script in sigil-workbench.sh sigil-tensions.sh sigil-validate.sh sigil-detect-zone.sh; do
+  ln -sf "$SIGIL_HOME/.claude/scripts/$script" ".claude/scripts/$script"
+done
+
+# Create version marker
+echo "Sigil v1.0 setup completed at $(date -u +%Y-%m-%dT%H:%M:%SZ)" > .sigil-setup-complete
+
+cat << 'EOF'
+Sigil v1.0 mounted.
+
+Next steps:
+  1. Run /envision to capture product soul
+  2. Run /codify to define materials
+  3. Run /map to configure zones
+  4. Run sigil-workbench.sh to launch Workbench
+
+Or start crafting: /craft
+EOF
 ```
 
 ---
 
-## 13. Success Criteria Validation
+## 10. Dependencies
 
-| Criterion | Implementation |
-|-----------|----------------|
-| Temporal Governor enforced | `check_temporal_physics()` blocks violations |
-| Budgets enforced | `check_budget()` with Taste Key override |
-| Hammer investigates | `select_tool()` routes ambiguous to Hammer |
-| Chisel executes fast | Direct execution for clear aesthetic input |
-| Loa handoffs work | `generate_loa_handoff()` with context |
-| Physics block impossible | IMPOSSIBLE violations cannot be overridden |
-| 8 commands only | Strict command list in mount script |
-| Single Taste Key | `holder.yaml` defines single owner |
-| Era-versioned | All decisions tagged with era |
+### 10.1 Required
+
+| Dependency | Purpose | Install |
+|------------|---------|---------|
+| Claude Code | AI agent CLI | `npm i -g @anthropic-ai/claude-code` |
+| tmux | Workbench layout | `brew install tmux` |
+| yq | YAML parsing | `brew install yq` |
+
+### 10.2 Optional
+
+| Dependency | Purpose | Install |
+|------------|---------|---------|
+| fswatch | File watching | `brew install fswatch` |
+| Chrome MCP | Live preview | Already installed |
+
+### 10.3 Fallbacks
+
+| If Missing | Fallback |
+|------------|----------|
+| fswatch | Manual `/validate` command |
+| Chrome MCP | Manual browser refresh |
+| tmux | Run commands individually |
 
 ---
 
-## 14. File Manifest
+## 11. File Manifest
 
 ### Commands (8)
 ```
@@ -1016,6 +905,16 @@ Ready for /craft
 └── greenlighting-concepts/
 ```
 
+### Scripts (5)
+```
+.claude/scripts/
+├── mount-sigil.sh
+├── sigil-workbench.sh
+├── sigil-tensions.sh
+├── sigil-validate.sh
+└── sigil-detect-zone.sh
+```
+
 ### State Zone
 ```
 sigil-mark/
@@ -1037,6 +936,65 @@ sigil-mark/
 └── taste-key/
     ├── holder.yaml
     └── rulings/
+```
+
+---
+
+## 12. Success Criteria Validation
+
+| Criterion | Implementation |
+|-----------|----------------|
+| Workbench launches | `sigil-workbench.sh` creates 4-pane tmux |
+| Tensions panel works | `sigil-tensions.sh` shows ASCII bars |
+| Validation is real-time | `sigil-validate.sh` with fswatch |
+| Pass/Fail output | Clear status in validation panel |
+| Physics block impossible | IMPOSSIBLE violations cannot override |
+| Budget violations block | BLOCK with Taste Key option |
+| 8 commands only | Strict command list |
+| Clean removal | `rm -rf sigil-mark/` removes all state |
+
+---
+
+## 13. Development Workflow
+
+### 13.1 Setup Flow
+
+```
+./mount-sigil.sh
+     │
+     ▼
+/envision (interview for product soul)
+     │
+     ▼
+/codify (define materials)
+     │
+     ▼
+/map (define zones)
+     │
+     ▼
+sigil-workbench.sh (launch Workbench)
+```
+
+### 13.2 Build Flow (in Workbench)
+
+```
+Claude Panel:
+/craft ConfirmButton src/features/checkout/
+     │
+     ▼
+Validation Panel:
+Real-time feedback on physics compliance
+     │
+     ▼
+Chrome Panel:
+Live preview of component
+     │
+     ▼
+When Status: READY FOR /approve
+     │
+     ▼
+Claude Panel:
+/approve ConfirmButton
 ```
 
 ---

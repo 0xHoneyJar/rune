@@ -1,57 +1,50 @@
-# Product Requirements Document: Sigil v4
+# Product Requirements Document: Sigil v1.0
 
-**Version:** 1.0
-**Status:** Draft
-**Date:** 2026-01-04
-**Author:** AI-Generated from sigil-v4.zip context
+> "Physics, not opinions. Constraints, not debates."
+
+**Version**: 1.0.0
+**Date**: 2026-01-04
+**Status**: Draft
 
 ---
 
 ## Executive Summary
 
-Sigil v4 is a Design Physics Engine that gives AI agents the constraints they need to make consistent design decisions. Unlike traditional design systems that document patterns, Sigil enforces physics — immutable laws that cannot be violated.
+Sigil v1.0 is a Design Physics Engine that gives AI agents physics constraints for consistent design decisions. This version introduces the Sigil Workbench—a real-time design environment that eliminates tab-switching and provides instant feedback on physics compliance.
 
-> "Physics, not opinions. Constraints, not debates."
+**Target User**: Solo developer using Claude Code for AI-assisted UI development.
 
-### Evolution
-
-| Version | Metaphor | Problem |
-|---------|----------|---------|
-| Canon | Philosophy | Debate without resolution |
-| Codex | Legal System | Precedent blocks innovation |
-| Resonance v3 | Physics Engine | Laws of nature, not laws of man |
-| **Platform v4** | **Physics + Economy** | Adds budgets, temporal governor, lens |
+**Core Value Proposition**: Every UI generation respects your product's physics automatically. No more correction cycles. No more design debates.
 
 ---
 
 ## 1. Problem Statement
 
-### The Core Problem
+### The Pain
 
-AI agents generating UI code make inconsistent design decisions because:
+When building UI with AI agents, design consistency breaks down because:
 
-1. **No physics constraints** — Design treated as preference, not law
-2. **No temporal awareness** — Agents don't know when delay is intentional
-3. **No budget enforcement** — Individual components pass, but composition fails
-4. **No fidelity ceiling** — "Better" graphics break product soul
-5. **No diagnosis protocol** — Symptoms treated without finding root cause
+1. **No component visibility** — Hard to discover what exists
+2. **Design knowledge loss** — Why decisions were made gets forgotten
+3. **Inconsistent patterns** — Same problems solved differently
+4. **Agent-human context loss** — AI lacks design context
+5. **Single-developer drift** — Inconsistency even with one person
+6. **Endless correction cycles** — AI generates, human corrects, repeat
 
-### The Linear Test (Failure Mode)
+### Why Now
 
-```
-User: "The claim button feels slow"
+- AI-assisted development is mainstream (Claude Code, Cursor, etc.)
+- Design systems are too abstract for AI to reason about
+- No existing tool provides "physics" (immutable constraints) vs "preferences"
 
-FAIL: Immediately add skeleton loader (bandaid)
-FAIL: Add optimistic UI without checking zone
-FAIL: Change animation timing without investigation
+### Why Sigil
 
-PASS: Ask "What kind of slow?"
-PASS: Diagnose root cause (UI vs infra)
-PASS: Check zone temporal physics
-PASS: Route correctly (Chisel vs Loa)
-```
+Sigil treats design decisions like physics, not opinions:
+- **Physics can't be argued with.** Gravity doesn't care about your feelings.
+- **"Server-authoritative data MUST show pending states"** is a constraint, not a preference.
+- When constraints are framed as physics, AI agents follow them without question.
 
-> Sources: ARCHITECTURE.md:439-449, CLAUDE.md:44-51
+> Source: SIGIL-COMPLETE-ARCHITECTURE.md §2.1
 
 ---
 
@@ -59,407 +52,523 @@ PASS: Route correctly (Chisel vs Loa)
 
 ### Primary Goals
 
-1. **Enforce physics, not opinions** — Violations are impossible, not just discouraged
-2. **Design latency, not hide it** — Temporal Governor makes delay intentional
-3. **Prevent "too much"** — Budgets stop composition failures
-4. **Diagnose before solving** — Hammer investigates, Chisel executes
+| Goal | Metric | Target |
+|------|--------|--------|
+| Reduce correction cycles | Generations accepted without modification | >80% |
+| Enforce physics | IMPOSSIBLE violations generated | 0 |
+| Enable real-time feedback | Time from code change to validation | <1s |
+| Simplify adoption | Time from clone to first /craft | <5 min |
 
-### Success Criteria
+### Secondary Goals
 
-| Criterion | Measurement |
-|-----------|-------------|
-| Temporal Governor enforced | Discrete tick zones wait; continuous zones lie |
-| Budgets enforced | Cognitive budget blocks "too many elements" |
-| Hammer investigates | Never jumps to solution without diagnosis |
-| Chisel executes fast | No investigation for clearly aesthetic input |
-| Loa handoffs work | Structural issues generate proper context |
-| Physics block impossible | Cannot generate violations |
-| 8 commands only | No command creep |
-| Single Taste Key | No committee language |
-| Era-versioned | Decisions tagged with era |
+| Goal | Metric | Target |
+|------|--------|--------|
+| Community adoption | GitHub stars | 500 in 6 months |
+| Documentation quality | Users complete setup without help | >90% |
+| Clean removal | `rm -rf sigil-mark/` removes everything | 100% |
 
-> Sources: ARCHITECTURE.md:426-436
+### Anti-Goals (The Anti-Beads Promise)
+
+Sigil will NEVER:
+- Run a background daemon
+- Hijack git hooks
+- Use a database (SQLite, etc.)
+- Require migrations
+- Auto-delete content
+- Create hidden branches
+
+> Source: SIGIL-COMPLETE-ARCHITECTURE.md §1 "Anti-Beads Promise"
 
 ---
 
-## 3. User & Stakeholder Context
+## 3. User Persona
 
-### Primary User: AI Agent
+### Primary: Solo Dev with AI
 
-The AI agent (Claude) generating or refining UI code. The agent:
-- Loads physics context before generating
-- Checks zone physics from file path
-- Applies material, tension, and budget constraints
-- Routes ambiguous input through Hammer diagnosis
-- Executes clear aesthetic input through Chisel
+**Name**: Alex
+**Role**: Solo developer building a web3 DeFi app
+**Tools**: Claude Code, VS Code, Chrome
 
-### Secondary User: Developer
+**Context**:
+- Building checkout/claim flows with real money
+- Needs UI to feel trustworthy and deliberate
+- Uses AI to generate components quickly
+- Frustrated by inconsistent AI outputs
+- Doesn't have a designer on the team
 
-The developer receiving physics-constrained output. They:
-- Trust that generated code respects product soul
-- Understand violations when they occur
-- Can request Taste Key overrides when needed
+**Jobs to Be Done**:
+1. Generate UI components that match my product's feel
+2. Know immediately when something violates design constraints
+3. Focus on building, not correcting AI outputs
+4. Maintain consistency as the product grows
 
-### Authority: Taste Key Holder
-
-Single person with absolute authority over visual execution:
-- **Absolute:** Visual execution, animation, color, styling, budget overrides
-- **Cannot override:** Core physics, fidelity ceiling, greenlighted concepts
-
-> Sources: holder.yaml:1-88, CLAUDE.md:1-171
+**Pain Points**:
+- AI generates bounce animations when I need deliberate weight
+- No way to tell AI "checkout is server-authoritative"
+- Every generation is a coin flip
+- Spend more time correcting than creating
 
 ---
 
 ## 4. Functional Requirements
 
-### 4.1 The 8 Commands
+### 4.1 Four-Layer Architecture
 
-| # | Command | Agent | Purpose |
-|---|---------|-------|---------|
-| 1 | `/envision` | envisioning-soul | Capture product essence |
-| 2 | `/codify` | codifying-materials | Define material physics |
-| 3 | `/map` | mapping-zones | Define zones and paths |
-| 4 | `/craft` | crafting-components | Generate with Hammer/Chisel |
-| 5 | `/validate` | validating-fidelity | Check violations |
-| 6 | `/garden` | gardening-entropy | Detect drift, mutations |
-| 7 | `/approve` | approving-patterns | Taste Key rulings |
-| 8 | `/greenlight` | greenlighting-concepts | Concept approval |
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                         TASTE KEY                                    │
+│  Single holder with authority over visual execution.                 │
+└─────────────────────────────────────────────────────────────────────┘
+                              │
+┌─────────────────────────────────────────────────────────────────────┐
+│                         MEMORY                                       │
+│  Era-versioned decisions. Historical record that informs.            │
+└─────────────────────────────────────────────────────────────────────┘
+                              │
+┌─────────────────────────────────────────────────────────────────────┐
+│                        RESONANCE                                     │
+│  Product-specific tuning. Materials, zones, tensions.                │
+└─────────────────────────────────────────────────────────────────────┘
+                              │
+┌─────────────────────────────────────────────────────────────────────┐
+│                          CORE                                        │
+│  Immutable physics. Tick rate. Sync model. Budgets. Fidelity.        │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
-**Workflow:**
+> Source: SIGIL-COMPLETE-ARCHITECTURE.md §4
+
+### 4.2 Core Layer (Immutable)
+
+| Component | Purpose | Enforcement |
+|-----------|---------|-------------|
+| **Temporal Governor** | Time as design material (discrete 600ms vs continuous 0ms) | IMPOSSIBLE |
+| **Sync Authority** | Server vs client truth | IMPOSSIBLE |
+| **Budgets** | Cognitive, visual, complexity limits | BLOCK |
+| **Fidelity Ceiling** | Max visual complexity (Mod Ghost Rule) | BLOCK |
+| **Lens Registry** | HD/SD coexistence | N/A |
+
+**Temporal Governor**:
+```yaml
+discrete:
+  rate_ms: 600
+  feel: "Heavy, rhythmic, ceremonial"
+  rule: "The delay IS the trust"
+
+continuous:
+  rate_ms: 0
+  feel: "Instant, fluid, seamless"
+  rule: "The lie IS the speed"
+```
+
+**Sync Authority**:
+- `server_authoritative`: Server is truth. NO optimistic updates. MUST show pending.
+- `client_authoritative`: Client is truth. Optimistic updates allowed.
+
+> Source: SIGIL-COMPLETE-ARCHITECTURE.md §5
+
+### 4.3 Resonance Layer (Tunable)
+
+| Component | Purpose | Source |
+|-----------|---------|--------|
+| **Essence** | Product soul (references, anti-patterns, key moments) | /envision interview |
+| **Materials** | Physics configs (clay, glass, machinery) | /codify |
+| **Zones** | Path-based physics contexts | /map |
+| **Tensions** | Continuous tuning sliders (0-100) | Team vote |
+
+**Materials**:
+
+| Material | Weight | Motion | Feedback | Zone Affinity |
+|----------|--------|--------|----------|---------------|
+| **Clay** | Heavy | Spring (120/14) | Depress | Critical, Transactional |
+| **Glass** | Weightless | Ease (200ms) | Glow | Exploratory, Marketing |
+| **Machinery** | None | Instant | Highlight | Admin |
+
+**Zones**:
+
+| Zone | Sync | Material | Elements | Decisions |
+|------|------|----------|----------|-----------|
+| Critical | server_authoritative | clay | 5 | 2 |
+| Transactional | server_authoritative | clay | 8 | 3 |
+| Exploratory | client_authoritative | glass | 20 | 10 |
+| Marketing | client_authoritative | glass | 15 | 8 |
+| Admin | client_authoritative | machinery | 25 | 15 |
+
+> Source: SIGIL-COMPLETE-ARCHITECTURE.md §6
+
+### 4.4 Memory Layer (Versioned)
+
+| Component | Purpose |
+|-----------|---------|
+| **Eras** | Time-bounded design contexts |
+| **Decisions** | Era-versioned rulings |
+| **Mutations** | Experimental sandbox |
+| **Graveyard** | Failed experiments (training data) |
+
+### 4.5 Taste Key (Authority)
+
+| Authority | Scope |
+|-----------|-------|
+| **CAN override** | Budgets, fidelity, colors, typography |
+| **CANNOT override** | Physics (sync, tick), security, accessibility |
+| **MUST respect** | Tension bounds (community-voted) |
+
+### 4.6 Eight Commands
+
+| # | Command | Purpose | Output |
+|---|---------|---------|--------|
+| 1 | `/envision` | Capture product essence | essence.yaml |
+| 2 | `/codify` | Define material physics | materials.yaml |
+| 3 | `/map` | Define zones and paths | zones.yaml |
+| 4 | `/craft` | Generate with Hammer/Chisel | Code + guidance |
+| 5 | `/validate` | Check violations | Report |
+| 6 | `/garden` | Detect entropy | Drift report |
+| 7 | `/approve` | Taste Key rulings | Ruling record |
+| 8 | `/greenlight` | Concept approval | Greenlight record |
+
+**Workflow**:
 ```
 SETUP:    /envision → /codify → /map
 BUILD:    /greenlight → /craft → /validate → /approve
 MAINTAIN: /garden
 ```
 
-> Sources: ARCHITECTURE.md:314-335
+> Source: SIGIL-COMPLETE-ARCHITECTURE.md §9
 
-### 4.2 Temporal Governor
+### 4.7 Hammer/Chisel Toolkit
 
-Time is a design material, not just a technical constraint.
+**Hammer (Diagnose + Route)**:
+- Find ROOT CAUSE before solving
+- AskUserQuestion loop to investigate
+- Routes to: Chisel (UI fix), Loa (structural), /approve (taste decision)
 
-**Modes:**
+**Chisel (Execute)**:
+- Quick aesthetic execution
+- No investigation for clearly aesthetic tasks
+- Applies physics constraints automatically
 
-| Mode | Rate | Feel | UI Behavior |
-|------|------|------|-------------|
-| Discrete | 600ms | Heavy, rhythmic, ceremonial | UI waits for tick. Delay validates. |
-| Continuous | 0ms | Instant, fluid, seamless | Optimistic updates. UI lies. |
-
-**Key Insight:** OSRS 600ms tick isn't latency to hide — it's the rhythm. Linear's "instant" isn't fast — it's a lie (optimistic) that creates flow.
-
-**Authority:**
-
-| Type | Meaning | UI Constraint |
-|------|---------|---------------|
-| Server-authoritative | Server is truth | NO optimistic updates. Ever. |
-| Client-authoritative | Client is truth | Optimistic updates expected. |
-| Collaborative | Merged truth (CRDT) | Conflict resolution visible |
-
-> Sources: sync.yaml:1-138
-
-### 4.3 Materials
-
-Materials are physics configurations, not themes.
-
-| Material | Light | Weight | Motion | Feedback | Zone Affinity |
-|----------|-------|--------|--------|----------|---------------|
-| Clay | Diffuse | Heavy | Spring | Depress | Critical, Celebration |
-| Machinery | Flat | None | Instant | Highlight | Transactional, Admin |
-| Glass | Refract | Weightless | Ease | Glow | Exploratory, Marketing |
-
-**Selection Guide:**
-- Irreversible actions → Clay
-- Frequent actions → Machinery
-- Exploratory actions → Glass
-
-> Sources: materials.yaml:1-151
-
-### 4.4 Zones
-
-Zones define physics context for file paths.
-
-| Zone | Sync | Tick | Material | Budget | Key Rule |
-|------|------|------|----------|--------|----------|
-| Critical | Server | Discrete | Clay | 5 elements | No optimistic UI |
-| Transactional | Client | Continuous | Machinery | 12 elements | Instant feedback |
-| Exploratory | Client | Continuous | Glass | 20 elements | Delight allowed |
-| Marketing | Client | Continuous | Glass | 15 elements | Animation for impact |
-
-**Detection:** Path-based matching via glob patterns in zones.yaml
-
-> Sources: zones.yaml:1-188
-
-### 4.5 Budgets
-
-Fidelity ceiling prevents "too good." Budgets prevent "too much."
-
-**Cognitive Budget:**
-- Interactive elements: 5 (critical) → 30 (admin)
-- Decisions required: 2 (critical) → 10 (exploratory)
-- Text density: 50 words (critical) → 300 words (exploratory)
-
-**Visual Budget:**
-- Color count: 5 distinct hues max
-- Animation count: 1 (critical) → 5 (exploratory)
-- Depth layers: 4 max
-
-**Complexity Budget:**
-- Props per component: 10 max
-- Variants per component: 12 max
-- Dependencies per component: 8 max
-
-> Sources: budgets.yaml:1-123
-
-### 4.6 Fidelity Ceiling (Mod Ghost Rule)
-
-Technical superiority is NOT justification for breaking resonance.
-
-**Constraints:**
-| Property | Ceiling | Violation |
-|----------|---------|-----------|
-| Gradients | 2 stops max | CEILING_VIOLATION |
-| Shadows | 3 layers max | CEILING_VIOLATION |
-| Animation | 800ms max | CEILING_VIOLATION |
-| Blur | 16px radius max | CEILING_VIOLATION |
-| Border radius | 24px max | CEILING_VIOLATION |
-
-**Agent Rule:** Generate at ceiling, not above. Simpler is often better.
-
-> Sources: fidelity.yaml:1-102
-
-### 4.7 Lens Registry
-
-HD and SD coexist without fighting.
-
-| Lens | Description | Constraint |
-|------|-------------|------------|
-| Vanilla | Gold standard, core fidelity | Default |
-| High-fidelity | 117HD style, enhanced | Cannot change geometry |
-| Utility | RuneLite style, overlays | Additive only |
-| Accessibility | High contrast, reduced motion | Highest priority |
-
-**Rule:** "NEVER bake lens features into core assets. Core is truth. Lens is experience."
-
-> Sources: lens.yaml:1-156
-
-### 4.8 Craft Toolkit (Hammer/Chisel)
-
-**Hammer (Diagnose + Route):**
-- **When:** Ambiguous symptoms, questions about approach
-- **Method:** AskUserQuestion loop to find root cause
-- **Outcomes:** Route to Chisel (aesthetic), Loa (structural), or /approve (taste)
-
-**Chisel (Execute):**
-- **When:** Clear aesthetic fix, explicit values
-- **Method:** Quick execution, minimal ceremony
-- **Precondition:** Root cause already understood
-
-**Tool Selection:**
+**The Linear Test**:
 ```
-Contains measurements? ("4px", "200ms") → Chisel
-Contains properties? ("padding", "shadow") → Chisel
-Contains feel-words? ("trustworthy", "heavy") → Hammer
-Questions approach? ("how should we") → Hammer
-Ambiguous symptom? ("feels slow") → Hammer
+User: "The claim button feels slow"
+
+❌ FAIL: Immediately add skeleton loader
+❌ FAIL: Add optimistic UI without checking zone
+✓ PASS: Ask "What kind of slow?"
+✓ PASS: Diagnose root cause (UI vs infra)
+✓ PASS: Check zone temporal physics
+✓ PASS: Route correctly (Chisel vs Loa)
 ```
 
-> Sources: SKILL.md:1-299, hammer.md:1-117, chisel.md:1-162
+> Source: SIGIL-COMPLETE-ARCHITECTURE.md §10
 
-### 4.9 Loa Handoff
+### 4.8 Violation Hierarchy
 
-When issue is structural (not UI), generate handoff context:
+| Type | Severity | Override | Example |
+|------|----------|----------|---------|
+| Physics | IMPOSSIBLE | None | Optimistic UI in server_authoritative |
+| Budget | BLOCK | Taste Key | 12 elements in critical zone (max 5) |
+| Fidelity | BLOCK | Taste Key | 4 gradient stops (max 2) |
+| Drift | WARN | None needed | Clay physics in transactional zone |
 
-```yaml
-handoff:
-  from: sigil
-  to: loa
-  problem:
-    symptom: "Claim feels slow"
-    diagnosis: "Envio indexer (3-4s)"
-  constraints:
-    zone: critical
-    physics: "Cannot use optimistic UI"
-  target: "<500ms confirmation"
+> Source: SIGIL-COMPLETE-ARCHITECTURE.md §11
+
+### 4.9 Sigil Workbench (MVP)
+
+A tmux-based real-time design environment with four panels:
+
+```
+┌─────────────────────────────┬───────────────────────────────────────┐
+│      CLAUDE PANEL           │         CHROME VIEW                   │
+│  /craft commands            │    [Live Preview of Component]        │
+│  Hammer/Chisel feedback     │                                       │
+├─────────────────────────────┼───────────────────────────────────────┤
+│      TENSIONS PANEL         │         VALIDATION PANEL              │
+│  Visual sliders             │  Physics: PASS/FAIL                   │
+│  [Reset Zone] [Override]    │  Budgets: 3/5 elements                │
+└─────────────────────────────┴───────────────────────────────────────┘
 ```
 
-> Sources: ARCHITECTURE.md:362-376
+**Real-Time Feedback Loop**:
+1. Developer types in Claude panel
+2. Claude generates/modifies component
+3. Chrome view updates live (hot reload)
+4. Tensions panel shows current values
+5. Validation panel shows violations
+6. Developer adjusts via Chisel
+7. Repeat until approved
 
-### 4.10 Memory (Era-Versioned)
+**Component Scoring**:
+```
+Physics Alignment     ████████████████████ 100%
+Budget Compliance     ████████████░░░░░░░░  60%
+Fidelity Ceiling      ████████████████████ 100%
+Material Resonance    ██████████████████░░  90%
+Zone Appropriateness  ████████████████████ 100%
 
-Decisions are versioned by era. What was true then may be false now.
+OVERALL: 90/100 — Ready for /approve
+```
 
-**Era Structure:**
-- Context (industry, product, technology shifts)
-- Truths (what's true in this era)
-- Deprecated (what was true in previous eras)
-- Transition triggers
-
-**Mutations:** Experimental sandbox for breaking precedent
-- Survivors → promoted to canon
-- Failures → graveyard (training data)
-
-> Sources: era-1.yaml:1-63, ARCHITECTURE.md:240-288
+> Source: SIGIL-COMPLETE-ARCHITECTURE.md §17
 
 ---
 
 ## 5. Technical Requirements
 
-### 5.1 Directory Structure
+### 5.1 State Zone Structure
 
 ```
 sigil-mark/
-├── core/
-│   ├── sync.yaml           # Temporal Governor + Authority
-│   ├── budgets.yaml        # Cognitive, Visual, Complexity
-│   ├── fidelity.yaml       # Mod Ghost Rule
-│   └── lens.yaml           # Rendering layers
+├── core/                    # IMMUTABLE
+│   ├── sync.yaml            # Temporal Governor + Authority
+│   ├── budgets.yaml         # Cognitive, Visual, Complexity
+│   ├── fidelity.yaml        # Mod Ghost Rule (ceiling)
+│   └── lens.yaml            # Rendering layers (HD/SD)
 │
-├── resonance/
-│   ├── essence.yaml        # Product soul
-│   ├── materials.yaml      # Clay, Machinery, Glass
-│   ├── zones.yaml          # Critical, Transactional, Exploratory
-│   └── tensions.yaml       # Tuning sliders
+├── resonance/               # TUNABLE
+│   ├── essence.yaml         # Product soul
+│   ├── materials.yaml       # Clay, Machinery, Glass
+│   ├── zones.yaml           # Zone definitions + paths
+│   └── tensions.yaml        # Tuning sliders
 │
-├── memory/
-│   ├── eras/               # Era definitions
-│   ├── decisions/          # Era-versioned decisions
-│   ├── mutations/active/   # Current experiments
-│   └── graveyard/          # Failed experiments
+├── memory/                  # VERSIONED
+│   ├── eras/                # Era definitions
+│   ├── decisions/           # Era-versioned decisions
+│   ├── mutations/active/    # Current experiments
+│   └── graveyard/           # Failed experiments
 │
-├── taste-key/
-│   ├── holder.yaml         # Who holds the key
-│   └── rulings/            # Taste Key decisions
-│
-└── .sigil/
-    ├── commands/           # The 8 commands
-    ├── skills/             # Agent skills
-    └── scripts/            # mount.sh, etc.
+└── taste-key/               # AUTHORITY
+    ├── holder.yaml          # Who holds the key
+    └── rulings/             # Recorded rulings
 ```
 
-### 5.2 Violation Hierarchy
+### 5.2 Technology Constraints
 
-| Type | Severity | Override |
-|------|----------|----------|
-| Physics Violation | IMPOSSIBLE | None. Cannot exceed speed of light. |
-| Budget Violation | BLOCK | Taste Key can override with justification |
-| Fidelity Violation | BLOCK | Taste Key can override |
-| Resonance Drift | WARN | Proceed, flagged for review |
+| Constraint | Rationale |
+|------------|-----------|
+| YAML only | Human-readable, no migrations |
+| No database | Clean removal guarantee |
+| No daemon | No background processes |
+| No git hooks | Developer owns their workflow |
+| File-based state | `rm -rf sigil-mark/` removes everything |
 
-### 5.3 Agent Protocol
+### 5.3 Integration Points
 
-Before generating UI code:
-1. Detect zone from file path
-2. Load zone physics (sync, tick, material)
-3. Load budgets and fidelity ceiling
-4. Load tensions from zone overrides
-5. Check for violations before generating
-6. Include physics context in output
+| Integration | Method |
+|-------------|--------|
+| **Claude Code** | Skills + Commands in `.claude/` |
+| **Loa** | Handoff via `loa-grimoire/context/sigil-handoff.md` |
+| **Chrome** | MCP tool for live preview (Workbench) |
+| **Hot Reload** | Vite/Next.js dev server integration |
 
-> Sources: ARCHITECTURE.md:391-421
+### 5.4 Workbench Technical Requirements
+
+| Requirement | Implementation |
+|-------------|----------------|
+| Layout | tmux with 4 panes |
+| Claude Panel | Claude Code CLI |
+| Chrome View | Chrome MCP extension |
+| Tensions Panel | Terminal-based sliders |
+| Validation Panel | Real-time file watching |
+| Hot Reload | Dev server websocket |
 
 ---
 
 ## 6. Scope & Prioritization
 
-### In Scope (v4)
+### v1.0 MVP (This Release)
 
 | Feature | Priority | Status |
 |---------|----------|--------|
-| Temporal Governor | P0 | New in v4 |
-| Budgets (cognitive, visual, complexity) | P0 | New in v4 |
-| Lens Registry | P0 | New in v4 |
-| Hammer/Chisel toolkit | P0 | New in v4 |
-| Loa handoff protocol | P0 | New in v4 |
-| Era-versioned memory | P1 | New in v4 |
-| 8 commands (setup/build/maintain) | P0 | Refined |
-| Materials (clay, machinery, glass) | P0 | From v3 |
-| Zones (critical, transactional, exploratory) | P0 | From v3 |
+| Four-layer architecture | P0 | Required |
+| 8 commands | P0 | Required |
+| Hammer/Chisel toolkit | P0 | Required |
+| Physics enforcement | P0 | Required |
+| Workbench (4-panel) | P0 | Required |
+| Real-time validation | P0 | Required |
+| Component scoring | P1 | Required |
+| Loa handoff | P1 | Required |
 
-### Out of Scope
+### v1.1 (Future)
 
-- Pure logic/backend work → Use Loa directly
-- Infrastructure issues → Hand off to Loa
-- Security/auth concerns → Not Sigil's domain
-- Content writing → Not Sigil's domain
+| Feature | Priority |
+|---------|----------|
+| Cross-context integration (GTM/MRD) | P2 |
+| Territory-specific handoffs | P2 |
+| Loa Constructs distribution | P3 |
+| Community contributions model | P3 |
 
-### MVP Definition
+### Out of Scope (v1.0)
 
-1. Temporal Governor with discrete/continuous modes
-2. Budget enforcement with Taste Key override
-3. Hammer diagnosis before Chisel execution
-4. Loa handoff for structural issues
-5. 8 commands only (no creep)
-
----
-
-## 7. Risks & Dependencies
-
-### Risks
-
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-| Over-constraint | Blocks creativity | Taste Key override + mutations |
-| Era confusion | Stale truths | Explicit era transitions |
-| Loa integration | Handoff failures | Clear protocol, context transfer |
-| Command creep | Scope bloat | Strict 8-command limit |
-
-### Dependencies
-
-| Dependency | Type | Notes |
-|------------|------|-------|
-| Loa Framework | Optional | For structural handoffs |
-| Taste Key holder | Required | Must be designated |
-| Zone path patterns | Required | Must match project structure |
+- Multi-user collaboration features
+- Real-time sync between developers
+- Visual GUI for configuration
+- CI/CD integration
+- VSCode extension
+- Cursor integration
 
 ---
 
-## 8. Key Insights
+## 7. User Stories
 
-### From OSRS
-- The 600ms tick isn't lag — it's rhythm
-- 117HD as Lens, not replacement
-- Mod Ghost Rule: "Better" can be worse
-- Poll concepts, dictate execution
+### Setup Flow
 
-### From Linear
-- "Spinners mean broken architecture"
-- Local-first = optimistic lies
-- Quality is removing, not adding
-- Individuals with taste, not committees
+```
+US-1: As a solo dev, I want to initialize Sigil on my repo so that AI
+      generates consistent UI.
 
-### From Uniswap
-- Immutable core, extensible hooks
-- Protocol vs Interface separation
-- Abstraction as design
+      Acceptance:
+      - Run mount-sigil.sh completes in <30s
+      - Creates sigil-mark/ with all required files
+      - Creates .claude/commands/ and .claude/skills/
+      - Shows next steps clearly
+```
 
-### From Airbnb
-- Materials as physics
-- Era transitions happen
-- Skeuomorphism returns
+```
+US-2: As a solo dev, I want to capture my product's soul via interview
+      so that AI understands my design intent.
+
+      Acceptance:
+      - /envision asks about reference products
+      - /envision asks about anti-patterns
+      - /envision asks about key moments (claim, success, error)
+      - Generates essence.yaml with all captured information
+```
+
+### Build Flow
+
+```
+US-3: As a solo dev, I want to generate a component with physics
+      so that it matches my product's feel automatically.
+
+      Acceptance:
+      - /craft resolves zone from file path
+      - /craft applies material physics
+      - /craft enforces sync constraints
+      - /craft stays within budgets
+      - Output includes zone resolution, physics applied, code
+```
+
+```
+US-4: As a solo dev, I want to see violations in real-time
+      so that I can fix them before committing.
+
+      Acceptance:
+      - Validation panel updates within 1s of code change
+      - Shows IMPOSSIBLE/BLOCK/WARN with causal explanation
+      - Offers fix suggestions
+```
+
+### Workbench Flow
+
+```
+US-5: As a solo dev, I want to see my component live while crafting
+      so that I can iterate quickly.
+
+      Acceptance:
+      - Chrome view updates on code change
+      - No manual refresh needed
+      - Shows current tensions visually
+```
+
+```
+US-6: As a solo dev, I want to see my component's physics score
+      so that I know when it's ready.
+
+      Acceptance:
+      - Shows 5 metrics (Physics, Budget, Fidelity, Material, Zone)
+      - Shows overall score 0-100
+      - Indicates "Ready for /approve" at 85+
+```
+
+### Maintenance Flow
+
+```
+US-7: As a solo dev, I want to detect design drift over time
+      so that my product doesn't decay.
+
+      Acceptance:
+      - /garden shows inflation metrics
+      - Alerts when growth exceeds thresholds
+      - Recommends review before next release
+```
 
 ---
 
-## Appendix: Delta from Current v11
+## 8. Risks & Mitigations
 
-### Current State (v11)
-- 32 skills (Loa + Sigil merged)
-- 35 commands
-- Integrated workflow
-
-### v4 Proposal
-- 8 skills (Sigil only)
-- 8 commands (setup/build/maintain)
-- Separated from Loa (handoff protocol)
-
-### New in v4
-- Temporal Governor
-- Budgets
-- Lens Registry
-- Hammer/Chisel
-- Era-versioned memory
+| Risk | Likelihood | Impact | Mitigation |
+|------|------------|--------|------------|
+| Workbench complexity delays MVP | High | High | Ship core engine first, add panels incrementally |
+| tmux learning curve for users | Medium | Medium | Provide alternative non-Workbench mode |
+| Hot reload integration issues | Medium | High | Support manual refresh as fallback |
+| Chrome MCP extension reliability | Medium | Medium | Design for graceful degradation |
+| Adoption friction | Medium | High | One-command install, <5 min to first /craft |
 
 ---
 
-## Next Step
+## 9. Success Criteria
 
-`/architect` to create Software Design Document
+### Launch Criteria (v1.0)
+
+- [ ] `mount-sigil.sh` works on macOS and Linux
+- [ ] All 8 commands implemented and documented
+- [ ] Hammer investigates (never jumps to solution)
+- [ ] Physics violations are IMPOSSIBLE (cannot generate)
+- [ ] Workbench launches with 4 panels
+- [ ] Live preview updates in <1s
+- [ ] Component scoring visible
+- [ ] Clean removal via `rm -rf sigil-mark/`
+- [ ] README has <5 min quickstart
+- [ ] No daemon, no database, no hooks
+
+### The Final Test
+
+```bash
+# To install Sigil:
+./mount-sigil.sh
+
+# To use Sigil:
+/envision → /codify → /map → /craft → /validate → /approve
+
+# To remove Sigil:
+rm -rf sigil-mark/
+# Done.
+```
+
+---
+
+## Appendix A: Key Quotes
+
+> "The delay IS the trust." — OSRS Temporal Philosophy
+
+> "The lie IS the speed." — Linear Optimistic UI
+
+> "Quality doesn't come from committees... it comes from individuals with taste." — Karri Saarinen
+
+> "Technical superiority is NOT justification for breaking resonance." — Mod Ghost Rule
+
+> "A screen with 50 perfect buttons is still bad design." — Budget Philosophy
+
+> "470,000 lines of Go vs `mkdir .tickets && vim`" — Anti-Beads Principle
+
+---
+
+## Appendix B: Source Tracing
+
+| Section | Sources |
+|---------|---------|
+| Problem Statement | SIGIL-COMPLETE-ARCHITECTURE.md §1 |
+| Philosophy | SIGIL-COMPLETE-ARCHITECTURE.md §2 |
+| Four Layers | SIGIL-COMPLETE-ARCHITECTURE.md §4-8 |
+| Commands | SIGIL-COMPLETE-ARCHITECTURE.md §9 |
+| Hammer/Chisel | SIGIL-COMPLETE-ARCHITECTURE.md §10 |
+| Violation Hierarchy | SIGIL-COMPLETE-ARCHITECTURE.md §11 |
+| Directory Structure | SIGIL-COMPLETE-ARCHITECTURE.md §12 |
+| Workbench | SIGIL-COMPLETE-ARCHITECTURE.md §17 |
+| Agent Instructions | SIGIL-PROMPT.md |
+| Reference Implementation | SIGIL-REFERENCE.md |
+| Scope Decisions | User clarification (2026-01-04) |
+
+---
+
+*End of PRD*
