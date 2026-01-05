@@ -23,38 +23,38 @@ This plan implements Sigil v1.0 Design Physics Engine in 12 sprints. The archite
 
 ---
 
-## Sprint 1: Project Scaffold & State Zone
+## Sprint 1: Project Scaffold & State Zone ✅ COMPLETE
 
 **Goal:** Create directory structure and core YAML templates
 
 ### Tasks
 
-- [ ] **S1-T1: Create sigil-mark directory structure**
+- [x] **S1-T1: Create sigil-mark directory structure** ✅
   - Create `sigil-mark/core/`, `sigil-mark/resonance/`, `sigil-mark/memory/`, `sigil-mark/taste-key/`
   - Create subdirectories: `memory/eras/`, `memory/decisions/`, `memory/mutations/active/`, `memory/graveyard/`, `taste-key/rulings/`
   - **Acceptance:** All directories exist per SDD §5.1
 
-- [ ] **S1-T2: Create core YAML templates**
+- [x] **S1-T2: Create core YAML templates** ✅
   - Create `sigil-mark/core/sync.yaml` with Temporal Governor schema
   - Create `sigil-mark/core/budgets.yaml` with cognitive/visual/complexity limits
   - Create `sigil-mark/core/fidelity.yaml` with Mod Ghost Rule ceiling
   - Create `sigil-mark/core/lens.yaml` with HD/SD rendering layers
   - **Acceptance:** All core YAML files valid, match SDD §4.1-4.4
 
-- [ ] **S1-T3: Create resonance YAML templates**
+- [x] **S1-T3: Create resonance YAML templates** ✅
   - Create `sigil-mark/resonance/essence.yaml` template (populated by /envision)
   - Create `sigil-mark/resonance/materials.yaml` with clay/machinery/glass defaults
   - Create `sigil-mark/resonance/zones.yaml` with 5 zone definitions
   - Create `sigil-mark/resonance/tensions.yaml` with default sliders
   - **Acceptance:** All resonance YAML files valid, match PRD §4.3
 
-- [ ] **S1-T4: Create .claude directory structure**
+- [x] **S1-T4: Create .claude directory structure** ✅
   - Create `.claude/commands/` directory
   - Create `.claude/skills/` directory
   - Create `.claude/scripts/` directory
   - **Acceptance:** Claude Code skill structure ready
 
-- [ ] **S1-T5: Create mount-sigil.sh script**
+- [x] **S1-T5: Create mount-sigil.sh script** ✅
   - Implement directory creation
   - Implement symlink setup for skills/commands/scripts
   - Create `.sigil-setup-complete` marker
