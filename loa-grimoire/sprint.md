@@ -75,30 +75,30 @@ This plan implements Sigil v1.0 Design Physics Engine in 12 sprints. The archite
 
 ### Tasks
 
-- [ ] **S2-T1: Create validating-fidelity skill structure**
+- [x] **S2-T1: Create validating-fidelity skill structure** ✅
   - Create `.claude/skills/validating-fidelity/index.yaml`
   - Create `.claude/skills/validating-fidelity/SKILL.md`
   - **Acceptance:** Skill loads in Claude Code
 
-- [ ] **S2-T2: Implement Temporal Governor validation**
+- [x] **S2-T2: Implement Temporal Governor validation** ✅
   - Detect server_authoritative zones
   - Block optimistic UI patterns in server_authoritative
   - Return IMPOSSIBLE for physics violations
   - **Acceptance:** Optimistic UI in critical zone returns IMPOSSIBLE
 
-- [ ] **S2-T3: Implement Budget validation**
+- [x] **S2-T3: Implement Budget validation** ✅
   - Count interactive elements in component
   - Compare against zone budget limits
   - Return BLOCK for budget violations
   - **Acceptance:** 8 elements in critical zone (max 5) returns BLOCK
 
-- [ ] **S2-T4: Implement Fidelity validation**
+- [x] **S2-T4: Implement Fidelity validation** ✅
   - Check gradient stops, shadow layers, animation duration
   - Compare against fidelity ceiling
   - Return BLOCK for fidelity violations
   - **Acceptance:** 4 gradient stops (max 2) returns BLOCK
 
-- [ ] **S2-T5: Create /validate command**
+- [x] **S2-T5: Create /validate command** ✅
   - Create `.claude/commands/validate.md`
   - Route to validating-fidelity skill
   - **Acceptance:** `/validate path/to/file.tsx` works
@@ -116,24 +116,24 @@ This plan implements Sigil v1.0 Design Physics Engine in 12 sprints. The archite
 
 ### Tasks
 
-- [ ] **S3-T1: Create sigil-detect-zone.sh script**
+- [x] **S3-T1: Create sigil-detect-zone.sh script** ✅
   - Read zones from `sigil-mark/resonance/zones.yaml`
   - Match file path against glob patterns
   - Return zone name (or "default")
   - **Acceptance:** `sigil-detect-zone.sh src/features/checkout/Button.tsx` returns "critical"
 
-- [ ] **S3-T2: Create mapping-zones skill structure**
+- [x] **S3-T2: Create mapping-zones skill structure** ✅
   - Create `.claude/skills/mapping-zones/index.yaml`
   - Create `.claude/skills/mapping-zones/SKILL.md`
   - **Acceptance:** Skill loads in Claude Code
 
-- [ ] **S3-T3: Implement /map command**
+- [x] **S3-T3: Implement /map command** ✅
   - Create `.claude/commands/map.md`
   - Interview for zone path patterns
   - Update `sigil-mark/resonance/zones.yaml`
   - **Acceptance:** `/map` captures zone definitions interactively
 
-- [ ] **S3-T4: Integrate zone detection into validation**
+- [x] **S3-T4: Integrate zone detection into validation** ✅
   - Load zone physics from zones.yaml
   - Apply zone-specific budgets
   - Apply zone-specific material
@@ -153,24 +153,24 @@ This plan implements Sigil v1.0 Design Physics Engine in 12 sprints. The archite
 
 ### Tasks
 
-- [ ] **S4-T1: Create codifying-materials skill structure**
+- [x] **S4-T1: Create codifying-materials skill structure** ✅
   - Create `.claude/skills/codifying-materials/index.yaml`
   - Create `.claude/skills/codifying-materials/SKILL.md`
   - **Acceptance:** Skill loads in Claude Code
 
-- [ ] **S4-T2: Implement material physics definitions**
+- [x] **S4-T2: Implement material physics definitions** ✅
   - Define clay: heavy, spring motion, depress feedback
   - Define machinery: no weight, instant motion, highlight feedback
   - Define glass: weightless, ease motion, glow feedback
   - **Acceptance:** materials.yaml matches PRD §4.3
 
-- [ ] **S4-T3: Implement /codify command**
+- [x] **S4-T3: Implement /codify command** ✅
   - Create `.claude/commands/codify.md`
   - Interview for material customization
   - Update `sigil-mark/resonance/materials.yaml`
   - **Acceptance:** `/codify` allows material tuning
 
-- [ ] **S4-T4: Integrate materials into craft output**
+- [x] **S4-T4: Integrate materials into craft output** ✅
   - Include material physics in generation context
   - Apply spring config for clay
   - Apply timing for glass

@@ -1,11 +1,11 @@
 ---
 name: codify
-version: "0.5.0"
+version: "1.0.0"
 description: Configure material selection and zone-material mappings
 agent: codifying-materials
 agent_path: .claude/skills/codifying-materials/SKILL.md
 preflight:
-  - sigil_setup_complete
+  - sigil_mark_exists
   - essence_exists
 ---
 

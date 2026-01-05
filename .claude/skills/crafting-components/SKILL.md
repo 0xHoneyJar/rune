@@ -1,4 +1,4 @@
-# Sigil Agent: Crafting Components
+# Sigil v1.0 Agent: Crafting Components
 
 > "Diagnose first, then execute. Physics, not opinions."
 

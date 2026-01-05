@@ -1,6 +1,6 @@
 name: crafting-components
 description: Generate UI with physics context using Hammer/Chisel toolkit
-version: "0.5.0"
+version: "1.0.0"
 command: /craft
 
 role: "Apprentice Smith"
@@ -9,7 +9,7 @@ role_description: "Diagnoses and executes with physics context"
 outputs: []  # Generates code, not state files
 
 prerequisites:
-  - sigil_setup_complete
+  - sigil_mark_exists
 
 context_injection: true
 

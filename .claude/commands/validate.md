@@ -1,11 +1,11 @@
 ---
 name: validate
-version: "0.5.0"
+version: "1.0.0"
 description: Validate against physics constraints, budgets, and fidelity ceiling
 agent: validating-fidelity
 agent_path: .claude/skills/validating-fidelity/SKILL.md
 preflight:
-  - sigil_setup_complete
+  - sigil_mark_exists
 context_injection: true
 ---
 
