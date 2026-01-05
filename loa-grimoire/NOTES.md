@@ -5,16 +5,44 @@
 
 ## Active Sub-Goals
 <!-- Current objectives being pursued -->
-1. Implement missing Sigil commands (/codify, /craft, /approve)
-2. Fix documentation drift (license, command counts)
-3. Add governance files (CHANGELOG, CONTRIBUTING, SECURITY)
+1. ~~Implement missing Sigil commands (/codify, /craft, /approve)~~ DONE (v11)
+2. ~~Fix documentation drift (license, command counts)~~ DONE (v11)
+3. ~~Add governance files (CHANGELOG, CONTRIBUTING, SECURITY)~~ DONE (v11)
+4. Test Sigil v11 on S&F repo for feedback loops
+5. Refine based on real-world usage
+
+## Versioning Warnings
+<!-- Important notes about version management -->
+
+### PRD Version Number
+The PRD contains a `version: "x.x"` field in the YAML frontmatter. This version:
+- Is **document version**, not framework version
+- Should be incremented when PRD content changes significantly
+- Does NOT auto-sync with VERSION file or package.json
+- Can cause confusion if not updated during major rewrites
+
+**Best Practice**: When doing major version bumps (e.g., v0.4 → v11):
+1. Update `VERSION` file in root
+2. Update `package.json` versions in packages/
+3. Update PRD frontmatter version
+4. Update SDD frontmatter version
+5. Update mount script version strings
+6. Grep for old version numbers: `grep -r "v0.4\|0\.4\." --include="*.md"`
+
+### Current Version State (2026-01-04)
+- Framework: v11.0.0 (VERSION file)
+- Mount script: v11.0.0
+- PRD: Check and update if stale
+- SDD: Check and update if stale
 
 ## Discovered Technical Debt
 <!-- Issues found during implementation that need future attention -->
-- 10 TODO markers in framework files
-- 3 missing commands documented but not implemented
-- README claims MIT license but actual is AGPL
-- No CHANGELOG.md for version history
+- ~~10 TODO markers in framework files~~ Reduced in v11
+- ~~3 missing commands documented but not implemented~~ Fixed in v11 (14 commands)
+- ~~README claims MIT license but actual is AGPL~~ Fixed (MIT)
+- ~~No CHANGELOG.md for version history~~ Added
+- gold-standard/ needs actual reference assets (currently placeholder README only)
+- essence.yaml values are null (populated via /envision)
 
 ## Blockers & Dependencies
 <!-- External factors affecting progress -->
@@ -24,6 +52,9 @@ None - all dependencies are optional (jq, yq)
 <!-- Key context to restore on next session -->
 | Timestamp | Agent | Summary |
 |-----------|-------|---------|
+| 2026-01-04 | implementing-tasks | Completed Sigil v11 (Sprints 13-19), security audit, drift fixes |
+| 2026-01-04 | auditing-security | Security audit APPROVED - 0 HIGH issues (all fixed) |
+| 2026-01-04 | - | Fixed mount-sigil.sh for v11 skills/commands, testing on S&F |
 | 2026-01-01 | riding-codebase | Completed /ride - analyzed codebase, 35% drift, 6 ghost features |
 
 ## Decision Log
