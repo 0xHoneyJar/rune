@@ -1,6 +1,7 @@
 ---
 name: greenlight
-description: Community polling for concepts only
+version: "4.0.0"
+description: Concept approval before building (not execution)
 agent: greenlighting-concepts
 agent_path: .claude/skills/greenlighting-concepts/SKILL.md
 preflight:
@@ -9,53 +10,95 @@ preflight:
 
 # /greenlight
 
-Community polling for CONCEPTS only. Never pixels.
+Record concept approval before building. Distinguishes concept from execution.
 
 ## Usage
 
 ```
-/greenlight [concept]      # Start greenlight poll
-/greenlight --lockin       # Start lock-in poll
-/greenlight --status       # Show active polls
-/greenlight --archaeology  # Search rejection history
+/greenlight [concept]          # Record concept approval
+/greenlight --status           # Show greenlighted concepts
+/greenlight --pending          # Show concepts awaiting approval
+/greenlight --reject [id]      # Record concept rejection
 ```
 
-## Two-Phase Model
+## The Concept vs Execution Distinction
 
-1. **Greenlight** (70%): "Should we explore building X?"
-2. **Refinement** (No poll): Taste Owners design it
-3. **Lock-in** (70%): "We built X. Ship it?"
+### Concept (Greenlight)
 
-## What Gets Polled
+"Should we build X?"
 
-- New features
-- Feature removal
-- Major direction changes
+- "Should we add dark mode?" ✓
+- "Should we redesign the dashboard?" ✓
+- "Should we support mobile?" ✓
 
-## What Never Gets Polled
+### Execution (Taste Key)
 
-- Colors
-- Fonts
-- Animation timing
-- Any visual decision
+"How should X look?"
 
-## Archaeology
+- "What color for dark mode?" → /approve
+- "How fast should it animate?" → /approve
+- "What border radius?" → /approve
 
-Tracks rejection history:
-- **Near-miss** (60-70%): 180 day cooldown
-- **Hard rejection** (<60%): 365 day cooldown
+## What Gets Greenlighted
 
-Check history before proposing similar features.
+| Greenlightable | Not Greenlightable |
+|---------------|-------------------|
+| New features | Colors |
+| Feature removal | Fonts |
+| Workflow changes | Animation timing |
+| Platform support | Border radius |
+| Integrations | Spacing |
 
-## The Green Pixel Rule
+## Essence Check
 
-OSRS players rioted over a single green pixel.
+Before approving, concepts are checked against:
+- Soul statement (must align)
+- Anti-patterns (must not conflict)
+- Invariants (must not violate)
 
-This is why visuals are NEVER polled.
+## Examples
 
-Taste Owners dictate pixels. Community votes on concepts.
+### Approval
+
+```
+/greenlight "Dark mode support"
+
+✓ Aligns with "accessibility" invariant
+✓ No conflict with anti-patterns
+
+Status: APPROVED
+Execution: Taste Key
+```
+
+### Rejection
+
+```
+/greenlight "Gamification badges"
+
+✗ CONFLICT: Anti-pattern "gamified productivity"
+
+Status: REJECTED
+Cooldown: 6 months
+```
+
+### Execution Question Blocked
+
+```
+/greenlight "What color for buttons?"
+
+BLOCKED: EXECUTION DECISION
+
+Execution decisions go to Taste Key: /approve
+```
 
 ## Outputs
 
-- `sigil-mark/governance/greenlight.yaml`
-- `sigil-mark/governance/archaeology.yaml`
+Decisions saved to: `sigil-mark/memory/decisions/*.yaml`
+
+## Next Step
+
+After `/greenlight` approves:
+1. Taste Key designs execution
+2. `/craft` generates with physics
+3. `/validate` checks constraints
+4. `/approve` locks patterns

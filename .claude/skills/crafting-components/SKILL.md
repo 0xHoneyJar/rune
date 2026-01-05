@@ -1,351 +1,304 @@
 # Sigil Agent: Crafting Components
 
-> "You are an apprentice in {{era}}. You do not know what Ambient Occlusion is."
+> "Diagnose first, then execute. Physics, not opinions."
 
 ## Role
 
-**Apprentice Smith** — Generates UI with context injection. Limited by Fidelity Ceiling. Follows material physics.
+**Apprentice Smith** — Uses Hammer to diagnose, Chisel to execute. Limited by physics constraints.
 
 ## Command
 
 ```
-/craft [prompt]
-/craft [prompt] --zone [zone]
-/craft [prompt] --material [material]
-/craft [prompt] --tension "[tension]=[value]"
+/craft [prompt]                    # Diagnose and generate
+/craft [prompt] --zone [zone]      # Force zone context
+/craft [prompt] --material [mat]   # Force material
 ```
 
-## Critical Behavior
+## Toolkit
 
-**This agent INJECTS context before generation, not after.**
+The craft command uses two tools:
 
-The entire point of Sigil is that Claude generates with soul because the constraints are injected into the prompt, not linted afterward.
+| Tool | Purpose | When to Use |
+|------|---------|-------------|
+| **Hammer** | Diagnose | Before ANY change, ask "what's the physics?" |
+| **Chisel** | Execute | After diagnosis, apply precise changes |
 
-## Context Injection
+See:
+- `tools/hammer.md` — Diagnosis workflow
+- `tools/chisel.md` — Execution workflow
 
-Before ANY generation, inject this context:
+## The Linear Test
 
-```xml
-<sigil_context version="11.0">
-  <zone name="{{detected_zone}}">
-    <material>{{zone.material}}</material>
-    <sync_strategy>{{zone.sync}}</sync_strategy>
-    <motion style="{{zone.motion.style}}" timing="{{zone.motion.entrance_ms}}ms" />
-  </zone>
-  
-  <material name="{{material}}">
-    <primitives>
-      <light>{{material.primitives.light}}</light>
-      <weight>{{material.primitives.weight}}</weight>
-      <motion>{{material.primitives.motion}}</motion>
-      <feedback>{{material.primitives.feedback | join(", ")}}</feedback>
-    </primitives>
-    <forbidden>
-      {{#each material.forbidden}}
-      <pattern>{{this}}</pattern>
-      {{/each}}
-    </forbidden>
-  </material>
-  
-  <physics>
-    <entrance>
-      from: { opacity: {{physics.entrance.from.opacity}}, y: {{physics.entrance.from.y}}px }
-      to: { opacity: 1, y: 0 }
-      duration: {{physics.entrance.duration}}ms
-      easing: {{physics.entrance.easing}}
-    </entrance>
-    <hover>{{physics.hover.transform}}</hover>
-    <active>{{physics.active.transform}}</active>
-  </physics>
-  
-  <tensions>
-    <playfulness value="{{tensions.playfulness}}">
-      --sigil-radius: {{calculated.radius}};
-      --sigil-bounce: {{calculated.bounce}};
-    </playfulness>
-    <weight value="{{tensions.weight}}">
-      --sigil-shadow-opacity: {{calculated.shadow_opacity}};
-      --sigil-hover-lift: {{calculated.hover_lift}};
-    </weight>
-    <density value="{{tensions.density}}">
-      --sigil-spacing: {{calculated.spacing}};
-      --sigil-font-size: {{calculated.font_size}};
-    </density>
-    <speed value="{{tensions.speed}}">
-      --sigil-transition-duration: {{calculated.transition_duration}};
-    </speed>
-  </tensions>
-  
-  <sync strategy="{{sync}}">
-    {{#if sync == "server_tick"}}
-    <rule>NEVER update UI optimistically</rule>
-    <rule>MUST show pending state</rule>
-    <rule>MUST wait for server confirmation</rule>
-    <rule>MUST show success animation (xp_drop)</rule>
-    {{/if}}
-    {{#if sync == "crdt"}}
-    <rule>Show presence cursors</rule>
-    <rule>Optimistic updates allowed</rule>
-    {{/if}}
-    {{#if sync == "lww"}}
-    <rule>Instant local update</rule>
-    <rule>Background sync</rule>
-    {{/if}}
-  </sync>
-  
-  <fidelity_ceiling>
-    <era>{{fidelity.era}}</era>
-    <forbidden_techniques>
-      {{#each fidelity.forbidden_techniques}}
-      <technique>{{this}}</technique>
-      {{/each}}
-    </forbidden_techniques>
-    <constraints>
-      <gradients max_stops="{{fidelity.constraints.visual.gradients.max_stops}}" />
-      <shadows max_layers="{{fidelity.constraints.visual.shadows.max_layers}}" />
-      <animation max_duration="{{fidelity.constraints.animation.max_duration_ms}}ms" />
-    </constraints>
-  </fidelity_ceiling>
-  
-  <essence>
-    <soul>{{essence.soul.statement}}</soul>
-    <invariants>
-      {{#each essence.invariants}}
-      <invariant enforcement="{{this.enforcement}}">{{this.statement}}</invariant>
-      {{/each}}
-    </invariants>
-  </essence>
-  
-  <instruction>
-    You are an apprentice in {{fidelity.era}}.
-    You do not know what {{fidelity.forbidden_techniques | join(", ")}} are.
-    
-    Generate UI that:
-    1. Uses {{material}} material physics
-    2. Respects the {{zone}} zone patterns
-    3. Follows {{sync}} sync strategy
-    4. Stays within the Fidelity Ceiling
-    5. Honors the soul: "{{essence.soul.statement}}"
-    
-    If your output looks "better" than the reference products, it is WRONG.
-  </instruction>
-</sigil_context>
+Before any change, apply The Linear Test:
+
+```
+User: "The claim button feels slow"
+
+WRONG (Chisel-first):
+- Add optimistic UI
+- Speed up animation
+- Reduce server calls
+
+RIGHT (Hammer-first):
+1. What zone is this button in? → critical
+2. What's the zone's sync authority? → server_authoritative
+3. What's the tick rate? → 600ms discrete
+4. Is "slow" the problem, or is "heavy" the intent?
+
+DIAGNOSIS:
+The button IS supposed to feel slow. Discrete tick is intentional.
+The "slowness" is communicating weight and trust.
+
+If user still wants change → Route to Loa (structural change).
 ```
 
 ## Workflow
 
-### Phase 1: Detect Zone
+### Step 1: Detect Context
 
 ```python
-def detect_zone(prompt, file_path=None):
-    # 1. Check explicit --zone argument
-    if args.zone:
-        return args.zone
-    
-    # 2. Check file path against zone patterns
-    if file_path:
-        for zone in zones:
-            for pattern in zone.paths:
-                if matches(file_path, pattern):
-                    return zone.name
-    
-    # 3. Detect from prompt keywords
-    if any(word in prompt for word in ["checkout", "trade", "claim", "buy"]):
-        return "critical"
-    if any(word in prompt for word in ["settings", "admin", "dashboard"]):
-        return "transactional"
-    if any(word in prompt for word in ["browse", "search", "explore"]):
-        return "exploratory"
-    if any(word in prompt for word in ["landing", "marketing", "hero"]):
-        return "marketing"
-    
-    return "default"
+def detect_context(prompt, file_path=None):
+    # 1. Detect zone from file path
+    zone = resolve_zone(file_path)
+
+    # 2. Load zone physics
+    physics = load_zone_physics(zone)
+
+    # 3. Load material from zone
+    material = load_material(physics.material)
+
+    # 4. Load essence
+    essence = load_essence()
+
+    # 5. Load fidelity ceiling
+    fidelity = load_fidelity()
+
+    return Context(zone, physics, material, essence, fidelity)
 ```
 
-### Phase 2: Load Context
+### Step 2: Inject Context
 
-```python
-def load_context(zone):
-    # Load zone config
-    zone_config = load_yaml(f"sigil-mark/soul/zones.yaml")[zone]
-    
-    # Load material
-    material = load_yaml("sigil-mark/soul/materials.yaml")[zone_config.material]
-    
-    # Load physics from kernel
-    physics = material.physics_lookup[zone_config.material]
-    
-    # Load tensions (with zone override)
-    tensions = load_yaml("sigil-mark/soul/tensions.yaml")
-    if zone in tensions.current.zone_overrides:
-        tensions.values = {**tensions.values, **tensions.current.zone_overrides[zone]}
-    
-    # Load essence
-    essence = load_yaml("sigil-mark/soul/essence.yaml")
-    
-    # Load fidelity ceiling
-    fidelity = load_yaml("sigil-mark/kernel/fidelity-ceiling.yaml")
-    
-    # Load sync
-    sync = zone_config.sync
-    
-    return Context(zone_config, material, physics, tensions, essence, fidelity, sync)
+Before generation, inject physics context:
+
+```xml
+<sigil_context version="4.0">
+  <zone name="{{zone.name}}">
+    <sync>{{zone.physics.sync}}</sync>
+    <tick>{{zone.physics.tick}} ({{zone.physics.tick_rate_ms}}ms)</tick>
+    <material>{{zone.physics.material}}</material>
+    <budget>
+      <interactive_elements max="{{zone.physics.budget.interactive_elements}}" />
+      <decisions max="{{zone.physics.budget.decisions}}" />
+      <animations max="{{zone.physics.budget.animations}}" />
+    </budget>
+  </zone>
+
+  <material name="{{material.name}}">
+    <physics>
+      <light>{{material.physics.light}}</light>
+      <weight>{{material.physics.weight}}</weight>
+      <motion type="{{material.physics.motion.type}}" />
+      <feedback>{{material.physics.feedback}}</feedback>
+    </physics>
+  </material>
+
+  <tensions>
+    <playfulness>{{tensions.playfulness}}</playfulness>
+    <weight>{{tensions.weight}}</weight>
+    <density>{{tensions.density}}</density>
+    <speed>{{tensions.speed}}</speed>
+  </tensions>
+
+  <essence>
+    <soul>{{essence.soul.statement}}</soul>
+  </essence>
+</sigil_context>
 ```
 
-### Phase 3: Inject Context
+### Step 3: Apply Hammer (Diagnose)
 
-Compile the `<sigil_context>` XML and prepend to the user's prompt.
+Use Hammer to understand the problem:
 
-### Phase 4: Generate
+```
+HAMMER DIAGNOSIS:
 
-Generate the component with injected context. The LLM now "knows":
-- What material to use
-- What physics to apply
-- What is forbidden
-- What sync strategy to follow
-- What the soul statement is
+Zone: critical
+Physics: server_authoritative, discrete (600ms)
+Material: clay (heavy, spring, depress)
 
-### Phase 5: Post-Generation Check (Constitution)
+User request: "Make the button faster"
 
-After generation, run constitution check:
+Analysis:
+1. Zone is server_authoritative → NO optimistic UI
+2. Tick is discrete 600ms → UI must wait for tick
+3. Material is clay → Weight is intentional
+
+Diagnosis: User is asking to violate physics.
+The "slowness" is the design, not a bug.
+
+Options:
+A. Explain physics constraint (educate)
+B. Route to Loa for structural change
+C. If user overrides, record Taste Key ruling
+```
+
+### Step 4: Apply Chisel (Execute)
+
+If diagnosis allows, execute with Chisel:
+
+```
+CHISEL EXECUTION:
+
+Creating button in critical zone with clay material.
+
+Physics applied:
+- shadow: soft, diffuse
+- transform: scale(0.98) on press
+- transition: spring (stiffness: 120, damping: 14)
+- sync: server_authoritative (no optimistic)
+- tick: waits for 600ms tick
+
+Generated component follows physics constraints.
+```
+
+### Step 5: Physics Violations
+
+Check for physics violations:
 
 ```python
-def constitution_check(generated_code, context):
+def check_violations(generated_code, context):
     violations = []
-    
-    # Check invariants
-    for invariant in context.essence.invariants:
-        if violates(generated_code, invariant):
+
+    # IMPOSSIBLE violations (cannot override)
+    if context.zone.physics.sync == "server_authoritative":
+        if has_optimistic_update(generated_code):
             violations.append({
-                "type": "invariant",
-                "invariant": invariant.statement,
-                "enforcement": invariant.enforcement
+                "type": "IMPOSSIBLE",
+                "message": "Optimistic UI in server_authoritative zone",
+                "action": "BLOCK"
             })
-    
-    # Check fidelity ceiling
-    for pattern in context.fidelity.detection.reject_patterns:
-        if matches(generated_code, pattern.pattern):
-            violations.append({
-                "type": "fidelity",
-                "pattern": pattern.pattern,
-                "message": pattern.message
-            })
-    
-    # Check sync strategy
-    if context.sync == "server_tick":
-        if "optimistic" in generated_code or not "pending" in generated_code:
-            violations.append({
-                "type": "sync",
-                "message": "Server-tick data must show pending state"
-            })
-    
+
+    # BLOCK violations (Taste Key can override)
+    if exceeds_budget(generated_code, context.zone.physics.budget):
+        violations.append({
+            "type": "BLOCK",
+            "message": "Exceeds element budget",
+            "action": "BLOCK (Taste Key can override)"
+        })
+
     return violations
 ```
 
-### Phase 6: Handle Violations
+### Step 6: Loa Handoff
+
+If request requires structural change:
 
 ```
-IF violations with enforcement="block":
-    ⛔ BLOCKED: [violation]
-    
-    This violates an invariant. Cannot proceed.
-    
-    Options:
-    - Fix the issue
-    - Request exception from Taste Owner
+LOA HANDOFF
 
-IF violations with enforcement="warn":
-    ⚠️ WARNING: [violation]
-    
-    This may not match the soul. Proceed anyway? [y/N]
+The request "make claim button instant" requires changing:
+- Zone sync authority (server → client)
+- Tick mode (discrete → continuous)
 
-IF violations with enforcement="suggest":
-    💡 SUGGESTION: [violation]
-    
-    Consider: [alternative]
+This is a STRUCTURAL change, not a UI change.
+
+Creating Loa consultation:
+---
+type: structural_change
+request: "Change claim button from discrete to continuous"
+impact: Trust model, data integrity
+recommendation: Consult with Loa before proceeding
+---
+
+Would you like to:
+1. Open Loa consultation (/consult)
+2. Get Taste Key approval to override
+3. Cancel and keep current physics
 ```
 
-## Material-Specific Generation
+## Material-Specific Patterns
 
-### Glass Material
-```tsx
-// Glass entrance
-const entrance = {
-  from: { opacity: 0, scale: 0.95, y: 8 },
-  to: { opacity: 1, scale: 1, y: 0 },
-  duration: 200,
-  easing: "ease-out"
-};
+### Clay (Heavy, Spring)
 
-// Glass surface
-className="
-  backdrop-blur-xl
-  bg-white/70
-  dark:bg-black/70
-  border border-white/20
-"
-```
-
-### Clay Material
 ```tsx
 // Clay entrance
-const entrance = {
+animate={{
   from: { opacity: 0, scale: 0.95, y: 8 },
   to: { opacity: 1, scale: 1, y: 0 },
-  duration: 300,
-  easing: "cubic-bezier(0.34, 1.56, 0.64, 1)" // spring
-};
+}}
+transition={{
+  type: "spring",
+  stiffness: 120,
+  damping: 14
+}}
 
-// Clay surface
+// Clay interaction
 className="
-  bg-gradient-to-br from-stone-50 to-stone-100
+  bg-stone-50
   shadow-sm shadow-stone-200/50
   hover:shadow-md hover:-translate-y-0.5
   active:shadow-sm active:translate-y-0.5 active:scale-[0.98]
-  transition-all duration-300
 "
-style={{ transitionTimingFunction: "cubic-bezier(0.34, 1.56, 0.64, 1)" }}
 ```
 
-### Machinery Material
+### Machinery (Instant, Flat)
+
 ```tsx
 // Machinery entrance - NONE
 // No animation, instant appearance
 
-// Machinery surface
+// Machinery interaction
 className="
   bg-neutral-900
   border border-neutral-800
   hover:bg-neutral-800
-  // NO transition classes
+  // NO transitions
 "
 ```
 
-## Server-Tick Component Pattern
+### Glass (Ease, Glow)
 
-When sync is `server_tick`, ALWAYS generate:
+```tsx
+// Glass entrance
+animate={{
+  from: { opacity: 0, scale: 0.95, y: 8 },
+  to: { opacity: 1, scale: 1, y: 0 },
+}}
+transition={{
+  duration: 0.2,
+  ease: "easeOut"
+}}
+
+// Glass interaction
+className="
+  backdrop-blur-xl
+  bg-white/70
+  border border-white/20
+  hover:bg-white/80
+  transition-all duration-200
+"
+```
+
+## Server-Tick Pattern
+
+For `server_authoritative` zones:
 
 ```tsx
 function ServerTickButton({ action, children }) {
-  const { execute, isPending, isSuccess, isError } = useServerTick(action);
-  
+  const { execute, isPending, isSuccess } = useServerTick(action);
+
   return (
     <button
       onClick={() => execute()}
-      disabled={isPending}  // MUST disable while pending
+      disabled={isPending}  // MUST disable
       className={cn(
-        // ... material styles
         isPending && "opacity-50 cursor-not-allowed"
       )}
     >
       {isPending ? (
-        // NO spinner - use text or skeleton
-        <span>Processing...</span>
+        <span>Processing...</span>  // NO spinner
       ) : isSuccess ? (
-        // XP drop animation
-        <SuccessAnimation>
-          {children}
-        </SuccessAnimation>
+        <SuccessAnimation>{children}</SuccessAnimation>
       ) : (
         children
       )}
@@ -356,13 +309,14 @@ function ServerTickButton({ action, children }) {
 
 ## Success Criteria
 
-- [ ] Context injection happens BEFORE generation
-- [ ] Zone is correctly detected
-- [ ] Material physics are applied
-- [ ] Sync strategy is respected
-- [ ] Fidelity ceiling is not exceeded
-- [ ] Constitution check passes
-- [ ] Generated code uses correct CSS variables
+- [ ] Hammer diagnosis before Chisel execution
+- [ ] Zone context detected correctly
+- [ ] Material physics applied
+- [ ] Sync strategy respected
+- [ ] Budget constraints checked
+- [ ] IMPOSSIBLE violations blocked
+- [ ] BLOCK violations reported
+- [ ] Loa handoff generated for structural changes
 
 ## Error Handling
 
@@ -370,9 +324,10 @@ function ServerTickButton({ action, children }) {
 |-----------|----------|
 | Unknown zone | Use default zone |
 | Missing essence | Warn, use minimal defaults |
-| Fidelity violation | Block or warn based on severity |
-| Sync violation | Always block (safety critical) |
+| Physics violation (IMPOSSIBLE) | Block, explain why |
+| Budget violation (BLOCK) | Block, offer Taste Key override |
+| Structural change requested | Generate Loa handoff |
 
 ## Next Step
 
-After `/craft`: Run `/validate` to check against Gold Standard.
+After `/craft`: Run `/validate` to check generated code against physics.

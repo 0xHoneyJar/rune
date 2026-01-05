@@ -1,9 +1,19 @@
 name: mapping-zones
-version: "1.0.0"
-description: "Configures path-based design zones. Zone Architect role."
+description: Configure path-based design zones with physics and budgets
+version: "4.0.0"
+command: /map
+
 role: "Zone Architect"
-command: /zone
+role_description: "Maps file paths to zones with physics, material, and budget settings"
+
 outputs:
-  - sigil-mark/soul/zones.yaml
-dependencies:
-  - codifying-materials
+  - sigil-mark/resonance/zones.yaml (updated)
+
+prerequisites:
+  - sigil_setup_complete
+  - essence_yaml_exists
+
+triggers:
+  - /map
+  - /map --add
+  - /map --paths

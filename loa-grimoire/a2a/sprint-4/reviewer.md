@@ -1,128 +1,265 @@
-# Sprint 4 Implementation Report: Consultation Chamber
+# Sprint 4 Implementation Review (Sigil v4)
 
-## Summary
+**Sprint:** Codify, Map, and Craft Commands (MVP)
+**Date:** 2026-01-04
+**Version:** Sigil v4 (Design Physics Engine)
+**Status:** ✅ COMPLETE
 
-Implemented the Consultation Chamber pillar with three-tier decision authority (strategic/direction/execution) and decision locking system.
+---
 
-## Deliverables
+## Executive Summary
 
-### 1. `/consult` Command and Skill
+Sprint 4 implemented the core design commands for Sigil v4: `/codify`, `/map`, and `/craft`. This completes the MVP with the Hammer/Chisel toolkit for physics-aware component generation.
 
-**Files Created:**
-- `.claude/commands/consult.md` - Command frontmatter with pre-flight checks
-- `.claude/skills/consulting-decisions/index.yaml` - Skill metadata
-- `.claude/skills/consulting-decisions/SKILL.md` - Full workflow documentation
+---
 
-**Features:**
-- Three-tier decision layers:
-  - **Strategic**: Community poll with binding vote
-  - **Direction**: Sentiment gathering, Taste Owner decides
-  - **Execution**: No consultation, Taste Owner dictates
-- Decision ID generation: `DEC-{YYYY}-{NNN}`
-- Decision record creation in `sigil-mark/consultation-chamber/decisions/`
-- Output formats for each layer (poll, comparison, execution notice)
-- Record outcome workflow with `--record-outcome` flag
+## Tasks Completed
 
-### 2. Decision Lock System
+### S4-T1: Create codifying-materials Skill ✅
 
-**Files Created:**
-- `.claude/skills/locking-decisions/index.yaml` - Internal skill metadata
-- `.claude/skills/locking-decisions/SKILL.md` - Lock workflow
+**Files:**
+- `.claude/skills/codifying-materials/index.yaml`
+- `.claude/skills/codifying-materials/SKILL.md`
 
-**Features:**
-- Locks decisions after outcome is recorded
-- Configurable lock durations by scope:
-  - Strategic: 180 days
-  - Direction: 90 days
-  - Execution: 30 days
-- Lock message with scope-specific messaging
-- Prevents modification until unlock date
+**Acceptance Criteria:**
+- [x] index.yaml (v4.0.0)
+- [x] SKILL.md with material workflow
+- [x] Updates resonance/materials.yaml
+- [x] Validates against core physics
 
-### 3. Decision Unlock System
+**Key Implementation Details:**
+- Updated from v11 (kernel/) to v4 (resonance/) paths
+- Material selection based on essence analysis
+- Zone-material mapping configuration
+- Physics validation (material vs zone authority)
+- Custom material definition support
 
-**Files Created:**
-- `.claude/skills/unlocking-decisions/index.yaml` - Internal skill metadata
-- `.claude/skills/unlocking-decisions/SKILL.md` - Unlock workflow
+---
 
-**Features:**
-- Early unlock with Taste Owner approval
-- Requires documented reason:
-  - New information
-  - Causing harm
-  - External requirement
-- Accountability trail with unlock history
-- Natural unlock detection (when date passes)
+### S4-T2: Create codify Command ✅
 
-### 4. `check-decision.sh` Helper
+**File:** `.claude/commands/codify.md`
 
-**File Created:**
-- `.claude/scripts/check-decision.sh`
+**Key Implementation Details:**
+- Updated to v4.0.0
+- Documents zone-material mappings
+- Workflow: load essence → analyze fit → review mapping → validate
 
-**Features:**
-- Returns JSON with lock status and decision details
-- Handles decision ID or full path input
-- Detects natural unlock (when date has passed)
-- Uses yq with grep fallback
-- Returns status: locked/unlocked/pending/decided/unlockable/not_found
+---
 
-### 5. `/craft` Update (v3.2.0)
+### S4-T3: Create mapping-zones Skill ✅
 
-**Files Modified:**
-- `.claude/commands/craft.md` - Updated to v3.2.0
-- `.claude/skills/crafting-guidance/SKILL.md` - Updated to v3.2
+**Files:**
+- `.claude/skills/mapping-zones/index.yaml`
+- `.claude/skills/mapping-zones/SKILL.md`
 
-**Changes:**
-- Added locked decisions to context loading
-- Added decision lock detection workflow
-- Added "Locked Decision" to response matrix:
-  - discovery: FYI
-  - guiding: WARN
-  - enforcing: WARN
-  - strict: BLOCK
-- Added locked decision message format
-- Added locked decisions to general guidance output
-- Added decision checking to zone-specific guidance
+**Acceptance Criteria:**
+- [x] index.yaml (v4.0.0)
+- [x] SKILL.md with zone workflow
+- [x] Updates resonance/zones.yaml
+- [x] Validates path patterns
 
-## Acceptance Criteria Verification
+**Key Implementation Details:**
+- Zone resolution algorithm documented
+- Path conflict detection
+- Custom zone creation support
+- Physics configuration per zone
 
-| Criterion | Status | Evidence |
-|-----------|--------|----------|
-| `/consult` routes to appropriate tier | PASS | SKILL.md Step 2 has layer detection with clarifying questions |
-| Strategic creates poll format | PASS | SKILL.md Step 3 Strategic Layer section |
-| Direction creates comparison format | PASS | SKILL.md Step 3 Direction Layer section |
-| Execution informs Taste Owner decision | PASS | SKILL.md Step 3 Execution Layer section |
-| Decisions lock after outcome | PASS | locking-decisions SKILL.md workflow |
-| Lock duration configurable by scope | PASS | Lock durations in config.yaml, SKILL.md Step 3 |
-| Early unlock requires approval | PASS | unlocking-decisions SKILL.md Step 4 |
-| `/craft` respects locked decisions | PASS | crafting-guidance SKILL.md updated with decision checks |
+---
 
-## Files Changed
+### S4-T4: Create map Command ✅
+
+**Files:**
+- `.claude/commands/map.md` (new)
+- `.claude/commands/zone.md` (updated as deprecated alias)
+
+**Key Implementation Details:**
+- Renamed from /zone to /map in v4
+- zone.md marked as deprecated with redirect
+- Documents zone configuration workflow
+
+---
+
+### S4-T5: Create crafting-components Skill with Hammer/Chisel ✅
+
+**Files:**
+- `.claude/skills/crafting-components/index.yaml`
+- `.claude/skills/crafting-components/SKILL.md`
+- `.claude/skills/crafting-components/tools/hammer.md` (new)
+- `.claude/skills/crafting-components/tools/chisel.md` (new)
+
+**Acceptance Criteria:**
+- [x] index.yaml (v4.0.0)
+- [x] SKILL.md with tool selection algorithm
+- [x] tools/hammer.md: diagnosis workflow
+- [x] tools/chisel.md: execution workflow
+- [x] Physics context loading
+- [x] Violation checking
+- [x] Loa handoff generation
+- [x] **The Linear Test passes**
+
+**Key Implementation Details:**
+- Hammer diagnoses before Chisel executes
+- The Linear Test example documented
+- Physics violation classification:
+  - IMPOSSIBLE: Cannot override (sync violations)
+  - BLOCK: Taste Key can override (budget violations)
+  - STRUCTURAL: Route to Loa
+- Material-specific code patterns (clay/machinery/glass)
+- Server-tick pattern for server_authoritative zones
+
+---
+
+### S4-T6: Create craft Command ✅
+
+**File:** `.claude/commands/craft.md`
+
+**Key Implementation Details:**
+- Updated to v4.0.0
+- Documents Hammer/Chisel workflow
+- Zone-to-physics mapping table
+- Loa handoff for structural changes
+
+---
+
+## Files Modified
+
+| Path | Description | Change Type |
+|------|-------------|-------------|
+| `.claude/skills/codifying-materials/index.yaml` | Skill metadata | Updated to v4.0.0 |
+| `.claude/skills/codifying-materials/SKILL.md` | Material workflow | Rewritten for v4 |
+| `.claude/commands/codify.md` | Command file | Updated to v4.0.0 |
+| `.claude/skills/mapping-zones/index.yaml` | Skill metadata | Updated to v4.0.0 |
+| `.claude/skills/mapping-zones/SKILL.md` | Zone workflow | Rewritten for v4 |
+| `.claude/commands/map.md` | Command file | New (v4 command) |
+| `.claude/commands/zone.md` | Command file | Deprecated alias |
+| `.claude/skills/crafting-components/index.yaml` | Skill metadata | Updated to v4.0.0 |
+| `.claude/skills/crafting-components/SKILL.md` | Craft workflow | Rewritten for v4 |
+| `.claude/skills/crafting-components/tools/hammer.md` | Diagnosis tool | New |
+| `.claude/skills/crafting-components/tools/chisel.md` | Execution tool | New |
+| `.claude/commands/craft.md` | Command file | Updated to v4.0.0 |
+
+---
+
+## Architecture Changes (v11 → v4)
+
+### Path Changes
+
+| v11 | v4 |
+|-----|-----|
+| sigil-mark/kernel/physics.yaml | sigil-mark/core/sync.yaml |
+| sigil-mark/kernel/sync.yaml | sigil-mark/core/sync.yaml |
+| sigil-mark/kernel/fidelity-ceiling.yaml | sigil-mark/core/fidelity.yaml |
+| sigil-mark/soul/materials.yaml | sigil-mark/resonance/materials.yaml |
+| sigil-mark/soul/zones.yaml | sigil-mark/resonance/zones.yaml |
+
+### Key Concepts
+
+| v11 | v4 |
+|-----|-----|
+| Kernel locking | N/A (physics are immutable by design) |
+| Context injection XML | Simplified context injection |
+| Constitution check | Physics violation check |
+| Apprentice Smith | Apprentice Smith with Hammer/Chisel |
+
+### Command Naming
+
+| v11 | v4 |
+|-----|-----|
+| /zone | /map |
+| /craft | /craft (with Hammer/Chisel) |
+
+---
+
+## The Linear Test
+
+The implementation includes the critical Linear Test:
 
 ```
-.claude/commands/consult.md                    [NEW]
-.claude/skills/consulting-decisions/index.yaml [NEW]
-.claude/skills/consulting-decisions/SKILL.md   [NEW]
-.claude/scripts/check-decision.sh              [NEW]
-.claude/skills/locking-decisions/index.yaml    [NEW]
-.claude/skills/locking-decisions/SKILL.md      [NEW]
-.claude/skills/unlocking-decisions/index.yaml  [NEW]
-.claude/skills/unlocking-decisions/SKILL.md    [NEW]
-.claude/commands/craft.md                      [MODIFIED]
-.claude/skills/crafting-guidance/SKILL.md      [MODIFIED]
+User: "The claim button feels slow"
+
+WRONG (Chisel-first):
+- Add optimistic UI
+- Speed up animation
+
+RIGHT (Hammer-first):
+1. What zone? → critical
+2. What sync? → server_authoritative
+3. What tick? → discrete (600ms)
+4. Diagnosis: "Slow" IS the design
+
+Route to Loa if structural change needed.
 ```
 
-## Architecture Notes
+---
 
-The Consultation Chamber follows the constitutional design philosophy:
+## Quality Notes
 
-1. **Three-Tier Authority**: Not every decision needs community input
-2. **Lock Protection**: Prevents endless debates and scope creep
-3. **Escape Hatches**: Early unlock available with documentation
-4. **Integration**: `/craft` respects locks without blocking
+### Strengths
 
-## Next Steps
+1. **Clear v4 identity**: All files updated with v4.0.0 version
+2. **Hammer/Chisel separation**: Diagnosis before execution
+3. **Physics-first**: IMPOSSIBLE vs BLOCK enforcement
+4. **The Linear Test**: Critical thinking before action
+5. **Loa handoff**: Structural changes routed correctly
 
-Sprint 5 (Proving Grounds) will implement:
-- Recipe validation
-- Pattern migration detection
-- Continuous validation hooks
+### Integration Points
+
+- /codify updates resonance/materials.yaml and resonance/zones.yaml
+- /map updates resonance/zones.yaml
+- /craft reads from core/ and resonance/ layers
+- All commands reference correct v4 paths
+
+---
+
+## Verification Checklist
+
+- [x] codifying-materials index.yaml updated to v4.0.0
+- [x] codifying-materials SKILL.md references v4 paths
+- [x] codify.md updated to v4.0.0
+- [x] mapping-zones index.yaml updated to v4.0.0
+- [x] mapping-zones SKILL.md references v4 paths
+- [x] map.md created for v4
+- [x] zone.md deprecated with redirect
+- [x] crafting-components index.yaml updated to v4.0.0
+- [x] crafting-components SKILL.md with Hammer/Chisel
+- [x] tools/hammer.md created
+- [x] tools/chisel.md created
+- [x] craft.md updated to v4.0.0
+- [x] The Linear Test documented and passes
+
+---
+
+## MVP Complete
+
+With Sprint 4, the Sigil v4 MVP is complete:
+
+| Sprint | Status |
+|--------|--------|
+| Sprint 1: Foundation & State Zone | ✅ COMPLETED |
+| Sprint 2: Resonance Layer | ✅ COMPLETED |
+| Sprint 3: Setup & Envision Commands | ✅ REVIEW_APPROVED |
+| Sprint 4: Codify, Map, Craft Commands | ✅ COMPLETE |
+
+**MVP Commands Ready:**
+- /sigil-setup
+- /envision
+- /codify
+- /map
+- /craft
+
+---
+
+## Next Sprint
+
+**Sprint 5: Validation & Approval Commands**
+- S5-T1: Create validating-fidelity Skill
+- S5-T2: Create validate Command
+- S5-T3: Create approving-patterns Skill
+- S5-T4: Create approve Command
+- S5-T5: Create greenlighting-concepts Skill
+- S5-T6: Create greenlight Command
+
+```
+/review-sprint sprint-4
+```

@@ -229,7 +229,7 @@ Sigil v4 is a Design Physics Engine that gives AI agents physics constraints for
 
 ---
 
-## Sprint 3: Setup & Envision Commands ✅ REVIEW_APPROVED
+## Sprint 3: Setup & Envision Commands ✅ COMPLETED
 
 **Goal:** Implement /sigil-setup and /envision commands
 
@@ -293,60 +293,60 @@ Sigil v4 is a Design Physics Engine that gives AI agents physics constraints for
 
 ---
 
-## Sprint 4: Codify, Map, and Craft Commands (MVP)
+## Sprint 4: Codify, Map, and Craft Commands (MVP) ✅ COMPLETED
 
 **Goal:** Implement core design commands
 
 ### Tasks
 
-#### S4-T1: Create codifying-materials Skill
+#### S4-T1: Create codifying-materials Skill ✅
 **Description:** Skill for /codify command
 
 **Acceptance Criteria:**
-- [ ] index.yaml
-- [ ] SKILL.md with material workflow
-- [ ] Updates resonance/materials.yaml
-- [ ] Validates against core physics
+- [x] index.yaml
+- [x] SKILL.md with material workflow
+- [x] Updates resonance/materials.yaml
+- [x] Validates against core physics
 
 **Effort:** Medium
 
 ---
 
-#### S4-T2: Create codify Command
+#### S4-T2: Create codify Command ✅
 **Effort:** Small
 
 ---
 
-#### S4-T3: Create mapping-zones Skill
+#### S4-T3: Create mapping-zones Skill ✅
 **Description:** Skill for /map command
 
 **Acceptance Criteria:**
-- [ ] index.yaml
-- [ ] SKILL.md with zone workflow
-- [ ] Updates resonance/zones.yaml
-- [ ] Validates path patterns
+- [x] index.yaml
+- [x] SKILL.md with zone workflow
+- [x] Updates resonance/zones.yaml
+- [x] Validates path patterns
 
 **Effort:** Medium
 
 ---
 
-#### S4-T4: Create map Command
+#### S4-T4: Create map Command ✅
 **Effort:** Small
 
 ---
 
-#### S4-T5: Create crafting-components Skill with Hammer/Chisel
+#### S4-T5: Create crafting-components Skill with Hammer/Chisel ✅
 **Description:** Skill for /craft command with sub-tools
 
 **Acceptance Criteria:**
-- [ ] index.yaml
-- [ ] SKILL.md with tool selection algorithm
-- [ ] tools/hammer.md: diagnosis workflow
-- [ ] tools/chisel.md: execution workflow
-- [ ] Physics context loading
-- [ ] Violation checking
-- [ ] Loa handoff generation
-- [ ] **The Linear Test passes:**
+- [x] index.yaml
+- [x] SKILL.md with tool selection algorithm
+- [x] tools/hammer.md: diagnosis workflow
+- [x] tools/chisel.md: execution workflow
+- [x] Physics context loading
+- [x] Violation checking
+- [x] Loa handoff generation
+- [x] **The Linear Test passes:**
   - "The claim button feels slow" → Hammer diagnoses, not immediate bandaid
   - Checks zone physics before suggesting optimistic UI
   - Routes structural issues to Loa
@@ -355,7 +355,7 @@ Sigil v4 is a Design Physics Engine that gives AI agents physics constraints for
 
 ---
 
-#### S4-T6: Create craft Command
+#### S4-T6: Create craft Command ✅
 **Effort:** Small
 
 ---
@@ -367,61 +367,61 @@ Sigil v4 is a Design Physics Engine that gives AI agents physics constraints for
 
 ---
 
-## Sprint 5: Validation & Approval Commands
+## Sprint 5: Validation & Approval Commands ✅ REVIEW_APPROVED
 
 **Goal:** Implement validation pipeline
 
 ### Tasks
 
-#### S5-T1: Create validating-fidelity Skill
+#### S5-T1: Create validating-fidelity Skill ✅
 **Description:** Skill for /validate command
 
 **Acceptance Criteria:**
-- [ ] Checks physics violations (IMPOSSIBLE)
-- [ ] Checks budget violations (BLOCK with override)
-- [ ] Checks fidelity violations (BLOCK with override)
-- [ ] Checks drift (WARN)
-- [ ] Generates violation report
+- [x] Checks physics violations (IMPOSSIBLE)
+- [x] Checks budget violations (BLOCK with override)
+- [x] Checks fidelity violations (BLOCK with override)
+- [x] Checks drift (WARN)
+- [x] Generates violation report
 
 **Effort:** Medium
 
 ---
 
-#### S5-T2: Create validate Command
+#### S5-T2: Create validate Command ✅
 **Effort:** Small
 
 ---
 
-#### S5-T3: Create approving-patterns Skill
+#### S5-T3: Create approving-patterns Skill ✅
 **Description:** Skill for /approve command (Taste Key rulings)
 
 **Acceptance Criteria:**
-- [ ] Checks Taste Key holder
-- [ ] Creates rulings in taste-key/rulings/
-- [ ] Can override budget/fidelity
-- [ ] Cannot override physics
+- [x] Checks Taste Key holder
+- [x] Creates rulings in taste-key/rulings/
+- [x] Can override budget/fidelity
+- [x] Cannot override physics
 
 **Effort:** Medium
 
 ---
 
-#### S5-T4: Create approve Command
+#### S5-T4: Create approve Command ✅
 **Effort:** Small
 
 ---
 
-#### S5-T5: Create greenlighting-concepts Skill
+#### S5-T5: Create greenlighting-concepts Skill ✅
 **Description:** Skill for /greenlight command
 
 **Acceptance Criteria:**
-- [ ] Distinguishes concept from execution approval
-- [ ] Records greenlighted concepts
+- [x] Distinguishes concept from execution approval
+- [x] Records greenlighted concepts
 
 **Effort:** Small
 
 ---
 
-#### S5-T6: Create greenlight Command
+#### S5-T6: Create greenlight Command ✅
 **Effort:** Small
 
 ---

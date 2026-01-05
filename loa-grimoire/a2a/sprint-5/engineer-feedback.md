@@ -1,62 +1,105 @@
-All good
+# Sprint 5 Engineer Feedback
+
+**Sprint:** Validation & Approval Commands
+**Review Date:** 2026-01-04
+**Reviewer:** Senior Technical Lead
 
 ---
 
-## Senior Technical Lead Review: Sprint 5
+## Review Decision
 
-**Reviewer:** Senior Technical Lead
-**Date:** 2026-01-02
-**Status:** APPROVED
+**All good**
 
-### Acceptance Criteria Verification
+---
 
-| Criterion | Status | Evidence |
-|-----------|--------|----------|
-| `/prove <feature>` registers in `active/` | PASS | proving-features SKILL.md Step 5 creates record |
-| Proving record includes monitors, duration, status | PASS | Complete schema in SKILL.md Step 5 |
-| Monitors configurable by domain | PASS | get-monitors.sh with 5 domains |
-| `/graduate` checks duration, monitors, P1s | PASS | graduating-features SKILL.md Step 2 |
-| Graduation requires Taste Owner sign-off | PASS | SKILL.md Step 3 explicit sign-off |
-| Graduated features moved to `canon/graduated/` | PASS | SKILL.md Steps 4-5 |
+## Verification Summary
 
-### Code Quality Assessment
+### S5-T1: validating-fidelity Skill ✅
 
-**proving-features/SKILL.md**
-- Clear 6-step workflow
-- Domain-specific monitor assignment
-- Complete proving record schema
-- Status checking with `--status` flag
-- Proper error handling
+| Criteria | Status | Evidence |
+|----------|--------|----------|
+| Checks physics violations (IMPOSSIBLE) | ✅ | SKILL.md:31-44 - Three-tier system with physics at top |
+| Checks budget violations (BLOCK with override) | ✅ | SKILL.md:45-59 - Zone-specific limits documented |
+| Checks fidelity violations (BLOCK with override) | ✅ | SKILL.md:60-73 - Ceiling values documented |
+| Checks drift (WARN) | ✅ | SKILL.md:75-88 - Drift patterns listed |
+| Generates violation report | ✅ | Output: `sigil-mark/memory/mutations/active/validation-report.yaml` |
 
-**graduating-features/SKILL.md**
-- 4 eligibility requirements clearly documented
-- Yellow monitor acknowledgment flow
-- Force graduation with logging
-- Proper record migration to `canon/graduated/`
-- Taste Owner sign-off required
+**Code Quality:** index.yaml updated to v4.0.0, SKILL.md has clear 7-phase workflow with physics context loading.
 
-**get-monitors.sh**
-- Proper shell script structure with `set -e`
-- 5 domains with appropriate monitors
-- JSON output format
-- Config file override support
-- Domain validation with error response
+---
 
-**monitoring-features/SKILL.md**
-- Monitor status flow: pending → green/yellow/red
-- Threshold evaluation by type
-- Violation tracking (P1/P2/P3)
-- History preservation
-- Eligibility recalculation
+### S5-T2: validate Command ✅
 
-### Architecture Alignment
+| Criteria | Status | Evidence |
+|----------|--------|----------|
+| Command file exists | ✅ | `.claude/commands/validate.md` |
+| References skill | ✅ | `agent_path: .claude/skills/validating-fidelity/SKILL.md` |
+| Documents violations | ✅ | Zone-specific limits table, fidelity ceiling table |
 
-Implementation follows the four-pillar architecture:
-- Proving Grounds properly isolated
-- Living Canon as graduation target
-- Taste Owner accountability preserved
-- Domain-specific monitoring
+---
 
-### No Issues Found
+### S5-T3: approving-patterns Skill ✅
 
-Implementation is complete and well-structured. Ready for security audit.
+| Criteria | Status | Evidence |
+|----------|--------|----------|
+| Checks Taste Key holder | ✅ | SKILL.md Phase 1: `verify_holder()` workflow |
+| Creates rulings in taste-key/rulings/ | ✅ | Output: `sigil-mark/taste-key/rulings/*.yaml` |
+| Can override budget/fidelity | ✅ | Authority Boundaries: overridable section |
+| Cannot override physics | ✅ | Authority Boundaries: immutable section + blocking workflow |
+
+**Code Quality:** Clear authority boundaries, Loa handoff documented for physics issues.
+
+---
+
+### S5-T4: approve Command ✅
+
+| Criteria | Status | Evidence |
+|----------|--------|----------|
+| Command file exists | ✅ | `.claude/commands/approve.md` |
+| References skill | ✅ | `agent_path: .claude/skills/approving-patterns/SKILL.md` |
+| Documents boundaries | ✅ | CAN/CANNOT override tables |
+
+---
+
+### S5-T5: greenlighting-concepts Skill ✅
+
+| Criteria | Status | Evidence |
+|----------|--------|----------|
+| Distinguishes concept from execution | ✅ | SKILL.md: "Concept vs Execution Distinction" section |
+| Records greenlighted concepts | ✅ | Output: `sigil-mark/memory/decisions/*.yaml` |
+
+**Code Quality:** Clear pattern detection for concept vs execution questions, execution questions blocked with redirect.
+
+---
+
+### S5-T6: greenlight Command ✅
+
+| Criteria | Status | Evidence |
+|----------|--------|----------|
+| Command file exists | ✅ | `.claude/commands/greenlight.md` |
+| References skill | ✅ | `agent_path: .claude/skills/greenlighting-concepts/SKILL.md` |
+| Documents distinction | ✅ | Greenlightable vs Not Greenlightable table |
+
+---
+
+## Architecture Alignment
+
+| v4 Requirement | Implementation |
+|----------------|----------------|
+| Three-tier violations | IMPOSSIBLE → BLOCK → WARN |
+| Taste Key authority | Can override taste, cannot override physics |
+| Concept vs Execution | Greenlight for concepts, Approve for execution |
+| Output paths | memory/decisions/, taste-key/rulings/, memory/mutations/active/ |
+
+---
+
+## Summary
+
+Sprint 5 implementation is complete and meets all acceptance criteria. The validation pipeline correctly enforces:
+
+1. **Physics violations** - Cannot be overridden (IMPOSSIBLE)
+2. **Budget/Fidelity violations** - Taste Key can override (BLOCK)
+3. **Drift** - Warnings only (WARN)
+4. **Concept vs Execution** - Clear distinction with appropriate routing
+
+Ready for security audit: `/audit-sprint sprint-5`

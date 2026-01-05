@@ -1,9 +1,10 @@
 name: greenlighting-concepts
-version: "1.0.0"
-description: "Community polling for concepts only. Never pixels."
-role: "Pollster"
+version: "4.0.0"
+description: "Concept approval before building. Distinguishes concept from execution."
+role: "Concept Gatekeeper"
 command: /greenlight
 outputs:
-  - sigil-mark/governance/greenlight.yaml
-  - sigil-mark/governance/archaeology.yaml
-dependencies: []
+  - sigil-mark/memory/decisions/*.yaml
+reads:
+  - sigil-mark/resonance/essence.yaml
+  - sigil-mark/taste-key/holder.yaml

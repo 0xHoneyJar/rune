@@ -1,198 +1,242 @@
 # Sigil Agent: Mapping Zones
 
-> "Zones are design contexts. Different zones, different physics."
+> "Zones are physics contexts. Different zones, different rules."
 
 ## Role
 
-**Zone Architect** — Configures path-based design zones with material, sync, and tension defaults.
+**Zone Architect** — Configures path-based design zones with physics, materials, and budgets.
 
-## Commands
+## Command
 
 ```
-/zone                    # List zones and mappings
-/zone add [name]         # Add custom zone
-/zone configure [name]   # Configure existing zone
-/zone map [path] [zone]  # Map path to zone
+/map              # Review and update zone configuration
+/map --add        # Add a new custom zone
+/map --paths      # Focus on path mapping only
 ```
 
 ## Outputs
 
 | Path | Description |
 |------|-------------|
-| `sigil-mark/soul/zones.yaml` | Zone definitions and mappings |
+| `sigil-mark/resonance/zones.yaml` | Zone definitions and path mappings |
 
 ## Prerequisites
 
-- Run `/codify` first (need materials defined)
+- Run `/sigil-setup` first
+- Run `/envision` first (need essence.yaml)
+- Run `/codify` first (optional, but recommended)
 
 ## Workflow
 
-### Phase 1: Review Default Zones
+### Phase 1: Load Context
+
+Read the following files:
+- `sigil-mark/resonance/zones.yaml` — Current zone configuration
+- `sigil-mark/resonance/essence.yaml` — Product feel for tension defaults
+- `sigil-mark/core/sync.yaml` — Temporal Governor constraints
+
+### Phase 2: Review Current Zones
+
+Display current zone configuration:
 
 ```
-Current zone configuration:
+Current Zone Configuration:
 
 ┌────────────────────────────────────────────────────────────────┐
 │ CRITICAL                                                        │
-│ Material: clay | Sync: server_tick | Speed: 40                  │
+│ Physics: server_authoritative, discrete (600ms)                 │
+│ Material: clay | Budget: 5 elements, 2 decisions, 1 animation  │
 │ Paths:                                                          │
-│   - src/features/checkout/**                                    │
-│   - src/features/claim/**                                       │
-│   - src/features/trade/**                                       │
+│   - **/checkout/**                                              │
+│   - **/claim/**                                                 │
+│   - **/transaction/**                                           │
 ├────────────────────────────────────────────────────────────────┤
 │ TRANSACTIONAL                                                   │
-│ Material: machinery | Sync: lww | Speed: 95                     │
+│ Physics: client_authoritative, continuous (0ms)                 │
+│ Material: machinery | Budget: 12 elements, 5 decisions          │
 │ Paths:                                                          │
-│   - src/features/admin/**                                       │
-│   - src/features/settings/**                                    │
+│   - **/dashboard/**                                             │
+│   - **/settings/**                                              │
 ├────────────────────────────────────────────────────────────────┤
 │ EXPLORATORY                                                     │
-│ Material: glass | Sync: lww | Speed: 60                         │
+│ Physics: client_authoritative, continuous (0ms)                 │
+│ Material: glass | Budget: 20 elements, 10 decisions             │
 │ Paths:                                                          │
-│   - src/features/browse/**                                      │
-│   - src/features/search/**                                      │
+│   - **/explore/**                                               │
+│   - **/browse/**                                                │
 ├────────────────────────────────────────────────────────────────┤
 │ MARKETING                                                       │
-│ Material: clay | Sync: local_only | Speed: 50                   │
+│ Physics: client_authoritative, continuous (0ms)                 │
+│ Material: glass | Budget: 15 elements, 3 decisions              │
 │ Paths:                                                          │
-│   - src/features/landing/**                                     │
-│   - app/(marketing)/**                                          │
+│   - **/landing/**                                               │
+│   - **/home/**                                                  │
 └────────────────────────────────────────────────────────────────┘
 
-Modify? [zone name or 'done']
+Modify a zone? Add paths? [zone name or 'done']
 ```
 
-### Phase 2: Add Paths
+Use AskUserQuestion for zone selection.
 
-For each zone, ask:
+### Phase 3: Add Paths to Zone
+
+For the selected zone:
+
 ```
-Which paths should map to [zone]?
+Zone: [selected_zone]
 
-Current patterns:
-{{zone.paths}}
+Current paths:
+{{zone.paths | join "\n"}}
 
-Add more paths (glob patterns):
+Add paths (glob patterns):
 > src/features/wallet/**
-> app/(app)/checkout/**
+> app/(app)/buy/**
 
 [Added]
 ```
 
-### Phase 3: Configure Zone Defaults
+Update `zones.yaml`:
+```yaml
+definitions:
+  [zone]:
+    paths:
+      - [existing paths]
+      - src/features/wallet/**
+      - app/(app)/buy/**
+```
 
-For each zone:
+### Phase 4: Configure Zone Physics (Optional)
+
+If user wants to modify zone physics:
+
 ```
 Configure [zone]:
 
-Material: [current: {{zone.material}}]
-  Options: glass, clay, machinery
-  Change? [enter to keep]
+Physics:
+  sync: [server_authoritative / client_authoritative / collaborative]
+  tick: [discrete / continuous]
+  tick_rate_ms: [600 / 0]
+  material: [clay / machinery / glass]
 
-Sync: [current: {{zone.sync}}]
-  Options: crdt, lww, server_tick, local_only
-  Change? [enter to keep]
+Budget:
+  interactive_elements: [5-30]
+  decisions: [2-10]
+  animations: [1-5]
 
-Tensions: [current values shown]
-  playfulness: {{zone.tensions.playfulness}}
-  weight: {{zone.tensions.weight}}
-  density: {{zone.tensions.density}}
-  speed: {{zone.tensions.speed}}
-  
-  Modify any? [tension=value or enter to keep]
+Tensions:
+  playfulness: [0-100]
+  weight: [0-100]
+  density: [0-100]
+  speed: [0-100]
 ```
 
-### Phase 4: Add Custom Zone
+### Phase 5: Add Custom Zone (Optional)
+
+If user runs `/map --add`:
 
 ```
-/zone add gaming
+Create new zone:
 
-Creating new zone: gaming
-
+Name: [e.g., "gaming"]
 Description: [What is this zone for?]
-> Game-related interfaces with tick-based timing
 
 Paths (glob patterns):
 > src/features/game/**
 > src/features/combat/**
 
-Material: [glass/clay/machinery]
-> clay
+Physics:
+  sync: [server_authoritative / client_authoritative]
+  tick: [discrete / continuous]
+  tick_rate_ms: [ms value]
+  material: [clay / machinery / glass]
 
-Sync: [crdt/lww/server_tick/local_only]
-> server_tick
+Budget:
+  interactive_elements: [count]
+  decisions: [count]
+  animations: [count]
 
-Motion style: [instant/ease/spring/step]
-> step
-
-Tick rate (if step): [ms]
-> 600
-
-Tensions:
-  playfulness: 30
-  weight: 60
-  density: 60
-  speed: 20
+Tensions (0-100):
+  playfulness: [value]
+  weight: [value]
+  density: [value]
+  speed: [value]
 
 [Zone 'gaming' created]
 ```
 
-### Phase 5: Pattern Overrides
+### Phase 6: Validate Configuration
 
-For specific files that need different zone:
-```
-Some files need zone override.
+After updates, validate:
 
-Add comment at top of file:
-// @sigil-zone critical
-
-This forces the file to use critical zone regardless of path.
-
-Configure any overrides? [file path]
-```
-
-## Zone Resolution Algorithm
-
-```python
-def resolve_zone(file_path: str) -> Zone:
-    # 1. Check for @sigil-zone comment in file
-    if has_zone_override(file_path):
-        return get_override_zone(file_path)
-    
-    # 2. Match against zone paths in priority order
-    for zone_name in ["critical", "celebration", "transactional", 
-                       "exploratory", "marketing", "default"]:
-        zone = zones[zone_name]
-        for pattern in zone.paths:
-            if glob_match(file_path, pattern):
-                return zone
-    
-    # 3. Return default
-    return zones["default"]
-```
-
-## Validation
-
-After configuration, validate:
 ```
 Validating zone configuration...
 
 ✓ All paths are valid glob patterns
-✓ All materials exist in materials.yaml
-✓ All sync strategies are valid
-✓ No overlapping paths with different zones
+✓ No path conflicts (same path → different zones)
+✓ All materials exist
+✓ Physics constraints are consistent
 ✓ Default zone is configured
 
-Zone configuration saved to sigil-mark/soul/zones.yaml
+Zone configuration saved.
+```
+
+## Zone Resolution Algorithm
+
+```
+When agent needs zone for a file:
+
+1. Check for @sigil-zone comment in file
+   // @sigil-zone critical
+
+2. Match path against zone patterns (priority order):
+   - critical (check first)
+   - admin
+   - marketing
+   - transactional
+   - exploratory
+   - default (fallback)
+
+3. Return matching zone with all physics
+```
+
+## Path Conflict Detection
+
+If same path matches multiple zones:
+
+```
+⚠️ PATH CONFLICT DETECTED
+
+Path: src/features/checkout/settings/**
+
+Matches:
+  - critical (**/checkout/**)
+  - transactional (**/settings/**)
+
+Resolution options:
+1. Keep critical (it has priority)
+2. Add explicit path to transactional
+3. Use @sigil-zone override in files
+
+Choose [1/2/3]:
 ```
 
 ## Success Criteria
 
 - [ ] All feature paths are mapped to zones
-- [ ] Each zone has material, sync, and tension defaults
-- [ ] No path conflicts (same path → different zones)
-- [ ] Critical paths use server_tick
-- [ ] Admin paths use machinery
+- [ ] Each zone has physics, material, and budget
+- [ ] No path conflicts exist
+- [ ] Critical paths use server_authoritative
+- [ ] Default zone is configured
+
+## Error Handling
+
+| Situation | Response |
+|-----------|----------|
+| Invalid glob pattern | Show valid pattern syntax |
+| Unknown material | List valid materials |
+| Path conflict | Show conflict resolution options |
+| Missing physics | Use zone defaults |
 
 ## Next Step
 
-After `/zone`: Ready to use `/craft` for generation.
+After `/map`: Ready to use `/craft` for component generation.

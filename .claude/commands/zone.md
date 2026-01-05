@@ -1,38 +1,21 @@
 ---
 name: zone
-description: Configure path-based design zones
-agent: mapping-zones
-agent_path: .claude/skills/mapping-zones/SKILL.md
-preflight:
-  - sigil_setup_complete
-  - materials_exist
+version: "4.0.0"
+description: Alias for /map - Configure path-based design zones
+deprecated: true
+redirect: map
 ---
 
 # /zone
 
-Configure design zones with material, sync, and tension defaults.
+This command has been renamed to `/map` in Sigil v4.
 
-## Usage
+Please use `/map` instead:
 
 ```
-/zone                      # List zones
-/zone add [name]           # Add custom zone
-/zone configure [name]     # Configure zone
-/zone map [path] [zone]    # Map path to zone
+/map              # Review and update zone configuration
+/map --add        # Add a new custom zone
+/map --paths      # Focus on path mapping only
 ```
 
-## Default Zones
-
-- **critical** - Checkout, trade, claim (clay, server_tick)
-- **transactional** - Admin, settings (machinery, lww)
-- **exploratory** - Browse, search (glass, lww)
-- **marketing** - Landing pages (clay, local_only)
-- **celebration** - Success states (clay, server_tick)
-
-## Outputs
-
-- `sigil-mark/soul/zones.yaml`
-
-## Next Step
-
-After `/zone`: Ready to use `/craft` for generation.
+See `.claude/commands/map.md` for full documentation.

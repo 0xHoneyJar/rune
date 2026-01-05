@@ -1,6 +1,7 @@
 ---
 name: approve
-description: Taste Owner sign-off on patterns
+version: "4.0.0"
+description: Taste Key holder sign-off and rulings
 agent: approving-patterns
 agent_path: .claude/skills/approving-patterns/SKILL.md
 preflight:
@@ -9,46 +10,98 @@ preflight:
 
 # /approve
 
-Taste Owner approval for visual patterns.
+Taste Key holder approval for patterns and override rulings.
 
 ## Usage
 
 ```
-/approve [pattern]         # Approve pattern
-/approve --list            # List pending
-/approve --history         # Show history
-/approve --challenge [id]  # Challenge integrity change
-/approve --unlock [id]     # Unlock for modification
+/approve [pattern]             # Approve a pattern
+/approve --ruling [name]       # Create override ruling
+/approve --list                # List active rulings
+/approve --history             # Show approval history
+/approve --revoke [id]         # Revoke a ruling
 ```
 
-## Taste Owner Authority
+## Authority Boundaries
 
-Taste Owners DICTATE:
-- Colors, fonts, spacing
-- Animation timing
-- Border radius
-- Shadows
-- All visual decisions
+### Taste Key CAN Override
 
-Taste Owners do NOT control (requires poll):
-- New features
-- Feature removal
-- Product direction
+| Category | Examples |
+|----------|----------|
+| Budgets | Element count, animation count, color count |
+| Fidelity | Gradient stops, shadow layers, animation duration |
+| Taste | Colors, typography, spacing, motion |
 
-## Trust Score
+### Taste Key CANNOT Override
 
-Actions affect trust score:
-- False integrity claim: -10
-- Successful integrity: +1
-- Approved pattern reverted: -5
+| Category | Why |
+|----------|-----|
+| Physics | Sync authority, tick modes are product integrity |
+| Security | Auth, validation are non-negotiable |
+| Accessibility | Contrast, keyboard nav are requirements |
 
-## Challenge Period
+## Ruling Types
 
-Integrity changes auto-deploy but can be challenged within 24 hours.
+| Type | Description |
+|------|-------------|
+| `pattern_approval` | Lock a visual pattern |
+| `budget_override` | Exception to budget limit |
+| `fidelity_override` | Exception to fidelity ceiling |
 
-If challenged as Content (not Integrity), change reverts immediately.
+## Examples
+
+### Pattern Approval
+
+```
+/approve "Primary button style"
+
+Pattern: Primary button style
+Material: clay
+Physics: ✓ PASS
+
+As Taste Key holder, approve this pattern?
+[approve] [modify] [reject]
+```
+
+### Override Ruling
+
+```
+/approve --ruling "animation-exception"
+
+RULING CREATED
+ID: RULING-2026-001
+Type: fidelity_override (animation_duration)
+Scope: src/features/checkout/ClaimButton.tsx
+
+Justification: Celebration moment requires longer animation.
+```
+
+### Physics Override Blocked
+
+```
+/approve --ruling "optimistic-checkout"
+
+BLOCKED: PHYSICS OVERRIDE ATTEMPTED
+
+Optimistic updates in server_authoritative zones
+cannot be overridden. This is physics, not taste.
+
+Route to Loa for structural change: /consult
+```
 
 ## Outputs
 
-- `sigil-mark/governance/taste-owners.yaml`
-- `sigil-mark/governance/approvals.yaml`
+Rulings saved to: `sigil-mark/taste-key/rulings/*.yaml`
+
+## Integration
+
+- `/validate` checks for rulings before blocking
+- Rulings allow exceptions without changing constraints
+- Rulings can be revoked via `--revoke`
+
+## Next Step
+
+After `/approve`:
+- Pattern is locked
+- Ruling allows exception in /validate
+- `/garden` reviews rulings periodically

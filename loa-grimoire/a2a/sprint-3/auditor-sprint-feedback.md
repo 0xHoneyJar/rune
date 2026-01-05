@@ -1,8 +1,9 @@
-# Sprint 3 Security Audit
+# Sprint 3 Security Audit (Sigil v4)
 
-**Sprint:** Lens Array
-**Date:** 2026-01-02
+**Sprint:** Setup & Envision Commands
+**Date:** 2026-01-04
 **Auditor:** Paranoid Cypherpunk Auditor
+**Version:** Sigil v4 (Design Physics Engine)
 
 ---
 
@@ -12,54 +13,119 @@
 
 ---
 
+## Prerequisites Verified
+
+- [x] Senior Technical Lead approval exists (`engineer-feedback.md`: "All good")
+- [x] All acceptance criteria verified with file:line references
+
+---
+
 ## Security Checklist
 
 ### Secrets & Credentials
 
 | Check | Status | Notes |
 |-------|--------|-------|
-| Hardcoded API keys | ✅ PASS | None found |
+| Hardcoded API keys | ✅ PASS | None found in any skill files |
 | Hardcoded passwords | ✅ PASS | None found |
 | Exposed tokens | ✅ PASS | None found |
+| Sensitive data in YAML | ✅ PASS | All template values are placeholders |
 
-### Shell Security (get-lens.sh)
-
-| Check | Status | Notes |
-|-------|--------|-------|
-| set -e enabled | ✅ PASS | Script fails fast on errors |
-| Input validation | ✅ PASS | FILE_PATH and LENSES_PATH validated |
-| No dangerous rm -rf | ✅ PASS | No destructive operations |
-| No curl | bash | ✅ PASS | No remote code execution |
-| No chmod 777 | ✅ PASS | No permission escalation |
-| No eval/exec | ✅ PASS | No dynamic code execution |
-| Variable quoting | ✅ PASS | All variables properly quoted |
-| Command injection | ✅ PASS | yq eval with fixed paths only |
-
-### Variable Expansion Security
-
-| Line | Variable | Status |
-|------|----------|--------|
-| 18 | `${1:-}` | ✅ Safe default expansion |
-| 19 | `${2:-...}` | ✅ Safe default with fallback |
-| 42-43 | `${lens}` | ✅ Comes from yq output, not user input |
-| 121-124 | `${DETECTED}` | ✅ From case statement, controlled values |
-
-### Skill Security
+### initializing-sigil Skill
 
 | Check | Status | Notes |
 |-------|--------|-------|
-| Path traversal | ✅ PASS | Fixed paths to sigil-mark/ |
-| Privilege escalation | ✅ PASS | No elevated permissions |
+| Path traversal | ✅ PASS | Fixed paths to `sigil-mark/` only |
+| Directory creation | ✅ PASS | Creates only in project scope |
+| File overwrite | ✅ PASS | Checks for `.sigil-setup-complete` before overwriting |
+| Privilege escalation | ✅ PASS | No elevated permissions requested |
+| Shell execution | ✅ PASS | No shell scripts, YAML-based only |
+| Network calls | ✅ PASS | No external network access |
+
+### envisioning-soul Skill
+
+| Check | Status | Notes |
+|-------|--------|-------|
+| User data handling | ✅ PASS | Interview data stored locally only |
+| Email/PII storage | ✅ PASS | Taste Key holder info stored in project, not transmitted |
+| Input validation | ✅ PASS | Uses AskUserQuestion (controlled input) |
+| Path traversal | ✅ PASS | Fixed output paths only |
+| Command injection | ✅ PASS | No shell execution |
 | Data exfiltration | ✅ PASS | No network calls |
-| Information disclosure | ✅ PASS | Error messages are generic |
 
-### validating-lenses Skill
+### Command Files
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Internal only | ✅ PASS | `internal: true` prevents user invocation |
-| Read-only state | ✅ PASS | Only reads lenses.yaml, no writes |
-| No command execution | ✅ PASS | SKILL.md is instructions only |
+| File | Check | Status | Notes |
+|------|-------|--------|-------|
+| sigil-setup.md | Preflight checks | ✅ PASS | Prevents duplicate setup |
+| sigil-setup.md | Output paths | ✅ PASS | All paths scoped to project |
+| envision.md | Preflight checks | ✅ PASS | Requires setup completion |
+| envision.md | Output paths | ✅ PASS | Fixed paths to essence.yaml, holder.yaml |
+
+---
+
+## Code Review Notes
+
+### initializing-sigil/SKILL.md
+
+The skill creates a v4 directory structure with four layers:
+
+1. **Core** (`sigil-mark/core/`) - Physics schemas
+2. **Resonance** (`sigil-mark/resonance/`) - Product tuning
+3. **Memory** (`sigil-mark/memory/`) - Decision versioning
+4. **Taste Key** (`sigil-mark/taste-key/`) - Authority records
+
+Security observations:
+- All directories created within `sigil-mark/` (no escape possible)
+- Idempotency check prevents accidental overwrites
+- Configuration file `.sigilrc.yaml` contains no secrets
+- Version tracking in `.sigil-version.json` is metadata only
+
+### envisioning-soul/SKILL.md
+
+The skill conducts a 9-phase interview to capture product essence:
+
+1. Product Identity
+2. Soul Statement
+3. Invariants
+4. References
+5. Feel Descriptors
+6. Key Moments
+7. Anti-Patterns
+8. Tension Defaults
+9. Taste Key Holder
+
+Security observations:
+- User input collected via AskUserQuestion (safe prompting)
+- No shell command execution
+- Output written to fixed paths only
+- Taste Key holder info (name, email, github) is project metadata, not transmitted
+- No external API calls
+
+### Zone Permissions
+
+Both skills properly scope their file access:
+
+```yaml
+zones:
+  state:
+    paths:
+      - sigil-mark/
+      - .sigilrc.yaml
+      - .sigil-setup-complete
+      - .sigil-version.json
+    permission: read-write
+  app:
+    paths:
+      - components/
+      - src/components/
+    permission: read
+```
+
+This prevents:
+- Writing outside designated areas
+- Modifying application code without explicit permission
+- Accessing sensitive system files
 
 ---
 
@@ -74,36 +140,17 @@
 
 ---
 
-## Code Review Notes
-
-### get-lens.sh
-
-The shell script demonstrates good security practices:
-- Uses `set -e` for fail-fast behavior
-- Proper quoting of all variables (`"$FILE_PATH"`, `"$LENSES_PATH"`)
-- Case statements use controlled string matching (no regex injection)
-- yq commands use eval with static paths, not user-controlled input
-- Graceful fallback when yq unavailable
-- Returns structured JSON, no shell interpretation issues
-
-### Variable Safety Analysis
-
-The `${lens}` variable on lines 42-43 and 50 comes from:
-```bash
-for lens in $(yq eval '.lenses | keys | .[]' "$LENSES_PATH" 2>/dev/null)
-```
-
-This is safe because:
-1. LENSES_PATH is a fixed file path (not user-controlled)
-2. yq output is YAML keys (alphanumeric + underscores)
-3. Used in yq eval with dot notation, not shell expansion
-
-The `${DETECTED}` variable comes from case statement pattern matching with controlled values ("mobile", "accessibility", "power_user", "newcomer").
-
----
-
 ## Conclusion
 
-Sprint 3 implements the Lens Array pillar with security-conscious design. The get-lens.sh script properly handles input, avoids dangerous operations, and uses safe variable expansion patterns. No security vulnerabilities found.
+Sprint 3 implements the Setup & Envision Commands with proper security practices:
 
-**Status: APPROVED**
+1. **No secrets handling** - Skills don't process or store credentials
+2. **Fixed output paths** - All writes scoped to project directory
+3. **Idempotency checks** - Prevents accidental data loss
+4. **No shell execution** - Pure YAML/markdown configuration
+5. **No network access** - Completely offline operation
+6. **Proper zone permissions** - Read/write scoped appropriately
+
+No security vulnerabilities found.
+
+**Status: APPROVED - LET'S FUCKING GO**

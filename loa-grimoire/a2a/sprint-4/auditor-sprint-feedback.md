@@ -1,72 +1,257 @@
-APPROVED - LET'S FUCKING GO
+# Sprint 4 Security Audit (Sigil v4)
+
+**Sprint:** Codify, Map, and Craft Commands (MVP)
+**Date:** 2026-01-04
+**Auditor:** Paranoid Cypherpunk Auditor
+**Version:** Sigil v4 (Design Physics Engine)
 
 ---
 
-## Paranoid Cypherpunk Auditor: Sprint 4 Security Audit
+## Audit Decision
 
-**Auditor:** Paranoid Cypherpunk
-**Date:** 2026-01-02
-**Status:** APPROVED
+**APPROVED - LET'S FUCKING GO**
 
-### Security Checklist
+---
+
+## Prerequisites Verified
+
+- [x] Senior Technical Lead approval exists (`engineer-feedback.md`: "All good")
+- [x] All acceptance criteria verified with file:line references
+- [x] The Linear Test documented and passes
+
+---
+
+## Security Checklist
+
+### Secrets & Credentials
 
 | Check | Status | Notes |
 |-------|--------|-------|
-| Hardcoded Secrets | PASS | No API keys, tokens, or credentials |
-| Shell Injection | PASS | All variables properly quoted |
-| Path Traversal | PASS | File paths constructed safely |
-| Command Injection | PASS | No eval or unquoted command execution |
-| Privilege Escalation | PASS | No sudo or permission changes |
-| Data Leakage | PASS | No sensitive data exposure |
-| Input Validation | PASS | Decision ID validated before use |
-| Auth/Authz | PASS | Taste Owner approval for unlock |
+| Hardcoded API keys | ✅ PASS | None found in any skill files |
+| Hardcoded passwords | ✅ PASS | None found |
+| Exposed tokens | ✅ PASS | None found |
 
-### Files Audited
+### codifying-materials Skill
 
-1. **`.claude/scripts/check-decision.sh`**
-   - All variables properly quoted (lines 28-36, 48-55)
-   - Safe use of `find` with quoted pattern
-   - Error handling with null checks
-   - No shell injection vectors
+| Check | Status | Notes |
+|-------|--------|-------|
+| Path traversal | ✅ PASS | Fixed paths to `sigil-mark/resonance/` only |
+| Input validation | ✅ PASS | Material names validated against known set |
+| Shell execution | ✅ PASS | No shell scripts, YAML-based only |
+| Network calls | ✅ PASS | No external network access |
+| Zone permissions | ✅ PASS | Read-write to resonance layer only |
 
-2. **`.claude/skills/consulting-decisions/SKILL.md`**
-   - Zone permissions properly scoped
-   - Pre-flight checks for setup verification
-   - No executable code, documentation only
+### mapping-zones Skill
 
-3. **`.claude/skills/locking-decisions/SKILL.md`**
-   - Requires outcome before locking (prevents premature locks)
-   - No direct file manipulation code
-   - Proper zone permissions
+| Check | Status | Notes |
+|-------|--------|-------|
+| Path traversal | ✅ PASS | Fixed paths to `sigil-mark/resonance/zones.yaml` |
+| Glob pattern injection | ✅ PASS | Path patterns stored as strings, not executed |
+| Priority resolution | ✅ PASS | Zone priority is deterministic, no race conditions |
+| Shell execution | ✅ PASS | No shell scripts |
+| Network calls | ✅ PASS | No external network access |
 
-4. **`.claude/skills/unlocking-decisions/SKILL.md`**
-   - Requires Taste Owner approval for early unlock
-   - Accountability trail with unlock history
-   - Documented reason required
-   - No bypass mechanisms
+### crafting-components Skill + Hammer/Chisel Tools
 
-5. **`.claude/skills/crafting-guidance/SKILL.md`** (v3.2)
-   - Read-only access to decisions
-   - Strictness-aware response matrix
-   - No direct decision modification
+| Check | Status | Notes |
+|-------|--------|-------|
+| Context injection | ✅ PASS | XML context is data only, no code execution |
+| Physics enforcement | ✅ PASS | IMPOSSIBLE violations blocked, no bypass |
+| Code generation | ✅ PASS | Generated code is React/TSX, no shell commands |
+| Loa handoff | ✅ PASS | Structural changes routed, not auto-executed |
+| Shell execution | ✅ PASS | No shell scripts in tools |
+| Network calls | ✅ PASS | No external network access |
 
-### Authorization Model Assessment
+### Command Files
 
-The Consultation Chamber implements proper authorization:
-- **Locking**: Requires recorded outcome (prevents empty locks)
-- **Unlocking**: Requires Taste Owner approval + documented reason
-- **Accountability**: Full audit trail preserved in decision files
-- **Escape Hatch**: Early unlock available but tracked
+| File | Check | Status | Notes |
+|------|-------|--------|-------|
+| codify.md | Preflight | ✅ PASS | Requires setup completion |
+| codify.md | Paths | ✅ PASS | Fixed output paths |
+| map.md | Preflight | ✅ PASS | Requires setup completion |
+| map.md | Paths | ✅ PASS | Fixed output to zones.yaml |
+| zone.md | Deprecation | ✅ PASS | Redirects to map, no execution |
+| craft.md | Preflight | ✅ PASS | Requires setup completion |
+| craft.md | Context injection | ✅ PASS | Read-only access to physics |
 
-### Findings
+---
 
-**CRITICAL:** 0
-**HIGH:** 0
-**MEDIUM:** 0
-**LOW:** 0
+## Code Review Notes
 
-### Conclusion
+### codifying-materials/SKILL.md (216 lines)
 
-Sprint 4 implementation follows secure coding practices. The decision locking mechanism provides appropriate barriers without creating unrecoverable states. The accountability trail ensures all actions are traceable.
+6-phase workflow for material configuration:
 
-No security issues found. Ready for production.
+1. Load Context (reads YAML files)
+2. Analyze Essence (recommends materials based on soul)
+3. Review Zone-Material Mapping
+4. Configure Selection Guide
+5. Custom Material (optional)
+6. Validate Configuration
+
+Security observations:
+- All reads from fixed `sigil-mark/` paths
+- Material physics validated against core constraints
+- No user input directly executed
+- AskUserQuestion for controlled interaction
+
+### mapping-zones/SKILL.md (243 lines)
+
+6-phase workflow for zone configuration:
+
+1. Load Context
+2. Review Current Zones (display only)
+3. Add Paths to Zone
+4. Configure Zone Physics
+5. Add Custom Zone
+6. Validate Configuration
+
+Security observations:
+- Glob patterns stored as strings, never executed as shell globs
+- Path conflict detection prevents ambiguous mappings
+- Zone resolution algorithm is deterministic
+- All output to fixed `zones.yaml` path
+
+### crafting-components/SKILL.md (334 lines)
+
+Hammer/Chisel workflow with physics enforcement:
+
+1. Detect Context (zone, material, essence, fidelity)
+2. Inject Context (XML data structure)
+3. Apply Hammer (diagnosis)
+4. Apply Chisel (execution)
+5. Check Violations
+6. Loa Handoff (if structural)
+
+Security observations:
+- Context injection is read-only data loading
+- Physics violations are BLOCKED, not just warned
+- IMPOSSIBLE violations cannot be overridden (by design)
+- Generated code is standard React/TSX with Tailwind classes
+- No shell commands or network calls in generated code
+
+### tools/hammer.md (206 lines)
+
+Diagnosis tool that classifies requests:
+
+| Classification | Meaning |
+|---------------|---------|
+| WITHIN_PHYSICS | Safe to proceed |
+| BUDGET_VIOLATION | Needs Taste Key override |
+| IMPOSSIBLE | Blocked, cannot proceed |
+| STRUCTURAL | Route to Loa |
+
+Security observations:
+- Read-only analysis, no state changes
+- Classification is based on physics rules, not user input
+- No command execution
+
+### tools/chisel.md (277 lines)
+
+Execution tool that generates components:
+
+- Material-specific CSS patterns (clay/machinery/glass)
+- Sync pattern code (server_authoritative/client_authoritative)
+- Tension-to-CSS variable mapping
+
+Security observations:
+- Generated code follows React/TSX patterns
+- No dangerouslySetInnerHTML or eval
+- No shell command strings
+- All CSS is class-based (Tailwind), no dynamic style injection
+
+### Generated Code Patterns
+
+The skill generates standard React components:
+
+```tsx
+// Server-tick pattern (safe)
+<button disabled={isPending}>
+  {isPending ? "Processing..." : children}
+</button>
+
+// Material physics (CSS classes only)
+className="bg-stone-50 shadow-sm"
+```
+
+No dangerous patterns found:
+- ❌ No `eval()` or `new Function()`
+- ❌ No `dangerouslySetInnerHTML`
+- ❌ No shell command execution
+- ❌ No dynamic imports from user input
+- ❌ No unescaped template literals in HTML
+
+---
+
+## Findings Summary
+
+| Severity | Count |
+|----------|-------|
+| CRITICAL | 0 |
+| HIGH | 0 |
+| MEDIUM | 0 |
+| LOW | 0 |
+
+---
+
+## The Linear Test Security Review
+
+The Linear Test example in SKILL.md:30-53:
+
+```
+User: "The claim button feels slow"
+
+HAMMER diagnoses:
+- Zone: critical → server_authoritative
+- Tick: discrete (600ms)
+- Material: clay (heavy, deliberate)
+
+Diagnosis: "Slow" IS the design. Not a bug.
+```
+
+This demonstrates proper security thinking:
+1. **No immediate action** - Diagnosis before execution
+2. **Physics enforcement** - Cannot bypass server authority
+3. **Escalation path** - Structural changes route to Loa
+4. **Human approval** - Taste Key required for overrides
+
+---
+
+## Conclusion
+
+Sprint 4 implements the MVP commands (Codify, Map, Craft) with proper security practices:
+
+1. **No secrets handling** - Skills don't process credentials
+2. **Fixed output paths** - All writes scoped to `sigil-mark/`
+3. **Physics enforcement** - IMPOSSIBLE violations blocked
+4. **Safe code generation** - Standard React/TSX patterns only
+5. **No shell execution** - Pure YAML/markdown configuration
+6. **No network access** - Completely offline operation
+7. **Diagnosis-first** - Hammer prevents hasty actions
+8. **Proper escalation** - Structural changes route to Loa
+
+The Hammer/Chisel toolkit enforces a security-conscious workflow: diagnose before acting, respect physics constraints, escalate when appropriate.
+
+No security vulnerabilities found.
+
+**Status: APPROVED - LET'S FUCKING GO**
+
+---
+
+## MVP Complete
+
+With Sprint 4 approved, the Sigil v4 MVP is security-cleared:
+
+| Sprint | Status |
+|--------|--------|
+| Sprint 1: Foundation & State Zone | ✅ COMPLETED |
+| Sprint 2: Resonance Layer | ✅ COMPLETED |
+| Sprint 3: Setup & Envision Commands | ✅ COMPLETED |
+| Sprint 4: Codify, Map, Craft Commands | ✅ COMPLETED |
+
+**MVP Commands Ready for Production:**
+- /sigil-setup
+- /envision
+- /codify
+- /map
+- /craft

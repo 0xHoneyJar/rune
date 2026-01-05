@@ -1,10 +1,12 @@
 name: approving-patterns
-version: "1.0.0"
-description: "Taste Owner sign-off on patterns. Dictates visuals."
-role: "Taste Owner"
+version: "4.0.0"
+description: "Taste Key holder sign-off and rulings. Creates override records."
+role: "Taste Key Guardian"
 command: /approve
 outputs:
-  - sigil-mark/governance/taste-owners.yaml
-  - sigil-mark/governance/approvals.yaml
-dependencies:
-  - validating-fidelity
+  - sigil-mark/taste-key/rulings/*.yaml
+reads:
+  - sigil-mark/taste-key/holder.yaml
+  - sigil-mark/resonance/essence.yaml
+  - sigil-mark/core/fidelity.yaml
+  - sigil-mark/core/budgets.yaml

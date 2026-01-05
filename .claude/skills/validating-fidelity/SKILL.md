@@ -1,338 +1,488 @@
-# Sigil Agent: Validating Fidelity
+# Sigil v4 Agent: Validating Fidelity
 
-> "If it looks 'better' than the Gold Standard, it is WRONG."
+> "Physics violations are IMPOSSIBLE. Budget violations are BLOCK."
 
 ## Role
 
-**Fidelity Guardian** — Checks generated output against Gold Standard. Flags "improvements" as violations.
+**Fidelity Guardian** — Validates generated code against physics constraints, budgets, and fidelity ceiling. Enforces the Design Physics Engine.
 
-## Commands
+## Command
 
 ```
 /validate [file]           # Validate single file
 /validate --all            # Validate all components
-/validate --report         # Generate fidelity report
+/validate --zone [zone]    # Validate all files in zone
+/validate --report         # Generate validation report
 ```
 
 ## Outputs
 
 | Path | Description |
 |------|-------------|
-| `sigil-mark/workbench/fidelity-report.yaml` | Validation results |
+| `sigil-mark/memory/mutations/active/validation-report.yaml` | Validation results |
 
-## The Mod Ghost Rule
+## Prerequisites
 
-When Mod Ghost joined Jagex, he created objectively "better" assets. The community rejected them because they didn't look like 2007.
+- Run `/sigil-setup` first
+- Run `/envision` first (need essence.yaml)
 
-**This agent protects the "jank" that constitutes the soul.**
+## The Three-Tier Violation System
 
-An AI optimizing for "quality" will:
-- Add more gradient stops
-- Increase shadow layers
-- Smooth animations
-- Add decorative elements
+### 1. PHYSICS VIOLATIONS (IMPOSSIBLE)
 
-All of these DESTROY the soul. This agent catches them.
-
-## Validation Checks
-
-### 1. Gradient Complexity
-
-```javascript
-function checkGradients(css) {
-  const gradientRegex = /linear-gradient\([^)]+\)/g;
-  const gradients = css.match(gradientRegex) || [];
-
-  for (const gradient of gradients) {
-    const stops = gradient.split(',').length - 1;
-    if (stops > config.constraints.visual.gradients.max_stops) {
-      return {
-        violation: true,
-        type: "gradient_complexity",
-        message: `Gradient has ${stops} stops (max: ${max_stops})`,
-        severity: "warn"
-      };
-    }
-  }
-}
-```
-
-### 2. Shadow Layers
-
-```javascript
-function checkShadows(css) {
-  const shadowRegex = /box-shadow:\s*([^;]+)/g;
-  const matches = css.match(shadowRegex) || [];
-
-  for (const match of matches) {
-    const layers = match.split(',').length;
-    if (layers > config.constraints.visual.shadows.max_layers) {
-      return {
-        violation: true,
-        type: "shadow_layers",
-        message: `Shadow has ${layers} layers (max: ${max_layers})`,
-        severity: "warn"
-      };
-    }
-  }
-}
-```
-
-### 3. Animation Duration
-
-```javascript
-function checkAnimations(css) {
-  const durationRegex = /(?:animation|transition).*?(\d+(?:\.\d+)?)(ms|s)/g;
-  let match;
-
-  while ((match = durationRegex.exec(css)) !== null) {
-    const value = parseFloat(match[1]);
-    const unit = match[2];
-    const ms = unit === 's' ? value * 1000 : value;
-
-    if (ms > config.constraints.animation.max_duration_ms) {
-      return {
-        violation: true,
-        type: "animation_duration",
-        message: `Animation ${ms}ms exceeds max (${max_duration_ms}ms)`,
-        severity: "warn"
-      };
-    }
-  }
-}
-```
-
-### 4. Forbidden Techniques
-
-```javascript
-function checkForbidden(css, jsx) {
-  const code = css + jsx;
-
-  for (const technique of config.forbidden_techniques) {
-    const pattern = techniquePatterns[technique];
-    if (pattern.test(code)) {
-      return {
-        violation: true,
-        type: "forbidden_technique",
-        message: `Forbidden technique: ${technique}`,
-        severity: "error"
-      };
-    }
-  }
-}
-
-const techniquePatterns = {
-  "Ambient Occlusion": /ambient.?occlusion/i,
-  "Mesh Gradients": /mesh.?gradient/i,
-  "3D Transforms": /rotate[XYZ]|perspective/,
-  "Particle Systems": /particle/i,
-  "Motion Blur": /motion.?blur/i,
-  "Glassmorphism (excessive)": /backdrop-filter.*blur\((?:[2-9]\d|\d{3,})px\)/,
-  "Neumorphism": /inset.*shadow.*inset/i,
-  "Complex SVG filters": /feTurbulence|feDisplacementMap/,
-  "Canvas 2D effects": /canvas.*getContext\(['"]2d['"]\)/,
-  "WebGL": /webgl|three\.js/i,
-  "Confetti/Particles": /confetti|particles?\.js/i
-};
-```
-
-### 5. Material Compliance
-
-```javascript
-function checkMaterial(code, expectedMaterial) {
-  const material = materials[expectedMaterial];
-
-  // Check for forbidden patterns
-  for (const forbidden of material.forbidden) {
-    if (containsPattern(code, forbidden)) {
-      return {
-        violation: true,
-        type: "material_violation",
-        message: `Material '${expectedMaterial}' forbids: ${forbidden}`,
-        severity: "error"
-      };
-    }
-  }
-
-  // Check for required physics
-  if (!hasPhysics(code, material.primitives.motion)) {
-    return {
-      violation: true,
-      type: "missing_physics",
-      message: `Material '${expectedMaterial}' requires ${material.primitives.motion} motion`,
-      severity: "warn"
-    };
-  }
-}
-```
-
-### 6. Sync Compliance
-
-```javascript
-function checkSync(code, expectedSync) {
-  if (expectedSync === "server_tick") {
-    // Must NOT have optimistic updates
-    if (/optimistic/i.test(code)) {
-      return {
-        violation: true,
-        type: "sync_violation",
-        message: "Server-tick data cannot use optimistic updates",
-        severity: "error"  // Always error for sync
-      };
-    }
-
-    // Must have pending state
-    if (!/pending|isPending|loading/i.test(code)) {
-      return {
-        violation: true,
-        type: "sync_violation",
-        message: "Server-tick components must show pending state",
-        severity: "error"
-      };
-    }
-  }
-}
-```
-
-## Report Format
+These CANNOT be generated. Ever. No override exists.
 
 ```yaml
-# sigil-mark/workbench/fidelity-report.yaml
-
-generated_at: "2025-01-15T10:30:00Z"
-files_checked: 47
-violations_found: 3
-
-summary:
-  pass: 44
-  warn: 2
-  error: 1
-
-violations:
-  - file: "src/components/Button.tsx"
-    line: 23
-    type: "gradient_complexity"
-    message: "Gradient has 4 stops (max: 2)"
-    severity: "warn"
-    suggestion: "Simplify to 2-stop gradient"
-
-  - file: "src/features/checkout/Confirm.tsx"
-    line: 45
-    type: "animation_duration"
-    message: "Animation 1200ms exceeds max (800ms)"
-    severity: "warn"
-    suggestion: "Reduce to 800ms or request marketing zone exception"
-
-  - file: "src/features/trade/TradeButton.tsx"
-    line: 12
-    type: "sync_violation"
-    message: "Server-tick components must show pending state"
-    severity: "error"
-    suggestion: "Add isPending state and disable button while pending"
-
-gold_standard_check:
-  reference_era: "2024"
-  exceeds_reference: 1
-  matches_reference: 46
+physics_violations:
+  - "Optimistic update in server_authoritative zone"
+  - "Bypassing discrete tick in critical zone"
+  - "Continuous animation in discrete tick zone"
+  - "Client state as truth in server_authoritative zone"
 ```
 
+**Agent behavior:** BLOCK and explain. Cannot proceed.
+
+### 2. BUDGET VIOLATIONS (BLOCK with override)
+
+These are blocked but Taste Key can override.
+
+```yaml
+budget_violations:
+  - "Exceeds interactive element count for zone"
+  - "Exceeds animation count for zone"
+  - "Exceeds color count"
+  - "Exceeds prop count per component"
+  - "Exceeds decision count"
+```
+
+**Agent behavior:** BLOCK, offer Taste Key override path.
+
+### 3. FIDELITY VIOLATIONS (BLOCK with override)
+
+These are blocked but Taste Key can override.
+
+```yaml
+fidelity_violations:
+  - "Gradient exceeds 2 stops"
+  - "Shadow exceeds 3 layers"
+  - "Animation exceeds 800ms"
+  - "Blur exceeds 16px"
+  - "Border radius exceeds 24px"
+```
+
+**Agent behavior:** BLOCK, offer Taste Key override path.
+
+### 4. DRIFT WARNINGS (WARN)
+
+These are warnings, not blocks.
+
+```yaml
+drift_warnings:
+  - "Material physics not applied correctly"
+  - "Tension values not reflected in CSS"
+  - "Missing zone-specific styling"
+  - "Inconsistent with essence feel descriptors"
+```
+
+**Agent behavior:** WARN, suggest corrections.
+
 ## Workflow
+
+### Phase 1: Load Context
+
+Read the following files:
+- `sigil-mark/core/sync.yaml` — Physics constraints
+- `sigil-mark/core/budgets.yaml` — Budget limits
+- `sigil-mark/core/fidelity.yaml` — Fidelity ceiling
+- `sigil-mark/resonance/zones.yaml` — Zone definitions
+- `sigil-mark/resonance/materials.yaml` — Material physics
+- `sigil-mark/resonance/essence.yaml` — Product soul
+
+### Phase 2: Resolve Zone
+
+For each file being validated:
+
+```python
+def resolve_zone(file_path):
+    # 1. Check for @sigil-zone comment
+    if has_zone_comment(file_path):
+        return parse_zone_comment(file_path)
+
+    # 2. Match against zone path patterns
+    zones = load_zones()
+    for zone_name, zone_config in zones.items():
+        for pattern in zone_config.paths:
+            if glob_match(file_path, pattern):
+                return zone_name
+
+    # 3. Default fallback
+    return "default"
+```
+
+### Phase 3: Check Physics Violations
+
+```python
+def check_physics(code, zone):
+    violations = []
+
+    # Get zone physics
+    physics = get_zone_physics(zone)
+
+    # Check sync authority
+    if physics.authority == "server_authoritative":
+        if has_optimistic_update(code):
+            violations.append({
+                "type": "IMPOSSIBLE",
+                "rule": "Optimistic update in server_authoritative zone",
+                "message": "Cannot use optimistic updates. Must wait for server.",
+                "action": "BLOCK"
+            })
+
+        if not has_pending_state(code):
+            violations.append({
+                "type": "IMPOSSIBLE",
+                "rule": "Missing pending state in server_authoritative zone",
+                "message": "Must show pending state while waiting for server.",
+                "action": "BLOCK"
+            })
+
+    # Check tick mode
+    if physics.tick == "discrete":
+        if has_continuous_animation(code):
+            violations.append({
+                "type": "IMPOSSIBLE",
+                "rule": "Continuous animation in discrete tick zone",
+                "message": "Animations must complete within tick boundaries.",
+                "action": "BLOCK"
+            })
+
+    return violations
+```
+
+### Phase 4: Check Budget Violations
+
+```python
+def check_budgets(code, zone):
+    violations = []
+
+    # Get zone budgets
+    budgets = get_zone_budgets(zone)
+
+    # Count interactive elements
+    count = count_interactive_elements(code)
+    if count > budgets.interactive_elements:
+        violations.append({
+            "type": "BUDGET",
+            "rule": f"Interactive elements: {count} > {budgets.interactive_elements}",
+            "message": f"Zone {zone} allows max {budgets.interactive_elements} interactive elements.",
+            "action": "BLOCK",
+            "override": "Taste Key"
+        })
+
+    # Count animations
+    count = count_animations(code)
+    if count > budgets.animations:
+        violations.append({
+            "type": "BUDGET",
+            "rule": f"Animations: {count} > {budgets.animations}",
+            "message": f"Zone {zone} allows max {budgets.animations} concurrent animations.",
+            "action": "BLOCK",
+            "override": "Taste Key"
+        })
+
+    return violations
+```
+
+### Phase 5: Check Fidelity Violations
+
+```python
+def check_fidelity(code):
+    violations = []
+
+    # Check gradient stops
+    gradients = extract_gradients(code)
+    for gradient in gradients:
+        stops = count_gradient_stops(gradient)
+        if stops > 2:
+            violations.append({
+                "type": "CEILING",
+                "rule": f"Gradient: {stops} stops > 2 max",
+                "message": "Fidelity ceiling limits gradients to 2 stops.",
+                "action": "BLOCK",
+                "override": "Taste Key"
+            })
+
+    # Check shadow layers
+    shadows = extract_shadows(code)
+    for shadow in shadows:
+        layers = count_shadow_layers(shadow)
+        if layers > 3:
+            violations.append({
+                "type": "CEILING",
+                "rule": f"Shadow: {layers} layers > 3 max",
+                "message": "Fidelity ceiling limits shadows to 3 layers.",
+                "action": "BLOCK",
+                "override": "Taste Key"
+            })
+
+    # Check animation duration
+    animations = extract_animations(code)
+    for animation in animations:
+        duration = get_duration_ms(animation)
+        if duration > 800:
+            violations.append({
+                "type": "CEILING",
+                "rule": f"Animation: {duration}ms > 800ms max",
+                "message": "Fidelity ceiling limits animations to 800ms.",
+                "action": "BLOCK",
+                "override": "Taste Key"
+            })
+
+    # Check blur radius
+    blurs = extract_blurs(code)
+    for blur in blurs:
+        radius = get_blur_radius(blur)
+        if radius > 16:
+            violations.append({
+                "type": "CEILING",
+                "rule": f"Blur: {radius}px > 16px max",
+                "message": "Fidelity ceiling limits blur to 16px.",
+                "action": "BLOCK",
+                "override": "Taste Key"
+            })
+
+    return violations
+```
+
+### Phase 6: Check Drift
+
+```python
+def check_drift(code, zone, material, essence):
+    warnings = []
+
+    # Check material physics applied
+    expected_motion = material.physics.motion.type
+    if not has_motion_type(code, expected_motion):
+        warnings.append({
+            "type": "DRIFT",
+            "rule": f"Material {material.name} expects {expected_motion} motion",
+            "message": "Material physics not applied correctly.",
+            "action": "WARN"
+        })
+
+    # Check tension reflection
+    tensions = get_zone_tensions(zone)
+    css_vars = extract_css_variables(code)
+    if not tensions_reflected(tensions, css_vars):
+        warnings.append({
+            "type": "DRIFT",
+            "rule": "Tension values not reflected in CSS variables",
+            "message": "Consider using --sigil-* CSS variables for tension.",
+            "action": "WARN"
+        })
+
+    return warnings
+```
+
+### Phase 7: Generate Report
+
+```yaml
+# sigil-mark/memory/mutations/active/validation-report.yaml
+
+report:
+  generated_at: "2026-01-04T12:00:00Z"
+  files_checked: 12
+
+  summary:
+    impossible: 0
+    block: 2
+    warn: 3
+    pass: 9
+
+  violations:
+    - file: "src/features/checkout/ClaimButton.tsx"
+      line: 45
+      zone: "critical"
+      type: "CEILING"
+      rule: "Animation: 1200ms > 800ms max"
+      message: "Fidelity ceiling limits animations to 800ms."
+      action: "BLOCK"
+      override: "Taste Key"
+      suggestion: "Reduce to 600ms or get Taste Key approval via /approve"
+
+    - file: "src/features/settings/ToggleGroup.tsx"
+      line: 23
+      zone: "transactional"
+      type: "BUDGET"
+      rule: "Interactive elements: 15 > 12"
+      message: "Zone transactional allows max 12 interactive elements."
+      action: "BLOCK"
+      override: "Taste Key"
+      suggestion: "Split into tabs or get Taste Key approval via /approve"
+
+  warnings:
+    - file: "src/components/Card.tsx"
+      line: 12
+      zone: "exploratory"
+      type: "DRIFT"
+      rule: "Material glass expects ease motion"
+      message: "Material physics not applied correctly."
+      action: "WARN"
+      suggestion: "Add transition-all duration-200 ease-out"
+
+  pass:
+    - file: "src/components/Button.tsx"
+      zone: "default"
+      material: "clay"
+      checks_passed: ["physics", "budget", "fidelity", "drift"]
+```
+
+## Output Format
 
 ### Single File Validation
 
 ```
-/validate src/components/Button.tsx
+/validate src/features/checkout/ClaimButton.tsx
 
-Validating Button.tsx...
+Validating ClaimButton.tsx...
 
-Zone: default (clay)
+Zone: critical
 Material: clay
-Sync: lww
+Physics: server_authoritative, discrete (600ms)
 
-Checks:
-  Gradient complexity (1 stop)
-  Shadow layers (2 layers)
-  Animation duration (300ms)
-  No forbidden techniques
-  Material compliance
-  Sync compliance
+PHYSICS CHECKS:
+✓ No optimistic updates
+✓ Has pending state
+✓ Discrete tick respected
 
-Result: PASS
+BUDGET CHECKS:
+✓ Interactive elements: 3 / 5
+✓ Decisions: 1 / 2
+✓ Animations: 1 / 1
+
+FIDELITY CHECKS:
+✓ Gradients: 1 stop / 2
+✓ Shadows: 2 layers / 3
+✗ Animation: 1200ms / 800ms  ← BLOCK
+
+DRIFT CHECKS:
+✓ Material physics applied
+✓ Tensions reflected
+
+Result: BLOCK (1 fidelity violation)
+
+To fix:
+1. Reduce animation duration to 800ms or less
+2. Or get Taste Key approval: /approve --ruling "animation-duration-exception"
 ```
 
-### Violation Found
+### Validation Report
 
 ```
-/validate src/features/checkout/AnimatedButton.tsx
+/validate --all
 
-Validating AnimatedButton.tsx...
+Validating all components...
 
-Zone: critical (clay)
-Material: clay
-Sync: server_tick
+Files checked: 47
+Zone breakdown:
+  critical: 8 files
+  transactional: 15 files
+  exploratory: 12 files
+  marketing: 6 files
+  default: 6 files
 
-Checks:
-  Gradient complexity
-  Shadow layers: 4 (max: 3)
-  Animation duration: 1200ms (max: 800ms)
-  No forbidden techniques
-  Material compliance
-  Sync compliance: Missing pending state
+RESULTS:
+  ✓ PASS: 42 files
+  ⚠ WARN: 3 files (drift)
+  ✗ BLOCK: 2 files
 
-Result: FAIL
+BLOCKED:
+1. src/features/checkout/ClaimButton.tsx
+   CEILING: Animation 1200ms > 800ms
 
-Violations:
-1. [WARN] Shadow has 4 layers. Simplify to 3 or fewer.
-2. [WARN] Animation too long. Critical zone max is 800ms.
-3. [ERROR] Server-tick button must show pending state.
+2. src/features/settings/ToggleGroup.tsx
+   BUDGET: 15 interactive elements > 12 zone limit
 
-Fix required for ERROR. Warnings are suggestions.
+WARNINGS:
+1. src/components/Card.tsx
+   DRIFT: Glass material expects ease motion
+
+Report saved to: sigil-mark/memory/mutations/active/validation-report.yaml
+
+Next steps:
+- Fix BLOCK violations or get Taste Key approval via /approve
+- Review WARN items for consistency
 ```
 
-## Zone-Specific Limits
+## Physics Violation Patterns
 
-```yaml
-# Fidelity limits by zone
-zones:
-  critical:
-    gradients: { max_stops: 2 }
-    shadows: { max_layers: 2 }
-    animation: { max_duration_ms: 600 }
+### Detecting Optimistic Updates
 
-  transactional:
-    gradients: { max_stops: 2 }
-    shadows: { max_layers: 1 }
-    animation: { max_duration_ms: 200 }
+```javascript
+const optimisticPatterns = [
+  /optimistic/i,
+  /useState.*\[\s*,\s*set/,  // State without server sync
+  /\.mutate\(\)/,            // React Query optimistic
+  /setQueryData/,            // Direct cache update
+];
 
-  exploratory:
-    gradients: { max_stops: 3 }
-    shadows: { max_layers: 3 }
-    animation: { max_duration_ms: 400 }
+function has_optimistic_update(code) {
+  return optimisticPatterns.some(p => p.test(code));
+}
+```
 
-  marketing:
-    gradients: { max_stops: 3 }
-    shadows: { max_layers: 4 }
-    animation: { max_duration_ms: 800 }
+### Detecting Pending State
+
+```javascript
+const pendingPatterns = [
+  /isPending/,
+  /isLoading/,
+  /loading/,
+  /pending/,
+  /disabled.*pending/i,
+];
+
+function has_pending_state(code) {
+  return pendingPatterns.some(p => p.test(code));
+}
+```
+
+### Detecting Continuous Animation
+
+```javascript
+const continuousPatterns = [
+  /infinite/,
+  /animate-spin/,
+  /animation-iteration-count:\s*infinite/,
+];
+
+function has_continuous_animation(code) {
+  return continuousPatterns.some(p => p.test(code));
+}
 ```
 
 ## Success Criteria
 
-- [ ] All ERROR violations fixed
-- [ ] WARN violations reviewed
-- [ ] Fidelity report generated
-- [ ] No forbidden techniques used
-- [ ] Material physics correctly applied
-- [ ] Sync strategies correctly implemented
+- [ ] Physics violations detected (IMPOSSIBLE)
+- [ ] Budget violations detected (BLOCK with override)
+- [ ] Fidelity violations detected (BLOCK with override)
+- [ ] Drift warnings generated (WARN)
+- [ ] Report saved to mutations/active/
+- [ ] Zone-specific limits applied
+- [ ] Material physics checked
 
 ## Error Handling
 
 | Situation | Response |
 |-----------|----------|
 | File not found | List valid paths |
-| No fidelity ceiling | Use defaults with warning |
-| Invalid zone | Fall back to default zone |
+| No zone detected | Use default zone |
+| Missing core files | Error: run /sigil-setup |
 | Parse error | Skip file with warning |
 
 ## Next Step
 
-After `/validate`: Run `/garden` to check paper cuts, or `/approve` for sign-off.
+After `/validate`:
+- If BLOCK violations: Fix or run `/approve` for Taste Key override
+- If WARN only: Review and optionally fix
+- If PASS: Ready for `/approve` sign-off

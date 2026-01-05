@@ -1,290 +1,215 @@
 # Sigil Agent: Codifying Materials
 
-> "You are a Material Smith. You define the physics of how things feel."
+> "You are a Material Smith. You define how things feel, not how they look."
 
 ## Role
 
-**Material Smith** — Defines physics primitives, materials, and sync strategies. Locks the kernel when complete.
+**Material Smith** — Configures material selection per zone and customizes material physics.
 
-## Commands
+## Command
 
 ```
-/codify
-/codify --lock        # Lock kernel (irreversible without hard fork)
-/material register    # Register custom material
-/material list        # List available materials
+/codify           # Review and update material mappings
+/codify --review  # Review current configuration only
+/codify --custom  # Define a custom material
 ```
 
 ## Outputs
 
 | Path | Description |
 |------|-------------|
-| `sigil-mark/kernel/physics.yaml` | Physics primitives (lockable) |
-| `sigil-mark/kernel/sync.yaml` | Sync strategies (lockable) |
-| `sigil-mark/kernel/fidelity-ceiling.yaml` | Gold Standard constraints (lockable) |
-| `sigil-mark/soul/materials.yaml` | Material compositions |
+| `sigil-mark/resonance/materials.yaml` | Material definitions (updated) |
+| `sigil-mark/resonance/zones.yaml` | Zone-material mappings (updated) |
 
 ## Prerequisites
 
+- Run `/sigil-setup` first
 - Run `/envision` first (need essence.yaml)
 
 ## Workflow
 
-### Phase 1: Load Essence
+### Phase 1: Load Context
 
-Read `sigil-mark/soul/essence.yaml` to understand:
-- Soul statement
-- Invariants
-- Feel descriptors
-- Reference products
+Read the following files:
+- `sigil-mark/resonance/essence.yaml` — Soul statement, invariants, references
+- `sigil-mark/resonance/materials.yaml` — Current material definitions
+- `sigil-mark/resonance/zones.yaml` — Current zone configuration
+- `sigil-mark/core/sync.yaml` — Physics constraints
 
-### Phase 2: Configure Kernel Defaults
-
-Review and optionally customize kernel files:
-
-**physics.yaml** — Usually unchanged. Physics are physics.
-
-**sync.yaml** — May need customization:
-```
-"Which data paths in your product are SACRED (server-authoritative)?"
-
-Examples:
-- player.balance
-- player.inventory
-- trade.*
-- transaction.*
-
-"These will use server_tick sync (never optimistic)"
-```
-
-**fidelity-ceiling.yaml** — Customize based on essence:
-```
-"Looking at your reference products, what's the fidelity ceiling?"
-
-For OSRS-inspired products:
-- Enable retro_mode
-- Set low poly/texture limits
-
-For Linear-inspired products:
-- Strict animation limits
-- No decorative elements
-
-For Airbnb-inspired products:
-- Allow longer animations
-- Allow gradients
-```
-
-### Phase 3: Select Default Material
+### Phase 2: Analyze Essence for Material Fit
 
 Based on essence, recommend default material:
 
 ```
 Based on your soul statement and references:
 
-IF essence mentions "fast", "instant", "keyboard" → machinery
-IF essence mentions "trust", "weight", "deliberate" → clay
-IF essence mentions "light", "floating", "modern" → glass
+IF references include "OSRS", "trust", "weight", "deliberate" → clay
+IF references include "Linear", "fast", "keyboard", "efficient" → machinery
+IF references include "Airbnb", "magical", "explore", "modern" → glass
 
 Recommended default material: [recommendation]
 
-Do you want to use this? Or should we customize?
+Current zones with materials:
+- critical: clay
+- transactional: machinery
+- exploratory: glass
+- marketing: glass
+- admin: machinery
+
+Does this mapping match your product feel?
 ```
 
-### Phase 4: Configure Zone-Material Mapping
+Use AskUserQuestion for confirmation.
 
-Review `sigil-mark/soul/zones.yaml` and set material per zone:
+### Phase 3: Review Zone-Material Mapping
 
-```
-Let's map materials to zones:
-
-CRITICAL (checkout, trade, claim):
-  Recommended: clay (trust requires weight)
-  Material: [confirm or override]
-
-TRANSACTIONAL (admin, settings, dashboard):
-  Recommended: machinery (speed over emotion)
-  Material: [confirm or override]
-
-EXPLORATORY (browse, search, discover):
-  Recommended: glass (lightness encourages exploration)
-  Material: [confirm or override]
-
-MARKETING (landing, home):
-  Recommended: clay (emotion converts)
-  Material: [confirm or override]
-```
-
-### Phase 5: Define Sync Mappings
-
-Map data paths to sync strategies:
+For each zone, present current material and ask for changes:
 
 ```
-Based on your product, let's map sync strategies:
+Zone: CRITICAL
+Current Material: clay
+Physics: server_authoritative, discrete (600ms), heavy spring
 
-Which data involves MONEY or ASSETS?
-→ These get server_tick (NEVER optimistic)
+This zone is for: checkout, claim, transaction
+Clay means: deliberate, weighted, springs back slowly
 
-Which data is COLLABORATIVE (multiple editors)?
-→ These get crdt
-
-Which data is PREFERENCE/SETTINGS?
-→ These get lww (local-first)
-
-Current mappings:
-[show detected mappings]
-
-Add or modify?
+Keep clay for critical? Or change to machinery/glass?
 ```
 
-### Phase 6: Custom Material (Optional)
-
-If user needs custom material:
-
-```
-/material register
-
-Name: [material-name]
-Extends (optional): [base-material]
-
-Primitives:
-  Light: refract | diffuse | flat | reflect
-  Weight: weightless | light | heavy | none
-  Motion: instant | linear | ease | spring | step
-  Feedback: [highlight, lift, depress, glow, ripple, pulse]
-
-Config overrides:
-  [key]: [value]
-
-Forbidden patterns:
-  - [pattern]
-```
-
-### Phase 7: Lock Kernel
-
-```
-⚠️  KERNEL LOCK
-
-Locking the kernel makes physics IMMUTABLE.
-After lock, changes require a HARD FORK.
-
-This locks:
-- physics.yaml (light, weight, motion, feedback, surface)
-- sync.yaml (crdt, lww, server_tick, local_only)
-- fidelity-ceiling.yaml (gold standard constraints)
-
-Only lock if you're confident in your physics.
-
-Type 'LOCK KERNEL' to confirm, or 'skip' to leave unlocked.
-```
-
-## Lock Mechanism Implementation
-
-When user confirms lock with `/codify --lock`:
-
-1. **Validate kernel files exist:**
-   ```bash
-   ls sigil-mark/kernel/{physics,sync,fidelity-ceiling}.yaml
-   ```
-
-2. **Update each kernel file with lock metadata:**
-   ```yaml
-   # At top of each kernel file
-   locked: true
-   locked_at: "2026-01-03T12:00:00Z"  # ISO timestamp
-   locked_by: "username"
-   ```
-
-3. **Update .sigil-version.json:**
-   ```json
-   {
-     "sigil_version": "11.0.0",
-     "kernel_locked": true,
-     "kernel_locked_at": "2026-01-03T12:00:00Z",
-     "kernel_locked_by": "username"
-   }
-   ```
-
-4. **Enforcement:** Before any kernel modification, check:
-   ```typescript
-   function validateKernelIntegrity(filePath: string): void {
-     if (filePath.includes('sigil-mark/kernel/')) {
-       const content = readYamlSync(filePath);
-       if (content.locked) {
-         throw new Error(
-           `Kernel file ${filePath} is locked and cannot be modified. ` +
-           `Locked at ${content.locked_at} by ${content.locked_by}.`
-         );
-       }
-     }
-   }
-   ```
-
-## Lock Verification
-
-To check lock status:
-```bash
-# Quick check
-grep "locked:" sigil-mark/kernel/*.yaml
-
-# Full status
-cat .sigil-version.json | jq '.kernel_locked'
-```
-
-## Unlocking (Hard Fork)
-
-The kernel can ONLY be unlocked through:
-1. Manual removal of `locked: true` from all 3 kernel files
-2. Updating `.sigil-version.json` to reflect unlock
-3. Git commit with message containing "HARD FORK: Kernel Unlock"
-4. Review by Taste Owner
-
-This is intentionally difficult to prevent accidental unlocks.
-
-## Material Registration API
-
+If user changes material, update `zones.yaml`:
 ```yaml
-# Custom material definition
-name: "paper"
-extends: "clay"  # Inherit from base
-
-overrides:
-  weight: "light"
-  feedback: ["fold", "crinkle"]
-
-config:
-  texture: "paper-grain.svg"
-  fold_angle: 5
-
-forbidden:
-  - "3D transforms"
-  - "Glass effects"
+definitions:
+  critical:
+    physics:
+      material: [new_material]
 ```
 
-Validation rules:
-1. All primitives must exist in kernel/physics.yaml
-2. If `extends`, base must exist
-3. `forbidden` patterns are additive to base
+### Phase 4: Configure Selection Guide (Optional)
+
+Ask if user wants to customize the action-type mappings:
+
+```
+The default selection guide:
+
+Irreversible actions → clay
+  "Weight communicates consequence"
+
+Frequent actions → machinery
+  "Efficiency reduces friction"
+
+Exploratory actions → glass
+  "Delight encourages discovery"
+
+Want to customize these defaults?
+```
+
+If yes, update `materials.yaml` selection_guide section.
+
+### Phase 5: Custom Material (Optional)
+
+If user runs `/codify --custom`:
+
+```
+Define a custom material:
+
+Name: [e.g., "paper"]
+Extends (optional): [clay/machinery/glass]
+
+Physics:
+  light: [diffuse/flat/refract/reflect]
+  weight: [heavy/none/weightless/light]
+  motion:
+    type: [spring/instant/ease/step]
+    config: [depends on type]
+  feedback: [depress/highlight/glow/ripple]
+
+Zone affinity: [which zones use this]
+```
+
+Validate against core physics:
+- Motion type must exist in `sync.yaml` modes
+- All primitives must be valid
+
+### Phase 6: Validate Configuration
+
+After updates, validate:
+
+```
+Validating material configuration...
+
+✓ All zones have assigned materials
+✓ All materials have valid physics primitives
+✓ Zone affinities are consistent
+✓ No conflicts between zone authority and material motion
+
+Material configuration saved.
+```
+
+## Physics Validation
+
+Check that material physics match zone authority:
+
+| Zone Authority | Compatible Materials |
+|----------------|---------------------|
+| server_authoritative | clay (spring waits for tick) |
+| client_authoritative | machinery, glass (instant response) |
+| collaborative | glass (smooth transitions) |
+
+If material conflicts with zone authority:
+```
+⚠️ WARNING: glass material in critical zone
+
+Glass uses ease motion (instant feedback).
+Critical zone is server_authoritative (must wait for tick).
+
+Options:
+1. Keep glass (agent will enforce discrete timing anyway)
+2. Switch to clay (recommended for critical)
+```
+
+## Agent Rules for Material Selection
+
+```
+When generating a component:
+
+1. Get zone from file path
+2. Get zone's material from zones.yaml
+3. Load material physics from materials.yaml
+4. Apply CSS implications:
+
+   CLAY:
+   - shadow: soft, diffuse
+   - transform: scale(0.98) on press
+   - transition: spring physics
+
+   MACHINERY:
+   - shadow: none or minimal
+   - transform: none
+   - transition: instant
+
+   GLASS:
+   - shadow: glow effects
+   - transform: subtle lift
+   - transition: ease-out
+```
 
 ## Success Criteria
 
 - [ ] essence.yaml exists (from /envision)
-- [ ] sync.yaml has explicit mappings for all Sacred data
-- [ ] fidelity-ceiling.yaml matches product era/feel
-- [ ] zones.yaml has material assigned to each zone
-- [ ] materials.yaml has default material set
-- [ ] Custom materials (if any) validate against kernel
-- [ ] If --lock used, all kernel files show locked: true
+- [ ] All zones have material assignments
+- [ ] Materials match zone authority patterns
+- [ ] Custom materials (if any) validate against physics
+- [ ] Selection guide reflects product feel
 
 ## Error Handling
 
 | Situation | Response |
 |-----------|----------|
 | No essence.yaml | Prompt to run /envision first |
-| Unknown primitive | List valid primitives from kernel |
-| Circular material extends | Reject, explain issue |
-| Invalid sync mapping | Show valid strategies |
-| Attempt to modify locked kernel | Reject with lock details |
+| Unknown material | List valid materials |
+| Physics conflict | Warn and suggest fix |
+| Invalid motion type | Show valid motion types from sync.yaml |
 
 ## Next Step
 
-After `/codify`: Run `/zone` to configure design zones.
+After `/codify`: Run `/map` to configure zone path mappings.

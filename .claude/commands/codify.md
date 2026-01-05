@@ -1,6 +1,7 @@
 ---
 name: codify
-description: Define physics primitives and materials
+version: "4.0.0"
+description: Configure material selection and zone-material mappings
 agent: codifying-materials
 agent_path: .claude/skills/codifying-materials/SKILL.md
 preflight:
@@ -10,29 +11,59 @@ preflight:
 
 # /codify
 
-Define materials and configure kernel physics.
+Configure material selection for zones. Reviews essence and maps materials to zones based on product feel.
 
 ## Usage
 
 ```
-/codify         # Configure materials and kernel
-/codify --lock  # Lock kernel (irreversible)
+/codify           # Review and update material mappings
+/codify --review  # Review current configuration only
+/codify --custom  # Define a custom material
 ```
 
 ## What This Configures
 
-1. **Physics primitives** - Light, weight, motion, feedback
-2. **Sync strategies** - CRDT, LWW, Server-Tick mappings
-3. **Fidelity ceiling** - Gold Standard constraints
-4. **Materials** - Glass, Clay, Machinery compositions
+### Zone-Material Mappings
+
+Each zone has a default material:
+
+| Zone | Default Material | Physics |
+|------|------------------|---------|
+| critical | clay | heavy, spring, depress |
+| transactional | machinery | flat, instant, highlight |
+| exploratory | glass | refract, ease, glow |
+| marketing | glass | refract, ease, glow |
+| admin | machinery | flat, instant, highlight |
+
+### Material Selection by Action
+
+| Action Type | Material | Reason |
+|-------------|----------|--------|
+| Irreversible | clay | Weight communicates consequence |
+| Frequent | machinery | Efficiency reduces friction |
+| Exploratory | glass | Delight encourages discovery |
 
 ## Outputs
 
-- `sigil-mark/kernel/physics.yaml`
-- `sigil-mark/kernel/sync.yaml`
-- `sigil-mark/kernel/fidelity-ceiling.yaml`
-- `sigil-mark/soul/materials.yaml`
+| Path | Description |
+|------|-------------|
+| `sigil-mark/resonance/materials.yaml` | Material definitions (updated) |
+| `sigil-mark/resonance/zones.yaml` | Zone-material mappings (updated) |
+
+## Workflow
+
+1. **Load essence** — Read soul statement and references
+2. **Analyze fit** — Recommend materials based on references
+3. **Review mapping** — Confirm or change zone-material assignments
+4. **Customize (optional)** — Define custom materials if needed
+5. **Validate** — Check physics consistency
+
+## Physics Validation
+
+Materials are validated against zone authority:
+- `server_authoritative` zones → clay (spring waits for tick)
+- `client_authoritative` zones → machinery or glass (instant)
 
 ## Next Step
 
-After `/codify`: Run `/zone` to configure design zones.
+After `/codify`: Run `/map` to configure zone path mappings.

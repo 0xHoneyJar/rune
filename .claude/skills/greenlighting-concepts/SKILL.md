@@ -1,405 +1,419 @@
-# Sigil Agent: Greenlighting Concepts
+# Sigil v4 Agent: Greenlighting Concepts
 
-> "Poll concepts, not pixels."
+> "Poll concepts, not pixels. 'Should we build X?' is different from 'How should X look?'"
 
 ## Role
 
-**Pollster** — Manages community polling for CONCEPTS only. Never polls visuals. Maintains archaeology of rejections.
+**Concept Gatekeeper** — Manages concept approval before building. Distinguishes between concept decisions (should we build?) and execution decisions (how should it look?). Execution is always dictated by Taste Key, never polled.
 
-## Commands
+## Command
 
 ```
-/greenlight [concept]      # Start greenlight poll
-/greenlight --lockin       # Start lock-in poll for built feature
-/greenlight --status       # Show active polls
-/greenlight --archaeology  # Search rejection history
+/greenlight [concept]          # Record concept approval
+/greenlight --status           # Show greenlighted concepts
+/greenlight --pending          # Show concepts awaiting approval
+/greenlight --reject [id]      # Record concept rejection
 ```
 
 ## Outputs
 
 | Path | Description |
 |------|-------------|
-| `sigil-mark/governance/greenlight.yaml` | Poll records |
-| `sigil-mark/governance/archaeology.yaml` | Rejection history |
+| `sigil-mark/memory/decisions/*.yaml` | Concept decision records |
 
-## The Two-Phase Model
+## Prerequisites
 
-Based on OSRS Polling Charter:
+- Run `/sigil-setup` first
+- Run `/envision` first (for essence context)
 
-```
-PHASE 1: GREENLIGHT
+## The Concept vs Execution Distinction
 
-Question: "Should we EXPLORE building [feature]?"
-Threshold: 70%
-Duration: 7 days
+### Concept Decisions (Greenlight)
 
-PASS -> Proceed to refinement (Taste Owners craft it)
-FAIL -> Archive to archaeology
-
----
-
-REFINEMENT (No Poll)
-
-Taste Owners design the specifics.
-No community input on colors, animations, layout.
-This is dictatorship of craft.
-
----
-
-PHASE 2: LOCK-IN
-
-Question: "We built [feature]. Should we SHIP it?"
-Threshold: 70%
-Duration: 7 days
-
-PASS -> Ship to production
-FAIL -> Archive or iterate
-```
-
-## What Gets Polled
+"Should we build this?"
 
 ```yaml
-pollable:
-  - "New major features"
-  - "Feature removal"
-  - "Major UI paradigm shifts"
-  - "New product directions"
-  - "New platforms/integrations"
-  - "Significant workflow changes"
-
-never_pollable:
-  - "Colors"
-  - "Fonts"
-  - "Animation timing"
-  - "Border radius"
-  - "Spacing values"
-  - "Icon designs"
-  - "Shadow styles"
-  - "Button shapes"
-  - "Micro-interactions"
-  - "Loading states"
-  - "Error message wording"
+greenlight_questions:
+  - "Should we add dark mode?"
+  - "Should we redesign the dashboard?"
+  - "Should we add a notifications feature?"
+  - "Should we support mobile?"
 ```
+
+These questions are about EXISTENCE, not EXECUTION.
+
+### Execution Decisions (Taste Key)
+
+"How should this look?"
+
+```yaml
+taste_key_questions:
+  - "What color should the dark mode background be?"
+  - "How fast should the notification animation be?"
+  - "What border radius should cards have?"
+  - "Which font should we use?"
+```
+
+These questions are NEVER greenlighted. Taste Key dictates.
 
 ## Workflow
 
-### Start Greenlight Poll
+### Phase 1: Classify Request
+
+```python
+def classify_concept(request):
+    # Check if this is a concept question
+    concept_patterns = [
+        "should we build",
+        "should we add",
+        "should we support",
+        "should we redesign",
+        "should we remove",
+        "new feature",
+        "new functionality"
+    ]
+
+    if matches_any(request, concept_patterns):
+        return {"type": "CONCEPT", "action": "GREENLIGHT"}
+
+    # Check if this is an execution question
+    execution_patterns = [
+        "what color",
+        "which font",
+        "how fast",
+        "how big",
+        "what radius",
+        "spacing",
+        "animation"
+    ]
+
+    if matches_any(request, execution_patterns):
+        return {
+            "type": "EXECUTION",
+            "action": "REDIRECT",
+            "message": "Execution decisions go to Taste Key, not greenlight."
+        }
+
+    return {"type": "UNKNOWN", "action": "CLARIFY"}
+```
+
+### Phase 2: Record Concept Decision
+
+```yaml
+# sigil-mark/memory/decisions/2026-01-04-dark-mode.yaml
+
+decision:
+  id: "CONCEPT-2026-001"
+  date: "2026-01-04"
+  type: "concept_greenlight"
+
+  concept:
+    name: "Dark Mode Support"
+    description: |
+      Add support for dark mode throughout the application.
+      Users can toggle between light and dark themes.
+
+  question: "Should we build dark mode support?"
+
+  status: "APPROVED"
+
+  approval:
+    method: "product_decision"  # or "community_poll"
+    date: "2026-01-04"
+    by: "Product Team"
+
+  notes: |
+    Approved based on user feedback and accessibility needs.
+    Execution details will be determined by Taste Key holder.
+
+  execution:
+    assigned_to: "Taste Key"
+    constraints:
+      - "Must respect zone-specific contrast ratios"
+      - "Must work with all existing materials (clay, machinery, glass)"
+```
+
+### Phase 3: Execution Handoff
+
+After greenlight, execution goes to Taste Key:
+
+```
+CONCEPT GREENLIGHTED
+====================
+
+Concept: Dark Mode Support
+ID: CONCEPT-2026-001
+Status: APPROVED
+
+Execution handoff:
+- Taste Key holder will dictate all visual decisions
+- Colors, contrasts, and transitions are NOT polled
+- Run /craft to start implementation with physics context
+
+Next steps:
+1. Taste Key designs the dark mode palette
+2. /craft generates components with physics
+3. /validate checks against constraints
+4. /approve locks the pattern
+```
+
+## Blocking Execution Questions
+
+When user tries to greenlight an execution decision:
+
+```
+/greenlight "Should buttons have 8px or 12px border radius?"
+
+BLOCKED: EXECUTION DECISION
+===========================
+
+This is an EXECUTION question, not a CONCEPT question.
+
+Concept questions:
+- "Should we build X?"
+- "Should we support Y?"
+- "Should we add Z feature?"
+
+Execution questions (go to Taste Key):
+- "What color should X be?"
+- "How should Y animate?"
+- "What border radius for Z?"
+
+Border radius is an execution decision.
+The Taste Key holder dictates: /approve
+
+Recommended action:
+1. If building a new feature, /greenlight the feature first
+2. Then Taste Key determines execution details
+```
+
+## Decision Categories
+
+### Greenlightable
+
+```yaml
+greenlightable:
+  - "New major features"
+  - "Feature removal"
+  - "Major workflow changes"
+  - "Platform support (mobile, desktop)"
+  - "Integration with external services"
+  - "UI paradigm shifts (tabs → sidebar)"
+```
+
+### Not Greenlightable (Taste Key)
+
+```yaml
+taste_key_only:
+  - "Colors and palettes"
+  - "Typography choices"
+  - "Animation timing"
+  - "Border radius"
+  - "Spacing values"
+  - "Shadow styles"
+  - "Motion patterns"
+  - "Micro-interactions"
+```
+
+## Decision Record Format
+
+### Approved Concept
+
+```yaml
+decision:
+  id: "CONCEPT-2026-001"
+  date: "2026-01-04"
+  type: "concept_greenlight"
+
+  concept:
+    name: "Dark Mode Support"
+    description: "Full dark mode theme support"
+
+  status: "APPROVED"
+
+  approval:
+    method: "product_decision"
+    date: "2026-01-04"
+    by: "Product Team"
+
+  execution:
+    assigned_to: "Taste Key"
+```
+
+### Rejected Concept
+
+```yaml
+decision:
+  id: "CONCEPT-2026-002"
+  date: "2026-01-04"
+  type: "concept_greenlight"
+
+  concept:
+    name: "Gamification Badges"
+    description: "Achievement badges for user actions"
+
+  status: "REJECTED"
+
+  rejection:
+    date: "2026-01-04"
+    by: "Product Team"
+    reason: |
+      Conflicts with product essence.
+      Soul statement emphasizes "meaningful rewards, not manipulation."
+      Gamification badges feel manipulative.
+
+  cooldown:
+    ends: "2026-07-04"
+    type: "6_months"
+```
+
+## Output Formats
+
+### Greenlight Approval
 
 ```
 /greenlight "Dark mode support"
 
-GREENLIGHT POLL
+CONCEPT GREENLIGHT
+==================
 
-Feature: Dark mode support
+Concept: Dark mode support
+Question: "Should we build dark mode support?"
 
-Creating poll:
-  Question: "Should we explore building dark mode support?"
-  Threshold: 70%
-  Duration: 7 days
-  Who votes: all_users
+Checking against essence...
+✓ Aligns with "accessibility" invariant
+✓ No conflict with anti-patterns
+✓ Matches "modern, approachable" feel
 
-Before publishing, confirm:
-- This is a CONCEPT poll (existence of feature)
-- NOT a visual poll (what dark mode looks like)
-- Taste Owners will design the specifics if it passes
+Status: APPROVED
 
-[publish] [edit] [cancel]
+Decision recorded:
+- ID: CONCEPT-2026-001
+- Type: concept_greenlight
+- Assigned to: Taste Key for execution
+
+Saved to: sigil-mark/memory/decisions/2026-01-04-dark-mode.yaml
+
+Next: Taste Key holder designs the execution.
 ```
 
-### Active Poll Status
+### Greenlight Rejection
+
+```
+/greenlight "Achievement badges"
+
+CONCEPT GREENLIGHT
+==================
+
+Concept: Achievement badges
+Question: "Should we add achievement badges?"
+
+Checking against essence...
+✗ CONFLICT: Anti-pattern "gamified productivity"
+  Essence says: "Rewards should feel meaningful, not manipulative"
+
+Status: REJECTED
+
+This concept conflicts with the product soul.
+
+Decision recorded:
+- ID: CONCEPT-2026-002
+- Type: concept_greenlight
+- Status: REJECTED
+- Cooldown: 6 months
+
+To revisit this concept:
+- Wait for cooldown period
+- Propose modified version that addresses anti-pattern
+```
+
+### Status Check
 
 ```
 /greenlight --status
 
-Active Polls
+GREENLIGHTED CONCEPTS
+=====================
 
-POLL-2025-003: Dark mode support
-Type: Greenlight
-Status: ACTIVE
+CONCEPT-2026-001: Dark Mode Support
+  Status: APPROVED
+  Approved: 2026-01-04
+  Execution: Taste Key (in progress)
 
-Current votes:
-78.4%
-Yes: 1,234 | No: 341 | Total: 1,575
+CONCEPT-2026-003: Mobile Responsive
+  Status: APPROVED
+  Approved: 2026-01-02
+  Execution: Taste Key (completed)
 
-Threshold: 70%
-Time remaining: 4 days 12 hours
-Projected: PASS
+REJECTED:
+CONCEPT-2026-002: Gamification Badges
+  Status: REJECTED
+  Cooldown ends: 2026-07-04
 
-No lock-in polls active.
+PENDING:
+None
+
+Total: 2 approved, 1 rejected, 0 pending
 ```
 
-### Lock-In Poll
+## Integration with Essence
 
-After feature is built:
-
-```
-/greenlight --lockin "Dark mode support"
-
-LOCK-IN POLL
-
-Feature: Dark mode support
-Status: Built and ready
-
-Creating lock-in poll:
-  Question: "We built dark mode. Should we ship it?"
-  Threshold: 70%
-  Duration: 7 days
-
-Preview available: [link]
-
-Note: This is a GO/NO-GO vote on shipping.
-Visual details are NOT up for vote.
-
-[publish] [cancel]
-```
-
-### Archaeology Search
-
-Before proposing a feature, check history:
-
-```
-/greenlight --archaeology "sailing"
-
-ARCHAEOLOGY SEARCH: "sailing"
-
-Found 2 related entries:
-
-NEAR-MISS: Sailing Skill (2024-06-15)
-
-Vote: 68.2%
-Threshold: 70%
-Gap: 1.8%
-
-Reason for failure:
-"Concerns about power creep and trivializing existing content"
-
-Cooldown ends: 2024-12-15
-Status: ELIGIBLE for re-poll
-
-Meta changes since:
-- New continent added (more content to explore)
-- Level cap increased
-- Community sentiment surveys show increased interest
-
----
-
-HARD REJECTION: Sailing Minigame (2023-02-01)
-
-Vote: 34.1%
-Threshold: 70%
-
-Reason for failure:
-"Seen as watered-down version of full skill"
-
-Cooldown ends: 2024-02-01
-Status: ELIGIBLE but risky
-
-Recommendation:
-The full Sailing Skill is eligible for re-poll with updated pitch
-addressing power creep concerns. The minigame approach failed badly.
-```
-
-### Automatic Archaeology Check
-
-When user suggests a feature:
+Before greenlighting, check against essence:
 
 ```python
-def handle_feature_suggestion(feature):
-    # Search archaeology
-    matches = search_archaeology(feature)
+def check_against_essence(concept, essence):
+    # Check anti-patterns
+    for anti_pattern in essence.anti_patterns:
+        if concept_matches_pattern(concept, anti_pattern):
+            return {
+                "conflict": True,
+                "type": "anti_pattern",
+                "message": f"Conflicts with: {anti_pattern.pattern}"
+            }
 
-    if matches:
-        for match in matches:
-            if match.type == "near_miss":
-                if not cooldown_expired(match):
-                    return f"This was polled {match.date} and got {match.vote}%. " \
-                           f"Cooldown ends {match.cooldown_end}."
-                else:
-                    return f"This was a near-miss ({match.vote}%). " \
-                           f"Consider addressing: {match.failure_reason}"
+    # Check invariants
+    for invariant in essence.soul.invariants:
+        if concept_violates_invariant(concept, invariant):
+            return {
+                "conflict": True,
+                "type": "invariant",
+                "message": f"Violates: {invariant}"
+            }
 
-            elif match.type == "hard_rejection":
-                return f"This was rejected ({match.vote}%). " \
-                       f"Would need significant changes to re-poll."
+    # Check alignment with soul statement
+    if not aligns_with_soul(concept, essence.soul.statement):
+        return {
+            "conflict": False,
+            "warning": True,
+            "message": "Consider if this aligns with soul statement"
+        }
 
-    return "No previous polls found. Eligible for greenlight."
+    return {"conflict": False, "warning": False}
 ```
-
-## Poll Configuration
-
-```yaml
-# sigil-mark/governance/greenlight.yaml
-
-config:
-  thresholds:
-    greenlight: 0.70
-    lockin: 0.70
-
-  durations:
-    greenlight_days: 7
-    lockin_days: 7
-
-  cooldowns:
-    near_miss_days: 180      # 60-69.9%
-    hard_rejection_days: 365  # <60%
-
-  near_miss_range: [0.60, 0.699]
-
-  min_participation: 100
-
-  who_can_vote: "all_users"  # or "power_users", "token_holders"
-
-  who_can_create:
-    - "taste_owners"
-    - "product_team"
-```
-
-## Poll Results
-
-### Pass
-
-```
-POLL CLOSED: Dark mode support
-
-Result: PASSED
-
-Final votes:
-82.1%
-Yes: 2,341 | No: 512 | Total: 2,853
-
-Threshold: 70%
-Margin: +12.1%
-
-Next steps:
-1. Feature moves to REFINEMENT phase
-2. Taste Owners will design specifics
-3. Lock-in poll when ready to ship
-
-No visual decisions will be polled.
-```
-
-### Fail (Near-Miss)
-
-```
-POLL CLOSED: New inventory system
-
-Result: NEAR-MISS
-
-Final votes:
-67.8%
-Yes: 1,892 | No: 899 | Total: 2,791
-
-Threshold: 70%
-Gap: 2.2%
-
-Analysis:
-Top concerns from No voters:
-- "Worried about complexity"
-- "Current system works fine"
-- "Need more details"
-
-Archived as NEAR-MISS.
-Cooldown: 180 days
-Re-poll eligible: 2025-07-15
-
-Recommendation:
-Address complexity concerns and provide more
-detailed preview before re-polling.
-```
-
-### Fail (Hard Rejection)
-
-```
-POLL CLOSED: Auto-play music
-
-Result: REJECTED
-
-Final votes:
-15.2%
-Yes: 234 | No: 1,305 | Total: 1,539
-
-Threshold: 70%
-Gap: 54.8%
-
-Archived as HARD REJECTION.
-Cooldown: 365 days
-
-This feature should not be re-polled without
-fundamental changes to the concept.
-```
-
-## Visual Poll Blocking
-
-When user tries to poll a visual decision:
-
-```
-/greenlight "Should buttons be rounded or square?"
-
-BLOCKED: Visual Decision
-
-This is a visual decision and CANNOT be polled.
-
-Pollable (concepts):
-- "Should we add dark mode?" (YES)
-- "Should we redesign the dashboard?" (YES)
-
-Not pollable (visuals):
-- "What color should buttons be?" (NO)
-- "Should buttons be rounded?" (NO)
-
-Visual decisions are made by Taste Owners.
-Use /approve instead.
-```
-
-## Integration with /craft
-
-When generating features:
-
-```python
-def pre_craft_feature_check(feature_name):
-    # Check if feature was greenlit
-    polls = load_polls()
-
-    greenlit = any(
-        p.feature == feature_name and
-        p.type == "greenlight" and
-        p.result == "passed"
-        for p in polls
-    )
-
-    if not greenlit:
-        return warn(f"Feature '{feature_name}' has not been greenlit. "
-                   f"Run /greenlight first.")
-
-    return proceed()
-```
-
-## The Green Pixel Rule
-
-OSRS players once rioted over a single green pixel in a construction icon.
-
-**This is why visuals are NEVER polled.**
-
-A democratic system cannot handle this level of detail without grinding to a halt. Taste Owners dictate pixels. The community votes on concepts.
 
 ## Success Criteria
 
-- [ ] Greenlight polls work
-- [ ] Lock-in polls work
-- [ ] Archaeology tracks all results
-- [ ] Near-miss vs hard-rejection classified
-- [ ] Cooldowns enforced
-- [ ] Visual decisions never polled
+- [ ] Concept questions identified correctly
+- [ ] Execution questions blocked with redirect
+- [ ] Approved concepts recorded in decisions/
+- [ ] Rejected concepts include cooldown
+- [ ] Essence anti-patterns checked
+- [ ] Execution handoff to Taste Key documented
+- [ ] Status shows all decisions
 
 ## Error Handling
 
 | Situation | Response |
 |-----------|----------|
-| Visual poll attempted | Block with explanation |
-| Feature in cooldown | Show cooldown end date |
-| Duplicate poll | Link to existing poll |
-| Insufficient participation | Extend duration |
+| Execution question | Block and redirect to /approve |
+| Concept conflicts with essence | Reject with explanation |
+| Duplicate concept | Link to existing decision |
+| In cooldown | Show cooldown end date |
 
 ## Next Step
 
-After `/greenlight` passes: Taste Owners design specifics, then `/greenlight --lockin` before shipping.
+After `/greenlight` approves:
+- Taste Key holder designs execution
+- `/craft` generates with physics context
+- `/validate` checks constraints
+- `/approve` locks patterns
