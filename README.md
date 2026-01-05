@@ -7,6 +7,101 @@
 
 Design Physics Engine for AI-assisted development. Gives AI agents physics constraints for consistent design decisions—materials, zones, fidelity ceilings, and human authority.
 
+## Philosophy
+
+### The Problem
+
+AI agents generate UI without understanding your product's soul. Every generation is a coin flip—sometimes it matches your vision, sometimes it doesn't. Design systems help, but they're too abstract for AI to reason about. You end up spending more time correcting than creating.
+
+Meanwhile, design debates consume hours. "Should this button be blue or green?" "Is this animation too slow?" These aren't physics problems—they're taste problems. But without a framework, every decision becomes a debate.
+
+### The Insight: Physics vs Opinions
+
+Sigil treats design decisions like physics, not opinions:
+
+- **Physics can't be argued with.** Gravity doesn't care about your feelings. Server-authoritative data MUST show pending states—this isn't a preference, it's a constraint.
+- **Opinions invite debate.** "I think this should be faster" leads to bikeshedding. "This violates discrete tick physics" ends the conversation.
+
+When you frame constraints as physics, AI agents follow them without question. Humans stop debating and start building.
+
+### The Mental Model: Zones
+
+Think of your app like a video game with different physics zones:
+
+| Zone | Feel | Why |
+|------|------|-----|
+| **Checkout/Trading** | Heavy, deliberate, slow | Money is at stake. Users need to feel the weight of their actions. Server must confirm before UI updates. |
+| **Browse/Discover** | Light, fluid, fast | Exploration should feel effortless. Optimistic updates are fine—low stakes. |
+| **Admin/Dashboard** | Precise, instant, mechanical | Power users want speed and accuracy. No flourishes, just function. |
+
+This isn't about "looks"—it's about "feels". A button in checkout and a button in browse might look identical, but they *behave* differently because they're in different physics zones.
+
+### The Hierarchy
+
+Not all constraints are equal:
+
+1. **IMPOSSIBLE** — Physics violations. Cannot be generated. Ever. No override exists. (e.g., optimistic updates in server-authoritative zones)
+2. **BLOCK** — Budget/fidelity violations. Blocked by default, but the Taste Key holder can create a ruling to override. (e.g., exceeding element count)
+3. **WARN** — Drift from essence. Suggestions only. Human decides. (e.g., using a color outside the palette)
+
+This hierarchy eliminates debate: physics is physics, taste is taste.
+
+## Best Practices
+
+### 1. Start with Soul, Not Rules
+
+Run `/envision` before anything else. The soul interview captures *why* your product feels the way it does—reference products, anti-patterns, key moments. Rules without soul produce soulless output.
+
+**Bad**: "Use blue buttons with 8px radius"
+**Good**: "We want the confidence of Linear with the warmth of Notion. Checkout should feel like confirming a bank transfer—heavy and deliberate."
+
+### 2. Zones Are Your Biggest Lever
+
+Most products have 3-5 zones. Define them early:
+
+```yaml
+zones:
+  critical:    # Money, trades, claims
+    paths: ["src/features/checkout/**", "src/features/claim/**"]
+    material: clay
+    sync: server_authoritative
+
+  exploratory: # Browse, discover, social
+    paths: ["src/features/browse/**", "src/features/social/**"]
+    material: glass
+    sync: client_authoritative
+```
+
+Once zones are set, every file inherits the right physics automatically. No per-component decisions needed.
+
+### 3. Use /craft Diagnostically
+
+When something "feels wrong," don't ask for a fix—ask for diagnosis:
+
+**Bad**: `/craft "make the button faster"`
+**Good**: `/craft "the claim button feels slow, diagnose why"`
+
+The Hammer tool will identify root causes. Often, "feels slow" isn't a design problem—it's a physics constraint (server-authoritative = discrete tick = intentional delay). Fixing the symptom breaks the system.
+
+### 4. One Taste Key Holder
+
+Design by committee produces mediocrity. Designate ONE person as the Taste Key holder. They can:
+- Override budget/fidelity violations with rulings
+- Make final calls on aesthetic decisions
+- But they CANNOT override physics
+
+This isn't dictatorship—it's clarity. Everyone knows who decides taste.
+
+### 5. Garden Regularly
+
+Entropy is real. Run `/garden` monthly to:
+- Detect drift from essence
+- Review stale mutations
+- Archive obsolete decisions
+- Prepare for era transitions
+
+Products evolve. Your design physics should evolve with them—deliberately, not accidentally.
+
 ## Quick Start
 
 ### Mount onto Existing Repository (Recommended)
