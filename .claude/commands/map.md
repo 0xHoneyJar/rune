@@ -1,7 +1,7 @@
 ---
 name: map
 version: "0.5.0"
-description: Configure path-based design zones with physics and budgets
+description: Analyze codebase and configure path-based design zones
 agent: mapping-zones
 agent_path: .claude/skills/mapping-zones/SKILL.md
 preflight:
@@ -11,15 +11,27 @@ preflight:
 
 # /map
 
-Configure path-based design zones. Maps file paths to zones with physics, materials, and budgets.
+Zone Architect — Analyzes codebase structure, suggests zone mappings, and configures path-based design zones. Zones live in Sigil; codebase stays clean.
 
 ## Usage
 
 ```
-/map              # Review and update zone configuration
+/map              # Analyze codebase and review zone configuration
+/map --analyze    # Deep analysis: scan codebase, suggest zone mappings
+/map --suggest    # Suggest file reorganization (optional, non-destructive)
+/map --refine     # Refine existing zones: gaps, conflicts, specificity
 /map --add        # Add a new custom zone
 /map --paths      # Focus on path mapping only
 ```
+
+## Philosophy
+
+**Zones adapt to codebases, not vice versa.**
+
+- Zone definitions live in `sigil-mark/resonance/zones.yaml`
+- Codebase structure is respected, not dictated
+- Glob patterns are flexible enough for any structure
+- Suggestions are optional; existing taste is preserved
 
 ## Default Zones
 
@@ -40,12 +52,13 @@ critical:
   paths:
     - "**/checkout/**"
     - "**/claim/**"
-    - "**/transaction/**"
+    - "**/withdraw/**"
 
 transactional:
   paths:
     - "**/dashboard/**"
     - "**/settings/**"
+    - "**/profile/**"
 ```
 
 ## Zone Resolution
@@ -61,14 +74,31 @@ transactional:
 |------|-------------|
 | `sigil-mark/resonance/zones.yaml` | Zone definitions and mappings |
 
-## Workflow
+## Workflow Modes
 
-1. **Review zones** — Display current zone configuration
-2. **Add paths** — Map new paths to zones
-3. **Configure physics** — Adjust zone physics if needed
-4. **Add custom zone** — Create new zone with `/map --add`
-5. **Validate** — Check for path conflicts
+### Default (`/map`)
+- Load current zone configuration
+- Scan codebase structure
+- Show coverage analysis with suggestions
+- Interactive refinement
+
+### Deep Analysis (`/map --analyze`)
+- Full codebase scan
+- Pattern detection (high-stakes vs low-stakes indicators)
+- Generate comprehensive zone map
+- Recommended for new or inherited codebases
+
+### Suggest Reorganization (`/map --suggest`)
+- Advisory only — no forced changes
+- Suggests file moves for better zone alignment
+- Respects existing taste and structure
+- Option to add paths to zones.yaml instead of moving files
+
+### Refine Zones (`/map --refine`)
+- Gap analysis (files using default when they shouldn't)
+- Conflict resolution (paths matching multiple zones)
+- Specificity suggestions (split broad patterns)
 
 ## Next Step
 
-After `/map`: Ready to use `/craft` for component generation.
+After `/map`: Ready to use `/craft` for component generation with automatic zone physics.
