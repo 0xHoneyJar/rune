@@ -1,1528 +1,1046 @@
-# Software Design Document: Sigil v11 — Soul Engine
+# Software Design Document: Sigil v4
 
-**Version:** 2.0
-**Date:** 2026-01-03
-**Author:** Architecture Agent
+**Version:** 1.0
 **Status:** Draft
-**PRD Reference:** `loa-grimoire/prd.md` v3.0
-**Supersedes:** Sigil v0.4 SDD v1.0
-
----
-
-## Table of Contents
-
-1. [Executive Summary](#executive-summary)
-2. [System Architecture](#system-architecture)
-3. [Technology Stack](#technology-stack)
-4. [Component Design](#component-design)
-5. [Data Architecture](#data-architecture)
-6. [Skill Architecture (8 Agents)](#skill-architecture-8-agents)
-7. [HUD Overlay Design](#hud-overlay-design)
-8. [Context Injection System](#context-injection-system)
-9. [Fidelity Validation Engine](#fidelity-validation-engine)
-10. [Integration Points](#integration-points)
-11. [Development Workflow](#development-workflow)
-12. [Technical Risks & Mitigation](#technical-risks--mitigation)
-13. [Future Considerations](#future-considerations)
+**Date:** 2026-01-04
+**Based on:** PRD v1.0
 
 ---
 
 ## Executive Summary
 
-Sigil v11 is a **design craft framework** that enables AI agents to generate UI with soul through physics-based constraints, material systems, and fidelity ceilings.
+Sigil v4 is a Design Physics Engine implemented as a Claude Code skill framework. It provides 8 specialized skills that give AI agents physics constraints for consistent design decisions. Sigil coexists with Loa (workflow framework) via a handoff protocol for structural issues.
 
-### Key Evolution from v0.4
-
-| v0.4 | v11 |
-|------|-----|
-| SQLite + Vite Workbench | YAML files only + HUD overlay |
-| 6 systems | 8 named agents |
-| No immutable kernel | Immutable kernel after lock |
-| No fidelity ceiling | Fidelity Ceiling (Mod Ghost Rule) |
-| Standalone Workbench app | Lightweight HUD overlay |
-
-### Architecture Principles
-
-1. **Zero Production Footprint**: HUD and dev tools only run in development
-2. **YAML-First State**: All configuration and state in human-readable YAML files
-3. **Context Injection Over Linting**: Constraints injected before generation, not linted after
-4. **Claude Code Skills**: Each agent implemented as a `.claude/skills/` directory
-5. **CSS Custom Properties**: Runtime tensions via CSS variables for <16ms updates
-
-### High-Level Architecture
+### Architecture Overview
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                           SIGIL v11 ARCHITECTURE                             │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│  ┌─────────────────────────────────────────────────────────────────────┐    │
-│  │  CLAUDE CODE INTEGRATION                                             │    │
-│  │  ┌─────────────┐                                                     │    │
-│  │  │ CLAUDE.md   │ ← Context auto-injected from sigil-mark/           │    │
-│  │  └─────────────┘                                                     │    │
-│  │  ┌─────────────────────────────────────────────────────────────┐    │    │
-│  │  │ .claude/skills/                                              │    │    │
-│  │  │ 8 Agent Skills (envisioning, codifying, crafting, etc.)     │    │    │
-│  │  └─────────────────────────────────────────────────────────────┘    │    │
-│  └─────────────────────────────────────────────────────────────────────┘    │
-│                              │                                               │
-│                              │ reads/writes                                  │
-│                              ▼                                               │
-│  ┌─────────────────────────────────────────────────────────────────────┐    │
-│  │  SIGIL STATE (sigil-mark/)                                          │    │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐               │    │
-│  │  │ kernel/      │  │ soul/        │  │ governance/  │               │    │
-│  │  │ (immutable)  │  │ (writable)   │  │ (dictated)   │               │    │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘               │    │
-│  └─────────────────────────────────────────────────────────────────────┘    │
-│                              │                                               │
-│                              │ dev only                                      │
-│                              ▼                                               │
-│  ┌─────────────────────────────────────────────────────────────────────┐    │
-│  │  RUNTIME (Development Only)                                         │    │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐               │    │
-│  │  │ HUD Overlay  │  │ CSS Variables│  │ File Watcher │               │    │
-│  │  │ (React)      │  │ (Tensions)   │  │ (YAML sync)  │               │    │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘               │    │
-│  └─────────────────────────────────────────────────────────────────────┘    │
-│                                                                              │
-└─────────────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                         SIGIL v4                                     │
+│                   Design Physics Engine                              │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                 │
+│  │   COMMANDS  │  │   SKILLS    │  │   STATE     │                 │
+│  │   (8 total) │  │   (8 total) │  │ sigil-mark/ │                 │
+│  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘                 │
+│         │                │                │                         │
+│         └────────────────┼────────────────┘                         │
+│                          │                                          │
+│  ┌───────────────────────┴───────────────────────┐                 │
+│  │              PHYSICS ENGINE                    │                 │
+│  │  ┌─────────┐ ┌─────────┐ ┌─────────┐         │                 │
+│  │  │Temporal │ │ Budget  │ │Fidelity │         │                 │
+│  │  │Governor │ │ Engine  │ │ Ceiling │         │                 │
+│  │  └─────────┘ └─────────┘ └─────────┘         │                 │
+│  └───────────────────────────────────────────────┘                 │
+│                          │                                          │
+│                          ▼                                          │
+│  ┌───────────────────────────────────────────────┐                 │
+│  │              LOA HANDOFF                       │                 │
+│  │  When issue is structural → generate context   │                 │
+│  └───────────────────────────────────────────────┘                 │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## System Architecture
+## 1. System Architecture
 
-### Layer Model
-
-| Layer | Responsibility | Mutability | Owner |
-|-------|---------------|------------|-------|
-| **Kernel** | Physics primitives, sync strategies, fidelity ceiling | IMMUTABLE after lock | Framework |
-| **Soul** | Materials, zones, tensions, essence | Read/Write | Project |
-| **Governance** | Taste owners, approvals, polls | Dictate only | Taste Owner |
-| **Workbench** | Paper cuts, fidelity reports, temp state | Read/Write | System |
-
-### Directory Structure
+### 1.1 Layer Model
 
 ```
-project/
-├── CLAUDE.md                         # Auto-generated context injection
-├── .sigilrc.yaml                     # Root configuration
-├── .sigil-setup-complete             # Setup marker
-├── .sigil-version.json               # Version tracking
-│
-├── .claude/
-│   └── skills/                       # 8 Agent skills
-│       ├── envisioning-soul/
-│       │   ├── index.yaml
-│       │   └── SKILL.md
-│       ├── codifying-materials/
-│       ├── mapping-zones/
-│       ├── crafting-components/
-│       ├── validating-fidelity/
-│       ├── gardening-entropy/
-│       ├── approving-patterns/
-│       └── greenlighting-concepts/
-│
-├── sigil-mark/                       # Soul state
-│   ├── kernel/                       # IMMUTABLE after /codify --lock
-│   │   ├── physics.yaml             # Light, weight, motion, feedback
-│   │   ├── sync.yaml                # CRDT, LWW, Server-Tick
-│   │   └── fidelity-ceiling.yaml    # Gold Standard constraints
-│   │
-│   ├── soul/
-│   │   ├── essence.yaml             # Soul statement, invariants
-│   │   ├── materials.yaml           # Material compositions
-│   │   ├── zones.yaml               # Path-based zones
-│   │   └── tensions.yaml            # Current tension state
-│   │
-│   ├── governance/
-│   │   ├── taste-owners.yaml        # Named authorities
-│   │   ├── approvals.yaml           # Sign-off records
-│   │   ├── polls.yaml               # Greenlight polls
-│   │   └── archaeology.yaml         # Rejection history
-│   │
-│   ├── workbench/
-│   │   ├── paper-cuts.yaml          # Entropy tracking
-│   │   └── fidelity-report.yaml     # Validation results
-│   │
-│   ├── moodboard.md                 # References, anti-patterns
-│   └── gold-standard/               # Reference assets
-│
-└── sigil-hud/                        # Optional: HUD overlay package
-    ├── package.json
-    └── src/
-        ├── index.tsx                # <SigilHUD /> component
-        ├── hooks/
-        │   ├── useTensions.ts
-        │   ├── useMaterial.ts
-        │   └── useZone.ts
-        └── components/
-            ├── TensionSlider.tsx
-            ├── MaterialPicker.tsx
-            └── FidelityStatus.tsx
+┌─────────────────────────────────────────────────────────────────────┐
+│                         TASTE KEY                                    │
+│  Single holder with absolute authority over visual execution.       │
+│  Can override: Budgets, Fidelity. Cannot override: Physics.         │
+└─────────────────────────────────────────────────────────────────────┘
+                              │
+┌─────────────────────────────────────────────────────────────────────┐
+│                         MEMORY                                       │
+│  Era-versioned decisions. Mutations sandbox. Graveyard archive.      │
+└─────────────────────────────────────────────────────────────────────┘
+                              │
+┌─────────────────────────────────────────────────────────────────────┐
+│                        RESONANCE                                     │
+│  Product tuning: Essence, Materials, Zones, Tensions.                │
+└─────────────────────────────────────────────────────────────────────┘
+                              │
+┌─────────────────────────────────────────────────────────────────────┐
+│                          CORE                                        │
+│  Immutable physics: Sync, Budgets, Fidelity, Lens.                  │
+│  CANNOT be overridden. Violations are IMPOSSIBLE.                    │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### 1.2 Coexistence with Loa
+
+Sigil and Loa are separate frameworks that coexist:
+
+| Aspect | Sigil | Loa |
+|--------|-------|-----|
+| Domain | Design physics | Development workflow |
+| State Zone | `sigil-mark/` | `loa-grimoire/` |
+| Config | `.sigilrc.yaml` | `.loa.config.yaml` |
+| Skills | 8 design-focused | Workflow-focused |
+| Commands | 8 design commands | Workflow commands |
+
+**Handoff Protocol:** When Sigil diagnoses a structural issue (not UI), it generates context for Loa.
+
+---
+
+## 2. Component Design
+
+### 2.1 The 8 Skills
+
+| # | Skill | Command | Purpose |
+|---|-------|---------|---------|
+| 1 | `envisioning-soul` | `/envision` | Capture product essence via interview |
+| 2 | `codifying-materials` | `/codify` | Define material physics (clay/machinery/glass) |
+| 3 | `mapping-zones` | `/map` | Define zones and path patterns |
+| 4 | `crafting-components` | `/craft` | Generate with Hammer/Chisel toolkit |
+| 5 | `validating-fidelity` | `/validate` | Check physics/budget/fidelity violations |
+| 6 | `gardening-entropy` | `/garden` | Detect drift, stale decisions, mutations |
+| 7 | `approving-patterns` | `/approve` | Taste Key rulings on patterns |
+| 8 | `greenlighting-concepts` | `/greenlight` | Concept approval before building |
+
+### 2.2 Skill Structure
+
+Each skill follows Claude Code conventions:
+
+```
+.claude/skills/{skill-name}/
+├── index.yaml          # Metadata (~100 tokens)
+├── SKILL.md            # Instructions (~2000 tokens)
+└── tools/              # Sub-tools (optional)
+    └── *.md
+```
+
+**Example: crafting-components**
+```
+.claude/skills/crafting-components/
+├── index.yaml
+├── SKILL.md
+└── tools/
+    ├── hammer.md       # Diagnose + Route
+    └── chisel.md       # Execute aesthetics
+```
+
+### 2.3 Command Structure
+
+Each command is a markdown file:
+
+```
+.claude/commands/{command}.md
+```
+
+**Example: craft.md**
+```markdown
+# Craft
+
+## Purpose
+Generate and refine UI components within physics constraints.
+
+## Agent
+Launches `crafting-components` skill.
+
+## Workflow
+1. Load physics context from sigil-mark/
+2. Select tool (Hammer or Chisel)
+3. Generate/refine component
+4. Validate against constraints
 ```
 
 ---
 
-## Technology Stack
+## 3. Physics Engine
 
-### Core Technologies
+### 3.1 Temporal Governor
 
-| Category | Technology | Justification |
-|----------|------------|---------------|
-| **State Format** | YAML | Human-readable, git-diffable, Claude-friendly |
-| **Skills Runtime** | Claude Code Skills | Native integration, no external dependencies |
-| **HUD Runtime** | React 18+ | Matches target stack (NextJS/React ecosystem) |
-| **CSS Runtime** | CSS Custom Properties | Native, <16ms updates, no build step |
-| **File Watching** | Node.js fs.watch | Native, no dependencies for simple YAML sync |
-| **Validation** | TypeScript + RegExp | Fast pattern matching for fidelity checks |
-| **Schema** | YAML + TypeScript types | Type-safe with zod for validation |
-
-### Target Stack Compatibility
-
-| Framework | Support Level | Notes |
-|-----------|---------------|-------|
-| **NextJS 14+** | Full | App Router, Server Components compatible |
-| **React 18+** | Full | Concurrent features, Suspense compatible |
-| **Tailwind CSS** | Full | Works with Tailwind utility classes |
-| **Shadcn/UI** | Full | Component library compatible |
-| **Vite** | Full | Dev server compatible |
-| **Remix** | Partial | Requires manual HUD injection |
-
-### Dependencies
-
-```json
-{
-  "dependencies": {},
-  "devDependencies": {
-    "@sigil/hud": "^0.1.0",
-    "yaml": "^2.3.0",
-    "zod": "^3.22.0"
-  },
-  "peerDependencies": {
-    "react": ">=18.0.0",
-    "react-dom": ">=18.0.0"
-  }
-}
-```
-
-**Design Decision:** Minimal dependencies. YAML parsing and Zod validation are the only required packages. The HUD is optional and dev-only.
-
----
-
-## Component Design
-
-### 1. Kernel Layer
-
-The Kernel contains immutable physics primitives. After `/codify --lock`, these files cannot be modified.
-
-#### physics.yaml Schema
-
-```typescript
-interface PhysicsKernel {
-  version: string;
-  locked: boolean;
-  locked_at?: string;
-  locked_by?: string;
-
-  light: {
-    refract: { blur: number; opacity: number };
-    diffuse: { shadow_layers: number };
-    flat: { background: string };
-    reflect: { gradient_angle: number };
-  };
-
-  weight: {
-    weightless: { hover: string };
-    light: { hover: string; shadow_scale: number };
-    heavy: { hover: string; shadow_scale: number };
-    none: Record<string, never>;
-  };
-
-  motion: {
-    instant: { duration_ms: 0; easing: "step-end" };
-    linear: { duration_ms: number; easing: "linear" };
-    ease: { duration_ms: number; easing: string };
-    spring: { duration_ms: number; easing: string };
-    step: { duration_ms: number; easing: "steps(n)" };
-    deliberate: { duration_ms: number; easing: string };
-  };
-
-  feedback: {
-    none: Record<string, never>;
-    highlight: { background: string };
-    lift: { transform: string };
-    depress: { transform: string };
-    glow: { boxShadow: string };
-    ripple: { animation: string };
-    pulse: { animation: string };
-    xp_drop: { animation: string };
-  };
-
-  surface: {
-    transparent: { opacity: number };
-    translucent: { opacity: number; blur: number };
-    solid: { opacity: 1 };
-    textured: { pattern: string };
-  };
-}
-```
-
-#### physics.yaml Example
+**Implementation:** `sigil-mark/core/sync.yaml`
 
 ```yaml
-# sigil-mark/kernel/physics.yaml
-version: "1.0"
-locked: false
-
-light:
-  refract:
-    blur: 20
-    opacity: 0.7
-    css: "backdrop-filter: blur(20px); opacity: 0.7;"
-  diffuse:
-    shadow_layers: 3
-    css: |
-      box-shadow:
-        0 1px 2px rgba(0,0,0,0.05),
-        0 4px 8px rgba(0,0,0,0.05),
-        0 8px 16px rgba(0,0,0,0.05);
-  flat:
-    background: "#0A0A0A"
-    css: "background: #0A0A0A; border: 1px solid #2A2A2A;"
-
-weight:
-  weightless:
-    hover: "translateY(-1px)"
-    shadow_scale: 0.8
-  light:
-    hover: "translateY(-2px)"
-    shadow_scale: 1.0
-  heavy:
-    hover: "translateY(-3px)"
-    shadow_scale: 1.3
-  none:
-    hover: "none"
-    shadow_scale: 0
-
-motion:
-  instant:
-    duration_ms: 0
-    easing: "step-end"
-    css: "transition: none;"
-  linear:
-    duration_ms: 200
-    easing: "linear"
-  ease:
-    duration_ms: 200
-    easing: "ease-out"
-  spring:
-    duration_ms: 300
-    easing: "cubic-bezier(0.34, 1.56, 0.64, 1)"
-  deliberate:
-    duration_ms: 800
-    easing: "cubic-bezier(0.4, 0, 0.2, 1)"
-
-feedback:
-  none: {}
-  highlight:
-    background: "rgba(255,255,255,0.05)"
-    css: "background: rgba(255,255,255,0.05);"
-  lift:
-    transform: "translateY(-2px)"
-    css: "transform: translateY(-2px);"
-  depress:
-    transform: "translateY(1px) scale(0.98)"
-    css: "transform: translateY(1px) scale(0.98);"
-  glow:
-    boxShadow: "0 0 20px rgba(59, 130, 246, 0.5)"
-  xp_drop:
-    animation: "rise 1500ms ease-out"
-    keyframes: |
-      @keyframes rise {
-        0% { opacity: 1; transform: translateY(0); }
-        100% { opacity: 0; transform: translateY(-50px); }
-      }
-```
-
-#### sync.yaml Schema
-
-```typescript
-interface SyncKernel {
-  version: string;
-  locked: boolean;
-
-  strategies: {
-    server_tick: {
-      keywords: string[];
-      ui_behavior: "pending_state";
-      optimistic: false;
-      confirmation: "xp_drop" | "checkmark" | "fade";
-      pending_ui: "skeleton" | "text" | "disabled";
-    };
-    crdt: {
-      keywords: string[];
-      ui_behavior: "presence_cursors";
-      optimistic: true;
-      presence_indicator: boolean;
-    };
-    lww: {
-      keywords: string[];
-      ui_behavior: "instant";
-      optimistic: true;
-      background_sync: boolean;
-    };
-    local_only: {
-      keywords: string[];
-      ui_behavior: "instant";
-      sync: false;
-    };
-  };
-}
-```
-
-#### sync.yaml Example
-
-```yaml
-# sigil-mark/kernel/sync.yaml
-version: "1.0"
-locked: false
-
-strategies:
-  server_tick:
-    description: "High-stakes operations that MUST wait for server confirmation"
-    keywords:
-      - trade
-      - transfer
-      - buy
-      - sell
-      - money
-      - wallet
-      - balance
-      - health
-      - inventory
-      - payment
-      - transaction
-    ui_behavior: pending_state
-    optimistic: false
-    rules:
-      - "NEVER update UI optimistically"
-      - "MUST show pending state (spinner forbidden, use text or skeleton)"
-      - "MUST wait for server confirmation"
-      - "MUST show success animation (xp_drop style)"
-    pending_ui: disabled
-    confirmation: xp_drop
-
-  crdt:
-    description: "Collaborative content that syncs in real-time"
-    keywords:
-      - edit
-      - type
-      - write
-      - comment
-      - message
-      - document
-      - collaborative
-    ui_behavior: presence_cursors
-    optimistic: true
-    rules:
-      - "Show presence cursors for other users"
-      - "Optimistic updates allowed"
-      - "Subtle sync indicator"
-
-  lww:
-    description: "Last-write-wins for simple state"
-    keywords:
-      - move
-      - toggle
-      - select
-      - preference
-      - position
-      - setting
-    ui_behavior: instant
-    optimistic: true
-    rules:
-      - "Instant local update"
-      - "Background sync"
-      - "No confirmation needed"
-
-  local_only:
-    description: "UI state that doesn't sync"
-    keywords:
-      - modal
-      - dropdown
-      - hover
-      - tooltip
-      - menu
-    ui_behavior: instant
-    sync: false
-```
-
-#### fidelity-ceiling.yaml Schema
-
-```typescript
-interface FidelityCeiling {
-  version: string;
-  locked: boolean;
-
-  era: string;  // "2007", "2024", etc.
-
-  constraints: {
-    visual: {
-      gradients: { max_stops: number; forbidden: string[] };
-      shadows: { max_layers: number; forbidden: string[] };
-      borders: { max_width: number; forbidden: string[] };
-      border_radius: { max_px: number; forbidden: string[] };
-    };
-    animation: {
-      max_duration_ms: number;
-      forbidden: string[];
-    };
-    typography: {
-      max_font_families: number;
-      min_font_size: number;
-      forbidden: string[];
-    };
-  };
-
-  forbidden_techniques: string[];
-
-  detection: {
-    reject_patterns: Array<{
-      pattern: string;
-      message: string;
-      severity: "error" | "warn";
-    }>;
-  };
-
-  zone_exceptions: {
-    marketing: {
-      animation: { max_duration_ms: number };
-      confetti_allowed: boolean;
-    };
-  };
-}
-```
-
-#### fidelity-ceiling.yaml Example
-
-```yaml
-# sigil-mark/kernel/fidelity-ceiling.yaml
-version: "1.0"
-locked: false
-
-era: "2024"
-
-agent_instruction: |
-  You are an apprentice in {{era}}.
-  You do not know what {{forbidden_techniques | join(", ")}} are.
-  You cannot generate textures above 64x64.
-  If your output looks "better" than the Gold Standard, it is WRONG.
-
-constraints:
-  visual:
-    gradients:
-      max_stops: 2
-      forbidden:
-        - "mesh gradient"
-        - "conic-gradient with >3 stops"
-    shadows:
-      max_layers: 3
-      forbidden:
-        - "colored shadows"
-        - "inset shadows on buttons"
-    borders:
-      max_width_px: 2
-      forbidden:
-        - "dashed"
-        - "dotted"
-        - "gradient borders"
-    border_radius:
-      max_px: 16
-      forbidden:
-        - "asymmetric radius"
-  animation:
-    max_duration_ms: 800
-    forbidden:
-      - "3D transforms"
-      - "particles"
-      - "confetti"
-      - "morphing"
-  typography:
-    max_font_families: 2
-    min_font_size_px: 12
-    forbidden:
-      - "decorative fonts in UI"
-      - "variable font animations"
-
-forbidden_techniques:
-  - "Ambient Occlusion"
-  - "Mesh Gradients"
-  - "3D Transforms"
-  - "Particle Systems"
-  - "Motion Blur"
-  - "Morphing Animations"
-  - "Glassmorphism with grain"
-  - "Claymorphism"
-  - "Neumorphism"
-
-detection:
-  reject_patterns:
-    - pattern: "rotate[XYZ]|perspective|transform3d"
-      message: "3D transforms are forbidden"
-      severity: error
-    - pattern: "linear-gradient\\([^)]+,[^,]+,[^,]+,[^,]+"
-      message: "Gradient has >2 stops"
-      severity: warn
-    - pattern: "mesh-gradient"
-      message: "Mesh gradients are forbidden"
-      severity: error
-
-zone_exceptions:
-  marketing:
-    animation:
-      max_duration_ms: 1500
-    confetti_allowed: true
-    gradients:
-      max_stops: 4
-```
-
-### 2. Lock Mechanism
-
-The kernel lock is enforced at the skill level:
-
-```typescript
-// In codifying-materials skill
-async function lockKernel(): Promise<void> {
-  const kernelPath = 'sigil-mark/kernel/';
-  const files = ['physics.yaml', 'sync.yaml', 'fidelity-ceiling.yaml'];
-
-  for (const file of files) {
-    const content = await readYaml(`${kernelPath}${file}`);
-    content.locked = true;
-    content.locked_at = new Date().toISOString();
-    content.locked_by = getCurrentUser();
-    await writeYaml(`${kernelPath}${file}`, content);
-  }
-
-  // Record lock in version file
-  const version = await readJson('.sigil-version.json');
-  version.kernel_locked = true;
-  version.kernel_locked_at = new Date().toISOString();
-  await writeJson('.sigil-version.json', version);
-}
-
-// Validation on any kernel modification attempt
-function validateKernelIntegrity(filePath: string): void {
-  if (filePath.includes('sigil-mark/kernel/')) {
-    const content = readYamlSync(filePath);
-    if (content.locked) {
-      throw new Error(
-        `Kernel file ${filePath} is locked and cannot be modified. ` +
-        `Locked at ${content.locked_at} by ${content.locked_by}.`
-      );
-    }
-  }
-}
-```
-
----
-
-## Data Architecture
-
-### YAML File Schemas
-
-All state is stored in YAML files. No database is used.
-
-#### State Flow
-
-```
-User Action          YAML File                    Runtime Effect
-───────────────────────────────────────────────────────────────────
-/envision       →    soul/essence.yaml       →    CLAUDE.md updated
-/codify         →    soul/materials.yaml     →    CLAUDE.md updated
-/zone           →    soul/zones.yaml         →    CLAUDE.md updated
-Tension slider  →    soul/tensions.yaml      →    CSS vars updated
-/approve        →    governance/approvals.yaml
-/garden         →    workbench/paper-cuts.yaml
-/validate       →    workbench/fidelity-report.yaml
-```
-
-#### tensions.yaml
-
-```yaml
-# sigil-mark/soul/tensions.yaml
-version: "1.0"
-updated_at: "2026-01-03T10:00:00Z"
-
-# Default tensions (0-100 scale)
-default:
-  playfulness: 50
-  weight: 50
-  density: 50
-  speed: 50
-
-# Current active tensions
-current:
-  playfulness: 45
-  weight: 60
-  density: 50
-  speed: 70
-
-  # Zone overrides
-  zone_overrides:
+temporal_governor:
+  zone_mapping:
     critical:
-      speed: 40  # Slower for critical actions
-    marketing:
-      playfulness: 80  # More playful for marketing
+      tick: discrete
+      rate_ms: 600
+      authority: server_authoritative
 
-# Named presets
-presets:
-  linear:
-    playfulness: 20
-    weight: 30
-    density: 70
-    speed: 95
-  airbnb:
-    playfulness: 50
-    weight: 60
-    density: 40
-    speed: 50
-  osrs:
-    playfulness: 30
-    weight: 70
-    density: 60
-    speed: 40
-  nintendo:
-    playfulness: 80
-    weight: 50
-    density: 30
-    speed: 60
+    transactional:
+      tick: continuous
+      rate_ms: 0
+      authority: client_authoritative
 ```
 
-#### zones.yaml
+**Agent Behavior:**
+```python
+def check_temporal_physics(zone, proposed_ui):
+    if zone.authority == "server_authoritative":
+        if proposed_ui.uses_optimistic_updates:
+            return PhysicsViolation(
+                type="IMPOSSIBLE",
+                message="Cannot use optimistic UI in server_authoritative zone"
+            )
+    return Valid()
+```
+
+### 3.2 Budget Engine
+
+**Implementation:** `sigil-mark/core/budgets.yaml`
 
 ```yaml
-# sigil-mark/soul/zones.yaml
-version: "1.0"
+budgets:
+  cognitive:
+    interactive_elements:
+      critical: 5
+      transactional: 12
+      exploratory: 20
+      admin: 30
+```
 
+**Agent Behavior:**
+```python
+def check_budget(zone, component):
+    budget = load_budget(zone)
+    if component.interactive_elements > budget.interactive_elements:
+        return BudgetViolation(
+            type="BLOCK",
+            message=f"Exceeds {zone} budget: {component.interactive_elements}/{budget.interactive_elements}",
+            override_available=True  # Taste Key can override
+        )
+    return Valid()
+```
+
+### 3.3 Fidelity Ceiling
+
+**Implementation:** `sigil-mark/core/fidelity.yaml`
+
+```yaml
+fidelity:
+  ceiling:
+    constraints:
+      gradients: { max_stops: 2 }
+      shadows: { max_layers: 3 }
+      animation: { max_duration_ms: 800 }
+      blur: { max_radius_px: 16 }
+      border_radius: { max_px: 24 }
+```
+
+**Agent Behavior:**
+```python
+def check_fidelity(component):
+    ceiling = load_fidelity_ceiling()
+    violations = []
+
+    if component.gradient_stops > ceiling.gradients.max_stops:
+        violations.append(CeilingViolation("gradients"))
+    if component.shadow_layers > ceiling.shadows.max_layers:
+        violations.append(CeilingViolation("shadows"))
+    # ... etc
+
+    return violations
+```
+
+### 3.4 Violation Hierarchy
+
+```python
+class ViolationType(Enum):
+    PHYSICS = "IMPOSSIBLE"      # Cannot generate
+    BUDGET = "BLOCK"            # Taste Key can override
+    FIDELITY = "BLOCK"          # Taste Key can override
+    DRIFT = "WARN"              # Proceed, flagged
+```
+
+---
+
+## 4. Data Architecture
+
+### 4.1 State Zone Structure
+
+```
+sigil-mark/
+├── core/                       # Immutable physics (version controlled)
+│   ├── sync.yaml              # Temporal Governor + Authority
+│   ├── budgets.yaml           # Cognitive, Visual, Complexity
+│   ├── fidelity.yaml          # Mod Ghost Rule
+│   └── lens.yaml              # Rendering layers
+│
+├── resonance/                  # Product tuning (editable)
+│   ├── essence.yaml           # Product soul (from /envision)
+│   ├── materials.yaml         # Clay, Machinery, Glass
+│   ├── zones.yaml             # Critical, Transactional, Exploratory
+│   └── tensions.yaml          # Tuning sliders (0-100)
+│
+├── memory/                     # Era-versioned history
+│   ├── eras/                  # Era definitions
+│   │   └── era-{n}.yaml
+│   ├── decisions/             # Era-versioned decisions
+│   │   └── {decision-id}.yaml
+│   ├── mutations/             # Experimental sandbox
+│   │   └── active/
+│   │       └── {mutation-id}.yaml
+│   └── graveyard/             # Failed experiments
+│       └── {mutation-id}.yaml
+│
+├── taste-key/                  # Authority
+│   ├── holder.yaml            # Who holds the key
+│   └── rulings/               # Taste Key decisions
+│       └── {ruling-id}.yaml
+│
+└── .sigil/                     # Framework (symlinked)
+    ├── commands/
+    ├── skills/
+    └── scripts/
+```
+
+### 4.2 YAML Schemas
+
+**Zone Definition:**
+```yaml
+# resonance/zones.yaml
 zones:
   critical:
-    description: "High-stakes transactions"
-    material: clay
-    sync: server_tick
-    motion:
-      style: deliberate
-      entrance_ms: 300
-    patterns:
-      prefer:
-        - "confirmation-flow"
-        - "pending-state"
-      warn:
-        - "instant-transition"
-        - "optimistic-update"
+    description: "High-stakes, irreversible actions"
+    physics:
+      sync: server_authoritative
+      tick: discrete
+      material: clay
+    rules:
+      - "Server confirms before state changes"
+      - "No optimistic updates"
     paths:
-      - "src/features/checkout/**"
-      - "src/features/trade/**"
-      - "src/features/claim/**"
-
-  transactional:
-    description: "Data operations"
-    material: machinery
-    sync: lww
-    motion:
-      style: instant
-      entrance_ms: 0
-    paths:
-      - "src/features/dashboard/**"
-      - "src/features/admin/**"
-
-  exploratory:
-    description: "Discovery and browsing"
-    material: glass
-    sync: lww
-    motion:
-      style: ease
-      entrance_ms: 200
-    paths:
-      - "src/features/browse/**"
-      - "src/features/search/**"
-
-  marketing:
-    description: "Landing and promotional"
-    material: clay
-    sync: local_only
-    motion:
-      style: spring
-      entrance_ms: 400
-    fidelity_override:
-      animation:
-        max_duration_ms: 1500
-      confetti_allowed: true
-    paths:
-      - "src/features/landing/**"
-      - "src/marketing/**"
-
-  default:
-    description: "Fallback for unmatched paths"
-    material: clay
-    sync: lww
-    motion:
-      style: ease
-      entrance_ms: 200
+      - "**/checkout/**"
+      - "**/claim/**"
+    budgets:
+      interactive_elements: 5
+      animations: 1
+    tension_overrides:
+      weight: 80
+      speed: 30
 ```
 
-#### materials.yaml
-
+**Material Definition:**
 ```yaml
-# sigil-mark/soul/materials.yaml
-version: "1.0"
-
+# resonance/materials.yaml
 materials:
-  glass:
-    description: "Light, translucent, VisionOS-inspired"
-    primitives:
-      light: refract
-      weight: weightless
-      motion: ease
-      feedback:
-        - glow
-    forbidden:
-      - "solid backgrounds"
-      - "hard shadows"
-      - "spring animations"
-    css_base: |
-      backdrop-filter: blur(20px) saturate(180%);
-      background: rgba(255, 255, 255, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-
   clay:
-    description: "Warm, tactile, trust-inspiring"
-    primitives:
+    physics:
       light: diffuse
       weight: heavy
       motion: spring
-      feedback:
-        - lift
-        - depress
-    forbidden:
-      - "flat design"
-      - "instant transitions"
-      - "pure gray backgrounds"
-    css_base: |
-      background: linear-gradient(135deg, #FAFAF9 0%, #F5F5F4 100%);
-      border-radius: 16px;
-      box-shadow:
-        0 1px 2px rgba(0,0,0,0.05),
-        0 4px 12px rgba(0,0,0,0.08);
-      transition: all 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
-
-  machinery:
-    description: "Instant, precise, command-line feel"
-    primitives:
-      light: flat
-      weight: none
-      motion: instant
-      feedback:
-        - highlight
-    forbidden:
-      - "fade-in animations"
-      - "bounce effects"
-      - "loading spinners"
-      - "gradients"
-      - "shadows"
-    css_base: |
-      background: #0A0A0A;
-      color: #FAFAFA;
-      border: 1px solid #2A2A2A;
-      font-family: 'JetBrains Mono', monospace;
+      feedback: depress
+    spring_config:
+      stiffness: 120
+      damping: 14
+    css_implications:
+      box_shadow: "0 2px 4px rgba(0,0,0,0.1)"
+      transition: "transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1)"
 ```
 
-### CLAUDE.md Generation
+**Era Definition:**
+```yaml
+# memory/eras/era-1.yaml
+era:
+  id: 1
+  name: "The Flat Era"
+  started: "2024-01-01"
+  ended: null
+  truths:
+    - statement: "Animation is latency"
+      evidence: "Bundle size constraints"
+  deprecated: []
+  transition:
+    triggers: |
+      This era ends when user base matures,
+      device performance allows richer animation,
+      industry shifts toward warmth/depth.
+```
 
-The `CLAUDE.md` file is auto-generated from sigil-mark/ state:
-
-```typescript
-async function generateClaudeMd(): Promise<string> {
-  const essence = await readYaml('sigil-mark/soul/essence.yaml');
-  const materials = await readYaml('sigil-mark/soul/materials.yaml');
-  const zones = await readYaml('sigil-mark/soul/zones.yaml');
-  const tensions = await readYaml('sigil-mark/soul/tensions.yaml');
-  const fidelity = await readYaml('sigil-mark/kernel/fidelity-ceiling.yaml');
-  const physics = await readYaml('sigil-mark/kernel/physics.yaml');
-
-  return `
-# Sigil: Design Context Framework
-
-> "Make the right path easy. Make the wrong path visible."
-
-## What is Sigil?
-
-Sigil is a design context framework that helps AI agents make consistent design decisions.
-
-## The Three Laws
-
-### Law 1: Fidelity Ceiling
-"Better" is often "worse." Block improvements that exceed the Gold Standard.
-
-${fidelity.agent_instruction}
-
-### Law 2: Taste Owner Authority
-Visuals and vibe are dictated, never polled.
-
-### Law 3: Poll Concepts, Not Pixels
-Community votes on "should this exist?" — never "what color?"
-
-## Materials
-
-${Object.entries(materials.materials).map(([name, mat]) => `
-### ${name}
-${mat.description}
-- Primitives: ${Object.entries(mat.primitives).map(([k,v]) => `${k}: ${v}`).join(', ')}
-- Forbidden: ${mat.forbidden.join(', ')}
-`).join('\n')}
-
-## Zones
-
-${Object.entries(zones.zones).map(([name, zone]) => `
-### ${name}
-- Material: ${zone.material}
-- Sync: ${zone.sync}
-- Paths: ${zone.paths.join(', ')}
-`).join('\n')}
-
-## Fidelity Ceiling Constraints
-
-${fidelity.forbidden_techniques.map(t => `- ${t}`).join('\n')}
-
-## Agent Protocol
-
-Before generating UI code:
-1. Detect zone from file path
-2. Apply material physics
-3. Respect fidelity ceiling
-4. Follow sync strategy rules
-`;
-}
+**Mutation Definition:**
+```yaml
+# memory/mutations/active/bouncy-claim.yaml
+mutation:
+  id: "bouncy-claim-button"
+  breaks: "deliberate-timing decision"
+  status: "dogfooding"
+  created: "2026-01-01"
+  expires: "2026-01-12"
+  success_criteria:
+    - metric: "completion_rate"
+      threshold: ">= 94%"
+    - metric: "trust_score"
+      threshold: ">= 4.0"
 ```
 
 ---
 
-## Skill Architecture (8 Agents)
+## 5. Craft Toolkit Design
 
-Each agent is implemented as a Claude Code skill in `.claude/skills/`.
+### 5.1 Tool Selection Algorithm
 
-### Skill Directory Structure
+```python
+def select_tool(user_input: str) -> Tool:
+    """Select Hammer or Chisel based on input patterns."""
+
+    # Chisel patterns (explicit, measurable)
+    chisel_patterns = [
+        r'\d+px',           # "4px", "16px"
+        r'\d+ms',           # "200ms", "800ms"
+        r'\d+%',            # "50%", "100%"
+        'padding', 'margin', 'shadow', 'border',
+        'lighter', 'darker', 'bigger', 'smaller',
+    ]
+
+    # Hammer patterns (ambiguous, feeling-based)
+    hammer_patterns = [
+        'feels', 'seems', 'looks',
+        'trustworthy', 'heavy', 'light', 'fast', 'slow',
+        'how should', 'what if', 'should we',
+        "doesn't feel right", "something's off",
+    ]
+
+    if any(re.search(p, user_input, re.I) for p in chisel_patterns):
+        return Chisel()
+    if any(re.search(p, user_input, re.I) for p in hammer_patterns):
+        return Hammer()
+
+    # Default to Hammer for ambiguous input
+    return Hammer()
+```
+
+### 5.2 Hammer Workflow
 
 ```
-.claude/skills/{agent-name}/
-├── index.yaml          # Metadata (~100 tokens)
-└── SKILL.md            # Instructions (~2000 tokens)
+INPUT: Ambiguous symptom
+         │
+         ▼
+┌─────────────────────────────────────┐
+│  1. CLARIFYING QUESTION             │
+│  "What kind of slow?"               │
+│  a) Response time                   │
+│  b) Animation speed                 │
+│  c) Confirmation delay              │
+└─────────────────────────────────────┘
+         │
+         ▼
+┌─────────────────────────────────────┐
+│  2. DIAGNOSTIC QUESTION             │
+│  "How long is 'too long'?"          │
+│  "Is it consistent?"                │
+└─────────────────────────────────────┘
+         │
+         ▼
+┌─────────────────────────────────────┐
+│  3. ROOT CAUSE DETERMINATION        │
+│  ├─ Aesthetic → Route to Chisel     │
+│  ├─ Structural → Generate Loa handoff│
+│  ├─ Taste → Route to /approve       │
+│  └─ Physics → Explain constraint    │
+└─────────────────────────────────────┘
 ```
 
-### Agent Implementations
+### 5.3 Chisel Workflow
 
-| # | Agent | Role | Command | Outputs |
-|---|-------|------|---------|---------|
-| 1 | envisioning-soul | Soul Keeper | `/envision` | essence.yaml, moodboard.md |
-| 2 | codifying-materials | Material Smith | `/codify`, `/material` | materials.yaml, kernel/* |
-| 3 | mapping-zones | Zone Architect | `/zone` | zones.yaml |
-| 4 | crafting-components | Apprentice Smith | `/craft` | Generated code |
-| 5 | validating-fidelity | Fidelity Guardian | `/validate` | fidelity-report.yaml |
-| 6 | gardening-entropy | Gardener | `/garden` | paper-cuts.yaml |
-| 7 | approving-patterns | Taste Owner | `/approve` | approvals.yaml |
-| 8 | greenlighting-concepts | Pollster | `/greenlight` | polls.yaml |
+```
+INPUT: Clear aesthetic fix
+         │
+         ▼
+┌─────────────────────────────────────┐
+│  1. LOAD PHYSICS CONTEXT            │
+│  Zone: critical                     │
+│  Material: clay                     │
+│  Constraints: max 800ms animation   │
+└─────────────────────────────────────┘
+         │
+         ▼
+┌─────────────────────────────────────┐
+│  2. CHECK CONSTRAINTS               │
+│  ├─ Within limits → Execute         │
+│  └─ Exceeds limits → Offer options  │
+└─────────────────────────────────────┘
+         │
+         ▼
+┌─────────────────────────────────────┐
+│  3. EXECUTE                         │
+│  Quick change, minimal ceremony     │
+│  Show before/after                  │
+└─────────────────────────────────────┘
+```
 
-### Example Skill: crafting-components
+### 5.4 Loa Handoff Protocol
+
+When Hammer diagnoses a structural issue:
 
 ```yaml
-# .claude/skills/crafting-components/index.yaml
-name: crafting-components
-description: Generate UI with context injection
-command: craft
-reads:
-  - sigil-mark/kernel/*
-  - sigil-mark/soul/*
-```
+# Generated handoff context
+handoff:
+  from: sigil
+  to: loa
+  timestamp: "2026-01-04T12:00:00Z"
 
-```markdown
-# .claude/skills/crafting-components/SKILL.md
+  problem:
+    symptom: "Claim button feels laggy"
+    diagnosis: "Envio indexer latency (3-4s)"
 
-# Sigil Agent: Crafting Components
+  investigation:
+    questions_asked:
+      - q: "What kind of lag?"
+        a: "Takes too long to confirm"
+      - q: "How long?"
+        a: "3-4 seconds consistently"
+      - q: "Where is time spent?"
+        a: "Envio indexer"
 
-> "You are an apprentice in {{era}}. You do not know what Ambient Occlusion is."
+  constraints:
+    zone: "critical"
+    sync: "server_authoritative"
+    physics_note: "Cannot use optimistic UI in this zone"
 
-## Role
+  target:
+    current: "3-4s confirmation"
+    goal: "<500ms confirmation"
 
-**Apprentice Smith** — Generates UI with context injection. Limited by Fidelity Ceiling.
-
-## Command
-
-```
-/craft [prompt]
-/craft [prompt] --zone [zone]
-/craft [prompt] --material [material]
-```
-
-## Critical Behavior
-
-**This agent INJECTS context before generation, not after.**
-
-## Context Injection
-
-Before ANY generation, inject this context:
-
-<sigil_context version="11.0">
-  <zone name="{{detected_zone}}">
-    <material>{{zone.material}}</material>
-    <sync_strategy>{{zone.sync}}</sync_strategy>
-  </zone>
-
-  <fidelity_ceiling>
-    <era>{{fidelity.era}}</era>
-    <forbidden_techniques>{{fidelity.forbidden_techniques}}</forbidden_techniques>
-  </fidelity_ceiling>
-
-  <instruction>
-    You are an apprentice in {{fidelity.era}}.
-    If your output looks "better" than the Gold Standard, it is WRONG.
-  </instruction>
-</sigil_context>
-
-## Workflow
-
-1. Detect zone from file path or prompt keywords
-2. Load context (zone, material, tensions, fidelity)
-3. Inject context XML
-4. Generate component
-5. Run constitution check (invariants, fidelity, sync)
-6. Handle violations (block errors, warn suggestions)
+  sigil_constraints: |
+    Whatever solution Loa implements, Sigil requires:
+    - No optimistic UI (server must confirm first)
+    - Pending state must be visible
+    - If latency cannot be fixed, make wait feel intentional
 ```
 
 ---
 
-## HUD Overlay Design
+## 6. Lens Architecture
 
-### Design Principles
+### 6.1 Layer Separation
 
-1. **Dev-Only**: Zero production footprint
-2. **Non-Intrusive**: Toggleable, doesn't block content
-3. **React-Native**: Works with React DevTools patterns
-
-### Component Architecture
-
-```tsx
-// sigil-hud/src/index.tsx
-import { createPortal } from 'react-dom';
-
-export function SigilHUD({
-  position = 'bottom-right',
-  defaultOpen = false
-}: SigilHUDProps) {
-  // Only render in development
-  if (process.env.NODE_ENV === 'production') {
-    return null;
-  }
-
-  const [isOpen, setIsOpen] = useState(defaultOpen);
-  const tensions = useTensions();
-  const zone = useZone();
-  const fidelity = useFidelity();
-
-  return createPortal(
-    <div className={cn(
-      "fixed z-[99999] font-mono text-xs",
-      positionClasses[position]
-    )}>
-      {/* Toggle Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="p-2 bg-neutral-900 text-white rounded-full shadow-lg"
-        title="Toggle Sigil HUD"
-      >
-        ⚗️
-      </button>
-
-      {isOpen && (
-        <HUDPanel
-          tensions={tensions}
-          zone={zone}
-          fidelity={fidelity}
-        />
-      )}
-    </div>,
-    document.body
-  );
-}
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                      LENS LAYER                                      │
+│  Optional rendering enhancements (user opt-in)                       │
+│  - Lighting, shadows, post-processing                               │
+│  - Can exceed fidelity ceiling                                       │
+│  - Togglable without breaking functionality                         │
+└─────────────────────────────────────────────────────────────────────┘
+                              │
+                        (renders on top of)
+                              │
+┌─────────────────────────────────────────────────────────────────────┐
+│                      CORE LAYER                                      │
+│  The "truth" - geometry, colors, logic, state                       │
+│  - At fidelity ceiling (never above)                                │
+│  - Server-authoritative in critical zones                           │
+│  - Must work with lens disabled                                     │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
-### Hook: useTensions
+### 6.2 Lens Types
 
-```tsx
-// sigil-hud/src/hooks/useTensions.ts
-import { useState, useEffect, useCallback } from 'react';
-import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
+```yaml
+# core/lens.yaml
+lens:
+  types:
+    vanilla:
+      is_default: true
+      description: "Gold standard. Core fidelity."
+      rendering:
+        lighting: baked
+        shadows: none
 
-interface Tensions {
-  playfulness: number;
-  weight: number;
-  density: number;
-  speed: number;
-}
+    high_fidelity:
+      requires_opt_in: true
+      description: "117HD style. Visual enhancement."
+      constraint: "Cannot change geometry"
+      rendering:
+        lighting: dynamic
+        shadows: real_time
 
-export function useTensions() {
-  const [tensions, setTensions] = useState<Tensions>({
-    playfulness: 50,
-    weight: 50,
-    density: 50,
-    speed: 50
-  });
+    utility:
+      requires_opt_in: true
+      description: "RuneLite style. Overlays, markers."
+      constraint: "Additive only"
 
-  useEffect(() => {
-    // Initial load from YAML
-    loadTensions().then(setTensions);
-  }, []);
-
-  const updateTension = useCallback((key: keyof Tensions, value: number) => {
-    const newTensions = { ...tensions, [key]: value };
-    setTensions(newTensions);
-
-    // Update CSS variables immediately (<16ms)
-    applyTensionVariables(newTensions);
-
-    // Persist to YAML (debounced)
-    debouncedSaveTensions(newTensions);
-  }, [tensions]);
-
-  return { tensions, updateTension };
-}
-
-function applyTensionVariables(tensions: Tensions) {
-  const root = document.documentElement;
-
-  // Playfulness: affects border-radius, bounce
-  const radius = mapRange(tensions.playfulness, 0, 100, 4, 16);
-  const bounce = mapRange(tensions.playfulness, 0, 100, 1, 1.5);
-  root.style.setProperty('--sigil-radius', `${radius}px`);
-  root.style.setProperty('--sigil-bounce', `${bounce}`);
-
-  // Weight: affects shadows
-  const shadowOpacity = mapRange(tensions.weight, 0, 100, 0.05, 0.2);
-  const hoverLift = mapRange(tensions.weight, 0, 100, 1, 4);
-  root.style.setProperty('--sigil-shadow-opacity', `${shadowOpacity}`);
-  root.style.setProperty('--sigil-hover-lift', `${hoverLift}px`);
-
-  // Density: affects spacing
-  const spacing = mapRange(tensions.density, 0, 100, 24, 12);
-  root.style.setProperty('--sigil-spacing', `${spacing}px`);
-
-  // Speed: affects transitions
-  const duration = mapRange(tensions.speed, 0, 100, 400, 100);
-  root.style.setProperty('--sigil-duration', `${duration}ms`);
-}
-
-function mapRange(value: number, inMin: number, inMax: number, outMin: number, outMax: number): number {
-  return ((value - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
-}
+    accessibility:
+      priority: highest
+      description: "High contrast, reduced motion."
+      rendering:
+        contrast: high
+        motion: reduced
 ```
 
-### Integration with NextJS
-
-```tsx
-// app/layout.tsx
-import { SigilHUD } from '@sigil/hud';
-
-export default function RootLayout({ children }) {
-  return (
-    <html>
-      <body>
-        {children}
-        <SigilHUD position="bottom-right" />
-      </body>
-    </html>
-  );
-}
-```
-
-### CSS Variable Contract
+### 6.3 CSS Implementation
 
 ```css
-/* Base CSS variables set by Sigil */
+/* Core layer (vanilla) */
 :root {
-  /* Playfulness */
-  --sigil-radius: 8px;
-  --sigil-bounce: 1.2;
+  --shadow: none;
+  --border-radius: 4px;
+  --animation-duration: 300ms;
+}
 
-  /* Weight */
-  --sigil-shadow-opacity: 0.1;
-  --sigil-hover-lift: 2px;
+/* Lens: high_fidelity */
+:root[data-lens="high_fidelity"] {
+  --shadow: 0 4px 12px rgba(0,0,0,0.15);
+  --border-radius: 8px;
+  --animation-duration: 400ms;
+}
 
-  /* Density */
-  --sigil-spacing: 16px;
-
-  /* Speed */
-  --sigil-duration: 200ms;
-
-  /* Material (set by zone) */
-  --sigil-material: clay;
+/* Lens: accessibility (highest priority) */
+:root[data-lens="accessibility"] {
+  --shadow: none;
+  --animation-duration: 0ms;
+  --focus-outline: 3px solid blue;
 }
 ```
 
 ---
 
-## Context Injection System
+## 7. Zone Detection
 
-### How Context Flows
+### 7.1 Path Matching Algorithm
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                           CONTEXT INJECTION FLOW                             │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│  1. User runs /craft "create checkout button"                               │
-│                              │                                               │
-│                              ▼                                               │
-│  2. crafting-components skill activates                                      │
-│                              │                                               │
-│                              ▼                                               │
-│  3. Zone Detection                                                           │
-│     ├─ Check --zone argument                                                 │
-│     ├─ Match file path to zones.yaml patterns                              │
-│     └─ Detect from prompt keywords                                          │
-│                              │                                               │
-│                              ▼                                               │
-│  4. Context Loading                                                          │
-│     ├─ Load zone config → zones.yaml                                        │
-│     ├─ Load material → materials.yaml                                       │
-│     ├─ Load physics → kernel/physics.yaml                                   │
-│     ├─ Load tensions → tensions.yaml                                        │
-│     ├─ Load fidelity → kernel/fidelity-ceiling.yaml                        │
-│     └─ Load essence → essence.yaml                                          │
-│                              │                                               │
-│                              ▼                                               │
-│  5. Context Injection                                                        │
-│     Compile <sigil_context> XML and prepend to prompt                       │
-│                              │                                               │
-│                              ▼                                               │
-│  6. Generation                                                               │
-│     LLM generates with full context awareness                               │
-│                              │                                               │
-│                              ▼                                               │
-│  7. Post-Generation Check                                                    │
-│     ├─ Check invariants                                                      │
-│     ├─ Check fidelity ceiling                                               │
-│     └─ Check sync compliance                                                │
-│                              │                                               │
-│                              ▼                                               │
-│  8. Output (with violations noted if any)                                   │
-│                                                                              │
-└─────────────────────────────────────────────────────────────────────────────┘
+```python
+def detect_zone(file_path: str) -> Zone:
+    """Detect zone from file path using glob patterns."""
+
+    zones = load_yaml("resonance/zones.yaml")
+
+    # Priority order: critical > transactional > exploratory > marketing > default
+    for zone_name in ["critical", "transactional", "exploratory", "marketing"]:
+        zone = zones.get(zone_name)
+        if not zone:
+            continue
+
+        for pattern in zone.get("paths", []):
+            if fnmatch.fnmatch(file_path, pattern):
+                return Zone(
+                    name=zone_name,
+                    physics=zone["physics"],
+                    budgets=zone.get("budgets", {}),
+                    tension_overrides=zone.get("tension_overrides", {})
+                )
+
+    return zones.get("default", DEFAULT_ZONE)
 ```
 
-### Zone Detection Algorithm
+### 7.2 Zone Context Loading
 
-```typescript
-function detectZone(
-  prompt: string,
-  filePath?: string,
-  explicitZone?: string
-): string {
-  // 1. Check explicit --zone argument (highest priority)
-  if (explicitZone) {
-    return explicitZone;
-  }
+```python
+def load_physics_context(file_path: str) -> PhysicsContext:
+    """Load complete physics context for a file path."""
 
-  // 2. Match file path against zone patterns
-  if (filePath) {
-    const zones = loadZones();
-    for (const [zoneName, zone] of Object.entries(zones)) {
-      for (const pattern of zone.paths) {
-        if (minimatch(filePath, pattern)) {
-          return zoneName;
-        }
-      }
-    }
-  }
+    # 1. Detect zone
+    zone = detect_zone(file_path)
 
-  // 3. Detect from prompt keywords
-  const keywordMap: Record<string, string[]> = {
-    critical: ['checkout', 'trade', 'claim', 'buy', 'sell', 'transfer'],
-    transactional: ['settings', 'admin', 'dashboard', 'manage'],
-    exploratory: ['browse', 'search', 'explore', 'discover'],
-    marketing: ['landing', 'marketing', 'hero', 'promo']
-  };
+    # 2. Load zone physics
+    sync = load_yaml("core/sync.yaml")
+    budgets = load_yaml("core/budgets.yaml")
+    fidelity = load_yaml("core/fidelity.yaml")
 
-  const promptLower = prompt.toLowerCase();
-  for (const [zone, keywords] of Object.entries(keywordMap)) {
-    if (keywords.some(kw => promptLower.includes(kw))) {
-      return zone;
-    }
-  }
+    # 3. Load material
+    materials = load_yaml("resonance/materials.yaml")
+    material = materials.get(zone.physics.material)
 
-  // 4. Default fallback
-  return 'default';
-}
+    # 4. Load tensions (with zone overrides)
+    tensions = load_yaml("resonance/tensions.yaml")
+    for key, value in zone.tension_overrides.items():
+        tensions[key] = value
+
+    return PhysicsContext(
+        zone=zone,
+        sync=sync,
+        material=material,
+        budgets=budgets,
+        fidelity=fidelity,
+        tensions=tensions
+    )
 ```
 
 ---
 
-## Fidelity Validation Engine
+## 8. Memory System
 
-### Validation Pipeline
+### 8.1 Era Versioning
 
-```typescript
-interface ValidationResult {
-  file: string;
-  violations: Violation[];
-  summary: {
-    pass: number;
-    warn: number;
-    error: number;
-  };
-}
-
-interface Violation {
-  line?: number;
-  type: ViolationType;
-  message: string;
-  severity: 'error' | 'warn' | 'suggest';
-  suggestion?: string;
-}
-
-type ViolationType =
-  | 'gradient_complexity'
-  | 'shadow_layers'
-  | 'animation_duration'
-  | 'forbidden_technique'
-  | 'material_violation'
-  | 'sync_violation'
-  | 'invariant_violation';
-
-async function validateFidelity(
-  code: string,
-  context: SigilContext
-): Promise<ValidationResult> {
-  const violations: Violation[] = [];
-
-  // 1. Check gradient complexity
-  violations.push(...checkGradients(code, context.fidelity));
-
-  // 2. Check shadow layers
-  violations.push(...checkShadows(code, context.fidelity));
-
-  // 3. Check animation duration
-  violations.push(...checkAnimations(code, context.fidelity));
-
-  // 4. Check forbidden techniques
-  violations.push(...checkForbiddenTechniques(code, context.fidelity));
-
-  // 5. Check material compliance
-  violations.push(...checkMaterial(code, context.material));
-
-  // 6. Check sync compliance
-  violations.push(...checkSync(code, context.sync));
-
-  return {
-    file: context.filePath,
-    violations,
-    summary: {
-      pass: violations.length === 0 ? 1 : 0,
-      warn: violations.filter(v => v.severity === 'warn').length,
-      error: violations.filter(v => v.severity === 'error').length
-    }
-  };
-}
-```
-
-### Pattern Matchers
-
-```typescript
-const techniquePatterns: Record<string, RegExp> = {
-  'Ambient Occlusion': /ambient[._-]?occlusion/i,
-  'Mesh Gradients': /mesh[._-]?gradient/i,
-  '3D Transforms': /rotate[XYZ]|perspective|transform3d/i,
-  'Particle Systems': /particle|confetti|sparkle/i,
-  'Motion Blur': /motion[._-]?blur/i,
-  'Glassmorphism with grain': /backdrop-filter.*noise|noise.*backdrop/i,
-  'Neumorphism': /neumorphism|neomorphism/i,
-};
-
-function checkForbiddenTechniques(
-  code: string,
-  fidelity: FidelityCeiling
-): Violation[] {
-  const violations: Violation[] = [];
-
-  for (const technique of fidelity.forbidden_techniques) {
-    const pattern = techniquePatterns[technique];
-    if (pattern && pattern.test(code)) {
-      violations.push({
-        type: 'forbidden_technique',
-        message: `Forbidden technique: ${technique}`,
-        severity: 'error',
-        suggestion: `Remove ${technique}. The Fidelity Ceiling prohibits this.`
-      });
-    }
-  }
-
-  return violations;
-}
-```
-
-### Fidelity Report Format
+Decisions are tagged with era context:
 
 ```yaml
-# sigil-mark/workbench/fidelity-report.yaml
-generated_at: "2026-01-03T10:30:00Z"
-files_checked: 47
-violations_found: 3
+# memory/decisions/loading-states.yaml
+decision:
+  id: "loading-states"
+  rulings:
+    - era: 1
+      verdict: "skeleton"
+      rationale: "Fast perceived performance"
 
-summary:
-  pass: 44
-  warn: 2
-  error: 1
-
-violations:
-  - file: "src/components/Button.tsx"
-    line: 23
-    type: gradient_complexity
-    message: "Gradient has 4 stops (max: 2)"
-    severity: warn
-    suggestion: "Simplify to 2-stop gradient"
-
-  - file: "src/features/checkout/Confirm.tsx"
-    line: 45
-    type: animation_duration
-    message: "Animation 1200ms exceeds max (800ms)"
-    severity: warn
-    suggestion: "Reduce to 800ms or request marketing zone exception"
-
-  - file: "src/features/trade/TradeButton.tsx"
-    line: 12
-    type: sync_violation
-    message: "Server-tick components must show pending state"
-    severity: error
-    suggestion: "Add isPending state and disable button while pending"
+    - era: 2
+      verdict: "text-pending-in-critical"
+      rationale: "Skeletons confused users in critical zones"
+      context: "User trust more important than perceived speed"
 ```
 
----
+### 8.2 Mutation Lifecycle
 
-## Integration Points
-
-### 1. Claude Code Integration
-
-**CLAUDE.md Auto-Generation:**
-
-The `/setup` command generates a CLAUDE.md file that Claude Code automatically loads.
-
-### 2. Git Integration
-
-Sigil state is git-tracked:
-
-```gitignore
-# .gitignore
-
-# Include all sigil-mark files
-!sigil-mark/
-
-# Exclude temporary workbench state (optional)
-sigil-mark/workbench/fidelity-report.yaml
+```
+┌─────────────┐
+│  PROPOSED   │ ← Breaks existing decision/pattern
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│  DOGFOODING │ ← Internal testing
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│   EXPIRES   │ ← Success criteria evaluated
+└──────┬──────┘
+       │
+   ┌───┴───┐
+   │       │
+   ▼       ▼
+┌─────┐  ┌─────────┐
+│CANON│  │GRAVEYARD│
+└─────┘  └─────────┘
+  ↓           ↓
+Promoted  Training data
+to truth  for future
 ```
 
-### 3. CI/CD Integration (Future)
+### 8.3 Graveyard as Training Data
 
-Advisory PR comments via GitHub Action:
+Failed mutations become training data:
 
 ```yaml
-# .github/workflows/sigil.yml
-name: Sigil Check
-on: [pull_request]
-
-jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: sigil-dev/validate-action@v1
-        with:
-          mode: comment  # advisory only, never block
+# memory/graveyard/bouncy-claim.yaml
+mutation:
+  id: "bouncy-claim-button"
+  status: "failed"
+  failure_reason: "Trust score dropped to 3.2 (threshold: 4.0)"
+  lessons:
+    - "Playful animations reduce trust in critical zones"
+    - "Even subtle bounce reads as 'unserious'"
+  archived: "2026-01-12"
 ```
 
 ---
 
-## Development Workflow
+## 9. Mount System
 
-### Initial Setup Flow
+### 9.1 Mount Script
 
+```bash
+#!/usr/bin/env bash
+# mount-sigil.sh - Mount Sigil v4 on a repository
+
+SIGIL_HOME="${SIGIL_HOME:-$HOME/.sigil/sigil}"
+SIGIL_SKILLS=(
+  "envisioning-soul"
+  "codifying-materials"
+  "mapping-zones"
+  "crafting-components"
+  "validating-fidelity"
+  "gardening-entropy"
+  "approving-patterns"
+  "greenlighting-concepts"
+)
+
+# Create .claude directories
+mkdir -p .claude/skills .claude/commands
+
+# Symlink Sigil skills
+for skill in "${SIGIL_SKILLS[@]}"; do
+  ln -sf "$SIGIL_HOME/.claude/skills/$skill" ".claude/skills/$skill"
+done
+
+# Symlink Sigil commands
+for cmd in envision codify map craft validate garden approve greenlight; do
+  ln -sf "$SIGIL_HOME/.claude/commands/${cmd}.md" ".claude/commands/${cmd}.md"
+done
+
+# Create sigil-mark if not exists
+mkdir -p sigil-mark/{core,resonance,memory,taste-key}
+
+echo "Sigil v4 mounted. Run /envision to start."
 ```
-1. Clone repo
-2. Run /setup (creates sigil-mark/, .sigilrc.yaml, skills/)
-3. Run /envision (interview, creates essence.yaml)
-4. Run /codify (define materials, optionally lock kernel)
-5. Run /zone (configure path mappings)
-6. Start development with /craft
-```
 
-### Daily Development Flow
+### 9.2 Version Tracking
 
+```json
+// .sigil-version.json
+{
+  "version": "4.0.0",
+  "mounted_at": "2026-01-04T12:00:00Z",
+  "updated_at": "2026-01-04T12:00:00Z",
+  "sigil_home": "/Users/soju/.sigil/sigil",
+  "branch": "main"
+}
 ```
-1. Open project
-2. HUD auto-loads (dev only)
-3. Adjust tensions via sliders if needed
-4. /craft to generate components
-5. /validate to check fidelity
-6. /garden to track paper cuts
-7. /approve for sign-offs
-```
-
-### Git Strategy
-
-```
-main
-  └── feature/xyz
-        ├── sigil-mark/ changes (committed)
-        └── src/ changes (committed)
-```
-
-All sigil-mark/ changes are committed alongside code changes, providing full history of design decisions.
 
 ---
 
-## Technical Risks & Mitigation
+## 10. Integration Points
 
-| Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
-| **AI ignores context** | Medium | High | Robust context injection, validation agent, iteration |
-| **YAML parsing errors** | Low | Medium | Zod schema validation, helpful error messages |
-| **HUD performance** | Low | Low | React.lazy loading, portal rendering, throttled updates |
-| **Kernel lock bypass** | Low | High | Skill-level enforcement, version file integrity check |
-| **Large codebase scan** | Medium | Medium | Incremental validation, file-specific checks |
-| **Fidelity Ceiling too restrictive** | Medium | Medium | Zone exceptions (marketing), Taste Owner override |
+### 10.1 Sigil ↔ Loa Boundary
+
+| Scenario | Handler | Handoff |
+|----------|---------|---------|
+| UI feels slow | Sigil (Hammer) | If structural → Loa |
+| Animation timing | Sigil (Chisel) | None |
+| API latency | Loa | None |
+| Component styling | Sigil (Craft) | None |
+| Database query | Loa | None |
+| Zone physics question | Sigil | None |
+
+### 10.2 Agent Protocol
+
+Before generating any UI code:
+
+```python
+def agent_protocol(file_path: str, user_request: str):
+    # 1. Check for Sigil setup
+    if not exists("sigil-mark/"):
+        return "Run /sigil-setup first"
+
+    # 2. Load physics context
+    context = load_physics_context(file_path)
+
+    # 3. Select tool
+    tool = select_tool(user_request)
+
+    # 4. If Hammer, diagnose first
+    if isinstance(tool, Hammer):
+        diagnosis = tool.diagnose(user_request)
+        if diagnosis.is_structural:
+            return generate_loa_handoff(diagnosis)
+        if diagnosis.is_aesthetic:
+            tool = Chisel()
+
+    # 5. Check violations before generating
+    violations = check_all_violations(context, proposed_output)
+    if violations.has_physics_violation:
+        return block_with_explanation(violations)
+    if violations.has_budget_violation:
+        return offer_override_or_alternatives(violations)
+
+    # 6. Generate with physics context header
+    return generate_with_context(context, tool, user_request)
+```
 
 ---
 
-## Future Considerations
+## 11. Output Formats
 
-### v12 Roadmap
+### 11.1 Physics Context Header
 
-1. **Greenlight Polling**: Full community polling with Snapshot/governance integration
-2. **Memory Services**: Cross-session learning via Claude memory
-3. **Framework Ports**: Vue, Svelte, vanilla adapters
-4. **Visual Regression**: Screenshot comparison against gold standard
+```
+🎛️ SIGIL RESONANCE
+═══════════════════════════════════════════════════════════════
 
-### Technical Debt
+PHYSICS CONTEXT
+Zone: critical
+Material: clay (heavy, spring, depress)
+Temporal: discrete tick (600ms) — delay is intentional
+Sync: server_authoritative (NO optimistic)
+Tensions: weight=80, speed=30, playfulness=20
 
-| Item | Priority | Notes |
-|------|----------|-------|
-| YAML hot-reload | P2 | Currently requires manual reload |
-| Tension interpolation | P3 | Smooth transitions between presets |
-| Zone inheritance | P3 | Allow zones to extend other zones |
+BUDGETS
+Cognitive: 3/5 interactive elements ✓
+Visual: 1/1 animations ✓
+
+─────────────────────────────────────────────────────────────────
+
+GENERATING...
+```
+
+### 11.2 Violation Output
+
+**Physics Violation (IMPOSSIBLE):**
+```
+❌ PHYSICS VIOLATION — IMPOSSIBLE
+═══════════════════════════════════════════════════════════════
+
+VIOLATION: Optimistic UI in server_authoritative zone
+
+This is not a style preference. It is a physics violation.
+You cannot exceed the speed of light.
+You cannot show state before the server confirms in this zone.
+
+Zone: critical
+Sync: server_authoritative
+Constraint: "Server confirms before state changes"
+
+─────────────────────────────────────────────────────────────────
+
+The delay IS the trust.
+This violation CANNOT be overridden.
+```
+
+**Budget Violation (Override Available):**
+```
+⚠️ BUDGET VIOLATION — COGNITIVE OVERLOAD
+═══════════════════════════════════════════════════════════════
+
+Zone: critical
+Budget: 5 interactive elements max
+Found: 12 interactive elements
+
+"A screen with 50 perfect buttons is still bad design."
+
+─────────────────────────────────────────────────────────────────
+
+OPTIONS:
+[Remove elements] [Request Taste Key override]
+```
 
 ---
 
-*Generated by Architecture Agent*
-*Date: 2026-01-03*
-*PRD Version: 3.0*
-*Sigil v11: Studio OS, Not Sovereign. Poll concepts, dictate pixels.*
+## 12. Development Workflow
+
+### 12.1 Sigil Setup Flow
+
+```
+/sigil-setup
+     │
+     ▼
+Creates sigil-mark/ structure
+     │
+     ▼
+/envision (interview for product soul)
+     │
+     ▼
+Creates resonance/essence.yaml
+     │
+     ▼
+/codify (define materials)
+     │
+     ▼
+Updates resonance/materials.yaml
+     │
+     ▼
+/map (define zones)
+     │
+     ▼
+Updates resonance/zones.yaml
+     │
+     ▼
+Ready for /craft
+```
+
+### 12.2 Build Flow
+
+```
+/greenlight (concept approval)
+     │
+     ▼
+/craft (generate component)
+     │
+     ├─ Hammer (if ambiguous)
+     │      │
+     │      ▼
+     │   Diagnose → Route
+     │
+     └─ Chisel (if clear)
+            │
+            ▼
+       Execute quickly
+            │
+            ▼
+/validate (check violations)
+     │
+     ▼
+/approve (Taste Key sign-off)
+```
+
+### 12.3 Maintain Flow
+
+```
+/garden
+     │
+     ├─ Detect drift
+     │
+     ├─ Review mutations
+     │      │
+     │      ├─ Promote to canon
+     │      └─ Archive to graveyard
+     │
+     └─ Flag stale decisions
+```
+
+---
+
+## 13. Success Criteria Validation
+
+| Criterion | Implementation |
+|-----------|----------------|
+| Temporal Governor enforced | `check_temporal_physics()` blocks violations |
+| Budgets enforced | `check_budget()` with Taste Key override |
+| Hammer investigates | `select_tool()` routes ambiguous to Hammer |
+| Chisel executes fast | Direct execution for clear aesthetic input |
+| Loa handoffs work | `generate_loa_handoff()` with context |
+| Physics block impossible | IMPOSSIBLE violations cannot be overridden |
+| 8 commands only | Strict command list in mount script |
+| Single Taste Key | `holder.yaml` defines single owner |
+| Era-versioned | All decisions tagged with era |
+
+---
+
+## 14. File Manifest
+
+### Commands (8)
+```
+.claude/commands/
+├── envision.md
+├── codify.md
+├── map.md
+├── craft.md
+├── validate.md
+├── garden.md
+├── approve.md
+└── greenlight.md
+```
+
+### Skills (8)
+```
+.claude/skills/
+├── envisioning-soul/
+├── codifying-materials/
+├── mapping-zones/
+├── crafting-components/
+│   └── tools/
+│       ├── hammer.md
+│       └── chisel.md
+├── validating-fidelity/
+├── gardening-entropy/
+├── approving-patterns/
+└── greenlighting-concepts/
+```
+
+### State Zone
+```
+sigil-mark/
+├── core/
+│   ├── sync.yaml
+│   ├── budgets.yaml
+│   ├── fidelity.yaml
+│   └── lens.yaml
+├── resonance/
+│   ├── essence.yaml
+│   ├── materials.yaml
+│   ├── zones.yaml
+│   └── tensions.yaml
+├── memory/
+│   ├── eras/
+│   ├── decisions/
+│   ├── mutations/active/
+│   └── graveyard/
+└── taste-key/
+    ├── holder.yaml
+    └── rulings/
+```
+
+---
+
+## Next Step
+
+`/sprint-plan` to break down implementation into sprints
