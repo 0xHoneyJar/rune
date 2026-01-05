@@ -98,6 +98,43 @@ setup_sigil_home() {
   log "Sigil home ready at $SIGIL_HOME"
 }
 
+# === Sigil v11 Skills ===
+SIGIL_SKILLS=(
+  "initializing-sigil"
+  "envisioning-soul"
+  "envisioning-moodboard"
+  "codifying-materials"
+  "codifying-rules"
+  "crafting-components"
+  "crafting-guidance"
+  "mapping-zones"
+  "validating-fidelity"
+  "validating-lenses"
+  "gardening-entropy"
+  "approving-patterns"
+  "greenlighting-concepts"
+  "inheriting-design"
+  "updating-framework"
+)
+
+# === Sigil v11 Commands ===
+SIGIL_COMMANDS=(
+  "setup"
+  "envision"
+  "codify"
+  "craft"
+  "zone"
+  "validate"
+  "garden"
+  "approve"
+  "greenlight"
+  "material"
+  "sync"
+  "inherit"
+  "update"
+  "sigil-setup"
+)
+
 # === Create Symlinks ===
 create_symlinks() {
   step "Creating symlinks..."
@@ -106,22 +143,21 @@ create_symlinks() {
   mkdir -p .claude/skills
   mkdir -p .claude/commands
 
-  # Symlink all sigil-* skills
+  # Symlink Sigil v11 skills
   local skill_count=0
-  for skill in "$SIGIL_HOME/.claude/skills/sigil-"*; do
-    if [[ -d "$skill" ]]; then
-      local skill_name=$(basename "$skill")
+  for skill_name in "${SIGIL_SKILLS[@]}"; do
+    if [[ -d "$SIGIL_HOME/.claude/skills/$skill_name" ]]; then
       # Remove existing symlink or directory
       rm -rf ".claude/skills/$skill_name"
-      ln -sf "$skill" ".claude/skills/$skill_name"
+      ln -sf "$SIGIL_HOME/.claude/skills/$skill_name" ".claude/skills/$skill_name"
       ((skill_count++))
     fi
   done
   log "Linked $skill_count skills"
 
-  # Symlink commands
+  # Symlink Sigil v11 commands
   local cmd_count=0
-  for cmd in setup envision codify craft approve inherit update; do
+  for cmd in "${SIGIL_COMMANDS[@]}"; do
     if [[ -f "$SIGIL_HOME/.claude/commands/${cmd}.md" ]]; then
       rm -f ".claude/commands/${cmd}.md"
       ln -sf "$SIGIL_HOME/.claude/commands/${cmd}.md" ".claude/commands/${cmd}.md"
@@ -135,8 +171,8 @@ create_symlinks() {
   for script in "$SIGIL_HOME/.claude/scripts/"*.sh; do
     if [[ -f "$script" ]]; then
       local script_name=$(basename "$script")
-      # Don't overwrite mount script
-      if [[ "$script_name" != "mount-sigil.sh" ]]; then
+      # Don't overwrite mount script if it exists locally
+      if [[ "$script_name" != "mount-sigil.sh" ]] || [[ ! -f ".claude/scripts/$script_name" ]]; then
         rm -f ".claude/scripts/$script_name"
         ln -sf "$script" ".claude/scripts/$script_name"
       fi
@@ -149,7 +185,7 @@ create_symlinks() {
 create_version_file() {
   step "Creating version manifest..."
 
-  local sigil_version="2.0.0"
+  local sigil_version="11.0.0"
   if [[ -f "$SIGIL_HOME/VERSION" ]]; then
     sigil_version=$(cat "$SIGIL_HOME/VERSION" | tr -d '[:space:]')
   fi
@@ -171,8 +207,8 @@ EOF
 main() {
   echo ""
   log "======================================================================="
-  log "  Sigil Framework Mount v2.0.0"
-  log "  Design Context for AI-Assisted Development"
+  log "  Sigil Soul Engine v11.0.0"
+  log "  Constitutional Design Framework for AI-Assisted Development"
   log "======================================================================="
   log "  Branch: $SIGIL_BRANCH"
   echo ""
@@ -193,12 +229,15 @@ main() {
   info "  3. Then '/envision' or '/inherit' to capture design context"
   echo ""
   info "Framework structure:"
-  info "  .claude/skills/sigil-*  -> Symlinked from $SIGIL_HOME"
-  info "  .claude/commands/       -> Symlinked commands"
-  info "  sigil-mark/             -> Your design context (created by /setup)"
-  info "  .sigilrc.yaml           -> Zone configuration (created by /setup)"
+  info "  .claude/skills/     -> 15 Sigil agents symlinked"
+  info "  .claude/commands/   -> 14 Sigil commands symlinked"
+  info "  sigil-mark/         -> Your design context (created by /setup)"
+  info "  .sigilrc.yaml       -> Zone configuration (created by /setup)"
   echo ""
-  info "Philosophy: Make the right path easy. Make the wrong path visible."
+  info "The Three Laws:"
+  info "  1. Server-tick data MUST show pending state"
+  info "  2. Fidelity ceiling cannot be exceeded"
+  info "  3. Visuals are dictated, never polled"
   echo ""
 }
 
