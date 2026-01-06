@@ -173,38 +173,38 @@ This plan implements Sigil v2.0, the "Reality Engine" that separates Truth (Core
 
 ### Tasks
 
-- [ ] **S3-T1: Create zone context**
+- [x] **S3-T1: Create zone context**
   - Create `sigil-mark/layouts/context.ts`
   - Define `ZoneType`, `ZoneContextValue`
   - Create `ZoneContext` React context
   - Create `useZoneContext()` hook with default fallback
   - **Acceptance:** Zone context works, defaults to 'default' zone
 
-- [ ] **S3-T2: Implement CriticalZone component**
+- [x] **S3-T2: Implement CriticalZone component**
   - Create `sigil-mark/layouts/CriticalZone.tsx`
   - Accept `financial` prop (default: true)
   - Provide zone context: `{ type: 'critical', financial, timeAuthority: 'server-tick' }`
   - **Acceptance:** CriticalZone provides zone context
 
-- [ ] **S3-T3: Implement CriticalZone.Content subcomponent**
+- [x] **S3-T3: Implement CriticalZone.Content subcomponent**
   - Create Content slot for zone body
   - Apply appropriate styling
   - **Acceptance:** Content renders with proper spacing
 
-- [ ] **S3-T4: Implement CriticalZone.Actions subcomponent**
+- [x] **S3-T4: Implement CriticalZone.Actions subcomponent**
   - Create Actions slot for buttons
   - Enforce 32px gap between actions
   - Accept `maxActions` prop (default: 3)
   - Warn if children exceed maxActions
   - **Acceptance:** Actions have 32px gap, warns on overflow
 
-- [ ] **S3-T5: Implement critical button auto-sorting**
+- [x] **S3-T5: Implement critical button auto-sorting**
   - Detect critical vs non-critical children
   - Auto-sort critical buttons to last position
   - Use React.Children.toArray + sort
   - **Acceptance:** Critical buttons always appear last
 
-- [ ] **S3-T6: Create CriticalZone tests**
+- [x] **S3-T6: Create CriticalZone tests**
   - Test zone context is provided
   - Test 32px gap enforcement
   - Test action auto-sorting
@@ -529,7 +529,7 @@ From PRD §7:
 |--------|--------|-----------|
 | Sprint 1 | COMPLETED | 2026-01-05 |
 | Sprint 2 | COMPLETED | 2026-01-05 |
-| Sprint 3 | PENDING | - |
+| Sprint 3 | COMPLETED | 2026-01-05 |
 | Sprint 4 | PENDING | - |
 | Sprint 5 | PENDING | - |
 | Sprint 6 | PENDING | - |
