@@ -1,7 +1,7 @@
 ---
 name: craft
-version: "1.2.4"
-description: Generate UI components using zone-appropriate recipes
+version: "2.0.0"
+description: Get design guidance with zone and lens context
 agent: crafting-components
 agent_path: .claude/skills/crafting-components/SKILL.md
 preflight:
@@ -11,108 +11,137 @@ context_injection: true
 
 # /craft
 
-Generate UI components using recipes from the current zone.
+Get design guidance with zone and lens context. Helps you select the right Layout, Lens, and time authority for your component.
 
 ## Usage
 
 ```
-/craft [component_description]               # Auto-detect zone
+/craft [component_description]               # Get guidance
 /craft [component_description] --file [path] # Specify target file
-/craft [component_description] --zone [zone] # Force zone context
+/craft [path]                                # Diagnose existing file
 ```
 
 ## Workflow
 
 ```
-1. RESOLVE ZONE
-   - Get file path (from --file or current context)
-   - Walk up directories for .sigilrc.yaml
-   - Load zone config (recipes, sync, constraints)
+1. DETERMINE CONTEXT
+   - Get file path (from --file or description)
+   - Identify component purpose (critical, admin, marketing)
+   - Map to appropriate Layout
 
-2. SELECT RECIPE
-   - Parse component description
-   - Match against available recipes in zone's recipe set
-   - Select most appropriate recipe
+2. SELECT LAYOUT
+   - CriticalZone → High-stakes actions (payments, destructive)
+   - MachineryLayout → Admin lists, keyboard-driven UIs
+   - GlassLayout → Marketing, hover-driven showcases
 
-3. GENERATE COMPONENT
-   - Import from @sigil/recipes/{zone}
-   - Configure recipe with appropriate props
-   - Show physics being applied
+3. DETERMINE TIME AUTHORITY
+   - server-tick → Payments, irreversible actions
+   - optimistic → Lists, reversible actions
+   - hybrid → Collaborative, real-time sync
 
-4. OUTPUT
-   - Show ZONE, RECIPE, PHYSICS
-   - Show generated code
-   - If updating: show diff
+4. RECOMMEND LENS
+   - CriticalZone + financial → StrictLens (forced)
+   - Other zones → User preference (DefaultLens)
+   - Accessibility mode → A11yLens
+
+5. OUTPUT GUIDANCE
+   - Show recommended pattern
+   - Show code example
+   - Note any physics constraints
 ```
 
 ## Output Format
 
 ```
-ZONE: src/checkout (decisive)
-RECIPE: decisive/Button
+CONTEXT: Payment confirmation button
+LAYOUT: CriticalZone (financial=true)
+TIME AUTHORITY: server-tick
+LENS: StrictLens (forced by CriticalZone)
 
-[generated code]
+RECOMMENDED PATTERN:
+┌─────────────────────────────────────────────────────────┐
+│ import { useCriticalAction, CriticalZone, useLens }     │
+│ from 'sigil-mark';                                      │
+│                                                         │
+│ const payment = useCriticalAction({                     │
+│   mutation: () => api.pay(amount),                      │
+│   timeAuthority: 'server-tick',                         │
+│ });                                                     │
+│                                                         │
+│ const Lens = useLens();                                 │
+│                                                         │
+│ <CriticalZone financial>                                │
+│   <Lens.CriticalButton state={payment.state} ... />    │
+│ </CriticalZone>                                         │
+└─────────────────────────────────────────────────────────┘
 
-PHYSICS: spring(180, 12), server-tick
+PHYSICS:
+- Touch target: 48px (StrictLens)
+- Animations: None (StrictLens)
+- State machine: idle → confirming → pending → confirmed/failed
 ```
 
-## Recipe Sets
+## Layout Selection Guide
 
-| Zone | Recipe Set | Example Recipes |
-|------|------------|-----------------|
-| checkout | decisive | Button, ConfirmFlow |
-| admin | machinery | Table, Toggle, Form |
-| marketing | glass | HeroCard, FeatureCard, Tooltip |
+| Use Case | Layout | Lens | Time Authority |
+|----------|--------|------|----------------|
+| Payment, checkout | CriticalZone | StrictLens (forced) | server-tick |
+| Delete, destructive | CriticalZone | StrictLens (forced) | server-tick |
+| Admin list, table | MachineryLayout | User preference | optimistic |
+| Product card | GlassLayout | User preference | optimistic |
+| Marketing hero | GlassLayout | User preference | optimistic |
 
-## Physics by Set
+## Lens Characteristics
 
-| Recipe Set | Spring | Feel |
-|------------|--------|------|
-| decisive | (180, 12) | Heavy, deliberate |
-| machinery | (400, 30) or instant | Efficient, no-nonsense |
-| glass | (200, 20) | Smooth, delightful |
-
-## Constraints
-
-When zone has constraints:
-
-```yaml
-# src/checkout/.sigilrc.yaml
-constraints:
-  optimistic_ui: forbidden
-  loading_spinners: forbidden
-```
-
-Claude will:
-1. Check request against constraints
-2. Refuse IMPOSSIBLE violations
-3. Warn on BLOCK violations
-4. Suggest alternatives
+| Lens | Touch Target | Contrast | Animations |
+|------|-------------|----------|------------|
+| DefaultLens | 44px | Standard | Yes |
+| StrictLens | 48px | High | No |
+| A11yLens | 56px | WCAG AAA | No |
 
 ## Examples
 
 ```
 /craft "Create a confirm button for checkout"
-→ ZONE: src/checkout (decisive)
-→ RECIPE: decisive/Button
-→ PHYSICS: spring(180, 12), server-tick
-→ Generates: <Button onAction={...} variant="primary" />
+→ LAYOUT: CriticalZone (financial=true)
+→ LENS: StrictLens (forced)
+→ TIME AUTHORITY: server-tick
+→ Generates: useCriticalAction + CriticalZone + Lens.CriticalButton
 
 /craft "Build a data table for admin"
-→ ZONE: src/admin (machinery)
-→ RECIPE: machinery/Table
-→ PHYSICS: none (instant)
-→ Generates: <Table data={...} columns={...} />
+→ LAYOUT: MachineryLayout
+→ LENS: DefaultLens (user preference)
+→ TIME AUTHORITY: optimistic
+→ Generates: MachineryLayout + Lens.MachineryItem
 
-/craft "Design a hero card for landing page"
-→ ZONE: src/marketing (glass)
-→ RECIPE: glass/HeroCard
-→ PHYSICS: spring(200, 20), float
-→ Generates: <HeroCard glowColor="..." />
+/craft "Design a product card"
+→ LAYOUT: GlassLayout (variant="card")
+→ LENS: DefaultLens (user preference)
+→ HOVER PHYSICS: scale 1.02, translateY -4px
+→ Generates: GlassLayout + Lens.GlassButton
+```
+
+## Diagnostic Mode
+
+When given a file path, diagnose current implementation:
+
+```
+/craft src/features/checkout/PaymentForm.tsx
+
+DIAGNOSIS:
+┌─────────────────────────────────────────────────────────┐
+│ Current: Raw <button> with onClick                      │
+│ Issue: Missing Layout context and Lens components       │
+│                                                         │
+│ Recommended:                                            │
+│ - Wrap in CriticalZone (financial=true)                 │
+│ - Use useCriticalAction with server-tick                │
+│ - Use Lens.CriticalButton for proper state handling     │
+└─────────────────────────────────────────────────────────┘
 ```
 
 ## Next Steps
 
-- `/sandbox [path]` — Enable raw physics for experimentation
-- `/codify [path]` — Extract physics to recipe
-- `/validate` — Check recipe compliance
+- `/validate` — Check Layout and Lens compliance
+- `/garden` — Detect drift and deprecated patterns
+- `/codify` — Update zone preferences in .sigilrc.yaml

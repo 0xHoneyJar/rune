@@ -63,12 +63,12 @@ In v2.0, zones are declared by Layout primitives, not file paths:
 - `GlassLayout` → Respects user lens preference
 - Default (no layout) → Uses `DefaultLens`
 
-**Recipes Are Still Valid**
+**v1.2.5 Patterns Are Deprecated**
 
-v1.2.5 recipes still work. They're just wrapped by layouts now:
+v1.2.5 patterns still work but are deprecated:
 
 ```tsx
-// v1.2.5 way (still works)
+// v1.2.5 way (deprecated, will be removed in v3.0)
 <SigilZone material="decisive">
   <DecisiveButton />
 </SigilZone>
@@ -482,27 +482,27 @@ sigil-mark/
 ├── index.ts              # Main entry point
 │
 ├── core/                 # Physics engines (Truth)
-│   ├── useCriticalAction.ts
-│   ├── useLocalCache.ts
+│   ├── use-critical-action.ts
+│   ├── use-local-cache.ts
 │   ├── proprioception.ts
 │   ├── types.ts
 │   └── index.ts
 │
 ├── layouts/              # Zones + Structural Physics
 │   ├── context.ts
-│   ├── CriticalZone.tsx
-│   ├── MachineryLayout.tsx
-│   ├── GlassLayout.tsx
+│   ├── critical-zone.tsx
+│   ├── machinery-layout.tsx
+│   ├── glass-layout.tsx
 │   └── index.ts
 │
 ├── lenses/               # Interchangeable UIs (Experience)
 │   ├── types.ts
-│   ├── useLens.ts
-│   ├── LensProvider.tsx
+│   ├── use-lens.ts
+│   ├── lens-provider.tsx
 │   ├── default/
-│   │   ├── CriticalButton.tsx
-│   │   ├── GlassButton.tsx
-│   │   ├── MachineryItem.tsx
+│   │   ├── critical-button.tsx
+│   │   ├── glass-button.tsx
+│   │   ├── machinery-item.tsx
 │   │   └── index.tsx
 │   ├── strict/
 │   │   └── ...
@@ -510,12 +510,11 @@ sigil-mark/
 │   │   └── ...
 │   └── index.ts
 │
-├── recipes/              # v1.2.5 recipes (still valid)
-│   ├── decisive/
-│   ├── machinery/
-│   └── glass/
+├── hooks/                # v1.2.5 compatibility
+│   └── use-server-tick.ts
 │
-└── __tests__/
+├── __examples__/         # Usage examples
+└── __tests__/            # Test suite
 ```
 </sigil_structure>
 

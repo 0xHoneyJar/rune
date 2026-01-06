@@ -1,7 +1,7 @@
 ---
 name: garden
-version: "1.2.4"
-description: Health report on recipes, sandboxes, and variants
+version: "2.0.0"
+description: Health report on Layouts, Lenses, and deprecated patterns
 agent: gardening-entropy
 agent_path: .claude/skills/gardening-entropy/SKILL.md
 preflight:
@@ -10,130 +10,187 @@ preflight:
 
 # /garden
 
-Health report on recipes, sandboxes, and variants. Shows coverage and recommends actions.
+Health report on Layouts, Lenses, and deprecated patterns. Detects drift and recommends maintenance actions.
 
 ## Usage
 
 ```
-/garden                 # Show health report
-/garden --zone [zone]   # Report for specific zone
-/garden --sandboxes     # Focus on sandbox status
-/garden --variants      # Show recipe variants
+/garden                 # Show full health report
+/garden --layout [name] # Report for specific Layout
+/garden --deprecated    # Focus on v1.2.5 patterns
+/garden --drift         # Focus on pattern drift
 ```
 
 ## What Gets Reported
 
-### 1. Recipe Coverage by Zone
+### 1. Layout Coverage
 
-Shows which zones have recipes and how many components use them.
+Shows which Layouts are used and component coverage.
 
-### 2. Active Sandboxes
+### 2. Lens Distribution
 
-Lists sandboxes with age. Flags stale sandboxes (>7 days).
+Shows lens usage across the codebase.
 
-### 3. Recipe Variants
+### 3. Deprecated Patterns
 
-Shows variants created (e.g., `Button.nintendo.tsx`).
+Lists v1.2.5 patterns that should be migrated.
 
-### 4. Recommendations
+### 4. Pattern Drift
 
-Suggests actions based on findings.
+Components that have drifted from v2.0 patterns.
+
+### 5. Recommendations
+
+Prioritized actions based on findings.
 
 ## Output Format
 
 ```
 /garden
 
-SIGIL HEALTH REPORT
+SIGIL v2.0 HEALTH REPORT
 ═══════════════════════════════════════════════════════════
 
-RECIPE COVERAGE
+LAYOUT COVERAGE
 ┌─────────────────────────────────────────────────────────┐
-│ Zone       │ Recipes │ Components │ Coverage           │
+│ Layout          │ Components │ Coverage                 │
 ├─────────────────────────────────────────────────────────┤
-│ decisive   │ 4       │ 12         │ ████████████░░ 85% │
-│ machinery  │ 3       │ 8          │ ████████████░░ 88% │
-│ glass      │ 3       │ 6          │ ██████████████ 100%│
+│ CriticalZone    │ 8          │ ██████████████████░░ 90% │
+│ MachineryLayout │ 12         │ ████████████████████ 100%│
+│ GlassLayout     │ 6          │ ████████████████████ 100%│
+│ No Layout       │ 4          │ ░░░░░░░░░░░░░░░░░░░░ 0%  │
 └─────────────────────────────────────────────────────────┘
 
-ACTIVE SANDBOXES (2)
+LENS DISTRIBUTION
 ┌─────────────────────────────────────────────────────────┐
-│ File                           │ Age    │ Status       │
+│ Lens        │ Usage │ Context                          │
 ├─────────────────────────────────────────────────────────┤
-│ src/checkout/ExperimentBtn.tsx │ 3 days │ OK           │
-│ src/marketing/NewHero.tsx      │ 12 days│ ⚠ STALE     │
+│ StrictLens  │ 8     │ CriticalZone (forced)            │
+│ DefaultLens │ 14    │ MachineryLayout, GlassLayout     │
+│ A11yLens    │ 0     │ Not enabled                      │
 └─────────────────────────────────────────────────────────┘
 
-RECIPE VARIANTS (3)
+DEPRECATED PATTERNS (v1.2.5)
 ┌─────────────────────────────────────────────────────────┐
-│ Base        │ Variant       │ Physics    │ Purpose     │
+│ Pattern          │ Files │ Migration                    │
 ├─────────────────────────────────────────────────────────┤
-│ Button      │ Button.nintendo│ (300, 8)  │ Snappy feel │
-│ Button      │ Button.relaxed │ (140, 16) │ Soft feel   │
+│ SigilZone        │ 3     │ → CriticalZone/Machinery/Glass│
+│ useServerTick    │ 2     │ → useCriticalAction          │
+│ useSigilPhysics  │ 1     │ → useLens()                  │
+│ @sigil/recipes/* │ 4     │ → Lens components            │
+└─────────────────────────────────────────────────────────┘
+
+PATTERN DRIFT
+┌─────────────────────────────────────────────────────────┐
+│ File                           │ Issue                  │
+├─────────────────────────────────────────────────────────┤
+│ src/checkout/QuickBuy.tsx      │ Raw button in Layout   │
+│ src/features/DeleteBtn.tsx     │ Missing Layout context │
+│ src/admin/BulkAction.tsx       │ Wrong time authority   │
 └─────────────────────────────────────────────────────────┘
 
 RECOMMENDATIONS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-1. CODIFY STALE SANDBOX
-   File: src/marketing/NewHero.tsx
-   Age: 12 days
-   Action: /codify src/marketing/NewHero.tsx
+1. MIGRATE DEPRECATED PATTERNS (Priority: HIGH)
+   Files: 10 files using v1.2.5 patterns
+   Action: See sigil-mark/MIGRATION.md
+   Command: /validate --deprecated
 
-2. IMPROVE DECISIVE COVERAGE
-   Missing: 2 components without recipes
-   Files: src/checkout/FastPay.tsx, src/checkout/Retry.tsx
-   Action: /craft for these files
+2. ADD LAYOUT CONTEXT (Priority: MEDIUM)
+   Files: 4 components without Layout
+   - src/features/QuickAction.tsx
+   - src/features/ConfirmBtn.tsx
+   Action: /craft [file] to get Layout recommendation
 
-3. REVIEW VARIANTS
-   Button has 2 variants — consider if both are needed
+3. FIX DRIFT (Priority: LOW)
+   Files: 3 components with pattern drift
+   Action: /validate [file] to see specific issues
 
 ═══════════════════════════════════════════════════════════
-Last Updated: 2026-01-05
+Last Updated: 2026-01-06
 ```
 
-## Sandbox States
+## Layout-Specific Report
 
-| Status | Age | Action |
-|--------|-----|--------|
-| OK | <7 days | Continue experimenting |
-| STALE | 7-14 days | Should codify soon |
-| CRITICAL | >14 days | Must codify or clear |
-
-## Variant Guidelines
-
-Variants should be created when:
-- Physics feels substantially different
-- Pattern is reusable across components
-- Refinement feedback leads to new feel
-
-Variants should NOT be created for:
-- One-off adjustments
-- Temporary experiments
-- Minor tweaks
-
-## Report Output
-
-With zone flag:
 ```
-/garden --zone decisive
+/garden --layout CriticalZone
 
-DECISIVE ZONE HEALTH
-────────────────────
-Recipes: 4 (Button, ButtonNintendo, ButtonRelaxed, ConfirmFlow)
-Components: 12
-Coverage: 85%
-Sandboxes: 1 (OK)
-Variants: 2
+CRITICALZONE HEALTH
+────────────────────────────────────────────────────
 
-Missing Coverage:
-  - src/checkout/FastPay.tsx
-  - src/checkout/Retry.tsx
+Components: 8
+Lens: StrictLens (forced for financial=true)
+Time Authority: server-tick (enforced)
+
+Files:
+┌─────────────────────────────────────────────────────────┐
+│ File                    │ Financial │ Lens      │ Status│
+├─────────────────────────────────────────────────────────┤
+│ PaymentForm.tsx         │ true      │ Strict    │ ✓     │
+│ ConfirmDialog.tsx       │ true      │ Strict    │ ✓     │
+│ DeleteAccount.tsx       │ true      │ Strict    │ ✓     │
+│ QuickBuy.tsx            │ true      │ RAW BTN   │ ✗     │
+└─────────────────────────────────────────────────────────┘
+
+Issues:
+  - QuickBuy.tsx: Uses raw <button> instead of Lens.CriticalButton
 ```
+
+## Deprecated Patterns Detail
+
+```
+/garden --deprecated
+
+DEPRECATED v1.2.5 PATTERNS
+────────────────────────────────────────────────────
+
+SigilZone (3 files):
+  - src/legacy/OldCheckout.tsx:12
+  - src/legacy/OldAdmin.tsx:8
+  - src/legacy/OldMarketing.tsx:15
+  Migration: Replace with CriticalZone, MachineryLayout, or GlassLayout
+
+useServerTick (2 files):
+  - src/legacy/PaymentBtn.tsx:23
+  - src/legacy/ConfirmBtn.tsx:18
+  Migration: Use useCriticalAction({ timeAuthority: 'server-tick' })
+
+useSigilPhysics (1 file):
+  - src/legacy/AnimatedCard.tsx:9
+  Migration: Use useLens()
+
+@sigil/recipes/* imports (4 files):
+  - src/features/Button.tsx:3
+  - src/features/Card.tsx:2
+  - src/features/Table.tsx:4
+  - src/features/Form.tsx:1
+  Migration: Use Layout + Lens components
+
+Total: 10 files need migration
+Guide: sigil-mark/MIGRATION.md
+```
+
+## Drift Detection
+
+Pattern drift occurs when:
+- Raw HTML elements used inside Layouts
+- Wrong time authority for action type
+- Missing Layout context for action components
+- Lens bypass (not using useLens())
+
+## Migration Priority
+
+| Pattern | Priority | Reason |
+|---------|----------|--------|
+| SigilZone | HIGH | Core architecture change |
+| useServerTick | HIGH | Time authority pattern |
+| useSigilPhysics | MEDIUM | Lens resolution |
+| @sigil/recipes/* | LOW | Still functional |
 
 ## Next Steps
 
 Based on recommendations:
-- `/codify` for stale sandboxes
-- `/craft` for missing coverage
-- `/sandbox --clear` for abandoned experiments
+- `/validate` for detailed violation report
+- `/craft [file]` for guidance on specific files
+- See `sigil-mark/MIGRATION.md` for full migration guide

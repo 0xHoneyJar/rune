@@ -343,26 +343,30 @@ sigil-mark/
 ├── rules.md              # Design rules by category
 │
 ├── core/                 # Physics engines (Truth)
-│   ├── useCriticalAction.ts
-│   ├── useLocalCache.ts
+│   ├── use-critical-action.ts
+│   ├── use-local-cache.ts
 │   ├── proprioception.ts
 │   └── types.ts
 │
 ├── layouts/              # Zone primitives
-│   ├── CriticalZone.tsx
-│   ├── MachineryLayout.tsx
-│   ├── GlassLayout.tsx
+│   ├── critical-zone.tsx
+│   ├── machinery-layout.tsx
+│   ├── glass-layout.tsx
 │   └── context.ts
 │
 ├── lenses/               # UI renderers (Experience)
 │   ├── default/
+│   │   ├── critical-button.tsx
+│   │   ├── glass-button.tsx
+│   │   └── machinery-item.tsx
 │   ├── strict/
 │   ├── a11y/
-│   ├── useLens.ts
-│   └── LensProvider.tsx
+│   ├── use-lens.ts
+│   └── lens-provider.tsx
 │
-├── recipes/              # v1.2.5 recipes (deprecated)
-├── sandbox/              # Unconstrained experiments
+├── hooks/                # Compatibility layer
+│   └── use-server-tick.ts
+│
 ├── __examples__/         # Usage examples
 └── __tests__/            # Test suite
 ```

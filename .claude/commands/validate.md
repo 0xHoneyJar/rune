@@ -1,7 +1,7 @@
 ---
 name: validate
-version: "1.2.4"
-description: Check recipe compliance across codebase
+version: "2.0.0"
+description: Check v2.0 Layout, Lens, and time authority compliance
 agent: null
 preflight:
   - sigil_mark_exists
@@ -10,7 +10,7 @@ context_injection: true
 
 # /validate
 
-Check recipe compliance across the codebase. Reports recipe usage and violations.
+Check v2.0 compliance across the codebase. Reports Layout usage, Lens enforcement, and time authority patterns.
 
 ## Usage
 
@@ -23,33 +23,70 @@ Check recipe compliance across the codebase. Reports recipe usage and violations
 
 ## What Gets Checked
 
-### 1. Recipe Imports (Required)
+### 1. Layout Usage (Required for UI Actions)
 
-Components with animation should import from `@sigil/recipes/`:
+Components with critical actions should use appropriate Layouts:
 
 **Passes:**
 ```tsx
-import { Button } from '@sigil/recipes/decisive';
+import { CriticalZone, useLens } from 'sigil-mark';
+
+<CriticalZone financial>
+  <Lens.CriticalButton state={payment.state} />
+</CriticalZone>
 ```
 
 **Fails:**
 ```tsx
-<motion.button transition={{ stiffness: 180 }}>
+<button onClick={() => api.pay(amount)}>Pay</button>
 ```
 
-### 2. Raw Physics (Blocked unless Sandbox)
+### 2. Lens Enforcement (CriticalZone)
 
-Raw `stiffness`, `damping`, `transition` values are blocked unless file has `// sigil-sandbox` header.
+`CriticalZone` with `financial={true}` must use Lens components:
 
-### 3. Zone Constraints
+**Passes:**
+```tsx
+<CriticalZone financial>
+  <Lens.CriticalButton state={action.state} />
+</CriticalZone>
+```
 
-Files in zones with constraints are checked:
-- `optimistic_ui: forbidden` — No immediate state updates
-- `loading_spinners: forbidden` — No spinner patterns
+**Fails:**
+```tsx
+<CriticalZone financial>
+  <button>Pay</button>  {/* Raw button in financial zone */}
+</CriticalZone>
+```
 
-### 4. Sandbox Age (Warned)
+### 3. Time Authority (useCriticalAction)
 
-Sandboxes older than 7 days trigger warnings.
+Critical actions should use appropriate time authority:
+
+**Passes:**
+```tsx
+useCriticalAction({
+  mutation: () => api.pay(amount),
+  timeAuthority: 'server-tick',  // Financial = server-tick
+});
+```
+
+**Fails:**
+```tsx
+useCriticalAction({
+  mutation: () => api.pay(amount),
+  timeAuthority: 'optimistic',  // Wrong for payments
+});
+```
+
+### 4. Deprecated Patterns (v1.2.5)
+
+Warns on deprecated v1.2.5 patterns:
+
+- `SigilZone` → Use `CriticalZone`, `MachineryLayout`, or `GlassLayout`
+- `useServerTick` → Use `useCriticalAction({ timeAuthority: 'server-tick' })`
+- `useSigilPhysics` → Use `useLens()`
+- `@sigil/recipes/*` imports → Use Lens components
 
 ## Output Format
 
@@ -58,46 +95,52 @@ Sandboxes older than 7 days trigger warnings.
 
 VALIDATING CODEBASE...
 
-Recipe Coverage: 87% (43/49 animated components)
+Layout Coverage: 92% (23/25 action components)
 
-PASSING (43):
-  ✓ src/checkout/ClaimButton.tsx (decisive/Button)
-  ✓ src/checkout/ConfirmDialog.tsx (decisive/ConfirmFlow)
-  ✓ src/admin/UserTable.tsx (machinery/Table)
+PASSING (23):
+  ✓ src/checkout/PaymentForm.tsx (CriticalZone + StrictLens)
+  ✓ src/checkout/ConfirmDialog.tsx (CriticalZone + StrictLens)
+  ✓ src/admin/UserList.tsx (MachineryLayout + DefaultLens)
+  ✓ src/marketing/ProductCard.tsx (GlassLayout + DefaultLens)
   ...
 
-VIOLATIONS (4):
-  ✗ src/features/NewFeature.tsx
-    Line 23: Raw spring(200, 15) outside sandbox
-    Fix: Add // sigil-sandbox or use recipe
+VIOLATIONS (2):
+  ✗ src/features/QuickBuy.tsx
+    Line 23: Raw button in CriticalZone
+    Fix: Use Lens.CriticalButton instead of <button>
 
-  ✗ src/checkout/QuickBuy.tsx
-    Line 45: Optimistic UI in server_authoritative zone
-    Fix: Use useServerTick pattern
+  ✗ src/features/DeleteAccount.tsx
+    Line 45: optimistic time authority for destructive action
+    Fix: Use timeAuthority: 'server-tick'
 
-SANDBOXES (2):
-  ⚠ src/experiments/ButtonTest.tsx (3 days)
-  ⚠ src/experiments/CardHover.tsx (9 days) — STALE
+DEPRECATED (3):
+  ⚠ src/legacy/OldCheckout.tsx
+    Line 12: SigilZone (deprecated)
+    Migration: Use CriticalZone instead
+
+  ⚠ src/legacy/AdminPanel.tsx
+    Line 8: useServerTick (deprecated)
+    Migration: Use useCriticalAction({ timeAuthority: 'server-tick' })
 
 SUMMARY:
-  Passing: 43
-  Violations: 4
-  Sandboxes: 2 (1 stale)
-  Coverage: 87%
+  Passing: 23
+  Violations: 2
+  Deprecated: 3
+  Coverage: 92%
 
 NEXT STEPS:
-  - Fix violations with /craft or /sandbox + /codify
-  - Codify stale sandbox: /codify src/experiments/CardHover.tsx
+  - Fix violations: Replace raw buttons with Lens components
+  - Migrate deprecated: See sigil-mark/MIGRATION.md
 ```
 
 ## Violation Types
 
 | Type | Level | Resolution |
 |------|-------|------------|
-| Raw physics | BLOCK | Use recipe or sandbox |
-| Constraint violation | IMPOSSIBLE | Must fix, cannot override |
-| Missing recipe import | BLOCK | Add recipe import |
-| Stale sandbox | WARN | Codify or clear |
+| Raw button in Layout | BLOCK | Use Lens component |
+| Wrong time authority | BLOCK | Match to action type |
+| Missing Layout | WARN | Wrap in appropriate Layout |
+| Deprecated pattern | WARN | Migrate to v2.0 |
 
 ## Report Output
 
@@ -106,23 +149,36 @@ With `--report`, writes to `sigil-mark/reports/validate-{date}.md`:
 ```markdown
 # Validation Report
 
-**Date:** 2026-01-05
-**Coverage:** 87%
+**Date:** 2026-01-06
+**Coverage:** 92%
 
-## Files by Zone
+## Files by Layout
 
-### decisive (src/checkout/)
-| File | Status | Recipe |
-|------|--------|--------|
-| ClaimButton.tsx | PASS | Button |
+### CriticalZone
+| File | Lens | Time Authority | Status |
+|------|------|----------------|--------|
+| PaymentForm.tsx | StrictLens | server-tick | PASS |
 | ... |
 
-### machinery (src/admin/)
-...
+### MachineryLayout
+| File | Lens | Status |
+|------|------|--------|
+| UserList.tsx | DefaultLens | PASS |
+| ... |
+
+### GlassLayout
+| File | Lens | Status |
+|------|------|--------|
+| ProductCard.tsx | DefaultLens | PASS |
+| ... |
 
 ## Violations
 
 [Detailed list with line numbers and fixes]
+
+## Deprecated Patterns
+
+[List with migration paths]
 ```
 
 ## Error Handling
@@ -130,12 +186,12 @@ With `--report`, writes to `sigil-mark/reports/validate-{date}.md`:
 | Error | Resolution |
 |-------|------------|
 | No components found | Check component paths |
-| Zone config missing | Create .sigilrc.yaml |
-| Recipe not found | Run /setup or check imports |
+| sigil-mark not found | Run /setup first |
+| Missing imports | Add sigil-mark imports |
 
 ## Next Steps
 
 After validate:
 - Fix violations with `/craft`
-- Codify sandboxes with `/codify`
+- Migrate deprecated patterns (see MIGRATION.md)
 - Check `/garden` for health report
