@@ -16,7 +16,7 @@ import type {
 } from './types';
 import { createInitialState } from './types';
 import { createProprioception, type ProprioceptionManager } from './proprioception';
-import { createCache } from './useLocalCache';
+import { createCache } from './use-local-cache';
 
 // Global cache instance (in production, use context or state management)
 const globalCache = createCache();

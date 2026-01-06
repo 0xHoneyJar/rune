@@ -15,11 +15,11 @@
  */
 
 // Base Button recipe
-export { Button, type ButtonProps } from './Button';
+export { Button, type ButtonProps } from './button';
 
 // Button variants
-export { ButtonNintendo, type ButtonNintendoProps } from './Button.nintendo';
-export { ButtonRelaxed, type ButtonRelaxedProps } from './Button.relaxed';
+export { ButtonNintendo, type ButtonNintendoProps } from './button.nintendo';
+export { ButtonRelaxed, type ButtonRelaxedProps } from './button.relaxed';
 
 // Multi-step flows
-export { ConfirmFlow, type ConfirmFlowProps, type ConfirmFlowState } from './ConfirmFlow';
+export { ConfirmFlow, type ConfirmFlowProps, type ConfirmFlowState } from './confirm-flow';

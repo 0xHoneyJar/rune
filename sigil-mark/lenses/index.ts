@@ -20,8 +20,8 @@ export { A11yLens } from './a11y';
 // PROVIDER
 // =============================================================================
 
-export { LensProvider, useLensPreference, useUserLens } from './LensProvider';
-export type { LensProviderProps } from './LensProvider';
+export { LensProvider, useLensPreference, useUserLens } from './lens-provider';
+export type { LensProviderProps } from './lens-provider';
 
 // =============================================================================
 // HOOK
@@ -33,8 +33,8 @@ export {
   registerStrictLens,
   getDefaultLens,
   getStrictLens,
-} from './useLens';
-export type { UseLensOptions } from './useLens';
+} from './use-lens';
+export type { UseLensOptions } from './use-lens';
 
 // =============================================================================
 // TYPES

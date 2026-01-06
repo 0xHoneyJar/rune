@@ -7,9 +7,9 @@
  * @module lenses/a11y
  */
 
-import { CriticalButton } from './CriticalButton';
-import { GlassButton } from './GlassButton';
-import { MachineryItem } from './MachineryItem';
+import { CriticalButton } from './critical-button';
+import { GlassButton } from './glass-button';
+import { MachineryItem } from './machinery-item';
 import type { Lens } from '../types';
 
 // =============================================================================

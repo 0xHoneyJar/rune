@@ -28,10 +28,10 @@
 // =============================================================================
 
 // Main physics hook
-export { useCriticalAction } from './useCriticalAction';
+export { useCriticalAction } from './use-critical-action';
 
 // Local cache hook
-export { useLocalCache, createCache } from './useLocalCache';
+export { useLocalCache, createCache } from './use-local-cache';
 
 // Proprioception
 export {
@@ -81,7 +81,7 @@ export {
   withSigilPhysics,
   type SigilZoneProps,
   type SigilZoneContextValue,
-} from './SigilZone';
+} from './sigil-zone';
 
 // Zone resolution utilities (file path → zone)
 export {

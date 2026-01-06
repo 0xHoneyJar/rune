@@ -16,8 +16,8 @@
  */
 
 // Data display
-export { Table, type TableProps, type TableColumn } from './Table';
+export { Table, type TableProps, type TableColumn } from './table';
 
 // Form controls
-export { Toggle, type ToggleProps } from './Toggle';
-export { Form, type FormProps, type FormState, type FormFieldError } from './Form';
+export { Toggle, type ToggleProps } from './toggle';
+export { Form, type FormProps, type FormState, type FormFieldError } from './form';

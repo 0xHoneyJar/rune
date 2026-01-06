@@ -16,10 +16,10 @@
  */
 
 // Hero components
-export { HeroCard, type HeroCardProps } from './HeroCard';
+export { HeroCard, type HeroCardProps } from './hero-card';
 
 // Feature displays
-export { FeatureCard, type FeatureCardProps } from './FeatureCard';
+export { FeatureCard, type FeatureCardProps } from './feature-card';
 
 // Contextual UI
-export { Tooltip, type TooltipProps } from './Tooltip';
+export { Tooltip, type TooltipProps } from './tooltip';

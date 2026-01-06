@@ -8,4 +8,4 @@ export {
   useServerTick,
   type UseServerTickOptions,
   type UseServerTickResult,
-} from './useServerTick';
+} from './use-server-tick';

@@ -7,10 +7,10 @@
  * @module lenses/default
  */
 
-import { CriticalButton } from './CriticalButton';
-import { GlassButton } from './GlassButton';
-import { MachineryItem } from './MachineryItem';
-import { registerDefaultLens } from '../useLens';
+import { CriticalButton } from './critical-button';
+import { GlassButton } from './glass-button';
+import { MachineryItem } from './machinery-item';
+import { registerDefaultLens } from '../use-lens';
 import type { Lens } from '../types';
 
 // =============================================================================

@@ -8,7 +8,7 @@
  */
 
 import { useZoneContext, requiresStrictLens, type ZoneContextValue } from '../layouts/context';
-import { useUserLens } from './LensProvider';
+import { useUserLens } from './lens-provider';
 import type { Lens } from './types';
 
 // =============================================================================

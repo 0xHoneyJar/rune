@@ -7,10 +7,10 @@
  * @module lenses/strict
  */
 
-import { CriticalButton } from './CriticalButton';
-import { GlassButton } from './GlassButton';
-import { MachineryItem } from './MachineryItem';
-import { registerStrictLens } from '../useLens';
+import { CriticalButton } from './critical-button';
+import { GlassButton } from './glass-button';
+import { MachineryItem } from './machinery-item';
+import { registerStrictLens } from '../use-lens';
 import type { Lens } from '../types';
 
 // =============================================================================

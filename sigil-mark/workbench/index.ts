@@ -54,7 +54,7 @@ export {
 } from './ab-toggle';
 
 // React hook for A/B toggle
-export { useABToggle, type UseABToggleResult } from './useABToggle';
+export { useABToggle, type UseABToggleResult } from './use-ab-toggle';
 
 // Iframe-based A/B comparison
 export * from './ab-iframe';

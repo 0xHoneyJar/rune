@@ -60,7 +60,7 @@ export {
   type CriticalZoneProps,
   type CriticalZoneContentProps,
   type CriticalZoneActionsProps,
-} from './CriticalZone';
+} from './critical-zone';
 
 // MachineryLayout — Sprint 4
 export {
@@ -70,7 +70,7 @@ export {
   type MachineryLayoutItemProps,
   type MachineryLayoutSearchProps,
   type MachineryLayoutEmptyProps,
-} from './MachineryLayout';
+} from './machinery-layout';
 
 // GlassLayout — Sprint 4
 export {
@@ -82,4 +82,4 @@ export {
   type GlassLayoutTitleProps,
   type GlassLayoutDescriptionProps,
   type GlassLayoutActionsProps,
-} from './GlassLayout';
+} from './glass-layout';
