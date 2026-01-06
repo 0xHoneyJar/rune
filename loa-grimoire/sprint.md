@@ -339,47 +339,47 @@ This plan implements Sigil v2.0, the "Reality Engine" that separates Truth (Core
 
 ### Tasks
 
-- [ ] **S6-T1: Implement DefaultLens.CriticalButton**
+- [x] **S6-T1: Implement DefaultLens.CriticalButton**
   - Create `sigil-mark/lenses/default/CriticalButton.tsx`
   - 44px min-height
   - Status-based styling (idle, confirming, pending, confirmed, failed)
   - Tap scale animation
   - **Acceptance:** Button renders all states correctly
 
-- [ ] **S6-T2: Implement DefaultLens.GlassButton**
+- [x] **S6-T2: Implement DefaultLens.GlassButton**
   - Create `sigil-mark/lenses/default/GlassButton.tsx`
   - 44px min-height
   - Variant support (primary, secondary, ghost)
   - Hover/active states
   - **Acceptance:** Button variants render correctly
 
-- [ ] **S6-T3: Implement DefaultLens.MachineryItem**
+- [x] **S6-T3: Implement DefaultLens.MachineryItem**
   - Create `sigil-mark/lenses/default/MachineryItem.tsx`
   - Hover highlighting
   - Active state styling
   - **Acceptance:** Item renders with proper states
 
-- [ ] **S6-T4: Create DefaultLens barrel export**
+- [x] **S6-T4: Create DefaultLens barrel export**
   - Create `sigil-mark/lenses/default/index.tsx`
   - Export `DefaultLens` object with all components
   - Classification: 'cosmetic'
   - **Acceptance:** DefaultLens exports correctly
 
-- [ ] **S6-T5: Implement StrictLens components**
+- [x] **S6-T5: Implement StrictLens components**
   - Create `sigil-mark/lenses/strict/` directory
   - CriticalButton: 48px min-height, high contrast, no animations
   - GlassButton: 48px min-height, high contrast
   - MachineryItem: Clear active state, border indicator
   - **Acceptance:** StrictLens is visually distinct, no frills
 
-- [ ] **S6-T6: Implement A11yLens components**
+- [x] **S6-T6: Implement A11yLens components**
   - Create `sigil-mark/lenses/a11y/` directory
   - CriticalButton: 56px min-height, extra high contrast
   - GlassButton: 56px min-height
   - MachineryItem: Large touch targets
   - **Acceptance:** A11yLens meets WCAG AAA contrast
 
-- [ ] **S6-T7: Create lenses barrel export**
+- [x] **S6-T7: Create lenses barrel export**
   - Create `sigil-mark/lenses/index.ts`
   - Export `useLens`, `LensProvider`, `DefaultLens`, `StrictLens`, `A11yLens`
   - Export all types
@@ -532,7 +532,7 @@ From PRD §7:
 | Sprint 3 | COMPLETED | 2026-01-05 |
 | Sprint 4 | COMPLETED | 2026-01-05 |
 | Sprint 5 | COMPLETED | 2026-01-05 |
-| Sprint 6 | PENDING | - |
+| Sprint 6 | COMPLETED | 2026-01-05 |
 | Sprint 7 | PENDING | - |
 | Sprint 8 | PENDING | - |
 
