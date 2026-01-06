@@ -1,26 +1,50 @@
 /**
- * Sigil v1.2.4 - Core Module
+ * Sigil v2.0 — Core Module
  *
- * Physics tokens, zone context, and resolution utilities.
+ * Physics engines that emit state streams. The source of Truth.
  *
- * @example Basic usage
+ * v2.0 introduces:
+ * - useCriticalAction — Main physics hook with time authority + proprioception
+ * - Three time authorities: optimistic, server-tick, hybrid
+ * - State streams that lenses consume
+ *
+ * @example v2.0 Usage
  * ```tsx
- * import { SigilZone, useSigilPhysics, PHYSICS } from 'sigil-mark/core';
+ * import { useCriticalAction } from 'sigil-mark/core';
  *
- * // Wrap components in a zone
- * <SigilZone material="decisive" serverAuthoritative>
- *   <Button>Confirm Purchase</Button>
- * </SigilZone>
+ * const payment = useCriticalAction({
+ *   mutation: () => api.pay(amount),
+ *   timeAuthority: 'server-tick',
+ * });
  *
- * // Components read physics from context
- * function MyComponent() {
- *   const { physics, material } = useSigilPhysics();
- *   // physics.spring, physics.tap, etc.
- * }
+ * <Lens.CriticalButton state={payment.state} onAction={() => payment.commit()}>
+ *   Pay ${amount}
+ * </Lens.CriticalButton>
  * ```
  */
 
+// =============================================================================
+// v2.0 EXPORTS — Reality Engine
+// =============================================================================
+
+// Main physics hook
+export { useCriticalAction } from './useCriticalAction';
+
+// Core types
+export {
+  createInitialState,
+  type CriticalActionOptions,
+  type CriticalActionState,
+  type CriticalAction,
+  type Cache,
+} from './types';
+
+// =============================================================================
+// v1.2.5 EXPORTS — DEPRECATED (will be removed in v3.0)
+// =============================================================================
+
 // Physics tokens (the source of truth for physics values)
+/** @deprecated Use layout primitives (CriticalZone, etc.) instead */
 export {
   PHYSICS,
   getPhysics,
@@ -32,6 +56,7 @@ export {
 } from './physics';
 
 // Zone context provider and hooks
+/** @deprecated Use layout primitives (CriticalZone, MachineryLayout, GlassLayout) instead */
 export {
   SigilZone,
   useSigilPhysics,

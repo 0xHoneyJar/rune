@@ -62,14 +62,14 @@ This plan implements Sigil v2.0, the "Reality Engine" that separates Truth (Core
 
 ### Tasks
 
-- [ ] **S1-T1: Create shared types**
+- [x] **S1-T1: Create shared types**
   - Create `sigil-mark/types/index.ts`
   - Define `TimeAuthority`, `CriticalActionStatus`, `Risk`
   - Define `SelfPredictionState`, `WorldTruthState`
   - Define `ProprioceptiveConfig` interface
   - **Acceptance:** All core types exported
 
-- [ ] **S1-T2: Create CriticalActionState interface**
+- [x] **S1-T2: Create CriticalActionState interface**
   - Create `sigil-mark/core/types.ts`
   - Define `CriticalActionState<TData>` with all fields:
     - `status: 'idle' | 'confirming' | 'pending' | 'confirmed' | 'failed'`
@@ -77,32 +77,32 @@ This plan implements Sigil v2.0, the "Reality Engine" that separates Truth (Core
     - `selfPrediction`, `worldTruth`, `risk`, `progress`, `error`, `data`
   - **Acceptance:** Interface matches SDD §2.1.1
 
-- [ ] **S1-T3: Create CriticalActionOptions interface**
+- [x] **S1-T3: Create CriticalActionOptions interface**
   - Define mutation, timeAuthority, proprioception options
   - Define optimistic/rollback callbacks
   - Define onSuccess/onError callbacks
   - **Acceptance:** Interface matches SDD §2.1.1
 
-- [ ] **S1-T4: Implement useCriticalAction hook - server-tick**
+- [x] **S1-T4: Implement useCriticalAction hook - server-tick**
   - Create `sigil-mark/core/useCriticalAction.ts`
   - Implement `server-tick` time authority
   - Show pending state, prevent double execution
   - Call onSuccess/onError appropriately
   - **Acceptance:** Hook works with server-tick, tests pass
 
-- [ ] **S1-T5: Implement useCriticalAction hook - optimistic**
+- [x] **S1-T5: Implement useCriticalAction hook - optimistic**
   - Add `optimistic` time authority support
   - Implement instant cache update
   - Implement silent rollback on failure
   - **Acceptance:** Hook works with optimistic, tests pass
 
-- [ ] **S1-T6: Implement useCriticalAction hook - hybrid**
+- [x] **S1-T6: Implement useCriticalAction hook - hybrid**
   - Add `hybrid` time authority support
   - Show sync indicator while pending
   - Implement visible rollback
   - **Acceptance:** Hook works with hybrid, tests pass
 
-- [ ] **S1-T7: Create core barrel export**
+- [x] **S1-T7: Create core barrel export**
   - Create `sigil-mark/core/index.ts`
   - Export `useCriticalAction` and types
   - **Acceptance:** `import { useCriticalAction } from './core'` works
@@ -527,7 +527,7 @@ From PRD §7:
 
 | Sprint | Status | Completed |
 |--------|--------|-----------|
-| Sprint 1 | PENDING | - |
+| Sprint 1 | COMPLETED | 2026-01-05 |
 | Sprint 2 | PENDING | - |
 | Sprint 3 | PENDING | - |
 | Sprint 4 | PENDING | - |
