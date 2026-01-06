@@ -1,535 +1,497 @@
-# Sprint Plan: Sigil v1.2.4
+# Sprint Plan: Sigil v2.0
 
-**Version:** 1.2.4
+**Version:** 2.0.0
 **Created:** 2026-01-05
 **Team:** Solo (1 engineer)
-**Sprint Duration:** 2 weeks
-**Build Strategy:** Refactor v1.0 to v1.2.4
+**Sprint Duration:** Focus-based (not time-boxed)
+**Build Strategy:** Additive evolution from v1.2.5, but v1.2.5 APIs deprecated
 
 ---
 
 ## Overview
 
-This plan refactors Sigil from v1.0 to v1.2.4, transitioning from a "validation framework" to an "apprenticeship learning system" built on the "Diff + Feel" philosophy.
+This plan implements Sigil v2.0, the "Reality Engine" that separates Truth (Core physics) from Experience (Lenses). The key architectural insight is: **Layouts ARE Zones**.
 
-### Key Changes from v1.0
+### Key Changes from v1.2.5
 
-| v1.0 | v1.2.4 |
-|------|--------|
-| 8 commands | 6 commands |
-| YAML configs define physics | TSX recipes ARE the physics |
-| vibes.yaml dictionary | Claude's training IS the vibe map |
-| Taste Key authority | Trust the team |
-| Complex Memory/Era system | In-repo history (markdown) |
-| 4-panel Workbench | 3-pane Workbench with A/B toggle |
+| v1.2.5 | v2.0 |
+|--------|------|
+| `SigilZone` + `material` prop | Layout primitives (CriticalZone, etc.) |
+| `useServerTick` | `useCriticalAction` with time authority |
+| `useSigilPhysics` | `useLens()` hook |
+| `Button` component | `Lens.CriticalButton`, `Lens.GlassButton` |
+| No predictions | Proprioception (self vs world) |
+| Single UI style | Multiple lenses (Default, Strict, A11y) |
+
+### Architecture (3 Layers)
+
+```
+┌────────────────────────────────────────────────────────────┐
+│  CORE LAYER — Physics engines (Truth)                     │
+│  useCriticalAction → State Stream                         │
+│  { status, timeAuthority, selfPrediction, worldTruth }    │
+├────────────────────────────────────────────────────────────┤
+│  LAYOUT LAYER — Zones + Structural Physics                │
+│  CriticalZone, MachineryLayout, GlassLayout               │
+│  Layouts ARE Zones. Physics is DOM, not lint.             │
+├────────────────────────────────────────────────────────────┤
+│  LENS LAYER — Interchangeable UIs (Experience)            │
+│  useLens() → Lens components                              │
+│  DefaultLens, StrictLens, A11yLens                        │
+└────────────────────────────────────────────────────────────┘
+```
 
 ### Sprint Sequence
 
-| Phase | Sprints | Focus |
-|-------|---------|-------|
-| Migration Foundation | 1 | Archive v1.0, create v1.2.4 structure |
-| Recipe System | 2-3 | TSX recipes, 3 recipe sets, variant system |
-| Zone System | 4 | New zone config format, resolution algorithm |
-| Core Commands | 5-6 | /craft, /sandbox, /codify |
-| Auxiliary Commands | 7 | /inherit, /validate, /garden |
-| Workbench | 8 | tmux + A/B toggle + Chrome MCP |
-| Enforcement | 9 | ESLint plugin, CI integration |
-| Polish | 10 | History system, documentation, testing |
+| Sprint | Focus |
+|--------|-------|
+| 1 | Core Layer foundation (types, state stream, time authority) |
+| 2 | Core Layer completion (proprioception, cache) |
+| 3 | Layout Layer (zone context, CriticalZone) |
+| 4 | Layout Layer completion (MachineryLayout, GlassLayout) |
+| 5 | Lens Layer (interface, useLens, LensProvider) |
+| 6 | Built-in Lenses (Default, Strict, A11y) |
+| 7 | Integration & Migration (public API, v1.2.5 deprecation) |
+| 8 | Testing & Documentation |
 
 ---
 
-## Sprint 1: Migration Foundation (Weeks 1-2)
+## Sprint 1: Core Layer Foundation
 
-**Goal:** Archive v1.0 structure, create clean v1.2.4 foundation
+**Goal:** Implement types and `useCriticalAction` hook with time authority
 
 ### Tasks
 
-- [x] **S1-T1: Archive v1.0 state zone structure**
-  - Move `sigil-mark/core/`, `sigil-mark/resonance/`, `sigil-mark/memory/`, `sigil-mark/taste-key/` to `sigil-mark/.archive-v1.0/`
-  - Keep `sigil-mark/` directory but clear for v1.2.4 structure
-  - **Acceptance:** v1.0 files preserved in archive, root is clean
+- [ ] **S1-T1: Create shared types**
+  - Create `sigil-mark/types/index.ts`
+  - Define `TimeAuthority`, `CriticalActionStatus`, `Risk`
+  - Define `SelfPredictionState`, `WorldTruthState`
+  - Define `ProprioceptiveConfig` interface
+  - **Acceptance:** All core types exported
 
-- [x] **S1-T2: Create v1.2.4 directory structure**
-  - Create `sigil-mark/recipes/` with `decisive/`, `machinery/`, `glass/` subdirectories
-  - Create `sigil-mark/hooks/` for shared hooks
-  - Create `sigil-mark/history/` for refinement history
-  - Create `sigil-mark/reports/` for garden reports
-  - **Acceptance:** Directory matches SDD §10.1
+- [ ] **S1-T2: Create CriticalActionState interface**
+  - Create `sigil-mark/core/types.ts`
+  - Define `CriticalActionState<TData>` with all fields:
+    - `status: 'idle' | 'confirming' | 'pending' | 'confirmed' | 'failed'`
+    - `timeAuthority: 'optimistic' | 'server-tick' | 'hybrid'`
+    - `selfPrediction`, `worldTruth`, `risk`, `progress`, `error`, `data`
+  - **Acceptance:** Interface matches SDD §2.1.1
 
-- [x] **S1-T3: Refactor .sigilrc.yaml format**
-  - Update root `.sigilrc.yaml` to v1.2.4 schema
-  - Add `sigil: "1.2.4"` version field
-  - Add `recipes:` field (default: machinery)
-  - Add optional `sync:`, `tick:`, `constraints:`, `sandbox:` fields
-  - **Acceptance:** Config matches SDD §4.1 schema
+- [ ] **S1-T3: Create CriticalActionOptions interface**
+  - Define mutation, timeAuthority, proprioception options
+  - Define optimistic/rollback callbacks
+  - Define onSuccess/onError callbacks
+  - **Acceptance:** Interface matches SDD §2.1.1
 
-- [x] **S1-T4: Update .sigil-version.json**
-  - Update version to "1.2.4"
-  - Add recipes count tracking
-  - Add variants count tracking
-  - Add last_garden timestamp
-  - **Acceptance:** Version tracking matches SDD §10.2
+- [ ] **S1-T4: Implement useCriticalAction hook - server-tick**
+  - Create `sigil-mark/core/useCriticalAction.ts`
+  - Implement `server-tick` time authority
+  - Show pending state, prevent double execution
+  - Call onSuccess/onError appropriately
+  - **Acceptance:** Hook works with server-tick, tests pass
 
-- [x] **S1-T5: Create CLAUDE.md for v1.2.4**
-  - Write Sigil v1.2.4 prompt based on SDD §6.2
-  - Include `<sigil_philosophy>`, `<sigil_commands>`, `<sigil_zones>`, `<sigil_behavior>` sections
-  - Emphasize "Diff + Feel" philosophy
-  - Remove lecture-based explanations
-  - **Acceptance:** CLAUDE.md matches v1.2.4 philosophy
+- [ ] **S1-T5: Implement useCriticalAction hook - optimistic**
+  - Add `optimistic` time authority support
+  - Implement instant cache update
+  - Implement silent rollback on failure
+  - **Acceptance:** Hook works with optimistic, tests pass
+
+- [ ] **S1-T6: Implement useCriticalAction hook - hybrid**
+  - Add `hybrid` time authority support
+  - Show sync indicator while pending
+  - Implement visible rollback
+  - **Acceptance:** Hook works with hybrid, tests pass
+
+- [ ] **S1-T7: Create core barrel export**
+  - Create `sigil-mark/core/index.ts`
+  - Export `useCriticalAction` and types
+  - **Acceptance:** `import { useCriticalAction } from './core'` works
 
 ### Deliverables
-- Archived v1.0 structure
-- Clean v1.2.4 directory layout
-- Updated config files
-- New CLAUDE.md
+- `sigil-mark/types/index.ts`
+- `sigil-mark/core/types.ts`
+- `sigil-mark/core/useCriticalAction.ts`
+- `sigil-mark/core/index.ts`
 
 ---
 
-## Sprint 2: Recipe System - Decisive Set (Weeks 3-4)
+## Sprint 2: Core Layer Completion
 
-**Goal:** Implement decisive recipe set (checkout, transactions)
+**Goal:** Implement proprioception and local cache
 
 ### Tasks
 
-- [x] **S2-T1: Create useServerTick hook**
-  - Create `sigil-mark/hooks/useServerTick.ts`
-  - Implement async action wrapper with pending state
-  - Prevent optimistic UI updates
-  - Export from `sigil-mark/hooks/index.ts`
-  - **Acceptance:** Hook prevents action during pending state
+- [ ] **S2-T1: Create proprioception module**
+  - Create `sigil-mark/core/proprioception.ts`
+  - Define `createProprioception()` factory
+  - Implement self-prediction state management
+  - Implement confidence decay over maxDrift
+  - **Acceptance:** Self predictions work with configurable decay
 
-- [x] **S2-T2: Create decisive/Button.tsx recipe**
-  - Create with `@sigil-recipe` JSDoc annotation
-  - Physics: `spring(180, 12)`, whileTap scale 0.98
-  - Use `useServerTick` for `onAction` prop
-  - Include `variant` prop (primary/secondary/danger)
-  - Include `size` prop (sm/md/lg)
-  - **Acceptance:** Button matches SDD §3.1 anatomy
+- [ ] **S2-T2: Implement position prediction with ghost rendering**
+  - Add `position.render: 'ghost' | 'solid' | 'hidden'`
+  - Implement ghost position state
+  - Implement confidence decay
+  - **Acceptance:** Ghost position shows predicted location
 
-- [x] **S2-T3: Create decisive/Button.nintendo.tsx variant**
-  - Fork Button.tsx with snappier physics
-  - Physics: `spring(300, 8)`
-  - Document purpose in JSDoc
-  - **Acceptance:** Nintendo variant is noticeably snappier
+- [ ] **S2-T3: Implement reconciliation strategies**
+  - Add `position.reconcile: 'snap' | 'lerp' | 'ignore'`
+  - Implement snap (instant correction)
+  - Implement lerp (smooth interpolation)
+  - **Acceptance:** Reconciliation works correctly
 
-- [x] **S2-T4: Create decisive/Button.relaxed.tsx variant**
-  - Fork Button.tsx with softer physics
-  - Physics: `spring(140, 16)`
-  - Document purpose in JSDoc
-  - **Acceptance:** Relaxed variant is noticeably softer
+- [ ] **S2-T4: Create useLocalCache hook**
+  - Create `sigil-mark/core/useLocalCache.ts`
+  - Implement Cache interface: get, set, update, append, remove, revert
+  - Support optimistic updates
+  - **Acceptance:** Cache operations work, revert restores previous state
 
-- [x] **S2-T5: Create decisive/ConfirmFlow.tsx recipe**
-  - Multi-step confirmation dialog
-  - Physics: `spring(150, 14)`, 600ms between steps
-  - States: initial → confirming → complete
-  - Use AnimatePresence for transitions
-  - **Acceptance:** Dialog flows through states with deliberate pacing
+- [ ] **S2-T5: Integrate proprioception with useCriticalAction**
+  - Wire proprioception config into hook
+  - Update selfPrediction state on action start
+  - Update worldTruth state on server response
+  - Reconcile on response
+  - **Acceptance:** Full proprioception flow works end-to-end
 
-- [x] **S2-T6: Create decisive/index.ts barrel export**
-  - Export all recipes and variants
-  - Use named exports with clear names
-  - **Acceptance:** `import { Button, ButtonNintendo } from '@sigil/recipes/decisive'` works
+- [ ] **S2-T6: Create useCriticalAction tests**
+  - Test server-tick authority flow
+  - Test optimistic authority with rollback
+  - Test hybrid authority with sync indicator
+  - Test proprioception predictions
+  - **Acceptance:** All core tests pass
 
 ### Deliverables
-- `useServerTick` hook
-- `decisive/Button.tsx` + 2 variants
-- `decisive/ConfirmFlow.tsx`
-- `decisive/index.ts` barrel
+- `sigil-mark/core/proprioception.ts`
+- `sigil-mark/core/useLocalCache.ts`
+- `sigil-mark/__tests__/useCriticalAction.test.ts`
 
 ---
 
-## Sprint 3: Recipe System - Machinery & Glass Sets (Weeks 5-6)
+## Sprint 3: Layout Layer - Zone Context & CriticalZone
 
-**Goal:** Complete all three recipe sets
+**Goal:** Implement zone context system and CriticalZone layout
 
 ### Tasks
 
-- [x] **S3-T1: Create machinery/Table.tsx recipe**
-  - No animation / instant state changes
-  - `sync: client_authoritative` appropriate
-  - Minimal physics overhead
-  - **Acceptance:** Table renders without animation delay
+- [ ] **S3-T1: Create zone context**
+  - Create `sigil-mark/layouts/context.ts`
+  - Define `ZoneType`, `ZoneContextValue`
+  - Create `ZoneContext` React context
+  - Create `useZoneContext()` hook with default fallback
+  - **Acceptance:** Zone context works, defaults to 'default' zone
 
-- [x] **S3-T2: Create machinery/Toggle.tsx recipe**
-  - Instant toggle state change
-  - Physics: `spring(400, 30)` or instant
-  - Focus on efficiency over delight
-  - **Acceptance:** Toggle feels instant, not animated
+- [ ] **S3-T2: Implement CriticalZone component**
+  - Create `sigil-mark/layouts/CriticalZone.tsx`
+  - Accept `financial` prop (default: true)
+  - Provide zone context: `{ type: 'critical', financial, timeAuthority: 'server-tick' }`
+  - **Acceptance:** CriticalZone provides zone context
 
-- [x] **S3-T3: Create machinery/Form.tsx recipe**
-  - Form wrapper with instant validation feedback
-  - No animated transitions
-  - **Acceptance:** Form feels efficient
+- [ ] **S3-T3: Implement CriticalZone.Content subcomponent**
+  - Create Content slot for zone body
+  - Apply appropriate styling
+  - **Acceptance:** Content renders with proper spacing
 
-- [x] **S3-T4: Create machinery/index.ts barrel export**
-  - Export all machinery recipes
-  - **Acceptance:** Machinery imports work
+- [ ] **S3-T4: Implement CriticalZone.Actions subcomponent**
+  - Create Actions slot for buttons
+  - Enforce 32px gap between actions
+  - Accept `maxActions` prop (default: 3)
+  - Warn if children exceed maxActions
+  - **Acceptance:** Actions have 32px gap, warns on overflow
 
-- [x] **S3-T5: Create glass/HeroCard.tsx recipe**
-  - Physics: `spring(200, 20)`, float on hover
-  - Enable glow effect with customizable color
-  - Entrance animation with delay
-  - **Acceptance:** Card floats and glows on hover
+- [ ] **S3-T5: Implement critical button auto-sorting**
+  - Detect critical vs non-critical children
+  - Auto-sort critical buttons to last position
+  - Use React.Children.toArray + sort
+  - **Acceptance:** Critical buttons always appear last
 
-- [x] **S3-T6: Create glass/FeatureCard.tsx recipe**
-  - Similar to HeroCard but simpler
-  - Staggered entrance animation
-  - **Acceptance:** Cards animate in sequence
-
-- [x] **S3-T7: Create glass/Tooltip.tsx recipe**
-  - Soft entrance animation
-  - Delayed appearance
-  - **Acceptance:** Tooltip feels polished
-
-- [x] **S3-T8: Create glass/index.ts barrel export**
-  - Export all glass recipes
-  - **Acceptance:** Glass imports work
+- [ ] **S3-T6: Create CriticalZone tests**
+  - Test zone context is provided
+  - Test 32px gap enforcement
+  - Test action auto-sorting
+  - Test maxActions warning
+  - **Acceptance:** All CriticalZone tests pass
 
 ### Deliverables
-- Complete machinery recipe set (3 recipes)
-- Complete glass recipe set (3 recipes)
-- All barrel exports
+- `sigil-mark/layouts/context.ts`
+- `sigil-mark/layouts/CriticalZone.tsx`
+- `sigil-mark/__tests__/CriticalZone.test.tsx`
 
 ---
 
-## Sprint 4: Zone System (Weeks 7-8)
+## Sprint 4: Layout Layer Completion
 
-**Goal:** Implement zone resolution with cascading configs
+**Goal:** Implement MachineryLayout and GlassLayout
 
 ### Tasks
 
-- [x] **S4-T1: Refactor sigil-detect-zone.sh to v1.2.4**
-  - Read new `.sigilrc.yaml` format
-  - Walk up directory tree, merge configs
-  - Return zone config JSON (not just zone name)
-  - **Acceptance:** Script returns full zone config
+- [ ] **S4-T1: Implement MachineryLayout component**
+  - Create `sigil-mark/layouts/MachineryLayout.tsx`
+  - Provide zone context: `{ type: 'admin', timeAuthority: 'optimistic' }`
+  - Accept `stateKey`, `onAction`, `onDelete` props
+  - **Acceptance:** MachineryLayout provides admin zone context
 
-- [x] **S4-T2: Create zone config templates**
-  - Create `src/.sigilrc.yaml` (default: machinery)
-  - Create `src/checkout/.sigilrc.yaml` (decisive, server_authoritative)
-  - Create `src/admin/.sigilrc.yaml` (machinery)
-  - Create `src/marketing/.sigilrc.yaml` (glass)
-  - **Acceptance:** Templates match SDD §4.3
+- [ ] **S4-T2: Implement MachineryLayout keyboard navigation**
+  - Arrow keys: Navigate items
+  - j/k: Vim-style navigation
+  - Enter/Space: Activate current item
+  - Delete/Backspace: Delete current item
+  - Escape: Deselect
+  - Home/End: Jump to first/last
+  - **Acceptance:** All keyboard shortcuts work
 
-- [x] **S4-T3: Implement zone resolution in TypeScript**
+- [ ] **S4-T3: Implement MachineryLayout subcomponents**
+  - `MachineryLayout.List` - container for items
+  - `MachineryLayout.Item` - single item with id
+  - `MachineryLayout.Search` - filter input
+  - `MachineryLayout.Empty` - empty state
+  - **Acceptance:** All subcomponents work together
+
+- [ ] **S4-T4: Implement GlassLayout component**
+  - Create `sigil-mark/layouts/GlassLayout.tsx`
+  - Provide zone context: `{ type: 'marketing', timeAuthority: 'optimistic' }`
+  - Accept `variant` prop ('card' | 'hero' | 'feature')
+  - **Acceptance:** GlassLayout provides marketing zone context
+
+- [ ] **S4-T5: Implement GlassLayout hover physics**
+  - Hover: `scale(1.02)`, `translateY(-4px)`, shadow increase
+  - Transition: 200ms ease-out
+  - Backdrop blur: `backdrop-blur-lg`
+  - **Acceptance:** Hover physics feel polished
+
+- [ ] **S4-T6: Implement GlassLayout subcomponents**
+  - `GlassLayout.Image` - image slot
+  - `GlassLayout.Content` - body slot
+  - `GlassLayout.Title` - title slot
+  - `GlassLayout.Description` - description slot
+  - `GlassLayout.Actions` - actions slot
+  - **Acceptance:** All subcomponents work together
+
+- [ ] **S4-T7: Create layouts barrel export**
+  - Create `sigil-mark/layouts/index.ts`
+  - Export all layouts and context utilities
+  - **Acceptance:** `import { CriticalZone, MachineryLayout, GlassLayout } from './layouts'` works
+
+- [ ] **S4-T8: Create MachineryLayout and GlassLayout tests**
+  - Test zone context provided
+  - Test keyboard navigation (Machinery)
+  - Test hover physics (Glass)
+  - **Acceptance:** All layout tests pass
+
+### Deliverables
+- `sigil-mark/layouts/MachineryLayout.tsx`
+- `sigil-mark/layouts/GlassLayout.tsx`
+- `sigil-mark/layouts/index.ts`
+- `sigil-mark/__tests__/MachineryLayout.test.tsx`
+- `sigil-mark/__tests__/GlassLayout.test.tsx`
+
+---
+
+## Sprint 5: Lens Layer Foundation
+
+**Goal:** Implement lens interface, useLens hook, and LensProvider
+
+### Tasks
+
+- [ ] **S5-T1: Create Lens interface**
+  - Create `sigil-mark/lenses/types.ts`
+  - Define `Lens` interface with name, classification, components
+  - Define `CriticalButtonProps` interface
+  - Define `GlassButtonProps` interface
+  - Define `MachineryItemProps` interface
+  - **Acceptance:** All lens types defined
+
+- [ ] **S5-T2: Create LensProvider component**
+  - Create `sigil-mark/lenses/LensProvider.tsx`
+  - Store user's lens preference in context
+  - Provide setter for lens selection
+  - **Acceptance:** LensProvider stores user preference
+
+- [ ] **S5-T3: Create useLens hook**
+  - Create `sigil-mark/lenses/useLens.ts`
+  - Read zone context from nearest layout
+  - Force `StrictLens` in critical+financial zones
+  - Return user preference otherwise
+  - Default to `DefaultLens` if no preference
+  - **Acceptance:** Hook returns correct lens based on zone
+
+- [ ] **S5-T4: Implement lens enforcement logging**
+  - Log warning in development when forcing StrictLens
+  - Include zone type and reason in warning
+  - **Acceptance:** Dev console shows lens enforcement warnings
+
+- [ ] **S5-T5: Create useLens tests**
+  - Test StrictLens forced in critical+financial zone
+  - Test user preference used in admin zone
+  - Test DefaultLens used when no preference
+  - **Acceptance:** All useLens tests pass
+
+### Deliverables
+- `sigil-mark/lenses/types.ts`
+- `sigil-mark/lenses/LensProvider.tsx`
+- `sigil-mark/lenses/useLens.ts`
+- `sigil-mark/__tests__/useLens.test.tsx`
+
+---
+
+## Sprint 6: Built-in Lenses
+
+**Goal:** Implement DefaultLens, StrictLens, and A11yLens
+
+### Tasks
+
+- [ ] **S6-T1: Implement DefaultLens.CriticalButton**
+  - Create `sigil-mark/lenses/default/CriticalButton.tsx`
+  - 44px min-height
+  - Status-based styling (idle, confirming, pending, confirmed, failed)
+  - Tap scale animation
+  - **Acceptance:** Button renders all states correctly
+
+- [ ] **S6-T2: Implement DefaultLens.GlassButton**
+  - Create `sigil-mark/lenses/default/GlassButton.tsx`
+  - 44px min-height
+  - Variant support (primary, secondary, ghost)
+  - Hover/active states
+  - **Acceptance:** Button variants render correctly
+
+- [ ] **S6-T3: Implement DefaultLens.MachineryItem**
+  - Create `sigil-mark/lenses/default/MachineryItem.tsx`
+  - Hover highlighting
+  - Active state styling
+  - **Acceptance:** Item renders with proper states
+
+- [ ] **S6-T4: Create DefaultLens barrel export**
+  - Create `sigil-mark/lenses/default/index.tsx`
+  - Export `DefaultLens` object with all components
+  - Classification: 'cosmetic'
+  - **Acceptance:** DefaultLens exports correctly
+
+- [ ] **S6-T5: Implement StrictLens components**
+  - Create `sigil-mark/lenses/strict/` directory
+  - CriticalButton: 48px min-height, high contrast, no animations
+  - GlassButton: 48px min-height, high contrast
+  - MachineryItem: Clear active state, border indicator
+  - **Acceptance:** StrictLens is visually distinct, no frills
+
+- [ ] **S6-T6: Implement A11yLens components**
+  - Create `sigil-mark/lenses/a11y/` directory
+  - CriticalButton: 56px min-height, extra high contrast
+  - GlassButton: 56px min-height
+  - MachineryItem: Large touch targets
+  - **Acceptance:** A11yLens meets WCAG AAA contrast
+
+- [ ] **S6-T7: Create lenses barrel export**
+  - Create `sigil-mark/lenses/index.ts`
+  - Export `useLens`, `LensProvider`, `DefaultLens`, `StrictLens`, `A11yLens`
+  - Export all types
+  - **Acceptance:** All lenses accessible from './lenses'
+
+### Deliverables
+- `sigil-mark/lenses/default/` (3 components + index)
+- `sigil-mark/lenses/strict/` (3 components + index)
+- `sigil-mark/lenses/a11y/` (3 components + index)
+- `sigil-mark/lenses/index.ts`
+
+---
+
+## Sprint 7: Integration & Migration
+
+**Goal:** Create public API and deprecate v1.2.5
+
+### Tasks
+
+- [ ] **S7-T1: Create package entry point**
+  - Create `sigil-mark/index.ts`
+  - Export all core hooks and types
+  - Export all layouts and context
+  - Export all lenses
+  - **Acceptance:** Single import point works
+
+- [ ] **S7-T2: Create v1.2.5 compatibility warnings**
+  - Add deprecation warnings to old APIs (if any remain)
+  - Log migration guidance in development
+  - **Acceptance:** Old API usage shows deprecation warning
+
+- [ ] **S7-T3: Update .sigilrc.yaml for v2.0**
+  - Update version to "2.0.0"
+  - Update zone definitions for layout-based zones
+  - Update lens configuration
+  - Remove deprecated fields
+  - **Acceptance:** Config matches SDD §5.1
+
+- [ ] **S7-T4: Create zone resolver for AI/Claude**
   - Create `sigil-mark/core/zone-resolver.ts`
-  - Implement `resolveZone(filePath)` function
-  - Return typed `ZoneConfig` object
-  - **Acceptance:** Resolution matches SDD §4.2 algorithm
+  - Parse .sigilrc.yaml zones
+  - Match file path against glob patterns
+  - Return zone config
+  - **Acceptance:** Claude can resolve zone from file path
 
-- [x] **S4-T4: Update sigil-core skill for v1.2.4**
-  - Create/update `.claude/skills/sigil-core/`
-  - Update `SKILL.md` with v1.2.4 commands
-  - Remove v1.0 commands not in v1.2.4
-  - **Acceptance:** Skill reflects 6 commands only
+- [ ] **S7-T5: Update CLAUDE.md for v2.0**
+  - Document 3-layer architecture
+  - Document "Layouts ARE Zones" philosophy
+  - Include usage examples for all patterns
+  - Remove v1.2.5 references
+  - **Acceptance:** CLAUDE.md matches v2.0 architecture
 
-- [x] **S4-T5: Configure path aliases**
-  - Update `tsconfig.json` with `@sigil/recipes/*` alias
-  - Update `vite.config.ts` (if exists) with resolve aliases
-  - Document IDE configuration
-  - **Acceptance:** `@sigil/recipes/decisive` resolves correctly
-
-### Deliverables
-- Updated zone detection script
-- Zone config templates
-- TypeScript zone resolver
-- Updated sigil-core skill
-- Path alias configuration
-
----
-
-## Sprint 5: Core Commands - /craft (Weeks 9-10)
-
-**Goal:** Implement primary generation command
-
-### Tasks
-
-- [x] **S5-T1: Create /craft command for v1.2.4**
-  - Update `.claude/commands/craft.md` to v1.2.4 spec
-  - Accept component description and optional file path
-  - Resolve zone from path
-  - Load available recipes for zone
-  - **Acceptance:** `/craft "button" src/checkout/` works
-
-- [x] **S5-T2: Implement recipe selection logic**
-  - Parse component description for recipe hints
-  - Match against available recipes in zone
-  - Suggest most appropriate recipe
-  - **Acceptance:** Claude selects correct recipe for context
-
-- [x] **S5-T3: Implement physics context output**
-  - Show zone resolution result
-  - Show recipe being used
-  - Show physics values (spring config)
-  - Format per SDD §7.1 output format
-  - **Acceptance:** Output shows `ZONE:`, `RECIPE:`, `PHYSICS:`
-
-- [x] **S5-T4: Generate recipe-consuming component**
-  - Import from `@sigil/recipes/{zone}`
-  - Configure recipe with props
-  - No raw physics values in generated code
-  - **Acceptance:** Generated code imports recipe, not raw spring values
-
-- [x] **S5-T5: Update crafting-components skill**
+- [ ] **S7-T6: Update skills for v2.0**
+  - Update `.claude/skills/sigil-core/SKILL.md`
   - Update `.claude/skills/crafting-components/SKILL.md`
-  - Remove Hammer/Chisel (v1.0 concept)
-  - Focus on recipe selection and zone context
-  - **Acceptance:** Skill generates recipe-based components
+  - Remove deprecated v1.2.5 patterns
+  - **Acceptance:** Skills use v2.0 patterns
 
 ### Deliverables
-- Updated `/craft` command
-- Recipe selection logic
-- Physics context output
-- Recipe-consuming generation
-- Updated skill
+- `sigil-mark/index.ts`
+- Updated `.sigilrc.yaml`
+- `sigil-mark/core/zone-resolver.ts`
+- Updated `CLAUDE.md`
+- Updated skills
 
 ---
 
-## Sprint 6: Core Commands - /sandbox & /codify (Weeks 11-12)
+## Sprint 8: Testing & Documentation
 
-**Goal:** Implement exploration and extraction commands
-
-### Tasks
-
-- [x] **S6-T1: Create /sandbox command**
-  - Create `.claude/commands/sandbox.md`
-  - Accept file path argument
-  - Add `// sigil-sandbox` header to file
-  - Update zone's sandbox list in `.sigilrc.yaml`
-  - **Acceptance:** `/sandbox src/checkout/Experiment.tsx` enables raw physics
-
-- [x] **S6-T2: Update ESLint config for sandbox detection**
-  - Check for `// sigil-sandbox` header
-  - Skip rule enforcement for sandbox files
-  - **Acceptance:** Sandbox files pass ESLint
-
-- [x] **S6-T3: Create /codify command**
-  - Create `.claude/commands/codify.md`
-  - Parse sandbox file for physics values
-  - Extract spring config, timing values
-  - **Acceptance:** `/codify` identifies physics in file
-
-- [x] **S6-T4: Implement recipe generation from sandbox**
-  - Generate recipe file with proper anatomy
-  - Include `@sigil-recipe` JSDoc
-  - Place in `sigil-mark/recipes/{zone}/`
-  - **Acceptance:** Generated recipe follows SDD §3.1 anatomy
-
-- [x] **S6-T5: Implement sandbox cleanup**
-  - Update source file to import new recipe
-  - Remove `// sigil-sandbox` header
-  - Remove from zone's sandbox list
-  - **Acceptance:** File migrated from sandbox to recipe consumer
-
-- [x] **S6-T6: Update codifying-materials skill to v1.2.4**
-  - Rename to `codifying-recipes` or update purpose
-  - Focus on extracting physics to recipes
-  - Remove material interview flow (v1.0 concept)
-  - **Acceptance:** Skill extracts recipes from sandbox
-
-### Deliverables
-- `/sandbox` command
-- `/codify` command
-- ESLint sandbox detection
-- Recipe generation logic
-- Sandbox cleanup flow
-
----
-
-## Sprint 7: Auxiliary Commands (Weeks 13-14)
-
-**Goal:** Implement /inherit, /validate, /garden
+**Goal:** Complete test coverage and documentation
 
 ### Tasks
 
-- [x] **S7-T1: Create /inherit command for v1.2.4**
-  - Update `.claude/commands/inherit.md`
-  - Scan for existing physics values in codebase
-  - Cluster patterns by similarity
-  - Report findings (do NOT auto-generate recipes)
-  - **Acceptance:** `/inherit` reports patterns without creating files
+- [ ] **S8-T1: Create integration tests**
+  - Test payment flow (CriticalZone + useCriticalAction + StrictLens)
+  - Test admin list (MachineryLayout + keyboard navigation)
+  - Test marketing card (GlassLayout + hover physics)
+  - **Acceptance:** All integration tests pass
 
-- [x] **S7-T2: Implement physics value extraction**
-  - Find `stiffness`, `damping`, `transition` in TSX files
-  - Extract values and file locations
-  - **Acceptance:** All physics values found in codebase
+- [ ] **S8-T2: Create end-to-end usage examples**
+  - Create `sigil-mark/__examples__/PaymentForm.tsx`
+  - Create `sigil-mark/__examples__/InvoiceList.tsx`
+  - Create `sigil-mark/__examples__/ProductCard.tsx`
+  - **Acceptance:** Examples work and demonstrate v2.0 patterns
 
-- [x] **S7-T3: Create /validate command for v1.2.4**
-  - Update `.claude/commands/validate.md`
-  - Check all components for recipe imports
-  - Flag raw physics outside sandbox
-  - Check zone constraint violations
-  - **Acceptance:** `/validate` reports compliance percentage
-
-- [x] **S7-T4: Create /garden command for v1.2.4**
-  - Update `.claude/commands/garden.md`
-  - Report recipe coverage by zone
-  - List active sandboxes with age
-  - List recipe variants
-  - Generate recommendations
-  - **Acceptance:** `/garden` produces health report
-
-- [x] **S7-T5: Update gardening-entropy skill**
-  - Focus on recipe coverage, not drift detection
-  - Track sandbox age
-  - Recommend `/codify` for stale sandboxes
-  - **Acceptance:** Skill matches v1.2.4 garden purpose
-
-### Deliverables
-- `/inherit` command (analysis only)
-- `/validate` command
-- `/garden` command
-- Updated skill
-
----
-
-## Sprint 8: Workbench (Weeks 15-16)
-
-**Goal:** Implement tmux-based learning environment with A/B toggle
-
-### Tasks
-
-- [x] **S8-T1: Refactor sigil-workbench.sh for v1.2.4**
-  - 3 panes instead of 4 (diff + browser + claude)
-  - Remove v1.0 tensions panel
-  - Add status bar with A/B toggle hint
-  - **Acceptance:** Workbench matches SDD §5.1 layout
-
-- [x] **S8-T2: Create diff panel script**
-  - Watch component files for changes
-  - Show git diff with physics value highlights
-  - Format: `- stiffness: 180` / `+ stiffness: 300`
-  - **Acceptance:** Diff shows physics changes prominently
-
-- [x] **S8-T3: Implement A/B toggle - hot-swap mode**
-  - Create `sigil-mark/workbench/ab-toggle.ts`
-  - Use CSS variables for physics values
-  - Dispatch custom event on toggle
-  - **Acceptance:** Pressing Space swaps physics instantly
-
-- [x] **S8-T4: Implement A/B toggle - iframe mode**
-  - Create iframe-based comparison for flow testing
-  - Load two versions of preview URL
-  - Toggle visibility on Space
-  - **Acceptance:** Full flows can be compared
-
-- [x] **S8-T5: Document Chrome MCP integration**
-  - Document how browser pane works with Chrome MCP
-  - Provide setup instructions
-  - Document keyboard shortcuts
-  - **Acceptance:** Documentation covers workbench usage
-
-- [x] **S8-T6: Update workbench branding**
-  - Apply Adhesion typeface styling (if applicable)
-  - Monochrome colors (#000/#FFF)
-  - Box-drawing characters in terminal
-  - **Acceptance:** Workbench feels like precision instrument
-
-### Deliverables
-- Refactored workbench script
-- Diff panel with physics highlighting
-- A/B toggle (hot-swap + iframe)
-- Chrome MCP documentation
-- Updated branding
-
----
-
-## Sprint 9: Enforcement Layer (Weeks 17-18)
-
-**Goal:** Implement ESLint plugin and CI validation
-
-### Tasks
-
-- [x] **S9-T1: Create eslint-plugin-sigil package structure**
-  - Create `sigil-mark/eslint-plugin/` or separate package
-  - Set up package.json with eslint peer dependency
-  - **Acceptance:** Package structure ready
-
-- [x] **S9-T2: Implement sigil/no-raw-physics rule**
-  - Detect `stiffness`, `damping`, `transition` properties
-  - Skip sandbox files (check for header)
-  - Error with helpful message
-  - **Acceptance:** Rule catches raw physics, ignores sandbox
-
-- [x] **S9-T3: Implement sigil/require-recipe rule**
-  - Check for `@sigil/recipes` imports
-  - Skip sandbox files
-  - Error if component has animation without recipe
-  - **Acceptance:** Rule requires recipe imports
-
-- [x] **S9-T4: Implement sigil/no-optimistic-in-decisive rule**
-  - Detect optimistic UI patterns in decisive zone
-  - Check for immediate state updates before async completion
-  - **Acceptance:** Rule catches optimistic UI violations
-
-- [x] **S9-T5: Implement sigil/sandbox-stale rule**
-  - Warn if sandbox file older than 7 days
-  - Calculate age from file modification time
-  - **Acceptance:** Rule warns on stale sandboxes
-
-- [x] **S9-T6: Create CI workflow**
-  - Create `.github/workflows/sigil.yml`
-  - Run ESLint with sigil rules
-  - Run `sigil validate` command
-  - Fail on IMPOSSIBLE violations
-  - **Acceptance:** CI blocks physics violations
-
-### Deliverables
-- `eslint-plugin-sigil` with 4 rules
-- CI workflow for GitHub Actions
-- Documentation for rule configuration
-
----
-
-## Sprint 10: History System & Polish (Weeks 19-20)
-
-**Goal:** Complete refinement history, documentation, testing
-
-### Tasks
-
-- [x] **S10-T1: Implement refinement history storage**
-  - Create `sigil-mark/history/YYYY-MM-DD.md` format
-  - Log feedback, before/after physics, variant created
-  - **Acceptance:** History entries follow SDD §9.1 format
-
-- [x] **S10-T2: Implement history parsing for Claude**
-  - Parse last 30 days of history
-  - Extract feedback patterns
-  - Calculate average physics for similar feedback
-  - **Acceptance:** Claude can reference history for calibration
-
-- [x] **S10-T3: Update README.md for v1.2.4**
+- [ ] **S8-T3: Update README.md for v2.0**
   - Quick start guide
-  - Command reference (6 commands)
-  - Philosophy section ("Diff + Feel")
-  - Migration guide from v1.0
-  - **Acceptance:** README matches v1.2.4 architecture
+  - 3-layer architecture explanation
+  - API reference
+  - Migration guide from v1.2.5
+  - **Acceptance:** README matches v2.0 architecture
 
-- [x] **S10-T4: Create unit tests for recipes**
-  - Test decisive/Button renders correctly
-  - Test useServerTick hook behavior
-  - Test zone resolution algorithm
-  - **Acceptance:** Core recipes have test coverage
+- [ ] **S8-T4: Create migration guide**
+  - Document v1.2.5 → v2.0 patterns
+  - Provide before/after code examples
+  - List deprecated APIs
+  - **Acceptance:** Clear migration path documented
 
-- [x] **S10-T5: Create integration tests**
-  - Test /craft generates recipe-consuming code
-  - Test /sandbox enables raw physics
-  - Test /codify extracts to recipe
-  - **Acceptance:** Command flows tested
-
-- [x] **S10-T6: Final validation**
-  - Run all commands end-to-end
-  - Verify `rm -rf sigil-mark/` cleans up
-  - Verify no daemon, no database, no hooks
-  - Test brownfield migration flow
-  - **Acceptance:** All PRD §10 success criteria pass
+- [ ] **S8-T5: Final validation**
+  - Verify all tests pass
+  - Verify all exports work
+  - Verify zone resolution works
+  - Verify lens enforcement works
+  - Test full payment flow end-to-end
+  - **Acceptance:** All PRD §7 success metrics pass
 
 ### Deliverables
-- Refinement history system
-- History parsing for Claude
-- Complete documentation
-- Test coverage
-- Final validation
+- Complete test suite
+- Usage examples
+- Updated README.md
+- Migration guide
+- Final validation report
 
 ---
 
@@ -537,37 +499,27 @@ This plan refactors Sigil from v1.0 to v1.2.4, transitioning from a "validation 
 
 | Risk | Mitigation |
 |------|------------|
-| v1.0 code breaks during refactor | Archive v1.0 completely before changes |
-| Recipe import paths don't resolve | Test path aliases early (Sprint 4) |
-| A/B toggle hot-swap technically hard | Fall back to iframe mode |
-| ESLint plugin complexity | Start with 2 critical rules, add others |
-| History parsing fragile | Use structured format within markdown |
+| Proprioception complexity | Start with simple predictions, add reconciliation later |
+| Keyboard navigation edge cases | Use established patterns from Radix/Headless UI |
+| Lens enforcement too strict | Force only in critical+financial, allow override elsewhere |
+| Migration breaks existing code | Clear deprecation warnings, migration guide |
 
 ---
 
 ## Success Criteria
 
-From PRD §10:
+From PRD §7:
 
-- [ ] /craft generates component using correct zone recipe
-- [ ] /sandbox enables raw physics without ESLint errors
-- [ ] /codify extracts sandbox to recipe
-- [ ] Workbench A/B toggle works (hot-swap or iframe)
-- [ ] Diff shown prominently after every adjustment
-- [ ] Zone resolution from file path works
-- [ ] Three recipe sets exist (decisive/machinery/glass)
-- [ ] `rm -rf sigil-mark/` removes everything
-- [ ] ESLint catches physics violations
-- [ ] CI blocks IMPOSSIBLE violations
-
-### The Learning Test
-
-```
-DAY 1: Engineer doesn't know what stiffness means
-DAY 7: Engineer has adjusted 20+ components
-DAY 14: Engineer predicts "Nintendo Switch = ~stiffness 300"
-DAY 30: Engineer teaches teammate about spring physics
-```
+- [ ] `useCriticalAction` works with all 3 time authorities
+- [ ] Proprioception shows ghost position, reconciles correctly
+- [ ] `CriticalZone` provides zone context + enforces layout physics
+- [ ] `useLens` forces `StrictLens` in critical+financial zones
+- [ ] Keyboard navigation works in `MachineryLayout`
+- [ ] Hover physics work in `GlassLayout`
+- [ ] All 3 built-in lenses render correctly
+- [ ] Public API exports cleanly from single entry point
+- [ ] All tests pass
+- [ ] CLAUDE.md accurately describes v2.0 architecture
 
 ---
 
@@ -575,21 +527,19 @@ DAY 30: Engineer teaches teammate about spring physics
 
 | Sprint | Status | Completed |
 |--------|--------|-----------|
-| Sprint 1 | COMPLETED | 2026-01-05 |
-| Sprint 2 | COMPLETED | 2026-01-05 |
-| Sprint 3 | COMPLETED | 2026-01-05 |
-| Sprint 4 | COMPLETED | 2026-01-05 |
-| Sprint 5 | COMPLETED | 2026-01-05 |
-| Sprint 6 | COMPLETED | 2026-01-05 |
-| Sprint 7 | COMPLETED | 2026-01-05 |
-| Sprint 8 | COMPLETED | 2026-01-05 |
-| Sprint 9 | COMPLETED | 2026-01-05 |
-| Sprint 10 | COMPLETED | 2026-01-05 |
+| Sprint 1 | PENDING | - |
+| Sprint 2 | PENDING | - |
+| Sprint 3 | PENDING | - |
+| Sprint 4 | PENDING | - |
+| Sprint 5 | PENDING | - |
+| Sprint 6 | PENDING | - |
+| Sprint 7 | PENDING | - |
+| Sprint 8 | PENDING | - |
 
 ---
 
 ## Next Step
 
 ```
-/implement sprint-2
+/implement sprint-1
 ```
