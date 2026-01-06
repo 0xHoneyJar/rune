@@ -292,7 +292,7 @@ This plan implements Sigil v2.0, the "Reality Engine" that separates Truth (Core
 
 ### Tasks
 
-- [ ] **S5-T1: Create Lens interface**
+- [x] **S5-T1: Create Lens interface**
   - Create `sigil-mark/lenses/types.ts`
   - Define `Lens` interface with name, classification, components
   - Define `CriticalButtonProps` interface
@@ -300,13 +300,13 @@ This plan implements Sigil v2.0, the "Reality Engine" that separates Truth (Core
   - Define `MachineryItemProps` interface
   - **Acceptance:** All lens types defined
 
-- [ ] **S5-T2: Create LensProvider component**
+- [x] **S5-T2: Create LensProvider component**
   - Create `sigil-mark/lenses/LensProvider.tsx`
   - Store user's lens preference in context
   - Provide setter for lens selection
   - **Acceptance:** LensProvider stores user preference
 
-- [ ] **S5-T3: Create useLens hook**
+- [x] **S5-T3: Create useLens hook**
   - Create `sigil-mark/lenses/useLens.ts`
   - Read zone context from nearest layout
   - Force `StrictLens` in critical+financial zones
@@ -314,12 +314,12 @@ This plan implements Sigil v2.0, the "Reality Engine" that separates Truth (Core
   - Default to `DefaultLens` if no preference
   - **Acceptance:** Hook returns correct lens based on zone
 
-- [ ] **S5-T4: Implement lens enforcement logging**
+- [x] **S5-T4: Implement lens enforcement logging**
   - Log warning in development when forcing StrictLens
   - Include zone type and reason in warning
   - **Acceptance:** Dev console shows lens enforcement warnings
 
-- [ ] **S5-T5: Create useLens tests**
+- [x] **S5-T5: Create useLens tests**
   - Test StrictLens forced in critical+financial zone
   - Test user preference used in admin zone
   - Test DefaultLens used when no preference
@@ -531,7 +531,7 @@ From PRD §7:
 | Sprint 2 | COMPLETED | 2026-01-05 |
 | Sprint 3 | COMPLETED | 2026-01-05 |
 | Sprint 4 | COMPLETED | 2026-01-05 |
-| Sprint 5 | PENDING | - |
+| Sprint 5 | COMPLETED | 2026-01-05 |
 | Sprint 6 | PENDING | - |
 | Sprint 7 | PENDING | - |
 | Sprint 8 | PENDING | - |
