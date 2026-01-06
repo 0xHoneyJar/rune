@@ -1,308 +1,476 @@
-# Sigil v1.2.4: Design Physics Framework
+# Sigil v2.0: Reality Engine
 
-> "See the diff. Feel the result. Learn by doing."
+> "Truth is Core. Experience is Lens. Layouts ARE Zones."
 
-You are operating within **Sigil**, a design physics framework for building consistent, craft-driven interfaces. Sigil provides recipes (pre-validated physics implementations) and a workbench environment where engineers learn by seeing diffs AND feeling results.
+You are operating within **Sigil v2.0**, a design physics framework that separates Truth (Core physics) from Experience (Lens rendering). The key architectural insight: **Layouts ARE Zones**.
+
+---
+
+## Architecture (3 Layers)
+
+```
+┌────────────────────────────────────────────────────────────┐
+│  CORE LAYER — Physics engines (Truth)                     │
+│  useCriticalAction → State Stream                         │
+│  { status, timeAuthority, selfPrediction, worldTruth }    │
+├────────────────────────────────────────────────────────────┤
+│  LAYOUT LAYER — Zones + Structural Physics                │
+│  CriticalZone, MachineryLayout, GlassLayout               │
+│  Layouts ARE Zones. Physics is DOM, not lint.             │
+├────────────────────────────────────────────────────────────┤
+│  LENS LAYER — Interchangeable UIs (Experience)            │
+│  useLens() → Lens components                              │
+│  DefaultLens, StrictLens, A11yLens                        │
+└────────────────────────────────────────────────────────────┘
+```
+
+### Layer Responsibilities
+
+| Layer | Emits | Consumes | Examples |
+|-------|-------|----------|----------|
+| **Core** | State streams | Mutations | `useCriticalAction`, `useLocalCache` |
+| **Layout** | Zone context | State streams | `CriticalZone`, `MachineryLayout`, `GlassLayout` |
+| **Lens** | UI components | State + Zone context | `DefaultLens`, `StrictLens`, `A11yLens` |
 
 ---
 
 ## Core Philosophy
 
 <sigil_philosophy>
-**Apprenticeship Through Diff + Feel**
+**Truth vs Experience**
 
-Design engineers learn by:
-1. Claude adjusts → Engineer sees `stiffness: 180 → 300`
-2. Engineer clicks component in browser → FEELS the snap
-3. Engineer toggles A/B → FEELS the difference
-4. Numbers gain meaning through fingers
+- **Truth (Core):** Physics engines that emit state streams. The server-tick authority, the optimistic rollback, the proprioception — this is Truth.
+- **Experience (Lens):** How that state is rendered. The 44px button, the WCAG AAA contrast, the animations — this is Experience.
 
-Do NOT lecture. Do NOT explain unless asked. Make the change. The diff + feel is the lesson.
+Same Truth, different Experience. A payment state can be rendered by StrictLens (48px, no animations) or DefaultLens (44px, tap scale) — the physics don't change, only how they're shown.
 
-**Claude's Training IS the Vibe Map**
+**Layouts ARE Zones**
 
-You already know what "Nintendo Switch snap" feels like. You know what "Linear's deliberate feel" looks like. You know what "anxious" means for THIS component in THIS context.
+In v2.0, zones are declared by Layout primitives, not file paths:
 
-No vibes.yaml dictionary. Infer from context. Same word ("anxious") means different physics for different components:
-- Toast: appears too fast → add delay, soften entrance
-- Delete button: feels shaky → more deliberate, steadier
-- Spinner: too urgent → slow down
+```tsx
+// This IS a critical zone — by structure, not config
+<CriticalZone financial>
+  {/* Server-tick authority enforced */}
+  {/* StrictLens forced for critical buttons */}
+</CriticalZone>
+```
 
-**Recipes Over Raw Physics**
+**Lens Enforcement**
 
-Generate code using recipes from `sigil-mark/recipes/`. Do not generate raw spring/timing values unless in sandbox mode. Recipes contain the physics — using them guarantees compliance.
+- `CriticalZone` with `financial={true}` → Forces `StrictLens` for critical buttons
+- `MachineryLayout` → Respects user lens preference
+- `GlassLayout` → Respects user lens preference
+- Default (no layout) → Uses `DefaultLens`
+
+**Recipes Are Still Valid**
+
+v1.2.5 recipes still work. They're just wrapped by layouts now:
+
+```tsx
+// v1.2.5 way (still works)
+<SigilZone material="decisive">
+  <DecisiveButton />
+</SigilZone>
+
+// v2.0 way (recommended)
+<CriticalZone financial>
+  <Lens.CriticalButton state={payment.state} onAction={commit} />
+</CriticalZone>
+```
 </sigil_philosophy>
 
 ---
 
-## Commands
+## Quick Start
 
-<sigil_commands>
-### /craft [component_description] [--file path]
+<sigil_quickstart>
+### Payment Form (Critical Zone)
 
-Generate a component using recipes from the current zone.
+```tsx
+import { useCriticalAction, CriticalZone, useLens } from 'sigil-mark';
 
-**Behavior:**
-1. Resolve zone from file path → find `.sigilrc.yaml`
-2. Load available recipes for that zone
-3. Select appropriate recipe based on component description
-4. Generate component that imports and configures the recipe
-5. Show the diff if updating existing file
+function PaymentForm({ amount }: { amount: number }) {
+  const payment = useCriticalAction({
+    mutation: () => api.pay(amount),
+    timeAuthority: 'server-tick',
+  });
 
-**Output format:**
+  const Lens = useLens(); // Auto-selects StrictLens in CriticalZone
+
+  return (
+    <CriticalZone financial>
+      <CriticalZone.Content>
+        <h2>Confirm Payment</h2>
+        <p>${amount}</p>
+      </CriticalZone.Content>
+      <CriticalZone.Actions>
+        <Lens.CriticalButton
+          state={payment.state}
+          onAction={() => payment.commit()}
+          labels={{
+            confirming: 'Confirm Payment',
+            pending: 'Processing...',
+            confirmed: 'Paid!',
+            failed: 'Failed - Retry',
+          }}
+        >
+          Pay ${amount}
+        </Lens.CriticalButton>
+      </CriticalZone.Actions>
+    </CriticalZone>
+  );
+}
 ```
-ZONE: src/checkout (decisive)
-RECIPE: decisive/Button
 
-[generated code]
+### Admin List (Machinery Layout)
 
-PHYSICS: spring(180, 12), server-tick
+```tsx
+import { MachineryLayout, useLens } from 'sigil-mark';
+
+function InvoiceList({ invoices }: { invoices: Invoice[] }) {
+  const Lens = useLens();
+
+  return (
+    <MachineryLayout
+      stateKey="invoices"
+      onAction={(id) => navigate(`/invoices/${id}`)}
+      onDelete={(id) => deleteInvoice(id)}
+    >
+      <MachineryLayout.Search placeholder="Search invoices..." />
+      <MachineryLayout.List>
+        {invoices.map((invoice) => (
+          <Lens.MachineryItem key={invoice.id} id={invoice.id}>
+            {invoice.title}
+          </Lens.MachineryItem>
+        ))}
+      </MachineryLayout.List>
+      <MachineryLayout.Empty>No invoices found</MachineryLayout.Empty>
+    </MachineryLayout>
+  );
+}
 ```
 
-### /sandbox [path]
+### Marketing Card (Glass Layout)
 
-Enable exploration mode for a file or directory. Raw physics allowed.
+```tsx
+import { GlassLayout, useLens } from 'sigil-mark';
 
-**Behavior:**
-1. Mark file with `// sigil-sandbox` header
-2. Relax ESLint rules for this file
-3. Allow raw spring/timing values
-4. Track in /garden as active sandbox
+function ProductCard({ product }: { product: Product }) {
+  const Lens = useLens();
 
-**Exit sandbox:** Run `/codify` to extract physics to recipe.
-
-### /codify [path] [--name recipe_name]
-
-Extract physics from a component into a recipe.
-
-**Behavior:**
-1. Analyze component for spring/timing/animation values
-2. Suggest recipe name based on zone and behavior
-3. Create recipe file in `sigil-mark/recipes/{zone}/`
-4. Update component to import the new recipe
-5. Remove sandbox markers if present
-
-### /inherit
-
-Bootstrap Sigil from an existing codebase.
-
-**Behavior:**
-1. Scan for component directories
-2. Detect existing patterns (colors, spacing, motion)
-3. Report findings with pattern clusters
-4. DO NOT auto-generate recipes (human decides)
-
-### /validate
-
-Check recipe compliance across codebase.
-
-**Behavior:**
-1. Find all components
-2. Check each imports from `@sigil/recipes/` (or local recipes)
-3. Flag raw physics outside sandbox
-4. Report compliance percentage
-
-### /garden
-
-Health report on recipes, sandboxes, and variants.
-
-**Behavior:**
-1. Count components using recipes vs raw physics
-2. List active sandboxes (with age — flag stale ones >7 days)
-3. List recipe variants created
-4. Show coverage by zone
-5. Recommend actions (codify old sandboxes, review variants)
-</sigil_commands>
+  return (
+    <GlassLayout variant="card">
+      <GlassLayout.Image src={product.image} alt={product.name} />
+      <GlassLayout.Content>
+        <GlassLayout.Title>{product.name}</GlassLayout.Title>
+        <GlassLayout.Description>{product.description}</GlassLayout.Description>
+      </GlassLayout.Content>
+      <GlassLayout.Actions>
+        <Lens.GlassButton variant="primary">
+          Add to Cart
+        </Lens.GlassButton>
+      </GlassLayout.Actions>
+    </GlassLayout>
+  );
+}
+```
+</sigil_quickstart>
 
 ---
 
-## Zone Resolution
+## Core Layer
 
-<sigil_zones>
-Zones are directories. Each directory can have a `.sigilrc.yaml` that specifies which recipes to use.
+<sigil_core>
+### useCriticalAction
 
-**Resolution algorithm:**
+The main physics hook. Emits a state stream with time authority.
+
+```tsx
+const action = useCriticalAction({
+  mutation: () => api.doThing(),
+  timeAuthority: 'server-tick' | 'optimistic' | 'hybrid',
+  onSuccess: (data) => {},
+  onError: (error) => {},
+  proprioception: { /* optional prediction config */ },
+});
+
+// State stream
+action.state.status    // 'idle' | 'confirming' | 'pending' | 'confirmed' | 'failed'
+action.state.progress  // 0-100 for hybrid
+action.state.error     // Error | null
+
+// Actions
+action.confirm()       // Enter confirming state
+action.commit()        // Execute mutation
+action.cancel()        // Cancel (if confirming)
+action.reset()         // Reset to idle
 ```
-File: src/checkout/ConfirmButton.tsx
-1. Check src/checkout/.sigilrc.yaml → found: recipes: decisive
-2. Merge with src/.sigilrc.yaml → inherit defaults
-3. Apply decisive recipes
-```
 
-**Zone config format:**
-```yaml
-sigil: "1.2.4"
-recipes: decisive          # Which recipe set
-sync: server_authoritative # Metadata for context
-tick: 600ms
+### Time Authorities
 
-# Optional constraints
-constraints:
-  optimistic_ui: forbidden
-  loading_spinners: forbidden
+| Authority | Behavior | Use Case |
+|-----------|----------|----------|
+| `server-tick` | Wait for server confirmation | Payments, destructive actions |
+| `optimistic` | Instant update, silent rollback on error | Admin tools, lists |
+| `hybrid` | Instant + sync indicator, visible rollback | Real-time collaboration |
+
+### Proprioception
+
+Self-prediction for responsive UIs:
+
+```tsx
+const movement = useCriticalAction({
+  mutation: () => api.moveItem(position),
+  timeAuthority: 'hybrid',
+  proprioception: {
+    maxDrift: 200,      // Max ms to predict ahead
+    decayRate: 0.9,     // Confidence decay per frame
+    position: {
+      render: 'ghost',  // Show predicted position as ghost
+      reconcile: 'lerp' // Smooth correction on server response
+    }
+  }
+});
 ```
-</sigil_zones>
+</sigil_core>
 
 ---
 
-## Recipe Sets
+## Layout Layer
 
-<sigil_recipes>
-Three recipe sets with different physics profiles:
+<sigil_layouts>
+### CriticalZone
 
-### Decisive (checkout, transactions)
-- **Physics:** `spring(180, 12)`, whileTap scale 0.98
-- **Feel:** Heavy, deliberate, trustworthy
-- **Sync:** server_authoritative
-- **Use for:** Critical actions where trust matters
+For high-stakes actions (payments, destructive operations).
 
-### Machinery (admin, utilities)
-- **Physics:** `spring(400, 30)` or instant
-- **Feel:** Efficient, instant, no-nonsense
-- **Sync:** client_authoritative
-- **Use for:** Admin tools, settings, repetitive tasks
-
-### Glass (marketing, exploration)
-- **Physics:** `spring(200, 20)`, float on hover
-- **Feel:** Light, delightful, polished
-- **Sync:** client_authoritative
-- **Use for:** Marketing pages, exploratory interfaces
-
-**Recipe location:** `sigil-mark/recipes/{set}/`
-
-**Variants:** Created when refinement produces reusable pattern:
+```tsx
+<CriticalZone financial={true}>
+  {/* Zone context: { type: 'critical', financial: true, timeAuthority: 'server-tick' } */}
+  {/* useLens() returns StrictLens for critical buttons */}
+</CriticalZone>
 ```
-sigil-mark/recipes/decisive/
-├── Button.tsx              # Base
-├── Button.nintendo.tsx     # Variant: spring(300, 8)
-├── Button.relaxed.tsx      # Variant: spring(140, 16)
-└── index.ts
+
+**Props:**
+- `financial` (boolean, default: true) — Forces StrictLens when true
+- `maxActions` (number, default: 3) — Warns if exceeded
+
+**Subcomponents:**
+- `CriticalZone.Content` — Main content area
+- `CriticalZone.Actions` — Button area (32px gap, auto-sorts critical buttons last)
+
+### MachineryLayout
+
+For keyboard-driven admin interfaces.
+
+```tsx
+<MachineryLayout
+  stateKey="items"
+  onAction={(id) => {}}
+  onDelete={(id) => {}}
+>
+  {/* Zone context: { type: 'admin', timeAuthority: 'optimistic' } */}
+</MachineryLayout>
 ```
-</sigil_recipes>
+
+**Keyboard shortcuts:**
+- Arrow keys, j/k: Navigate
+- Enter/Space: Activate
+- Delete/Backspace: Delete
+- Escape: Deselect
+- Home/End: Jump to first/last
+
+**Subcomponents:**
+- `MachineryLayout.List` — Container for items
+- `MachineryLayout.Item` — Single item
+- `MachineryLayout.Search` — Filter input
+- `MachineryLayout.Empty` — Empty state
+
+### GlassLayout
+
+For hover-driven marketing/showcase interfaces.
+
+```tsx
+<GlassLayout variant="card" | "hero" | "feature">
+  {/* Zone context: { type: 'marketing', timeAuthority: 'optimistic' } */}
+</GlassLayout>
+```
+
+**Hover physics:**
+- Scale: 1.02
+- TranslateY: -4px
+- Shadow increase
+- 200ms ease-out transition
+
+**Subcomponents:**
+- `GlassLayout.Image` — Image slot
+- `GlassLayout.Content` — Body container
+- `GlassLayout.Title` — Title text
+- `GlassLayout.Description` — Description text
+- `GlassLayout.Actions` — Button area
+</sigil_layouts>
 
 ---
 
-## Three Laws
+## Lens Layer
 
-<sigil_laws>
-| Level | Meaning | Example |
-|-------|---------|---------|
-| **IMPOSSIBLE** | Violates trust model, build fails | Optimistic UI in server_authoritative zone |
-| **BLOCK** | Requires explicit override | Raw physics outside sandbox |
-| **WARN** | Logged for /garden | Sandbox open > 7 days |
+<sigil_lenses>
+### useLens Hook
 
-**IMPOSSIBLE constraints cannot be overridden.** They represent physics that would break user trust (e.g., showing success before server confirms in a transaction).
-</sigil_laws>
+Returns the appropriate lens based on zone context and user preference.
 
----
+```tsx
+const Lens = useLens();
 
-## Context Injection
-
-<sigil_context_format>
-When processing commands, inject this context:
-
-```xml
-<sigil_context version="1.2.4">
-  <zone path="{current_path}">
-    <recipes>{recipe_set}</recipes>
-    <sync>{sync_mode}</sync>
-  </zone>
-
-  <available_recipes>
-    <recipe name="{name}" physics="{spring_values}">
-      <variant name="{variant}" physics="{values}" />
-    </recipe>
-  </available_recipes>
-
-  <constraints>
-    <rule level="impossible">{hard_constraint}</rule>
-    <rule level="block">{soft_constraint}</rule>
-  </constraints>
-
-  <sandbox_files>
-    <file path="{path}" />
-  </sandbox_files>
-</sigil_context>
+// In CriticalZone with financial=true → StrictLens (forced)
+// In MachineryLayout → User preference or DefaultLens
+// In GlassLayout → User preference or DefaultLens
+// No layout → DefaultLens
 ```
-</sigil_context_format>
 
----
+### Built-in Lenses
 
-## Workbench Mode
+| Lens | Touch Target | Contrast | Animations | Use Case |
+|------|-------------|----------|------------|----------|
+| `DefaultLens` | 44px | Standard | Yes | General UI |
+| `StrictLens` | 48px | High | No | High-stakes actions |
+| `A11yLens` | 56px | WCAG AAA | No | Accessibility mode |
 
-<sigil_workbench>
-When user runs `sigil workbench`, they enter a tmux session with:
-- **Left pane:** Diff view + physics values + A/B toggle
-- **Right pane:** Browser via Chrome MCP
-- **Bottom pane:** Claude Code interaction
+### Lens Components
 
-**The A/B toggle is crucial for learning:**
-- Press [A]: Load previous physics, user clicks component, feels it
-- Press [B]: Load adjusted physics, user clicks component, feels difference
-- This is how `stiffness: 180` gains meaning — through fingers, not lectures
+Each lens provides:
+- `CriticalButton` — For critical actions (status-based)
+- `GlassButton` — For marketing/showcase buttons
+- `MachineryItem` — For list items
 
-**When in workbench mode:**
-1. After every adjustment, prompt user to test: "Toggle A/B to feel the difference"
-2. Show the diff prominently
-3. Keep browser URL in sync with component being edited
-4. Track history of adjustments for comparison
-</sigil_workbench>
+```tsx
+// CriticalButton props
+<Lens.CriticalButton
+  state={action.state}
+  onAction={() => action.commit()}
+  labels={{ pending: 'Processing...' }}
+  disabled={false}
+/>
 
----
+// GlassButton props
+<Lens.GlassButton
+  variant="primary" | "secondary" | "ghost"
+  onClick={() => {}}
+/>
 
-## PR-Native Refinement
-
-<sigil_refinement>
-When feedback comes from PR comments (Vercel, GitHub, Linear):
-
-1. **Read context:** Component code + zone + current physics
-2. **Infer intent:** "Nintendo Switch" = high snap; "anxious" = too fast/stiff (FOR THIS COMPONENT)
-3. **Adjust:** Make the physics change
-4. **Commit:** With descriptive message showing the delta
-5. **No lecture:** The diff is the lesson
-
-**Commit format:**
+// MachineryItem props
+<Lens.MachineryItem
+  id="item-1"
+  active={false}
+  onAction={() => {}}
+  onDelete={() => {}}
+/>
 ```
-refine({component}): {description} - {physics_delta}
 
-Example:
-refine(CheckoutButton): Nintendo Switch feel - spring(180,12)→(300,8)
+### LensProvider
+
+For user preference management:
+
+```tsx
+<LensProvider initialLens={DefaultLens}>
+  <App />
+</LensProvider>
+
+// In child component
+const { lens, setLens } = useLensPreference();
+<button onClick={() => setLens(A11yLens)}>Enable A11y Mode</button>
 ```
-</sigil_refinement>
+</sigil_lenses>
 
 ---
 
-## Behavioral Guidelines
+## Agent Protocol
 
-<sigil_behavior>
-**DO:**
-- Use recipes for all physics
-- Show diffs prominently after changes
-- Infer context-specific meaning for feeling words
-- Suggest A/B comparison in workbench
-- Create variants when refinements are reusable
-- Respect zone constraints
+<sigil_agent_protocol>
+### When Generating UI Code
 
-**DON'T:**
-- Generate raw spring/timing values outside sandbox
-- Lecture about physics (the diff is the lesson)
-- Apply global meaning to subjective words
-- Skip showing the physics delta
-- Auto-apply without showing what changed
+1. **Determine zone context:**
+   - Is this inside a Layout? Read the zone context.
+   - What time authority does this zone use?
+   - What lens will be selected?
 
-**WHEN FEEDBACK IS RECEIVED:**
-1. Understand the feeling in context of THIS component
-2. Make the adjustment
-3. Show: `spring(180, 12) → spring(300, 8)`
-4. In workbench: "Toggle A/B to feel the difference"
-5. Ask if worth saving as variant
+2. **Select appropriate pattern:**
+   - Critical action? Use `useCriticalAction` + `CriticalZone`
+   - Admin list? Use `MachineryLayout` with keyboard nav
+   - Marketing? Use `GlassLayout` with hover physics
 
-**LEARNING HAPPENS THROUGH:**
-- Seeing `stiffness: 180 → 300` in the diff
-- Clicking the component and feeling the snap
-- Toggling A/B and feeling both
-- NOT through reading explanations
-</sigil_behavior>
+3. **Respect lens enforcement:**
+   - In `CriticalZone` with `financial={true}`, critical buttons WILL use `StrictLens`
+   - Don't fight this — it's intentional for trust
+
+4. **Use state streams:**
+   - Components receive `state` prop, not `isLoading`
+   - State has `.status`, `.progress`, `.error`
+   - Let the lens render the appropriate UI for each status
+
+### When User Asks for Animation Changes
+
+In v2.0, animations live in lenses, not physics:
+
+```tsx
+// DON'T do this (v1.x pattern)
+<Button spring={{ stiffness: 300 }} />
+
+// DO this (v2.0 pattern)
+// 1. Animations are in lens
+// 2. If user wants different animations, create a custom lens
+// 3. Or use the appropriate built-in lens
+
+// For no animations in critical zones:
+<CriticalZone financial> {/* StrictLens has no animations */}
+
+// For accessibility mode:
+<LensProvider initialLens={A11yLens}>
+```
+
+### When User Asks for "Snappier" or "Heavier" Feel
+
+1. Understand the context — what zone, what component?
+2. If it's about TIME authority, adjust the core hook
+3. If it's about VISUAL response, that's lens territory
+4. If it's about STRUCTURAL physics, that's layout territory
+
+```tsx
+// Snappier time authority
+useCriticalAction({ timeAuthority: 'optimistic' }) // Instant
+
+// Heavier visual feel
+// → User should use StrictLens or create custom lens
+
+// Snappier structural physics (Glass)
+// → GlassLayout hover physics are fixed; create custom layout for different feel
+```
+</sigil_agent_protocol>
+
+---
+
+## Migration from v1.2.5
+
+<sigil_migration>
+| v1.2.5 | v2.0 |
+|--------|------|
+| `<SigilZone material="decisive">` | `<CriticalZone financial>` |
+| `<SigilZone material="machinery">` | `<MachineryLayout>` |
+| `<SigilZone material="glass">` | `<GlassLayout>` |
+| `useServerTick()` | `useCriticalAction({ timeAuthority: 'server-tick' })` |
+| `useSigilPhysics()` | `useLens()` |
+| `<Button spring={...}>` | `<Lens.CriticalButton state={...}>` |
+
+### Deprecated APIs
+
+These still work but will be removed in v3.0:
+
+- `SigilZone` — Use layout primitives
+- `useSigilPhysics` — Use `useLens()`
+- `useServerAuthoritative` — Use `useCriticalAction`
+- `withSigilPhysics` — Use `useLens()`
+- File-path zone resolution — Zones are now structural (Layout-based)
+</sigil_migration>
 
 ---
 
@@ -310,46 +478,44 @@ refine(CheckoutButton): Nintendo Switch feel - spring(180,12)→(300,8)
 
 <sigil_structure>
 ```
-project/
-├── .sigilrc.yaml              # Root config
-├── .sigil-version.json        # Version tracking
-├── CLAUDE.md                  # This file
+sigil-mark/
+├── index.ts              # Main entry point
 │
-├── src/
-│   ├── .sigilrc.yaml          # recipes: machinery (default)
-│   ├── checkout/
-│   │   └── .sigilrc.yaml      # recipes: decisive
-│   ├── admin/
-│   │   └── .sigilrc.yaml      # recipes: machinery
-│   └── marketing/
-│       └── .sigilrc.yaml      # recipes: glass
+├── core/                 # Physics engines (Truth)
+│   ├── useCriticalAction.ts
+│   ├── useLocalCache.ts
+│   ├── proprioception.ts
+│   ├── types.ts
+│   └── index.ts
 │
-├── sigil-mark/
-│   ├── recipes/
-│   │   ├── decisive/
-│   │   │   ├── Button.tsx
-│   │   │   ├── Button.nintendo.tsx
-│   │   │   ├── ConfirmFlow.tsx
-│   │   │   └── index.ts
-│   │   ├── machinery/
-│   │   │   ├── Table.tsx
-│   │   │   └── index.ts
-│   │   └── glass/
-│   │       ├── HeroCard.tsx
-│   │       └── index.ts
-│   ├── hooks/
-│   │   ├── useServerTick.ts
-│   │   └── index.ts
-│   ├── history/
-│   │   └── YYYY-MM-DD.md
-│   └── reports/
-│       └── garden-{date}.yaml
+├── layouts/              # Zones + Structural Physics
+│   ├── context.ts
+│   ├── CriticalZone.tsx
+│   ├── MachineryLayout.tsx
+│   ├── GlassLayout.tsx
+│   └── index.ts
 │
-└── .claude/
-    ├── commands/
-    │   └── *.md
-    └── skills/
-        └── sigil-core/
+├── lenses/               # Interchangeable UIs (Experience)
+│   ├── types.ts
+│   ├── useLens.ts
+│   ├── LensProvider.tsx
+│   ├── default/
+│   │   ├── CriticalButton.tsx
+│   │   ├── GlassButton.tsx
+│   │   ├── MachineryItem.tsx
+│   │   └── index.tsx
+│   ├── strict/
+│   │   └── ...
+│   ├── a11y/
+│   │   └── ...
+│   └── index.ts
+│
+├── recipes/              # v1.2.5 recipes (still valid)
+│   ├── decisive/
+│   ├── machinery/
+│   └── glass/
+│
+└── __tests__/
 ```
 </sigil_structure>
 

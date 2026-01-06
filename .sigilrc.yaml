@@ -1,7 +1,8 @@
-# Sigil v1.2.4 Configuration
-# "See the diff. Feel the result. Learn by doing."
+# Sigil v2.0 Configuration
+# "Truth is Core. Experience is Lens. Layouts ARE Zones."
 
-sigil: "1.2.4"
+sigil: "2.0.0"
+codename: "Reality Engine"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # PROJECT METADATA
@@ -11,18 +12,81 @@ project:
   name: "Sigil Framework"
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# RECIPES
-# Which recipe set to use by default
-# Options: decisive | machinery | glass
+# v2.0 ZONES
+# Layout-based zone configuration
+# Zones are now declared via Layout primitives, not file paths
 # ═══════════════════════════════════════════════════════════════════════════════
 
+zones:
+  # CriticalZone — High-stakes financial/destructive actions
+  critical:
+    layout: CriticalZone
+    timeAuthority: server-tick
+    lens: strict              # Forces StrictLens when financial=true
+    constraints:
+      optimistic_ui: forbidden
+      loading_spinners: warn
+      animations: warn
+
+  # MachineryLayout — Keyboard-driven admin interfaces
+  admin:
+    layout: MachineryLayout
+    timeAuthority: optimistic
+    lens: user-preference     # Respects user's lens choice
+    constraints:
+      raw_physics: allowed
+
+  # GlassLayout — Hover-driven marketing/showcase
+  marketing:
+    layout: GlassLayout
+    timeAuthority: optimistic
+    lens: user-preference
+    constraints: {}           # No constraints for marketing
+
+  # Default zone (no layout wrapper)
+  default:
+    layout: null
+    timeAuthority: optimistic
+    lens: default
+    constraints: {}
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# LENS CONFIGURATION
+# Which lenses are available and their classifications
+# ═══════════════════════════════════════════════════════════════════════════════
+
+lenses:
+  # Built-in lenses
+  DefaultLens:
+    classification: cosmetic
+    minTouchTarget: 44px
+    animations: true
+    description: "Standard UI with animations and 44px touch targets"
+
+  StrictLens:
+    classification: cosmetic
+    minTouchTarget: 48px
+    animations: false
+    description: "High-contrast, no animations, for high-stakes actions"
+    zones:
+      - critical              # Auto-selected in critical+financial zones
+
+  A11yLens:
+    classification: cosmetic
+    minTouchTarget: 56px
+    animations: false
+    wcag: AAA
+    description: "WCAG AAA compliant, 56px targets, bold focus rings"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# v1.2.5 LEGACY (deprecated)
+# These settings are preserved for backwards compatibility
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# @deprecated Use zones.admin instead
 recipes: machinery
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# COMPONENT DISCOVERY
-# Where to find components that should use recipes
-# ═══════════════════════════════════════════════════════════════════════════════
-
+# @deprecated Use zones configuration instead
 component_paths:
   - "components/**"
   - "src/components/**"
@@ -30,40 +94,22 @@ component_paths:
   - "packages/*/src/**"
   - "src/features/**/components/**"
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# SYNC STRATEGY (optional)
-# How UI syncs with server
-# Options: client_authoritative | server_authoritative | server_tick
-# ═══════════════════════════════════════════════════════════════════════════════
-
-# sync: client_authoritative
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# TICK DURATION (optional)
-# For server_tick sync, how long to wait for confirmation
-# ═══════════════════════════════════════════════════════════════════════════════
-
+# @deprecated Use zones.critical.timeAuthority instead
+# sync: server_authoritative
 # tick: 600ms
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# CONSTRAINTS (optional)
-# Physics behaviors that are forbidden in this scope
-# ═══════════════════════════════════════════════════════════════════════════════
-
+# @deprecated Use zones configuration instead
 # constraints:
 #   optimistic_ui: forbidden
-#   loading_spinners: forbidden
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # SANDBOX FILES (managed by /sandbox command)
-# Files where raw physics are allowed for experimentation
 # ═══════════════════════════════════════════════════════════════════════════════
 
 sandbox: []
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # REFINEMENT (optional)
-# PR-native feedback configuration
 # ═══════════════════════════════════════════════════════════════════════════════
 
 refinement:

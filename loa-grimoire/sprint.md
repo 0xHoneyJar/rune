@@ -399,40 +399,40 @@ This plan implements Sigil v2.0, the "Reality Engine" that separates Truth (Core
 
 ### Tasks
 
-- [ ] **S7-T1: Create package entry point**
+- [x] **S7-T1: Create package entry point**
   - Create `sigil-mark/index.ts`
   - Export all core hooks and types
   - Export all layouts and context
   - Export all lenses
   - **Acceptance:** Single import point works
 
-- [ ] **S7-T2: Create v1.2.5 compatibility warnings**
+- [x] **S7-T2: Create v1.2.5 compatibility warnings**
   - Add deprecation warnings to old APIs (if any remain)
   - Log migration guidance in development
   - **Acceptance:** Old API usage shows deprecation warning
 
-- [ ] **S7-T3: Update .sigilrc.yaml for v2.0**
+- [x] **S7-T3: Update .sigilrc.yaml for v2.0**
   - Update version to "2.0.0"
   - Update zone definitions for layout-based zones
   - Update lens configuration
   - Remove deprecated fields
   - **Acceptance:** Config matches SDD §5.1
 
-- [ ] **S7-T4: Create zone resolver for AI/Claude**
+- [x] **S7-T4: Create zone resolver for AI/Claude**
   - Create `sigil-mark/core/zone-resolver.ts`
   - Parse .sigilrc.yaml zones
   - Match file path against glob patterns
   - Return zone config
   - **Acceptance:** Claude can resolve zone from file path
 
-- [ ] **S7-T5: Update CLAUDE.md for v2.0**
+- [x] **S7-T5: Update CLAUDE.md for v2.0**
   - Document 3-layer architecture
   - Document "Layouts ARE Zones" philosophy
   - Include usage examples for all patterns
   - Remove v1.2.5 references
   - **Acceptance:** CLAUDE.md matches v2.0 architecture
 
-- [ ] **S7-T6: Update skills for v2.0**
+- [x] **S7-T6: Update skills for v2.0**
   - Update `.claude/skills/sigil-core/SKILL.md`
   - Update `.claude/skills/crafting-components/SKILL.md`
   - Remove deprecated v1.2.5 patterns
@@ -533,7 +533,7 @@ From PRD §7:
 | Sprint 4 | COMPLETED | 2026-01-05 |
 | Sprint 5 | COMPLETED | 2026-01-05 |
 | Sprint 6 | COMPLETED | 2026-01-05 |
-| Sprint 7 | PENDING | - |
+| Sprint 7 | COMPLETED | 2026-01-05 |
 | Sprint 8 | PENDING | - |
 
 ---
