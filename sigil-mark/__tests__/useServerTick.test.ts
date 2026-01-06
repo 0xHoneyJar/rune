@@ -2,114 +2,229 @@
  * @jest-environment jsdom
  */
 
-import { renderHook, act } from '@testing-library/react';
-
-// Mock implementation for testing
-const mockUseServerTick = <T,>(action: () => Promise<T>) => {
-  let isPending = false;
-  let error: Error | null = null;
-
-  const execute = async () => {
-    if (isPending) return; // Prevent double execution
-    isPending = true;
-    error = null;
-
-    try {
-      await action();
-    } catch (e) {
-      error = e as Error;
-    } finally {
-      isPending = false;
-    }
-  };
-
-  return { execute, isPending, error };
-};
+import { renderHook, act, waitFor } from '@testing-library/react';
+import { useServerTick } from '../hooks/useServerTick';
 
 describe('useServerTick', () => {
-  it('should prevent optimistic UI updates', async () => {
-    let callCount = 0;
-    const action = async () => {
-      callCount++;
-      await new Promise((r) => setTimeout(r, 100));
-    };
-
-    const hook = mockUseServerTick(action);
-
-    // First call starts
-    const p1 = hook.execute();
-
-    // Second call should be blocked while pending
-    // In real implementation, execute returns early if isPending
-    expect(hook.isPending).toBe(true);
-
-    await p1;
-    expect(callCount).toBe(1);
+  beforeEach(() => {
+    jest.useFakeTimers();
   });
 
-  it('should track pending state correctly', async () => {
-    const states: boolean[] = [];
-    const action = async () => {
-      await new Promise((r) => setTimeout(r, 50));
-    };
-
-    const hook = mockUseServerTick(action);
-
-    states.push(hook.isPending); // false
-    const promise = hook.execute();
-    // Note: In a real React implementation, isPending updates reactively
-    await promise;
-    states.push(hook.isPending); // false after complete
-
-    expect(states[0]).toBe(false);
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
-  it('should handle errors gracefully', async () => {
+  it('executes action and manages pending state', async () => {
+    const action = jest.fn().mockResolvedValue('result');
+
+    const { result } = renderHook(() => useServerTick(action));
+
+    expect(result.current.isPending).toBe(false);
+
+    let executePromise: Promise<unknown>;
+    act(() => {
+      executePromise = result.current.execute();
+    });
+
+    expect(result.current.isPending).toBe(true);
+
+    await act(async () => {
+      await executePromise;
+    });
+
+    expect(result.current.isPending).toBe(false);
+    expect(action).toHaveBeenCalledTimes(1);
+  });
+
+  it('prevents double execution during pending state', async () => {
+    const action = jest.fn().mockImplementation(
+      () => new Promise((resolve) => setTimeout(resolve, 100))
+    );
+
+    const { result } = renderHook(() => useServerTick(action));
+
+    act(() => {
+      result.current.execute();
+      result.current.execute(); // Should be ignored
+      result.current.execute(); // Should be ignored
+    });
+
+    expect(action).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      jest.advanceTimersByTime(100);
+    });
+  });
+
+  it('respects minPendingTime for deliberate feel', async () => {
+    const action = jest.fn().mockResolvedValue('result');
+    const minPendingTime = 600;
+
+    const { result } = renderHook(() =>
+      useServerTick(action, { minPendingTime })
+    );
+
+    let startTime: number;
+    let executePromise: Promise<unknown>;
+
+    act(() => {
+      startTime = Date.now();
+      executePromise = result.current.execute();
+    });
+
+    expect(result.current.isPending).toBe(true);
+
+    // Advance time but not enough
+    await act(async () => {
+      jest.advanceTimersByTime(300);
+    });
+
+    expect(result.current.isPending).toBe(true);
+
+    // Advance remaining time
+    await act(async () => {
+      jest.advanceTimersByTime(300);
+      await executePromise;
+    });
+
+    expect(result.current.isPending).toBe(false);
+  });
+
+  it('handles errors and calls onError callback', async () => {
     const error = new Error('Server error');
-    const action = async () => {
-      throw error;
-    };
+    const action = jest.fn().mockRejectedValue(error);
+    const onError = jest.fn();
 
-    const hook = mockUseServerTick(action);
+    const { result } = renderHook(() =>
+      useServerTick(action, { onError })
+    );
 
-    await hook.execute();
-    expect(hook.error).toBe(error);
+    await act(async () => {
+      await result.current.execute();
+    });
+
+    expect(result.current.error).toEqual(error);
+    expect(onError).toHaveBeenCalledWith(error);
+    expect(result.current.isPending).toBe(false);
   });
 
-  it('should not show success before server confirms', async () => {
-    let serverConfirmed = false;
-    const action = async () => {
-      await new Promise((r) => setTimeout(r, 100));
-      serverConfirmed = true;
+  it('calls onSuccess callback on success', async () => {
+    const action = jest.fn().mockResolvedValue('result');
+    const onSuccess = jest.fn();
+
+    const { result } = renderHook(() =>
+      useServerTick(action, { onSuccess })
+    );
+
+    await act(async () => {
+      await result.current.execute();
+    });
+
+    expect(onSuccess).toHaveBeenCalled();
+    expect(result.current.error).toBeNull();
+  });
+
+  it('resets error state with resetError', async () => {
+    const error = new Error('Test error');
+    const action = jest.fn().mockRejectedValue(error);
+
+    const { result } = renderHook(() => useServerTick(action));
+
+    await act(async () => {
+      await result.current.execute();
+    });
+
+    expect(result.current.error).toEqual(error);
+
+    act(() => {
+      result.current.resetError();
+    });
+
+    expect(result.current.error).toBeNull();
+  });
+
+  it('uses refs to avoid stale closures (fixes dependency bug)', async () => {
+    // This tests the fix for the dependency bug
+    // The action should always use the latest callback, not a stale one
+    let counter = 0;
+    const createAction = () => {
+      const currentValue = ++counter;
+      return jest.fn().mockResolvedValue(currentValue);
     };
 
-    const hook = mockUseServerTick(action);
+    const action1 = createAction();
+    const { result, rerender } = renderHook(
+      ({ action }) => useServerTick(action),
+      { initialProps: { action: action1 } }
+    );
 
-    // Before execute
-    expect(serverConfirmed).toBe(false);
+    // Execute with action1
+    await act(async () => {
+      await result.current.execute();
+    });
+    expect(action1).toHaveBeenCalled();
 
-    // Start execute
-    const promise = hook.execute();
-    expect(serverConfirmed).toBe(false); // Still false while pending
+    // Re-render with new action (simulates unmemoized callback)
+    const action2 = createAction();
+    rerender({ action: action2 });
 
-    // After execute completes
-    await promise;
-    expect(serverConfirmed).toBe(true);
+    // Execute should use action2, not stale action1
+    await act(async () => {
+      await result.current.execute();
+    });
+
+    expect(action2).toHaveBeenCalled();
+  });
+
+  it('returns result from action', async () => {
+    const expectedResult = { success: true, data: 'test' };
+    const action = jest.fn().mockResolvedValue(expectedResult);
+
+    const { result } = renderHook(() => useServerTick(action));
+
+    let executeResult: unknown;
+    await act(async () => {
+      executeResult = await result.current.execute();
+    });
+
+    expect(executeResult).toEqual(expectedResult);
   });
 });
 
-describe('useServerTick in decisive zone', () => {
-  it('should match IMPOSSIBLE constraint: no optimistic UI', () => {
-    // This test documents the constraint
-    // In decisive zones, useServerTick is REQUIRED
+describe('useServerTick in decisive zone context', () => {
+  it('enforces server-authoritative behavior (no optimistic UI)', async () => {
+    // This documents the constraint:
+    // In decisive zones with serverAuthoritative=true,
+    // state should NEVER update before server confirms
 
-    const constraint = {
-      level: 'IMPOSSIBLE',
-      rule: 'optimistic_ui: forbidden',
-      enforcement: 'ESLint sigil/no-optimistic-in-decisive',
-    };
+    let serverConfirmed = false;
+    const action = jest.fn().mockImplementation(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      serverConfirmed = true;
+      return 'confirmed';
+    });
 
-    expect(constraint.level).toBe('IMPOSSIBLE');
-    expect(constraint.rule).toContain('forbidden');
+    const { result } = renderHook(() => useServerTick(action));
+
+    // Before execution
+    expect(serverConfirmed).toBe(false);
+    expect(result.current.isPending).toBe(false);
+
+    // Start execution
+    act(() => {
+      result.current.execute();
+    });
+
+    // During pending - server has NOT confirmed yet
+    expect(serverConfirmed).toBe(false);
+    expect(result.current.isPending).toBe(true);
+
+    // Only after server responds
+    await act(async () => {
+      jest.advanceTimersByTime(100);
+    });
+
+    expect(serverConfirmed).toBe(true);
+    expect(result.current.isPending).toBe(false);
   });
 });

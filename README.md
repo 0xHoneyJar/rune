@@ -1,50 +1,61 @@
 # Sigil
 
-[![Version](https://img.shields.io/badge/version-1.2.4-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.2.5-blue.svg)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 > *"Engineers learn by seeing diffs and feeling the physics."*
 
-Design Context Framework for AI-assisted development. Gives AI agents design context through TSX recipes with embedded physics—engineers see the diff, feel the component, decide what works.
+Design Context Framework for AI-assisted development. Components automatically inherit physics from context—move code between zones without changing imports.
 
 ## Philosophy: Diff + Feel
 
 ### The Insight
 
-Traditional design systems are too abstract. Telling an AI "use deliberate motion in checkout" doesn't translate to code. Sigil flips this:
+Traditional design systems are too abstract. Sigil flips this:
 
-1. **Recipes are TSX components** — Real code with real spring physics
-2. **Diffs show the physics** — Engineers see exactly what changed
+1. **Physics are tokens** — Versioned data, visible in diffs
+2. **Context provides physics** — Components inherit from `<SigilZone>`
 3. **Feel validates decisions** — Run the component, feel if it's right
-4. **Sandbox enables exploration** — Raw physics experimentation without constraints
+4. **Zero refactors** — Moving code between zones = changing the wrapper
 
-When an engineer sees a recipe diff with `spring: { tension: 180, friction: 12 }`, they can render it, feel the weight, and understand *why* checkout buttons feel deliberate.
+When physics change, the diff shows exactly what changed. Engineers render, feel, and decide.
 
 ### Core Principles
 
-**1. Diff + Feel > Documentation**
+**1. One Component, Contextual Physics**
 
-A TSX component with embedded physics values teaches more than paragraphs of guidelines. Engineers learn by doing:
-- See the recipe diff
-- Render in sandbox
-- Feel the spring physics
-- Apply or reject
+```tsx
+// Same Button component, different physics
+<SigilZone material="decisive" serverAuthoritative>
+  <Button onAction={confirmPurchase}>Confirm</Button>  // Heavy, deliberate
+</SigilZone>
 
-**2. Three Recipe Sets**
-
-| Set | Spring | Feel | Zone Affinity |
-|-----|--------|------|---------------|
-| **Decisive** | `spring(180, 12)` | Heavy, deliberate | Critical, Transactional |
-| **Machinery** | `spring(400, 30)` | Instant, efficient | Admin |
-| **Glass** | `spring(200, 20)` | Smooth, delightful | Marketing, Exploratory |
-
-**3. Zone Resolution by Path**
-
-Physics are automatic based on file location:
+<SigilZone material="glass">
+  <Button onClick={learnMore}>Learn More</Button>      // Smooth, delightful
+</SigilZone>
 ```
-src/features/checkout/Button.tsx → zone: critical → recipe: decisive
-src/admin/Dashboard.tsx → zone: admin → recipe: machinery
-src/marketing/Hero.tsx → zone: marketing → recipe: glass
+
+**2. Three Materials**
+
+| Material | Spring | Feel | Zone Affinity |
+|----------|--------|------|---------------|
+| **Decisive** | `180/12` | Heavy, deliberate | Critical, Transactional |
+| **Machinery** | `400/30` | Instant, efficient | Admin |
+| **Glass** | `200/20` | Smooth, delightful | Marketing, Exploratory |
+
+**3. Physics as Tokens**
+
+```typescript
+// sigil-mark/core/physics.ts - Single source of truth
+export const PHYSICS = {
+  decisive: {
+    spring: { stiffness: 180, damping: 12 },
+    tap: { scale: 0.98 },
+    minPendingTime: 600,
+    feel: 'Heavy, deliberate - like confirming a bank transfer',
+  },
+  // ...
+};
 ```
 
 **4. Three Laws of Enforcement**
@@ -52,7 +63,7 @@ src/marketing/Hero.tsx → zone: marketing → recipe: glass
 | Level | Behavior | Override |
 |-------|----------|----------|
 | **IMPOSSIBLE** | Physics violations. Never generated. | None |
-| **BLOCK** | Budget/fidelity violations. Sandbox allowed. | Taste Key ruling |
+| **BLOCK** | Budget violations. Sandbox allowed. | Taste Key ruling |
 | **WARN** | Drift from essence. Advisory only. | Human decides |
 
 ## Quick Start
@@ -71,27 +82,47 @@ claude
 /envision
 ```
 
+### Basic Usage
+
+```tsx
+import { SigilZone, useSigilPhysics } from 'sigil-mark/core';
+import { Button } from 'sigil-mark/components';
+
+// Checkout page - decisive physics, server-authoritative
+function CheckoutPage() {
+  return (
+    <SigilZone material="decisive" serverAuthoritative>
+      <h1>Checkout</h1>
+      <Button onAction={confirmPurchase}>
+        Confirm Purchase
+      </Button>
+    </SigilZone>
+  );
+}
+
+// Marketing page - glass physics
+function MarketingPage() {
+  return (
+    <SigilZone material="glass">
+      <h1>Features</h1>
+      <Button onClick={learnMore}>
+        Learn More
+      </Button>
+    </SigilZone>
+  );
+}
+```
+
 ### Commands (6 total)
 
 | Command | Purpose |
 |---------|---------|
 | `/craft` | Get design guidance with zone context |
 | `/sandbox` | Experiment with raw physics (no constraints) |
-| `/codify` | Define zone rules and recipes |
+| `/codify` | Define zone rules |
 | `/inherit` | Bootstrap from existing codebase |
 | `/validate` | Check physics compliance |
 | `/garden` | Entropy detection and maintenance |
-
-### Setup Flow
-
-```
-/setup → /envision → /codify → (build) → /craft → /garden
-```
-
-For existing codebases:
-```
-/setup → /inherit → /envision → /codify → (build) → /craft
-```
 
 ## Architecture
 
@@ -101,73 +132,46 @@ For existing codebases:
 sigil-mark/
 ├── moodboard.md          # Product feel + references
 ├── rules.md              # Design rules by category
-├── inventory.md          # Component list
 │
-├── recipes/              # TSX components with physics
-│   ├── decisive/         # Heavy spring (180/12)
-│   │   ├── ConfirmButton.tsx
-│   │   └── TransactionCard.tsx
-│   ├── machinery/        # Instant (400/30)
-│   │   └── AdminAction.tsx
-│   └── glass/            # Smooth (200/20)
-│       └── HeroReveal.tsx
+├── core/                 # Core modules
+│   ├── physics.ts        # Physics tokens (source of truth)
+│   ├── SigilZone.tsx     # Context provider
+│   └── zone-resolver.ts  # File path → zone mapping
+│
+├── components/           # Context-aware components
+│   └── Button.tsx        # Auto-inherits physics from zone
 │
 ├── hooks/                # React hooks
-│   └── useServerTick.ts  # Server-authoritative tick
-│
-├── history/              # Refinement log
-│   └── TEMPLATE.md
-│
-├── core/                 # Internal modules
-│   └── history.ts
-│
-├── eslint-plugin/        # Enforcement rules
-│   ├── package.json
-│   ├── index.js
-│   └── rules/
-│       ├── no-raw-physics.js
-│       ├── require-recipe.js
-│       ├── no-optimistic-in-decisive.js
-│       └── sandbox-stale.js
+│   └── useServerTick.ts  # Server-authoritative actions
 │
 ├── workbench/            # A/B comparison tools
-│   ├── ab-toggle.ts      # Hot-swap mode
+│   ├── ab-toggle.ts      # Context-based toggle
+│   ├── useABToggle.ts    # React hook for A/B
 │   └── ab-iframe.ts      # Iframe mode
+│
+├── eslint-plugin/        # Enforcement rules
 │
 └── __tests__/            # Test suite
 ```
 
 ### Configuration: `.sigilrc.yaml`
 
-Per-directory configuration with cascading merge:
-
 ```yaml
-version: "1.2.4"
-
-component_paths:
-  - "components/"
-  - "src/components/"
+version: "1.2.5"
 
 zones:
   critical:
     paths: ["src/features/checkout/**", "src/features/claim/**"]
-    recipe: decisive
+    material: decisive
     sync: server_authoritative
-    patterns:
-      prefer: ["deliberate-entrance", "confirmation-flow"]
-      warn: ["instant-transition", "playful-bounce"]
 
   admin:
     paths: ["src/admin/**"]
-    recipe: machinery
-    patterns:
-      prefer: ["snappy-transition"]
+    material: machinery
 
   marketing:
     paths: ["src/features/marketing/**"]
-    recipe: glass
-    patterns:
-      prefer: ["playful-bounce", "attention-grab"]
+    material: glass
 
 rejections:
   - pattern: "Spinner"
@@ -175,115 +179,101 @@ rejections:
     exceptions: ["admin/**"]
 ```
 
-## Recipes
+## Core API
 
-### Decisive Set (Critical Zones)
+### SigilZone
+
+Context provider that gives children access to physics:
 
 ```tsx
-// sigil-mark/recipes/decisive/ConfirmButton.tsx
-import { motion } from 'framer-motion';
+import { SigilZone } from 'sigil-mark/core';
 
-export const physics = {
-  spring: { tension: 180, friction: 12 },
-  duration: '800ms+',
-  feel: 'heavy, deliberate'
-};
-
-export const ConfirmButton = ({ children, onClick }) => (
-  <motion.button
-    whileTap={{ scale: 0.98 }}
-    transition={{ type: 'spring', ...physics.spring }}
-    onClick={onClick}
-  >
-    {children}
-  </motion.button>
-);
+<SigilZone material="decisive" serverAuthoritative>
+  {/* All children inherit decisive physics */}
+</SigilZone>
 ```
 
-### Machinery Set (Admin Zones)
+### useSigilPhysics
+
+Hook to access current zone's physics:
 
 ```tsx
-// sigil-mark/recipes/machinery/AdminAction.tsx
-export const physics = {
-  spring: { tension: 400, friction: 30 },
-  duration: '<200ms',
-  feel: 'instant, efficient'
-};
-```
+import { useSigilPhysics } from 'sigil-mark/core';
 
-### Glass Set (Marketing Zones)
+function MyComponent() {
+  const { physics, material, serverAuthoritative } = useSigilPhysics();
 
-```tsx
-// sigil-mark/recipes/glass/HeroReveal.tsx
-export const physics = {
-  spring: { tension: 200, friction: 20 },
-  duration: '300-500ms',
-  feel: 'smooth, delightful'
-};
-```
-
-## Hooks
-
-### useServerTick
-
-Prevents optimistic updates in server-authoritative zones:
-
-```tsx
-import { useServerTick } from 'sigil-mark/hooks/useServerTick';
-
-function ClaimButton() {
-  const { tick, pending, sync } = useServerTick({
-    tickRate: 600,
-    sync: 'server_authoritative'
-  });
-
-  // Automatically enforces pending states
-  // Blocks optimistic UI in critical zones
+  return (
+    <motion.div
+      whileTap={{ scale: physics.tap.scale }}
+      transition={physics.spring}
+    >
+      Using {material} physics
+    </motion.div>
+  );
 }
 ```
 
-## Workbench
+### Button (Context-Aware)
 
-3-pane tmux environment for design iteration:
+Single button component that inherits physics:
 
-```bash
-# Launch workbench
-sigil-workbench.sh
+```tsx
+import { Button } from 'sigil-mark/components';
+
+// In decisive zone: heavy, deliberate (180/12)
+// In machinery zone: instant (400/30)
+// In glass zone: smooth (200/20)
+<Button onAction={async () => api.confirm()}>
+  Confirm
+</Button>
 ```
 
-### Layout
+### useServerTick
 
+Wraps async actions to prevent optimistic UI:
+
+```tsx
+import { useServerTick } from 'sigil-mark/hooks';
+
+function ClaimButton() {
+  const { execute, isPending } = useServerTick(
+    async () => api.claim(),
+    { minPendingTime: 600 }  // Decisive feel
+  );
+
+  return (
+    <button onClick={execute} disabled={isPending}>
+      {isPending ? 'Processing...' : 'Claim'}
+    </button>
+  );
+}
 ```
-┌─────────────────────────────────────────────┐
-│                                             │
-│              Physics Diff                   │
-│              (Pane 0)                       │
-│                                             │
-├──────────────────────┬──────────────────────┤
-│                      │                      │
-│   Browser Preview    │   Claude Code        │
-│   (Pane 1)           │   (Pane 2)           │
-│                      │                      │
-└──────────────────────┴──────────────────────┘
-```
 
-### A/B Toggle
+## A/B Toggle
 
-Compare recipe variants:
-- **Hot-swap mode**: CSS variable swap for instant comparison
-- **Iframe mode**: Side-by-side flow testing
+Compare physics in real-time:
 
-```typescript
-import { ABToggle } from 'sigil-mark/workbench';
+```tsx
+import { SigilZone } from 'sigil-mark/core';
+import { useABToggle, initABToggle } from 'sigil-mark/workbench';
 
-// Hot-swap physics variables
-ABToggle.swap('decisive', 'glass');
+// Initialize comparison
+initABToggle('decisive', 'glass');
 
-// Or render side-by-side
-ABToggle.iframe('/checkout', [
-  { recipe: 'decisive', label: 'Current' },
-  { recipe: 'glass', label: 'Proposed' }
-]);
+function ABTestPage() {
+  const { currentMaterial, mode } = useABToggle();
+
+  return (
+    <SigilZone material={currentMaterial}>
+      <p>Mode: {mode} ({currentMaterial})</p>
+      <p>Press Space to toggle</p>
+      <Button onAction={async () => {}}>
+        Feel the physics
+      </Button>
+    </SigilZone>
+  );
+}
 ```
 
 ## ESLint Plugin
@@ -295,103 +285,62 @@ Enforce physics at lint time:
   "plugins": ["sigil-mark"],
   "rules": {
     "sigil-mark/no-raw-physics": "error",
-    "sigil-mark/require-recipe": "warn",
     "sigil-mark/no-optimistic-in-decisive": "error",
     "sigil-mark/sandbox-stale": "warn"
   }
 }
 ```
 
-### Rules
-
 | Rule | Description |
 |------|-------------|
-| `no-raw-physics` | Must use recipe, not raw spring values |
-| `require-recipe` | Zone-mapped files need recipe import |
+| `no-raw-physics` | Use physics tokens, not raw values |
 | `no-optimistic-in-decisive` | Block optimistic UI in critical zones |
 | `sandbox-stale` | Warn on sandbox files >7 days old |
 
-## CI Integration
+## Moving Code Between Zones
 
-`.github/workflows/sigil.yml`:
+Zero refactors needed:
 
-```yaml
-name: Sigil Validation
-on: [push, pull_request]
-jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run sigil:validate
+```tsx
+// Before: Component in marketing zone
+<SigilZone material="glass">
+  <FeatureCard />  // Uses glass physics
+</SigilZone>
+
+// After: Same component in critical zone
+<SigilZone material="decisive" serverAuthoritative>
+  <FeatureCard />  // Now uses decisive physics!
+</SigilZone>
+
+// No import changes. No component modifications.
 ```
-
-## History System
-
-Track refinement decisions:
-
-```markdown
-<!-- sigil-mark/history/2026-01-05-checkout-motion.md -->
-# Refinement: Checkout Motion
-
-## Context
-Checkout button felt too light for monetary transactions.
-
-## Before
-- Recipe: glass
-- Spring: 200/20
-- User feedback: "Doesn't feel serious"
-
-## After
-- Recipe: decisive
-- Spring: 180/12
-- User feedback: "Feels trustworthy"
-
-## Pattern
-heavy_spring_for_money: When handling transactions, use decisive recipe.
-```
-
-## Coexistence with Loa
-
-Sigil and Loa serve different purposes:
-
-| Aspect | Sigil | Loa |
-|--------|-------|-----|
-| Domain | Design physics | Product architecture |
-| State zone | `sigil-mark/` | `loa-grimoire/` |
-| Config | `.sigilrc.yaml` | `.loa.config.yaml` |
-| Focus | How it feels | How it works |
-
-They coexist without conflict. When Sigil detects an architectural issue (e.g., "should checkout be optimistic?"), it generates a handoff document for Loa.
 
 ## Version History
 
 | Version | Codename | Description |
 |---------|----------|-------------|
-| v0.3.x | Constitutional Design Framework | Four pillars, progressive strictness |
-| v0.4.x | Soul Engine | npm package, React hooks |
-| v0.5.0 | Design Physics Engine | Simplified physics focus |
-| v1.0.0 | Full Workbench | 4-panel tmux, materials system |
-| v1.2.4 | Diff + Feel | Recipe-based, 3-pane workbench, ESLint enforcement |
+| v0.3.x | Constitutional Design Framework | Four pillars, strictness |
+| v0.4.x | Soul Engine | npm package, hooks |
+| v0.5.0 | Design Physics Engine | Simplified physics |
+| v1.0.0 | Full Workbench | 4-panel tmux, materials |
+| v1.2.4 | Diff + Feel | Recipe files per zone |
+| v1.2.5 | Zone Provider | Context-based physics, one component library |
 
-## Migration from v1.0
+## Key Changes in v1.2.5
 
-Key changes:
-1. **Materials → Recipes**: Clay/Machinery/Glass become TSX components
-2. **4-panel → 3-pane**: Simplified workbench layout
-3. **8 commands → 6 commands**: Consolidated workflow
-4. **zones.yaml → .sigilrc.yaml**: Per-directory configuration
-
-See [MIGRATION.md](MIGRATION.md) for detailed upgrade guide.
+- **Physics tokens** — Single source of truth (`core/physics.ts`)
+- **SigilZone context** — Components inherit physics automatically
+- **One Button** — No more DecisiveButton, GlassButton, MachineryButton
+- **Zero refactors** — Moving code = changing the wrapper
+- **A/B toggle works** — Context-based, not CSS variables
 
 ## Requirements
 
 - Git
 - Claude Code CLI
 - Node.js 18+ (for ESLint plugin)
-- tmux (for workbench)
+- React 18+
+- framer-motion (for animations)
 
 ## License
 
