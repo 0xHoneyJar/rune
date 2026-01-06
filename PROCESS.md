@@ -1,31 +1,20 @@
 # Development Process
 
-This document outlines the Sigil v0.3 workflow for capturing and maintaining design context in AI-assisted development.
+This document outlines the Sigil v1.2.4 workflow for capturing and maintaining design context in AI-assisted development.
 
-> "Culture is the Reality. Code is Just the Medium."
+> "Engineers learn by seeing diffs and feeling the physics."
 
-## Philosophy
+## Philosophy: Diff + Feel
 
-Sigil v0.3 is a constitutional framework that protects both intended soul (Immutable Values) and emergent soul (Canon of Flaws). It enables culture through:
+Sigil v1.2.4 is a design context framework built on one insight: **engineers learn by doing, not reading**. Instead of abstract guidelines, Sigil provides:
 
-- **Soul Protection** — Both intended and emergent soul are protected
-- **Multiple Truths** — Different users can have different valid experiences (Lenses)
-- **Layered Authority** — Not every decision needs community input (Consultation Chamber)
-- **Prove at Scale** — Features must demonstrate stability before becoming canonical
-- **Human Accountability** — All automated decisions can be overridden (with logging)
+- **TSX Recipes** — Real components with embedded spring physics
+- **Zone Resolution** — Automatic context based on file path
+- **Sandbox Mode** — Unconstrained experimentation with raw physics
+- **History System** — Pattern extraction from refinement decisions
+- **Human Accountability** — All validation is human approval, not automation
 
 Systems that block will be bypassed. Systems that enable will be adopted.
-
----
-
-## Four Pillars
-
-| Pillar | Directory | Purpose |
-|--------|-----------|---------|
-| Soul Binder | `soul-binder/` | Protects values and emergent behaviors |
-| Lens Array | `lens-array/` | Supports multiple user truths |
-| Consultation Chamber | `consultation-chamber/` | Layered decision authority |
-| Proving Grounds | `proving-grounds/` | Scale validation before production |
 
 ---
 
@@ -35,12 +24,12 @@ Sigil's workflow has two paths:
 
 ### New Project Path
 ```
-/setup → /envision → /codify → (build) → /craft → /approve
+/setup → /envision → /codify → (build) → /craft → /garden
 ```
 
 ### Existing Codebase Path
 ```
-/setup → /inherit → /envision → /codify → (build) → /craft → /approve
+/setup → /inherit → /envision → /codify → (build) → /craft
 ```
 
 ---
@@ -56,96 +45,101 @@ Use this to quickly find the right command:
 │
 ├─ During development?
 │  ├─ Need design guidance → /craft
-│  ├─ Validate in specific lens → /craft --lens <name>
-│  └─ New pattern needs sign-off → /approve
+│  ├─ Experiment with physics → /sandbox
+│  └─ Check compliance → /validate
 │
-├─ Protecting culture?
-│  ├─ Emergent behavior to protect → /canonize
-│  ├─ Major design decision → /consult
-│  └─ Need to revisit locked decision → /unlock
+├─ Maintenance?
+│  ├─ Detect drift/entropy → /garden
+│  └─ Get framework updates → /update
 │
-├─ Validating at scale?
-│  ├─ Feature ready for proving → /prove
-│  └─ Proving complete → /graduate
-│
-└─ Maintenance?
-   └─ Get framework updates → /update
+└─ Zone configuration?
+   └─ Define zones/recipes → /codify
 ```
 
 ---
 
-## Commands
+## Commands (6 Total)
 
-### Phase 0: Setup (`/setup`)
+### `/craft` — Design Guidance
 
-**Goal**: Initialize Sigil on a repository
+**Skill**: `crafting-guidance`
 
-**Process**:
-1. Creates `sigil-mark/` directory structure
-2. Initializes `.sigilrc.yaml` configuration
-3. Creates `.sigil-setup-complete` marker
-4. Displays next steps
+**Goal**: Get design guidance with zone context
+
+**Modes**:
+
+1. **Zone Detection**: Which zone is this file in?
+   ```bash
+   /craft src/features/checkout/PaymentForm.tsx
+   ```
+
+2. **Recipe Suggestion**: What recipe fits this context?
+   ```bash
+   /craft "loading state for checkout"
+   ```
+
+3. **Physics Lookup**: What are the physics values?
+   ```bash
+   /craft "button spring values"
+   ```
+
+**Output**: Conversational guidance with zone context and recipe suggestions
+
+---
+
+### `/sandbox` — Raw Physics Experimentation
+
+**Skill**: `sandboxing-physics`
+
+**Goal**: Experiment with physics without constraints
+
+**When to Use**:
+- Exploring new motion patterns
+- Testing physics values before committing to a recipe
+- Prototyping without zone restrictions
 
 **Command**:
 ```bash
-/setup
+/sandbox
+/sandbox "bouncy entrance animation"
 ```
 
-**Outputs**:
-- `sigil-mark/` directory
-- `.sigilrc.yaml` (zone configuration)
-- `.sigil-setup-complete` marker
+**What Happens**:
+1. Creates file in `sigil-mark/sandbox/`
+2. No recipe enforcement
+3. No zone constraints
+4. ESLint warns after 7 days (stale sandbox)
+
+**Output**: Raw physics component for experimentation
 
 ---
 
-### Phase 1A: Envision (`/envision`) - New Projects
+### `/codify` — Define Zone Rules
 
-**Skill**: `envisioning-moodboard`
+**Skill**: `codifying-rules`
 
-**Goal**: Capture product moodboard through interview
+**Goal**: Define explicit design rules and zone configuration
 
 **Process**:
-1. **Reference Products**: What games, apps, or products inspire the feel?
-2. **Feel Descriptors**: How should different contexts feel? (critical = deliberate, marketing = playful)
-3. **Anti-Patterns**: What to explicitly avoid?
-4. **Key Moments**: High-stakes, celebrations, error recovery
+1. **Zones**: Map paths to recipe sets
+2. **Recipes**: Define or customize physics values
+3. **Rejections**: Patterns to warn about
+4. **Motion**: Zone-specific motion recipes
 
 **Command**:
 ```bash
-/envision
+/codify
 ```
 
-**Output**: `sigil-mark/moodboard.md`
-
-**Moodboard Structure**:
-```markdown
-# Product Moodboard
-
-## Reference Products
-- [Product] - Why it inspires us
-
-## Feel by Context
-| Context | Feel | Example |
-|---------|------|---------|
-| Critical | Deliberate, reassuring | Checkout, claims |
-| Marketing | Playful, energetic | Landing pages |
-
-## Anti-Patterns
-- Pattern to avoid - Why
-
-## Key Moments
-- High-stakes: How to handle
-- Celebrations: How to handle
-- Recovery: How to handle
-```
+**Output**: Updated `.sigilrc.yaml` and `sigil-mark/rules.md`
 
 ---
 
-### Phase 1B: Inherit (`/inherit`) - Existing Codebases
+### `/inherit` — Bootstrap from Existing Code
 
 **Skill**: `inheriting-design`
 
-**Goal**: Bootstrap design context from existing code
+**Goal**: Bootstrap design context from existing codebase
 
 **Process**:
 1. Scans codebase for components
@@ -164,313 +158,177 @@ Use this to quickly find the right command:
 - `sigil-mark/rules.md` (draft, needs review)
 - `sigil-mark/inventory.md` (component list)
 
-**Note**: After `/inherit`, run `/envision` to refine the moodboard with intent, not just observation.
+**Note**: After `/inherit`, run `/envision` to refine with intent.
 
 ---
 
-### Phase 2: Codify (`/codify`)
+### `/validate` — Check Physics Compliance
 
-**Skill**: `codifying-rules`
+**Skill**: `validating-physics`
 
-**Goal**: Define explicit design rules by category
+**Goal**: Verify physics compliance across codebase
 
-**Process**:
-1. **Colors**: Token definitions, light/dark modes
-2. **Typography**: Font classes, size conventions
-3. **Spacing**: Values and when to use them
-4. **Motion**: Recipes by zone (deliberate, playful, snappy)
-5. **Components**: Specific component rules
+**What It Checks**:
+- Recipe usage in zone-mapped files
+- Raw physics values that should use recipes
+- Optimistic UI in server-authoritative zones
+- Stale sandbox files
 
 **Command**:
 ```bash
-/codify
+/validate
+/validate src/features/checkout/
 ```
 
-**Output**: `sigil-mark/rules.md`
-
-**Rules Structure**:
-```markdown
-# Design Rules
-
-## Colors
-| Token | Light | Dark | Usage |
-|-------|-------|------|-------|
-
-## Typography
-| Class | Size | Weight | Usage |
-|-------|------|--------|-------|
-
-## Spacing
-| Value | Usage |
-|-------|-------|
-
-## Motion by Zone
-| Zone | Recipe | Duration | Spring |
-|------|--------|----------|--------|
-
-## Component Rules
-- Component: Specific guidance
-```
+**Output**: Compliance report with violations and suggestions
 
 ---
 
-### Phase 3: Build (Your Work)
+### `/garden` — Entropy Detection
 
-With moodboard and rules captured, you build your product. Sigil provides context to AI agents during this phase.
+**Skill**: `gardening-entropy`
 
-**What Happens Automatically**:
-- Agents read `sigil-mark/moodboard.md` and `sigil-mark/rules.md`
-- Zone resolution based on file path in `.sigilrc.yaml`
-- Pattern suggestions based on zone
+**Goal**: Detect drift and maintain design health
 
----
-
-### Phase 4: Craft (`/craft`)
-
-**Skill**: `crafting-guidance`
-
-**Goal**: Get design guidance during implementation
-
-**Modes**:
-
-1. **Zone Detection**: Which zone is this file in?
-   ```bash
-   /craft src/features/checkout/PaymentForm.tsx
-   ```
-
-2. **Pattern Suggestion**: What pattern fits this context?
-   ```bash
-   /craft "loading state for checkout"
-   ```
-
-3. **Rule Lookup**: What's the rule for this?
-   ```bash
-   /craft "button spacing"
-   ```
-
-4. **Forced Lens Mode**: Validate in a specific lens
-   ```bash
-   /craft --lens power_user "accessible loading state"
-   ```
+**What It Catches**:
+- **Drift**: Components straying from recipes
+- **Stale Sandbox**: Experiments older than 7 days
+- **Zone Conflicts**: Files in wrong zones
+- **Recipe Deviation**: Modified physics values
 
 **Command**:
 ```bash
-/craft [--lens <lens_name>] [file_path | question]
+/garden
+/garden drift
+/garden stale
 ```
 
-**Arguments**:
-| Argument | Description |
-|----------|-------------|
-| `--lens <name>` | Force validation in specific lens (e.g., `power_user`, `new_visitor`) |
-| `file_path` | Path to get zone context for |
-| `question` | Design question to answer |
-
-**Output**: Conversational guidance with zone context
+**Output**: Entropy report with actionable items
 
 ---
 
-### Phase 5: Approve (`/approve`)
+## Recipe System
 
-**Skill**: `approving-patterns`
+### Three Recipe Sets
 
-**Goal**: Human sign-off on design patterns
+| Set | Spring | Feel | Zone Affinity |
+|-----|--------|------|---------------|
+| **Decisive** | `spring(180, 12)` | Heavy, deliberate | Critical, Transactional |
+| **Machinery** | `spring(400, 30)` | Instant, efficient | Admin |
+| **Glass** | `spring(200, 20)` | Smooth, delightful | Marketing, Exploratory |
 
-**Process**:
-1. Review new patterns or deviations
-2. Taste owner approves or requests changes
-3. Approval recorded in rules
+### Recipe Structure
 
-**Command**:
-```bash
-/approve
+Recipes are TSX components with exported physics:
+
+```tsx
+// sigil-mark/recipes/decisive/ConfirmButton.tsx
+import { motion } from 'framer-motion';
+
+export const physics = {
+  spring: { tension: 180, friction: 12 },
+  duration: '800ms+',
+  feel: 'heavy, deliberate'
+};
+
+export const ConfirmButton = ({ children, onClick }) => (
+  <motion.button
+    whileTap={{ scale: 0.98 }}
+    transition={{ type: 'spring', ...physics.spring }}
+    onClick={onClick}
+  >
+    {children}
+  </motion.button>
+);
 ```
 
-**Output**: Approval record in `sigil-mark/rules.md`
+### Using Recipes
 
----
+Import physics from recipe files:
 
-### Maintenance: Update (`/update`)
+```tsx
+import { physics } from 'sigil-mark/recipes/decisive/ConfirmButton';
 
-**Goal**: Pull latest Sigil framework updates
-
-**Command**:
-```bash
-/update
-```
-
-**What Happens**:
-1. Fetches latest from upstream
-2. Updates symlinks to new versions
-3. Preserves your `sigil-mark/` content
-
----
-
-## v0.3 Constitutional Commands
-
-### Canonize (`/canonize`)
-
-**Skill**: `canonizing-flaws`
-
-**Goal**: Protect emergent behaviors that users love
-
-**Process**:
-1. Identify a behavior that emerged organically
-2. Document why it matters
-3. Register in Canon of Flaws
-
-**Command**:
-```bash
-/canonize "double-click submit"
-```
-
-**Output**: `sigil-mark/soul-binder/canon-of-flaws.yaml`
-
----
-
-### Consult (`/consult`)
-
-**Skill**: `consulting-decisions`
-
-**Goal**: Start a consultation process for design decisions
-
-**Layers**:
-| Layer | Process | Authority |
-|-------|---------|-----------|
-| Strategic | Community poll | Binding vote |
-| Direction | Sentiment gathering | Taste Owner decides |
-| Execution | None | Taste Owner dictates |
-
-**Command**:
-```bash
-/consult "new onboarding flow"
-```
-
-**Output**: `sigil-mark/consultation-chamber/decisions/{id}.yaml`
-
----
-
-### Prove (`/prove`)
-
-**Skill**: `proving-features`
-
-**Goal**: Register a feature for proving period
-
-**Domains**: defi, creative, community, games, general
-
-**Command**:
-```bash
-/prove token-swap --domain defi
-```
-
-**Output**: `sigil-mark/proving-grounds/active/{feature}.yaml`
-
----
-
-### Graduate (`/graduate`)
-
-**Skill**: `graduating-features`
-
-**Goal**: Graduate a proven feature to the Living Canon
-
-**Requirements**:
-- All monitors green
-- No P1 violations
-- Taste Owner sign-off
-
-**Command**:
-```bash
-/graduate token-swap
-```
-
-**Output**: `sigil-mark/canon/graduated/{feature}.yaml`
-
----
-
-### Unlock (`/unlock`)
-
-**Skill**: `unlocking-decisions`
-
-**Goal**: Unlock a locked decision before its natural unlock date
-
-**When to Use**:
-- Decision was locked but circumstances changed
-- Need to revisit a decision earlier than planned
-- Taste Owner needs to override a lock
-
-**Command**:
-```bash
-/unlock DEC-001
-```
-
-**Process**:
-1. Verifies decision exists and is locked
-2. Checks if natural unlock time has passed
-3. If still locked, requires justification
-4. Updates decision record with unlock reason
-5. Logs override to audit trail
-
-**Output**: Updated `sigil-mark/consultation-chamber/decisions/{id}.yaml`
-
----
-
-## Strictness Levels
-
-Sigil v0.3 has progressive strictness:
-
-| Level | Behavior |
-|-------|----------|
-| `discovery` | All suggestions, no blocks (default) |
-| `guiding` | Warnings on violations |
-| `enforcing` | Blocks on protected flaws/values |
-| `strict` | Blocks on all violations |
-
-Configure in `.sigilrc.yaml`:
-```yaml
-strictness: "discovery"
+// Use in your component
+<motion.div transition={{ type: 'spring', ...physics.spring }}>
 ```
 
 ---
 
 ## Zone System
 
-Zones define design context by file path. They're configured in `.sigilrc.yaml`:
+Zones define design context by file path. Configured in `.sigilrc.yaml`:
 
 ```yaml
 zones:
   critical:
     paths: ["src/features/checkout/**", "src/features/claim/**"]
-    motion: "deliberate"
+    recipe: decisive
+    sync: server_authoritative
     patterns:
       prefer: ["deliberate-entrance", "confirmation-flow"]
       warn: ["instant-transition", "playful-bounce"]
 
-  marketing:
-    paths: ["src/features/marketing/**"]
-    motion: "playful"
-    patterns:
-      prefer: ["playful-bounce", "attention-grab"]
-
   admin:
     paths: ["src/admin/**"]
-    motion: "snappy"
+    recipe: machinery
+    patterns:
+      prefer: ["snappy-transition"]
+
+  marketing:
+    paths: ["src/features/marketing/**"]
+    recipe: glass
+    patterns:
+      prefer: ["playful-bounce", "attention-grab"]
 ```
 
 ### Zone Resolution
 
-When you're working in a file:
+When working in a file:
 
 1. Agent gets current file path
 2. Matches against zone patterns in `.sigilrc.yaml`
 3. Returns zone name (or "default" if no match)
-4. Applies zone-appropriate patterns
+4. Applies zone-appropriate recipe
 
-### Motion Recipes by Zone
+### Per-Directory Configuration
 
-| Zone | Recipe | Feel | Parameters |
-|------|--------|------|------------|
-| critical | `useDeliberateEntrance` | Heavy, reassuring | 800ms+, tension: 120 |
-| marketing | `usePlayfulBounce` | Bouncy, energetic | Fast, tension: 200 |
-| admin | `useSnappyTransition` | Instant, efficient | <200ms, tension: 400 |
+`.sigilrc.yaml` can exist at any directory level:
+
+```
+project/
+├── .sigilrc.yaml              # Project-wide zones
+├── src/
+│   ├── features/
+│   │   └── checkout/
+│   │       └── .sigilrc.yaml  # Checkout-specific overrides
+```
+
+Child configurations merge with parent (child wins on conflict).
+
+---
+
+## Three Laws of Enforcement
+
+| Level | Behavior | Override |
+|-------|----------|----------|
+| **IMPOSSIBLE** | Physics violations. Never generated. | None |
+| **BLOCK** | Budget/fidelity violations. Sandbox allowed. | Taste Key ruling |
+| **WARN** | Drift from essence. Advisory only. | Human decides |
+
+### Examples
+
+**IMPOSSIBLE** (no override):
+- Optimistic UI in `server_authoritative` zone
+- Missing pending state in critical zone
+
+**BLOCK** (Taste Key can override):
+- Raw physics values instead of recipe
+- Exceeding element budget
+
+**WARN** (advisory only):
+- Using `glass` recipe in critical zone
+- Pattern in rejection list
 
 ---
 
@@ -490,83 +348,149 @@ When a user wants a rejected pattern, agents:
 2. Offer alternatives
 3. Allow override if user insists
 
-Example response:
-> "Spinners are noted as creating anxiety in critical zones. Alternatives:
-> 1. Skeleton loading with deliberate reveal
-> 2. Progress indicator with copy
->
-> If you still need a spinner, I can add it—just note this deviates from established patterns."
+---
+
+## Workbench
+
+3-pane tmux environment for design iteration:
+
+```bash
+sigil-workbench.sh
+```
+
+### Layout
+
+```
+┌─────────────────────────────────────────────┐
+│                                             │
+│              Physics Diff                   │
+│              (Pane 0)                       │
+│                                             │
+├──────────────────────┬──────────────────────┤
+│                      │                      │
+│   Browser Preview    │   Claude Code        │
+│   (Pane 1)           │   (Pane 2)           │
+│                      │                      │
+└──────────────────────┴──────────────────────┘
+```
+
+### A/B Toggle
+
+Two modes for comparing recipes:
+
+**Hot-swap mode**: CSS variable swap
+```typescript
+ABToggle.swap('decisive', 'glass');
+```
+
+**Iframe mode**: Side-by-side
+```typescript
+ABToggle.iframe('/checkout', [
+  { recipe: 'decisive', label: 'Current' },
+  { recipe: 'glass', label: 'Proposed' }
+]);
+```
+
+---
+
+## ESLint Enforcement
+
+Install the plugin:
+
+```bash
+npm install sigil-mark-eslint-plugin --save-dev
+```
+
+Configure in `.eslintrc`:
+
+```json
+{
+  "plugins": ["sigil-mark"],
+  "rules": {
+    "sigil-mark/no-raw-physics": "error",
+    "sigil-mark/require-recipe": "warn",
+    "sigil-mark/no-optimistic-in-decisive": "error",
+    "sigil-mark/sandbox-stale": "warn"
+  }
+}
+```
+
+### Rules
+
+| Rule | Description |
+|------|-------------|
+| `no-raw-physics` | Must use recipe, not raw spring values |
+| `require-recipe` | Zone-mapped files need recipe import |
+| `no-optimistic-in-decisive` | Block optimistic UI in critical zones |
+| `sandbox-stale` | Warn on sandbox files >7 days old |
+
+---
+
+## History System
+
+Track refinement decisions in `sigil-mark/history/`:
+
+```markdown
+# Refinement: Checkout Motion
+
+## Context
+Checkout button felt too light for monetary transactions.
+
+## Before
+- Recipe: glass
+- Spring: 200/20
+- User feedback: "Doesn't feel serious"
+
+## After
+- Recipe: decisive
+- Spring: 180/12
+- User feedback: "Feels trustworthy"
+
+## Pattern
+heavy_spring_for_money: When handling transactions, use decisive recipe.
+```
+
+### Pattern Extraction
+
+The history system extracts patterns:
+
+```typescript
+import { extractPatterns } from 'sigil-mark/core/history';
+
+const patterns = extractPatterns();
+// Returns: { heavy_spring_for_money: "When handling transactions..." }
+```
 
 ---
 
 ## State Zone Structure
 
-All design context lives in `sigil-mark/` (v0.3 four-pillar architecture):
+All design context lives in `sigil-mark/`:
 
 ```
 sigil-mark/
-├── moodboard.md              # Product feel
+├── moodboard.md              # Product feel + references
 ├── rules.md                  # Design rules by category
 ├── inventory.md              # Component list
 │
-├── soul-binder/              # Pillar 1: Values + Flaws
-│   ├── immutable-values.yaml # Core values (hard-block violations)
-│   ├── canon-of-flaws.yaml   # Protected emergent behaviors
-│   └── visual-soul.yaml      # Grit signatures
+├── recipes/                  # TSX components with physics
+│   ├── decisive/             # Heavy spring (180/12)
+│   ├── machinery/            # Instant (400/30)
+│   └── glass/                # Smooth (200/20)
 │
-├── lens-array/               # Pillar 2: User personas
-│   └── lenses.yaml           # Multi-truth validation
+├── hooks/                    # React hooks
+│   └── useServerTick.ts      # Server-authoritative tick
 │
-├── consultation-chamber/     # Pillar 3: Decisions
-│   ├── config.yaml           # Decision authority config
-│   └── decisions/            # Individual decision records
+├── sandbox/                  # Unconstrained experiments
 │
-├── proving-grounds/          # Pillar 4: Feature proving
-│   ├── config.yaml           # Monitor configuration
-│   └── active/               # Features currently proving
+├── history/                  # Refinement log
 │
-├── canon/                    # Graduated features
-│   └── graduated/
+├── eslint-plugin/            # Enforcement rules
 │
-└── audit/                    # Override logging
-    └── overrides.yaml
+├── workbench/                # A/B comparison tools
+│
+└── __tests__/                # Test suite
 ```
-
----
-
-## Skills
-
-Sigil uses modular skills with 3-level architecture:
-
-```
-.claude/skills/{skill-name}/
-├── index.yaml          # Metadata (~100 tokens)
-├── SKILL.md            # Instructions (~2000 tokens)
-└── scripts/            # Bash utilities
-```
-
-### Core Skills
-| Skill | Purpose |
-|-------|---------|
-| `initializing-sigil` | Initialize Sigil v0.3 |
-| `envisioning-moodboard` | Capture moodboard + values + lenses |
-| `codifying-rules` | Define rules |
-| `crafting-guidance` | Provide guidance |
-| `approving-patterns` | Human sign-off |
-| `inheriting-design` | Bootstrap from codebase |
-| `updating-framework` | Pull updates |
-
-### v0.3 Skills
-| Skill | Purpose |
-|-------|---------|
-| `canonizing-flaws` | Protect emergent behaviors |
-| `consulting-decisions` | Start decision consultation |
-| `proving-features` | Register feature for proving |
-| `graduating-features` | Graduate feature to canon |
-| `validating-lenses` | Validate across user lenses |
-| `locking-decisions` | Lock decisions after outcome |
-| `unlocking-decisions` | Unlock decisions early |
-| `monitoring-features` | Update proving monitors |
 
 ---
 
@@ -583,9 +507,9 @@ Sigil uses modular skills with 3-level architecture:
 # → Answer questions about references, feel, anti-patterns
 # → Review sigil-mark/moodboard.md
 
-# 3. Define explicit design rules
+# 3. Define zone rules and recipes
 /codify
-# → Answer questions about colors, typography, spacing, motion
+# → Configure zones in .sigilrc.yaml
 # → Review sigil-mark/rules.md
 
 # 4. Build your product (your work)
@@ -594,10 +518,19 @@ Sigil uses modular skills with 3-level architecture:
 # 5. Get guidance during implementation
 /craft src/features/checkout/PaymentForm.tsx
 # → Zone detected: critical
-# → Motion recipe: useDeliberateEntrance
+# → Recipe: decisive
+# → Physics: spring(180, 12)
 
-# 6. Get human sign-off on new patterns
-/approve
+# 6. Experiment with alternatives
+/sandbox "lighter checkout button"
+# → Creates sandbox file
+# → No constraints applied
+
+# 7. Check compliance
+/validate
+
+# 8. Detect entropy
+/garden
 ```
 
 ### Existing Codebase
@@ -613,10 +546,10 @@ Sigil uses modular skills with 3-level architecture:
 # 3. Refine moodboard with intent
 /envision
 
-# 4. Refine rules with explicit decisions
+# 4. Define zones for existing paths
 /codify
 
-# 5. Continue with craft/approve as needed
+# 5. Continue with craft/sandbox/validate as needed
 ```
 
 ---
@@ -624,31 +557,34 @@ Sigil uses modular skills with 3-level architecture:
 ## Best Practices
 
 ### Capturing Feel
+
 - Be specific about contexts (checkout feels different than marketing)
 - Include anti-patterns with reasons
 - Reference real products, not abstract concepts
 
-### Defining Rules
-- Start loose, tighten as patterns emerge
-- Document the "why" not just the "what"
-- Use zone-appropriate motion recipes
+### Using Recipes
 
-### During Implementation
-- Check zone before adding motion
-- Use `/craft` when uncertain
-- Request `/approve` for new patterns
+- Always import from recipe files, not raw values
+- Use sandbox for experimentation, then graduate to recipe
+- Match recipe to zone (decisive for critical, etc.)
 
-### Approval Flow
-- Taste owners (not bots) approve
-- Document approvals in rules
-- Allow escape hatches for edge cases
+### Zone Configuration
+
+- Start with 3 zones: critical, admin, default
+- Add zones as patterns emerge
+- Use per-directory `.sigilrc.yaml` for exceptions
+
+### Enforcement
+
+- Run `/validate` before commits
+- Use ESLint plugin in CI
+- Review `/garden` output weekly
 
 ---
 
 ## Related Documentation
 
 - **[README.md](README.md)** - Quick start guide
-- **[INSTALLATION.md](INSTALLATION.md)** - Detailed installation guide
 - **[CLAUDE.md](CLAUDE.md)** - Agent protocol reference
-- **[MIGRATION.md](MIGRATION.md)** - Migration from v0.2 to v0.3
 - **[CHANGELOG.md](CHANGELOG.md)** - Version history
+- **[MIGRATION.md](MIGRATION.md)** - Migration from previous versions
