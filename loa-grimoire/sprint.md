@@ -453,32 +453,32 @@ This plan implements Sigil v2.0, the "Reality Engine" that separates Truth (Core
 
 ### Tasks
 
-- [ ] **S8-T1: Create integration tests**
+- [x] **S8-T1: Create integration tests**
   - Test payment flow (CriticalZone + useCriticalAction + StrictLens)
   - Test admin list (MachineryLayout + keyboard navigation)
   - Test marketing card (GlassLayout + hover physics)
   - **Acceptance:** All integration tests pass
 
-- [ ] **S8-T2: Create end-to-end usage examples**
+- [x] **S8-T2: Create end-to-end usage examples**
   - Create `sigil-mark/__examples__/PaymentForm.tsx`
   - Create `sigil-mark/__examples__/InvoiceList.tsx`
   - Create `sigil-mark/__examples__/ProductCard.tsx`
   - **Acceptance:** Examples work and demonstrate v2.0 patterns
 
-- [ ] **S8-T3: Update README.md for v2.0**
+- [x] **S8-T3: Update README.md for v2.0**
   - Quick start guide
   - 3-layer architecture explanation
   - API reference
   - Migration guide from v1.2.5
   - **Acceptance:** README matches v2.0 architecture
 
-- [ ] **S8-T4: Create migration guide**
+- [x] **S8-T4: Create migration guide**
   - Document v1.2.5 → v2.0 patterns
   - Provide before/after code examples
   - List deprecated APIs
   - **Acceptance:** Clear migration path documented
 
-- [ ] **S8-T5: Final validation**
+- [x] **S8-T5: Final validation**
   - Verify all tests pass
   - Verify all exports work
   - Verify zone resolution works
@@ -534,7 +534,7 @@ From PRD §7:
 | Sprint 5 | COMPLETED | 2026-01-05 |
 | Sprint 6 | COMPLETED | 2026-01-05 |
 | Sprint 7 | COMPLETED | 2026-01-05 |
-| Sprint 8 | PENDING | - |
+| Sprint 8 | COMPLETED | 2026-01-05 |
 
 ---
 
