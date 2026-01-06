@@ -1,20 +1,23 @@
-# Product Requirements Document: Sigil v1.0
+# Product Requirements Document: Sigil v1.2.4
 
-> "Physics, not opinions. Constraints, not debates."
+> "See the diff. Feel the result. Learn by doing."
 
-**Version**: 1.0.0
-**Date**: 2026-01-04
+**Version**: 1.2.4
+**Date**: 2026-01-05
 **Status**: Draft
+**Evolution**: Iteration from v1.0, philosophy refined
 
 ---
 
 ## Executive Summary
 
-Sigil v1.0 is a Design Physics Engine that gives AI agents physics constraints for consistent design decisions. This version introduces the Sigil Workbench—a real-time design environment that eliminates tab-switching and provides instant feedback on physics compliance.
+Sigil v1.2.4 is a Design Physics Framework that enables lean teams to achieve world-class product craftsmanship through **apprenticeship learning**. Engineers learn spring physics by seeing diffs and feeling results in the browser—not through lectures or documentation.
 
-**Target User**: Solo developer using Claude Code for AI-assisted UI development.
+**Target User**: Lean product teams (1-5 people) using Claude Code for AI-assisted UI development.
 
-**Core Value Proposition**: Every UI generation respects your product's physics automatically. No more correction cycles. No more design debates.
+**Core Value Proposition**: Designer-engineer harmony at scale. Engineers develop taste for motion physics through hands-on iteration, not abstract study.
+
+**North Star**: "We nailed it" = Designers and engineers speak the same language about motion/feel, with resonance in the craftsmanship process at scale.
 
 ---
 
@@ -22,52 +25,90 @@ Sigil v1.0 is a Design Physics Engine that gives AI agents physics constraints f
 
 ### The Pain
 
-When building UI with AI agents, design consistency breaks down because:
+When building UI with AI agents, design consistency and craft quality break down because:
 
-1. **No component visibility** — Hard to discover what exists
-2. **Design knowledge loss** — Why decisions were made gets forgotten
-3. **Inconsistent patterns** — Same problems solved differently
-4. **Agent-human context loss** — AI lacks design context
-5. **Single-developer drift** — Inconsistency even with one person
-6. **Endless correction cycles** — AI generates, human corrects, repeat
+1. **Knowledge stays abstract** — Engineers read about spring physics but can't feel the difference between `stiffness: 180` and `stiffness: 300`
+2. **Designer-engineer gap** — Designers say "more Nintendo Switch" and engineers don't know what that means in code
+3. **Correction cycles burn time** — AI generates, designer rejects, engineer guesses at fix, repeat
+4. **Physics scattered everywhere** — Spring values hardcoded across components with no consistency
+5. **Learning doesn't compound** — Same mistakes repeat because there's no embodied knowledge
 
 ### Why Now
 
-- AI-assisted development is mainstream (Claude Code, Cursor, etc.)
-- Design systems are too abstract for AI to reason about
-- No existing tool provides "physics" (immutable constraints) vs "preferences"
+- AI-assisted development is mainstream (Claude Code, Cursor)
+- Design systems are too abstract for AI AND humans to reason about
+- Motion/animation is the frontier of craft—colors and typography are solved, physics is not
+- Lean teams need world-class studio capabilities without the headcount
 
 ### Why Sigil
 
-Sigil treats design decisions like physics, not opinions:
-- **Physics can't be argued with.** Gravity doesn't care about your feelings.
-- **"Server-authoritative data MUST show pending states"** is a constraint, not a preference.
-- When constraints are framed as physics, AI agents follow them without question.
+Sigil recognizes that craft is learned through **doing**, not reading:
 
-> Source: SIGIL-COMPLETE-ARCHITECTURE.md §2.1
+- **Apprenticeship model**: See the diff (`stiffness: 180 → 300`), feel the snap, learn the number
+- **Recipes encode knowledge**: Physics is in code form, using it guarantees compliance
+- **Progressive disclosure**: Start with feelings ("snappier"), graduate to values
+- **Claude's training IS the vibe map**: No dictionary needed—Claude knows what "Nintendo Switch" feels like
+
+> "Blacksmiths don't read about hammer technique. They watch, then do, then FEEL the metal respond."
 
 ---
 
-## 2. Goals & Success Metrics
+## 2. Philosophy Evolution
+
+### From v1.0 to v1.2.4
+
+| v1.0 | v1.2.4 |
+|------|--------|
+| Physics validation framework | Apprenticeship learning system |
+| YAML configs define physics | TSX recipes ARE the physics |
+| 8 commands, 8 skills | 6 commands, 1 core skill |
+| vibes.yaml dictionary | Claude's training IS the vibe map |
+| Taste Key authority | Trust the team |
+| Memory/Era system | In-repo history (markdown) |
+| Complex governance | Simple enforcement |
+
+**This is iteration, not replacement.** The core essence is retained. Concepts may return when proven necessary. Philosophy evolved toward "diff + feel" as the primary learning mechanism.
+
+### Three Pillars
+
+1. **Recipes Over Raw Physics**
+   - Engineers import recipes, not spring values
+   - Using a recipe guarantees compliance
+   - Raw physics only allowed in sandbox mode
+
+2. **Diff + Feel**
+   - Every adjustment shows the delta prominently
+   - Workbench A/B toggle enables embodied comparison
+   - Numbers gain meaning through fingers, not lectures
+
+3. **Progressive Disclosure**
+   - Designers start with feeling words ("snappier", "more Nintendo Switch")
+   - Workbench shows the values Claude chose
+   - Over time, designers learn to speak in values—that's the apprenticeship
+
+---
+
+## 3. Goals & Success Metrics
 
 ### Primary Goals
 
 | Goal | Metric | Target |
 |------|--------|--------|
-| Reduce correction cycles | Generations accepted without modification | >80% |
-| Enforce physics | IMPOSSIBLE violations generated | 0 |
-| Enable real-time feedback | Time from code change to validation | <1s |
-| Simplify adoption | Time from clone to first /craft | <5 min |
+| Designer-engineer harmony | First drafts approved without iteration | >60% |
+| Learning outcomes | Engineers articulate "why 180 vs 300" | Qualitative |
+| Craft quality | Designers say "this feels right" | >80% satisfaction |
+| Developer velocity | Component creation time | 50% faster |
 
-### Secondary Goals
+### Success Definition (3 months)
 
-| Goal | Metric | Target |
-|------|--------|--------|
-| Community adoption | GitHub stars | 500 in 6 months |
-| Documentation quality | Users complete setup without help | >90% |
-| Clean removal | `rm -rf sigil-mark/` removes everything | 100% |
+All of the following, enabling increased cognitive awareness and depth into the craft around building world-class products:
 
-### Anti-Goals (The Anti-Beads Promise)
+- **Craft quality**: Designers consistently approve first drafts
+- **Learning outcomes**: Engineers develop opinions about spring physics
+- **Adoption**: Teams actively using Sigil in production
+- **Velocity**: Ship faster without sacrificing polish
+
+### Anti-Goals (Preserved from v1.0)
 
 Sigil will NEVER:
 - Run a background daemon
@@ -77,479 +118,534 @@ Sigil will NEVER:
 - Auto-delete content
 - Create hidden branches
 
-> Source: SIGIL-COMPLETE-ARCHITECTURE.md §1 "Anti-Beads Promise"
-
 ---
 
-## 3. User Persona
+## 4. User Persona
 
-### Primary: Solo Dev with AI
+### Primary: Lean Web3 Product Team
 
-**Name**: Alex
-**Role**: Solo developer building a web3 DeFi app
-**Tools**: Claude Code, VS Code, Chrome
+**Team**: 1-5 people (engineer, designer, founder)
+**Product**: DeFi/web3 app with wallet-connected flows
+**Tools**: Claude Code, VS Code, Chrome, Vercel
 
 **Context**:
-- Building checkout/claim flows with real money
+- Building checkout/claim flows with real money (crypto)
 - Needs UI to feel trustworthy and deliberate
-- Uses AI to generate components quickly
-- Frustrated by inconsistent AI outputs
-- Doesn't have a designer on the team
+- Designer reviews on staging (testnet) with test wallet
+- Some flows require real transactions, so use recording/playback for async review
+- Doesn't have dedicated design engineer headcount
 
 **Jobs to Be Done**:
-1. Generate UI components that match my product's feel
-2. Know immediately when something violates design constraints
-3. Focus on building, not correcting AI outputs
+1. Generate UI components that match our product's feel
+2. Learn what makes motion "feel right" through doing
+3. Speak the same language as our designer about physics
 4. Maintain consistency as the product grows
+5. Ship at world-class studio quality with lean team
 
 **Pain Points**:
-- AI generates bounce animations when I need deliberate weight
-- No way to tell AI "checkout is server-authoritative"
+- Designer says "more Nintendo Switch" and I don't know what to adjust
+- Spring values are magic numbers I don't understand
 - Every generation is a coin flip
-- Spend more time correcting than creating
+- Learning about animation feels overwhelming
 
 ---
 
-## 4. Functional Requirements
+## 5. Functional Requirements
 
-### 4.1 Four-Layer Architecture
+### 5.1 Three-Layer Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                         TASTE KEY                                    │
-│  Single holder with authority over visual execution.                 │
-└─────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────┐
+│                           WORKBENCH                                      │
+│  Diff + Feel learning environment. A/B toggle. Browser preview.          │
+└─────────────────────────────────────────────────────────────────────────┘
                               │
-┌─────────────────────────────────────────────────────────────────────┐
-│                         MEMORY                                       │
-│  Era-versioned decisions. Historical record that informs.            │
-└─────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────┐
+│                           RECIPES                                        │
+│  Pre-validated physics implementations. TSX components with embedded     │
+│  spring/timing values. Using a recipe guarantees compliance.             │
+└─────────────────────────────────────────────────────────────────────────┘
                               │
-┌─────────────────────────────────────────────────────────────────────┐
-│                        RESONANCE                                     │
-│  Product-specific tuning. Materials, zones, tensions.                │
-└─────────────────────────────────────────────────────────────────────┘
-                              │
-┌─────────────────────────────────────────────────────────────────────┐
-│                          CORE                                        │
-│  Immutable physics. Tick rate. Sync model. Budgets. Fidelity.        │
-└─────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────┐
+│                            ZONES                                         │
+│  Directory = Zone. .sigilrc.yaml per folder. Cascading inheritance.      │
+│  Determines which recipe set applies.                                    │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
-> Source: SIGIL-COMPLETE-ARCHITECTURE.md §4
+### 5.2 Recipe Sets
 
-### 4.2 Core Layer (Immutable)
+| Set | Physics | Feel | Zone Affinity |
+|-----|---------|------|---------------|
+| **decisive** | spring(180, 12), server-tick | Heavy, deliberate, trustworthy | checkout, transactions |
+| **machinery** | instant, no animation | Efficient, precise, fast | admin, dashboards |
+| **glass** | spring(200, 20), float/glow | Delightful, polished, inviting | marketing, landing |
 
-| Component | Purpose | Enforcement |
-|-----------|---------|-------------|
-| **Temporal Governor** | Time as design material (discrete 600ms vs continuous 0ms) | IMPOSSIBLE |
-| **Sync Authority** | Server vs client truth | IMPOSSIBLE |
-| **Budgets** | Cognitive, visual, complexity limits | BLOCK |
-| **Fidelity Ceiling** | Max visual complexity (Mod Ghost Rule) | BLOCK |
-| **Lens Registry** | HD/SD coexistence | N/A |
+**Recipe Anatomy**:
+```tsx
+/**
+ * @sigil-recipe decisive/Button
+ * @physics spring(180, 12), timing(150-250ms)
+ * @zone checkout, transaction
+ * @sync server_authoritative
+ */
 
-**Temporal Governor**:
+export function Button({ onAction, children }) {
+  const { execute, isPending } = useServerTick(onAction);
+
+  return (
+    <motion.button
+      onClick={execute}
+      disabled={isPending}
+      whileTap={{ scale: 0.98 }}
+      transition={{ type: 'spring', stiffness: 180, damping: 12 }}
+    >
+      {isPending ? 'Processing...' : children}
+    </motion.button>
+  );
+}
+```
+
+**Variants**: Created through refinement, exploratory like Figma mockups:
+```
+sigil-mark/recipes/decisive/
+├── Button.tsx              # Base: spring(180, 12)
+├── Button.nintendo.tsx     # Variant: spring(300, 8) — snappier
+├── Button.relaxed.tsx      # Variant: spring(140, 16) — less anxious
+└── index.ts
+```
+
+Hierarchical variants supported (Button.nintendo.extra-snappy).
+
+### 5.3 Zones
+
+Directory = Zone. Configuration cascades from parent.
+
+**Zone Config** (`.sigilrc.yaml`):
 ```yaml
-discrete:
-  rate_ms: 600
-  feel: "Heavy, rhythmic, ceremonial"
-  rule: "The delay IS the trust"
+sigil: "1.2.4"
+recipes: decisive
+sync: server_authoritative
+tick: 600ms
 
-continuous:
-  rate_ms: 0
-  feel: "Instant, fluid, seamless"
-  rule: "The lie IS the speed"
+constraints:
+  optimistic_ui: forbidden
+  loading_spinners: forbidden
 ```
 
-**Sync Authority**:
-- `server_authoritative`: Server is truth. NO optimistic updates. MUST show pending.
-- `client_authoritative`: Client is truth. Optimistic updates allowed.
-
-> Source: SIGIL-COMPLETE-ARCHITECTURE.md §5
-
-### 4.3 Resonance Layer (Tunable)
-
-| Component | Purpose | Source |
-|-----------|---------|--------|
-| **Essence** | Product soul (references, anti-patterns, key moments) | /envision interview |
-| **Materials** | Physics configs (clay, glass, machinery) | /codify |
-| **Zones** | Path-based physics contexts | /map |
-| **Tensions** | Continuous tuning sliders (0-100) | Team vote |
-
-**Materials**:
-
-| Material | Weight | Motion | Feedback | Zone Affinity |
-|----------|--------|--------|----------|---------------|
-| **Clay** | Heavy | Spring (120/14) | Depress | Critical, Transactional |
-| **Glass** | Weightless | Ease (200ms) | Glow | Exploratory, Marketing |
-| **Machinery** | None | Instant | Highlight | Admin |
-
-**Zones**:
-
-| Zone | Sync | Material | Elements | Decisions |
-|------|------|----------|----------|-----------|
-| Critical | server_authoritative | clay | 5 | 2 |
-| Transactional | server_authoritative | clay | 8 | 3 |
-| Exploratory | client_authoritative | glass | 20 | 10 |
-| Marketing | client_authoritative | glass | 15 | 8 |
-| Admin | client_authoritative | machinery | 25 | 15 |
-
-> Source: SIGIL-COMPLETE-ARCHITECTURE.md §6
-
-### 4.4 Memory Layer (Versioned)
-
-| Component | Purpose |
-|-----------|---------|
-| **Eras** | Time-bounded design contexts |
-| **Decisions** | Era-versioned rulings |
-| **Mutations** | Experimental sandbox |
-| **Graveyard** | Failed experiments (training data) |
-
-### 4.5 Taste Key (Authority)
-
-| Authority | Scope |
-|-----------|-------|
-| **CAN override** | Budgets, fidelity, colors, typography |
-| **CANNOT override** | Physics (sync, tick), security, accessibility |
-| **MUST respect** | Tension bounds (community-voted) |
-
-### 4.6 Eight Commands
-
-| # | Command | Purpose | Output |
-|---|---------|---------|--------|
-| 1 | `/envision` | Capture product essence | essence.yaml |
-| 2 | `/codify` | Define material physics | materials.yaml |
-| 3 | `/map` | Define zones and paths | zones.yaml |
-| 4 | `/craft` | Generate with Hammer/Chisel | Code + guidance |
-| 5 | `/validate` | Check violations | Report |
-| 6 | `/garden` | Detect entropy | Drift report |
-| 7 | `/approve` | Taste Key rulings | Ruling record |
-| 8 | `/greenlight` | Concept approval | Greenlight record |
-
-**Workflow**:
+**Resolution Algorithm**:
 ```
-SETUP:    /envision → /codify → /map
-BUILD:    /greenlight → /craft → /validate → /approve
-MAINTAIN: /garden
+File: src/checkout/ConfirmButton.tsx
+1. Check src/checkout/.sigilrc.yaml → recipes: decisive
+2. Merge with src/.sigilrc.yaml → inherit defaults
+3. Apply decisive zone rules
 ```
 
-> Source: SIGIL-COMPLETE-ARCHITECTURE.md §9
+### 5.4 Six Commands
 
-### 4.7 Hammer/Chisel Toolkit
+| # | Command | Purpose | MVP Priority |
+|---|---------|---------|--------------|
+| 1 | `/craft` | Generate component using zone-appropriate recipes | ESSENTIAL |
+| 2 | `/sandbox` | Enable exploration mode (raw physics allowed) | ESSENTIAL |
+| 3 | `/codify` | Extract physics from sandbox to recipe | ESSENTIAL |
+| 4 | `/inherit` | Bootstrap from existing codebase (brownfield) | HIGH |
+| 5 | `/validate` | Check compliance across codebase | MEDIUM |
+| 6 | `/garden` | Health report (coverage, stale sandboxes) | MEDIUM |
 
-**Hammer (Diagnose + Route)**:
-- Find ROOT CAUSE before solving
-- AskUserQuestion loop to investigate
-- Routes to: Chisel (UI fix), Loa (structural), /approve (taste decision)
-
-**Chisel (Execute)**:
-- Quick aesthetic execution
-- No investigation for clearly aesthetic tasks
-- Applies physics constraints automatically
-
-**The Linear Test**:
+**MVP Workflow**:
 ```
-User: "The claim button feels slow"
-
-❌ FAIL: Immediately add skeleton loader
-❌ FAIL: Add optimistic UI without checking zone
-✓ PASS: Ask "What kind of slow?"
-✓ PASS: Diagnose root cause (UI vs infra)
-✓ PASS: Check zone temporal physics
-✓ PASS: Route correctly (Chisel vs Loa)
+BROWNFIELD: /inherit → review analysis → create recipes manually
+GREENFIELD: /craft → iterate → /sandbox for exploration → /codify
+MAINTAIN:   /garden → /validate
 ```
 
-> Source: SIGIL-COMPLETE-ARCHITECTURE.md §10
+### 5.5 Workbench
 
-### 4.8 Violation Hierarchy
+The core learning environment. Diff + browser side by side.
 
-| Type | Severity | Override | Example |
-|------|----------|----------|---------|
-| Physics | IMPOSSIBLE | None | Optimistic UI in server_authoritative |
-| Budget | BLOCK | Taste Key | 12 elements in critical zone (max 5) |
-| Fidelity | BLOCK | Taste Key | 4 gradient stops (max 2) |
-| Drift | WARN | None needed | Clay physics in transactional zone |
-
-> Source: SIGIL-COMPLETE-ARCHITECTURE.md §11
-
-### 4.9 Sigil Workbench (MVP)
-
-A tmux-based real-time design environment with four panels:
-
+**Layout**:
 ```
-┌─────────────────────────────┬───────────────────────────────────────┐
-│      CLAUDE PANEL           │         CHROME VIEW                   │
-│  /craft commands            │    [Live Preview of Component]        │
-│  Hammer/Chisel feedback     │                                       │
-├─────────────────────────────┼───────────────────────────────────────┤
-│      TENSIONS PANEL         │         VALIDATION PANEL              │
-│  Visual sliders             │  Physics: PASS/FAIL                   │
-│  [Reset Zone] [Override]    │  Budgets: 3/5 elements                │
-└─────────────────────────────┴───────────────────────────────────────┘
-```
-
-**Real-Time Feedback Loop**:
-1. Developer types in Claude panel
-2. Claude generates/modifies component
-3. Chrome view updates live (hot reload)
-4. Tensions panel shows current values
-5. Validation panel shows violations
-6. Developer adjusts via Chisel
-7. Repeat until approved
-
-**Component Scoring**:
-```
-Physics Alignment     ████████████████████ 100%
-Budget Compliance     ████████████░░░░░░░░  60%
-Fidelity Ceiling      ████████████████████ 100%
-Material Resonance    ██████████████████░░  90%
-Zone Appropriateness  ████████████████████ 100%
-
-OVERALL: 90/100 — Ready for /approve
+┌─────────────────────────────────────────────────────────────────────────┐
+│  sigil workbench                                      [checkout/decisive] │
+├────────────────────────┬────────────────────────────────────────────────┤
+│ DIFF                   │                                                │
+│                        │  ┌──────────────────────────────────────────┐  │
+│ - stiffness: 180       │  │                                          │  │
+│ + stiffness: 300       │  │         [Confirm Purchase]               │  │
+│ - damping: 12          │  │                                          │  │
+│ + damping: 8           │  │         ← click to test                  │  │
+│                        │  │                                          │  │
+│ PHYSICS                │  └──────────────────────────────────────────┘  │
+│ spring(300, 8)         │                                                │
+│                        │  BROWSER (Chrome MCP / iframe)                 │
+│ COMPARE                │  See the diff. Feel the diff.                  │
+│ [A] Before  180/12     │                                                │
+│ [B] After   300/8      │                                                │
+├────────────────────────┴────────────────────────────────────────────────┤
+│ CLAUDE CODE                                                             │
+│                                                                         │
+│ > More Nintendo Switch                                                  │
+│ Adjusted: spring(180, 12) → spring(300, 8)                              │
+│ [Toggle A/B to feel the difference]                                     │
+│                                                                         │
+├─────────────────────────────────────────────────────────────────────────┤
+│ [A] Before  [B] After  │  Space to toggle                    ● Learning │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
-> Source: SIGIL-COMPLETE-ARCHITECTURE.md §17
+**A/B Toggle Implementation**:
+- Hot-swap in browser for granular changes (CSS variables / re-render)
+- iFrames for entire zone/user flow comparison
+- The A/B toggle IS the learning mechanism
+
+**Branding: Adhesion**:
+- Own identity always (precision instrument, not product preview)
+- Typeface: Adhesion (bundled in `assets/fonts/`)
+- Colors: `#000000` background, `#FFFFFF` text
+- No gradients, no shadows, no rounded corners
+- Box-drawing characters for terminal aesthetic
+
+### 5.6 PR-Native Refinement (Nice-to-Have)
+
+Async feedback without CLI context switches:
+
+```
+1. Engineer: /craft → pushes PR
+2. Vercel: Deploys preview (testnet for crypto flows)
+3. Designer: Comments "More Nintendo Switch"
+4. Claude: Reads comment + context → infers → commits
+5. Engineer: Sees diff in GitHub
+6. Preview: Rebuilds
+7. Designer: Confirms
+```
+
+**Authority**: Anyone with comment access can trigger refinements. Trust the team.
+
+**Commit Format**:
+```
+refine(CheckoutButton): Nintendo Switch feel - spring(180,12)→(300,8)
+```
+
+### 5.7 Refinement History
+
+Learning from history: Claude should remember past refinements.
+
+**Storage**: In-repo markdown at `sigil-mark/history/`
+```
+sigil-mark/history/
+├── 2026-01-05.md    # "Nintendo Switch" → spring(300, 8)
+├── 2026-01-04.md    # "too anxious" → spring(140, 16)
+└── ...
+```
+
+Claude parses history to calibrate: "Last 5 times you said 'Nintendo Switch', we ended at spring(280-320)".
+
+### 5.8 Three Laws (Simplified)
+
+| Level | Meaning | Enforcement | Override |
+|-------|---------|-------------|----------|
+| **IMPOSSIBLE** | Violates trust model | Build fails (ESLint + CI) | Never |
+| **BLOCK** | Requires explicit action | Sandbox or override | Allowed |
+| **WARN** | Logged for review | /garden reports | N/A |
+
+**Enforcement Strategy**: Keep it simple and effective.
+- ESLint plugin catches early (`sigil/no-raw-physics`, `sigil/no-optimistic-in-decisive`)
+- CI validation (`sigil validate`) as final gate
+- Advisory sandbox warnings (>7 days) but nothing blocks
 
 ---
 
-## 5. Technical Requirements
+## 6. Technical Requirements
 
-### 5.1 State Zone Structure
+### 6.1 Technology Stack (Opinionated)
+
+| Layer | Technology | Rationale |
+|-------|------------|-----------|
+| Animation | React + Motion (Framer Motion) | Industry standard for React |
+| CSS | CSS animations (Emil Kowalski principles) | Fallback, performance |
+| Build | Vite / Next.js | Hot reload for workbench |
+| State | File-based (YAML + markdown) | No database, clean removal |
+
+**Other stacks can use the concepts but not the recipes.** Sigil ships with React + Motion implementations.
+
+### 6.2 File Structure
 
 ```
-sigil-mark/
-├── core/                    # IMMUTABLE
-│   ├── sync.yaml            # Temporal Governor + Authority
-│   ├── budgets.yaml         # Cognitive, Visual, Complexity
-│   ├── fidelity.yaml        # Mod Ghost Rule (ceiling)
-│   └── lens.yaml            # Rendering layers (HD/SD)
+project/
+├── CLAUDE.md                  # Sigil prompt for Claude CLI
+├── .sigilrc.yaml              # Root config
 │
-├── resonance/               # TUNABLE
-│   ├── essence.yaml         # Product soul
-│   ├── materials.yaml       # Clay, Machinery, Glass
-│   ├── zones.yaml           # Zone definitions + paths
-│   └── tensions.yaml        # Tuning sliders
+├── src/
+│   ├── .sigilrc.yaml          # Default zone config
+│   ├── checkout/
+│   │   └── .sigilrc.yaml      # recipes: decisive
+│   ├── admin/
+│   │   └── .sigilrc.yaml      # recipes: machinery
+│   └── marketing/
+│       └── .sigilrc.yaml      # recipes: glass
 │
-├── memory/                  # VERSIONED
-│   ├── eras/                # Era definitions
-│   ├── decisions/           # Era-versioned decisions
-│   ├── mutations/active/    # Current experiments
-│   └── graveyard/           # Failed experiments
+├── sigil-mark/
+│   ├── recipes/
+│   │   ├── decisive/
+│   │   │   ├── Button.tsx
+│   │   │   ├── Button.nintendo.tsx
+│   │   │   ├── ConfirmFlow.tsx
+│   │   │   └── index.ts
+│   │   ├── machinery/
+│   │   │   ├── Table.tsx
+│   │   │   ├── Toggle.tsx
+│   │   │   └── index.ts
+│   │   └── glass/
+│   │       ├── HeroCard.tsx
+│   │       ├── Tooltip.tsx
+│   │       └── index.ts
+│   ├── history/               # Refinement history (markdown)
+│   │   └── YYYY-MM-DD.md
+│   └── reports/
+│       └── garden-{date}.yaml
 │
-└── taste-key/               # AUTHORITY
-    ├── holder.yaml          # Who holds the key
-    └── rulings/             # Recorded rulings
+├── .claude/
+│   ├── commands/
+│   │   └── *.md
+│   ├── skills/
+│   │   └── sigil-core/
+│   └── scripts/
+│       └── *.sh
+│
+├── assets/
+│   └── fonts/
+│       └── Adhesion-Regular.otf
+│
+└── .sigil-version.json
 ```
 
-### 5.2 Technology Constraints
+### 6.3 Integration Points
 
-| Constraint | Rationale |
-|------------|-----------|
-| YAML only | Human-readable, no migrations |
-| No database | Clean removal guarantee |
-| No daemon | No background processes |
-| No git hooks | Developer owns their workflow |
-| File-based state | `rm -rf sigil-mark/` removes everything |
+| Integration | Method | Status |
+|-------------|--------|--------|
+| **Claude Code** | Skills + Commands in `.claude/` | Core |
+| **Chrome MCP** | Live preview in workbench | Core |
+| **Vercel** | Preview deployments, drains for telemetry | Enhanced |
+| **ESLint** | `eslint-plugin-sigil` | Enforcement |
+| **CI** | `sigil validate` command | Enforcement |
 
-### 5.3 Integration Points
+### 6.4 Crypto/Web3 Considerations
 
-| Integration | Method |
-|-------------|--------|
-| **Claude Code** | Skills + Commands in `.claude/` |
-| **Loa** | Handoff via `loa-grimoire/context/sigil-handoff.md` |
-| **Chrome** | MCP tool for live preview (Workbench) |
-| **Hot Reload** | Vite/Next.js dev server integration |
+The primary use case is web3 product development with wallet-connected flows.
 
-### 5.4 Workbench Technical Requirements
+**Staging Review**:
+- Testnet integration for staging (designer uses test wallet)
+- Recording/playback for async review of flows requiring real transactions
 
-| Requirement | Implementation |
-|-------------|----------------|
-| Layout | tmux with 4 panes |
-| Claude Panel | Claude Code CLI |
-| Chrome View | Chrome MCP extension |
-| Tensions Panel | Terminal-based sliders |
-| Validation Panel | Real-time file watching |
-| Hot Reload | Dev server websocket |
+**Crypto-Specific Patterns**: Generic core + optional `@sigil/crypto-recipes` package:
+- AddressDisplay (truncation)
+- GasEstimator (pulse/countdown)
+- SlideToConfirm (dead man's switch)
+- SimulationPreview (pre-sign)
+
+**Archetype Support**: Sigil should flexibly support multiple physics models:
+- HIGH_MASS_VAULT (Family-like): Heavy, overdamped, object permanence
+- SPECTRAL_COMPANION (Phantom-like): Floating, tiered friction
+- VISCOUS_FLOW (Matcha-like): Fluid dynamics, flow visualization
 
 ---
 
-## 6. Scope & Prioritization
+## 7. Scope & Prioritization
 
-### v1.0 MVP (This Release)
+### MVP (1 Week)
 
 | Feature | Priority | Status |
 |---------|----------|--------|
-| Four-layer architecture | P0 | Required |
-| 8 commands | P0 | Required |
-| Hammer/Chisel toolkit | P0 | Required |
-| Physics enforcement | P0 | Required |
-| Workbench (4-panel) | P0 | Required |
-| Real-time validation | P0 | Required |
-| Component scoring | P1 | Required |
-| Loa handoff | P1 | Required |
+| /craft + recipes | P0 | ESSENTIAL |
+| /sandbox + /codify | P0 | ESSENTIAL |
+| Workbench A/B toggle | P0 | ESSENTIAL |
+| Recipe structure (decisive/machinery/glass) | P0 | ESSENTIAL |
+| Zone resolution | P0 | ESSENTIAL |
+| CLAUDE.md prompt | P0 | ESSENTIAL |
 
-### v1.1 (Future)
+### v1.2.4 Full Release
 
 | Feature | Priority |
 |---------|----------|
-| Cross-context integration (GTM/MRD) | P2 |
-| Territory-specific handoffs | P2 |
-| Loa Constructs distribution | P3 |
-| Community contributions model | P3 |
+| /inherit (brownfield) | P1 |
+| /validate | P1 |
+| /garden | P1 |
+| Refinement history | P2 |
+| PR-native refinement | P2 |
+| ESLint plugin | P2 |
 
-### Out of Scope (v1.0)
+### Future (v1.3+)
 
-- Multi-user collaboration features
-- Real-time sync between developers
-- Visual GUI for configuration
-- CI/CD integration
+| Feature | Priority |
+|---------|----------|
+| @sigil/crypto-recipes package | P3 |
+| Cross-team learning (cloud) | P3 |
+| Visual GUI for workbench | P3 |
+| Multi-framework support | P4 |
+
+### Out of Scope (v1.2.4)
+
+- Multi-user real-time collaboration
 - VSCode extension
 - Cursor integration
+- Visual configuration editor
+- Framework-agnostic recipe format
 
 ---
 
-## 7. User Stories
+## 8. User Stories
 
-### Setup Flow
+### Brownfield Flow (Priority)
 
 ```
-US-1: As a solo dev, I want to initialize Sigil on my repo so that AI
-      generates consistent UI.
+US-1: As an engineer with an existing codebase, I want to analyze my
+      scattered spring values so I can see what patterns exist.
 
       Acceptance:
-      - Run mount-sigil.sh completes in <30s
-      - Creates sigil-mark/ with all required files
-      - Creates .claude/commands/ and .claude/skills/
-      - Shows next steps clearly
+      - /inherit scans component directories
+      - Reports physics patterns found (e.g., "23 components with stiffness 140-200")
+      - Flags files for human decision (does NOT auto-generate recipes)
+      - Human creates recipes manually based on analysis
 ```
 
+### Craft Flow
+
 ```
-US-2: As a solo dev, I want to capture my product's soul via interview
-      so that AI understands my design intent.
+US-2: As an engineer, I want to generate a component using zone-appropriate
+      physics so it matches my product's feel automatically.
 
       Acceptance:
-      - /envision asks about reference products
-      - /envision asks about anti-patterns
-      - /envision asks about key moments (claim, success, error)
-      - Generates essence.yaml with all captured information
+      - /craft "confirmation button" in checkout/ uses decisive recipes
+      - Output shows zone resolution and physics applied
+      - Component imports from @sigil/recipes/decisive
+      - No raw spring values in generated code
 ```
 
-### Build Flow
+### Learning Flow
 
 ```
-US-3: As a solo dev, I want to generate a component with physics
-      so that it matches my product's feel automatically.
+US-3: As an engineer, I want to feel the difference between spring values
+      so I develop intuition for motion physics.
 
       Acceptance:
-      - /craft resolves zone from file path
-      - /craft applies material physics
-      - /craft enforces sync constraints
-      - /craft stays within budgets
-      - Output includes zone resolution, physics applied, code
+      - Workbench shows diff prominently (stiffness: 180 → 300)
+      - A/B toggle lets me feel before and after
+      - After 10+ adjustments, I can predict what "snappier" means in values
 ```
 
+### Exploration Flow
+
 ```
-US-4: As a solo dev, I want to see violations in real-time
-      so that I can fix them before committing.
+US-4: As an engineer exploring new physics, I want a sandbox where I can
+      experiment with raw values before committing to a recipe.
 
       Acceptance:
-      - Validation panel updates within 1s of code change
-      - Shows IMPOSSIBLE/BLOCK/WARN with causal explanation
-      - Offers fix suggestions
+      - /sandbox marks file with // sigil-sandbox header
+      - Raw spring values allowed (no ESLint errors)
+      - /garden shows sandbox with age
+      - /codify extracts to recipe when ready
+      - Sandbox can stay open indefinitely (advisory only, team trusts)
 ```
 
-### Workbench Flow
+### Refinement Flow
 
 ```
-US-5: As a solo dev, I want to see my component live while crafting
-      so that I can iterate quickly.
+US-5: As a designer, I want to give feedback in my words ("more Nintendo Switch")
+      and have it translated to physics automatically.
 
       Acceptance:
-      - Chrome view updates on code change
-      - No manual refresh needed
-      - Shows current tensions visually
-```
-
-```
-US-6: As a solo dev, I want to see my component's physics score
-      so that I know when it's ready.
-
-      Acceptance:
-      - Shows 5 metrics (Physics, Budget, Fidelity, Material, Zone)
-      - Shows overall score 0-100
-      - Indicates "Ready for /approve" at 85+
-```
-
-### Maintenance Flow
-
-```
-US-7: As a solo dev, I want to detect design drift over time
-      so that my product doesn't decay.
-
-      Acceptance:
-      - /garden shows inflation metrics
-      - Alerts when growth exceeds thresholds
-      - Recommends review before next release
+      - I comment on PR: "More Nintendo Switch"
+      - Claude interprets based on context and history
+      - Commit shows: spring(180, 12) → spring(300, 8)
+      - I feel the change in preview
+      - Over time, I learn what the numbers mean
 ```
 
 ---
 
-## 8. Risks & Mitigations
+## 9. Risks & Mitigations
 
 | Risk | Likelihood | Impact | Mitigation |
 |------|------------|--------|------------|
-| Workbench complexity delays MVP | High | High | Ship core engine first, add panels incrementally |
-| tmux learning curve for users | Medium | Medium | Provide alternative non-Workbench mode |
-| Hot reload integration issues | Medium | High | Support manual refresh as fallback |
-| Chrome MCP extension reliability | Medium | Medium | Design for graceful degradation |
-| Adoption friction | Medium | High | One-command install, <5 min to first /craft |
+| "Claude's training" interpretation varies | High | Medium | Refinement history calibrates over time |
+| Workbench complexity delays MVP | Medium | High | Ship A/B toggle first, add chrome integration incrementally |
+| Recipe sprawl (too many variants) | Medium | Low | /garden reports, hierarchical naming |
+| Hot-swap technically challenging | Medium | Medium | Fall back to iframes for full-flow comparison |
+| Brownfield codebases too messy | Medium | High | /inherit flags only, human decides |
+| Crypto flows hard to test | High | Medium | Testnet + recording/playback |
 
 ---
 
-## 9. Success Criteria
+## 10. Success Criteria
 
-### Launch Criteria (v1.0)
+### MVP Criteria
 
-- [ ] `mount-sigil.sh` works on macOS and Linux
-- [ ] All 8 commands implemented and documented
-- [ ] Hammer investigates (never jumps to solution)
-- [ ] Physics violations are IMPOSSIBLE (cannot generate)
-- [ ] Workbench launches with 4 panels
-- [ ] Live preview updates in <1s
-- [ ] Component scoring visible
-- [ ] Clean removal via `rm -rf sigil-mark/`
-- [ ] README has <5 min quickstart
-- [ ] No daemon, no database, no hooks
+- [ ] /craft generates component using correct zone recipe
+- [ ] /sandbox enables raw physics without ESLint errors
+- [ ] /codify extracts sandbox to recipe
+- [ ] Workbench A/B toggle works (hot-swap or iframe)
+- [ ] Diff shown prominently after every adjustment
+- [ ] Zone resolution from file path works
+- [ ] Three recipe sets exist (decisive/machinery/glass)
+- [ ] `rm -rf sigil-mark/` removes everything
 
-### The Final Test
+### The Learning Test
 
-```bash
-# To install Sigil:
-./mount-sigil.sh
+```
+DAY 1: Engineer doesn't know what stiffness means
+DAY 7: Engineer has adjusted 20+ components
+DAY 14: Engineer predicts "Nintendo Switch = ~stiffness 300"
+DAY 30: Engineer teaches teammate about spring physics
 
-# To use Sigil:
-/envision → /codify → /map → /craft → /validate → /approve
+The craft compounds through doing.
+```
 
-# To remove Sigil:
-rm -rf sigil-mark/
-# Done.
+### The Harmony Test
+
+```
+BEFORE: Designer says "snappier", engineer guesses
+AFTER: Designer says "snappier", engineer says "stiffness 200 → 280?"
+       Designer says "yeah, maybe 300"
+       They speak the same language.
 ```
 
 ---
 
-## Appendix A: Key Quotes
+## Appendix A: Interview Insights
 
-> "The delay IS the trust." — OSRS Temporal Philosophy
+### Crypto UX Physics Reference
 
-> "The lie IS the speed." — Linear Optimistic UI
+The "Kinematics of Value" article provided deep context on crypto interface physics:
 
-> "Quality doesn't come from committees... it comes from individuals with taste." — Karri Saarinen
+| Product | Archetype | Physics Model |
+|---------|-----------|---------------|
+| Family | HIGH_MASS_VAULT | Overdamped spring, heavy haptics, object permanence |
+| Phantom | SPECTRAL_COMPANION | Floating oscillation, tiered friction, slide-to-confirm |
+| Matcha | VISCOUS_FLOW | Sankey diagrams, ease-out curves, liquidity visualization |
 
-> "Technical superiority is NOT justification for breaking resonance." — Mod Ghost Rule
+Sigil should flexibly support all three models through zone configuration and recipe customization.
 
-> "A screen with 50 perfect buttons is still bad design." — Budget Philosophy
+### Key Interview Answers
 
-> "470,000 lines of Go vs `mkdir .tickets && vim`" — Anti-Beads Principle
+| Question | Answer |
+|----------|--------|
+| Recipe versioning | Global updates are intentional (zone determines physics) |
+| PR refinement auth | Anyone with comment access, trust the team |
+| Wallet flow testing | Testnet + recording/playback |
+| Sandbox enforcement | Advisory only (trust the team) |
+| Vibe calibration | Learning from history |
+| Framework lock | React + Motion (opinionated) |
+| A/B mechanics | Hot-swap for granular, iframes for flows |
+| Variant management | Hierarchical, exploratory like Figma |
+| /inherit quality | Flag only, human decides |
+| Law enforcement | Simple and effective (ESLint + CI) |
+| Crypto patterns | Generic core + optional package |
+| v1.0 → v1.2.4 | Iteration, not replacement |
+| History storage | In-repo markdown |
+| Feedback mode | Progressive disclosure |
+| Connectivity | Local-first + telemetry (Vercel, Chrome MCP) |
+| Project type | Brownfield priority |
+| North star | Designer-engineer harmony at scale |
 
 ---
 
@@ -557,17 +653,16 @@ rm -rf sigil-mark/
 
 | Section | Sources |
 |---------|---------|
-| Problem Statement | SIGIL-COMPLETE-ARCHITECTURE.md §1 |
-| Philosophy | SIGIL-COMPLETE-ARCHITECTURE.md §2 |
-| Four Layers | SIGIL-COMPLETE-ARCHITECTURE.md §4-8 |
-| Commands | SIGIL-COMPLETE-ARCHITECTURE.md §9 |
-| Hammer/Chisel | SIGIL-COMPLETE-ARCHITECTURE.md §10 |
-| Violation Hierarchy | SIGIL-COMPLETE-ARCHITECTURE.md §11 |
-| Directory Structure | SIGIL-COMPLETE-ARCHITECTURE.md §12 |
-| Workbench | SIGIL-COMPLETE-ARCHITECTURE.md §17 |
-| Agent Instructions | SIGIL-PROMPT.md |
-| Reference Implementation | SIGIL-REFERENCE.md |
-| Scope Decisions | User clarification (2026-01-04) |
+| Philosophy | sigil-v1.2.4/CLAUDE.md, Interview Phase 1-2 |
+| Recipe architecture | sigil-v1.2.4/docs/ARCHITECTURE.md |
+| Workbench design | sigil-v1.2.4/docs/ARCHITECTURE.md §Workbench |
+| Crypto UX context | Interview (Kinematics of Value article) |
+| Success metrics | Interview Phase 5 |
+| MVP scope | Interview Phase 5 |
+| Technical constraints | Interview Phase 3-4 |
+| Zone resolution | sigil-v1.2.4/CLAUDE.md §Zone Resolution |
+| Three Laws | sigil-v1.2.4/CLAUDE.md §Three Laws |
+| Branding | sigil-v1.2.4/docs/BRANDING.md |
 
 ---
 

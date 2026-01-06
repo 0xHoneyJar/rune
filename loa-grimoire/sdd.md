@@ -1,1004 +1,1567 @@
-# Software Design Document: Sigil v1.0
+# Software Design Document: Sigil v1.2.4
 
-**Version:** 1.0
-**Status:** Draft
-**Date:** 2026-01-04
-**Based on:** PRD v1.0
+> "See the diff. Feel the result. Learn by doing."
+
+**Version**: 1.2.4
+**Date**: 2026-01-05
+**Status**: Draft
+**PRD Reference**: loa-grimoire/prd.md
 
 ---
 
 ## Executive Summary
 
-Sigil v1.0 is a Design Physics Engine implemented as a Claude Code skill framework with a real-time Workbench environment. It provides 8 specialized commands that give AI agents physics constraints for consistent design decisions. The Workbench enables live preview, real-time validation, and visual tension monitoring.
+Sigil v1.2.4 is a Design Physics Framework that enables apprenticeship learning for motion physics. Engineers learn by seeing diffs and feeling results in the browser, not through lectures.
 
-### Key Decisions
+### Architecture Philosophy
+
+1. **Recipes are the truth** — TSX components with embedded spring values
+2. **Zones determine context** — Directory = zone, config cascades
+3. **Workbench enables learning** — tmux + browser + A/B toggle
+4. **Claude infers, humans approve** — No dictionary, trust Claude's training
+
+### Key Technical Decisions
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| Workbench launch | Standalone script | Simplicity, no Claude Code integration complexity |
-| Tensions panel | Simple text (ASCII) | Minimal dependencies, works everywhere |
-| Scoring | Pass/Fail only | Reduces complexity, clear actionable output |
-
-### Architecture Overview
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                         SIGIL WORKBENCH                              │
-│                    tmux with 4 panes                                 │
-├─────────────────────────────┬───────────────────────────────────────┤
-│      CLAUDE PANEL           │         CHROME VIEW                   │
-│  Claude Code CLI            │    Chrome MCP live preview            │
-├─────────────────────────────┼───────────────────────────────────────┤
-│      TENSIONS PANEL         │         VALIDATION PANEL              │
-│  ASCII progress bars        │    Real-time file watcher             │
-└─────────────────────────────┴───────────────────────────────────────┘
-                                        │
-┌───────────────────────────────────────┴───────────────────────────────┐
-│                         SIGIL ENGINE                                   │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │
-│  │   COMMANDS  │  │   SKILLS    │  │   STATE     │  │  VALIDATOR  │  │
-│  │   (8 total) │  │   (8 total) │  │ sigil-mark/ │  │   (watcher) │  │
-│  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘  │
-└───────────────────────────────────────────────────────────────────────┘
-```
+| Workbench shell | tmux + browser | Native terminal, Chrome MCP for preview |
+| Recipe imports | Local path alias | `@sigil/recipes` → `./sigil-mark/recipes` |
+| Animation library | React + Motion | Opinionated, industry standard |
+| State storage | File-based (YAML + MD) | No database, clean removal |
+| Enforcement | ESLint + CI | Simple and effective |
 
 ---
 
 ## 1. System Architecture
 
-### 1.1 Layer Model
+### 1.1 High-Level Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                         TASTE KEY                                    │
-│  Single holder with absolute authority over visual execution.       │
-│  Can override: Budgets, Fidelity. Cannot override: Physics.         │
-└─────────────────────────────────────────────────────────────────────┘
-                              │
-┌─────────────────────────────────────────────────────────────────────┐
-│                         MEMORY                                       │
-│  Era-versioned decisions. Mutations sandbox. Graveyard archive.      │
-└─────────────────────────────────────────────────────────────────────┘
-                              │
-┌─────────────────────────────────────────────────────────────────────┐
-│                        RESONANCE                                     │
-│  Product tuning: Essence, Materials, Zones, Tensions.                │
-└─────────────────────────────────────────────────────────────────────┘
-                              │
-┌─────────────────────────────────────────────────────────────────────┐
-│                          CORE                                        │
-│  Immutable physics: Sync, Budgets, Fidelity, Lens.                  │
-│  CANNOT be overridden. Violations are IMPOSSIBLE.                    │
-└─────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                              SIGIL v1.2.4                                    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │                         WORKBENCH LAYER                              │   │
+│  │  tmux session: diff pane + browser pane + claude pane               │   │
+│  │  A/B toggle: hot-swap (granular) | iframes (flows)                  │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                    │                                        │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │                         RECIPE LAYER                                 │   │
+│  │  TSX components with embedded physics                                │   │
+│  │  Variants: Button.tsx, Button.nintendo.tsx, Button.relaxed.tsx      │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                    │                                        │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │                          ZONE LAYER                                  │   │
+│  │  .sigilrc.yaml per directory, cascading inheritance                 │   │
+│  │  Zones: decisive | machinery | glass                                │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                    │                                        │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │                      ENFORCEMENT LAYER                               │   │
+│  │  ESLint plugin (sigil/no-raw-physics) + CI validation               │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                    │                                        │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │                       CLAUDE LAYER                                   │   │
+│  │  Context injection via XML, history parsing, vibe inference         │   │
+│  │  Skills: sigil-core | Commands: /craft /sandbox /codify /etc.       │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 1.2 Coexistence with Loa
+### 1.2 Component Interaction Flow
 
-Sigil and Loa are separate frameworks that coexist:
-
-| Aspect | Sigil | Loa |
-|--------|-------|-----|
-| Domain | Design physics | Development workflow |
-| State Zone | `sigil-mark/` | `loa-grimoire/` |
-| Config | `.sigilrc.yaml` | `.loa.config.yaml` |
-| Skills | 8 design-focused | Workflow-focused |
-| Commands | 8 design commands | Workflow commands |
-
-**Handoff Protocol:** When Sigil diagnoses a structural issue (not UI), it generates context for Loa via `loa-grimoire/context/sigil-handoff.md`.
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   CLAUDE    │────▶│    ZONE     │────▶│   RECIPE    │────▶│  WORKBENCH  │
+│   CODE      │     │  RESOLVER   │     │   LOADER    │     │   A/B TEST  │
+└─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
+       │                   │                   │                   │
+       │                   │                   │                   │
+       ▼                   ▼                   ▼                   ▼
+  /craft request     Find .sigilrc.yaml   Import recipe      Hot-swap or
+  with file path     Walk up directories  from zone set      iframe compare
+       │                   │                   │                   │
+       │                   │                   │                   │
+       ▼                   ▼                   ▼                   ▼
+  CONTEXT.xml         Zone config          Generated TSX       User feels
+  injected to         with constraints     using recipe        difference
+  Claude prompt                            physics
+```
 
 ---
 
-## 2. Workbench Architecture
+## 2. Technology Stack
 
-### 2.1 Overview
+### 2.1 Core Technologies
 
-The Workbench is a tmux-based environment launched via `sigil-workbench.sh`:
+| Layer | Technology | Version | Rationale |
+|-------|------------|---------|-----------|
+| **Animation** | Framer Motion | ^10.0 | React animation standard, spring physics |
+| **Framework** | React | ^18.0 | Opinionated choice for recipe ecosystem |
+| **Build** | Vite | ^5.0 | Fast HMR for workbench, ESM native |
+| **Terminal** | tmux | ^3.3 | Mature, scriptable, ubiquitous |
+| **Browser** | Chrome MCP | Latest | Claude-native browser control |
+| **CLI** | Node.js | ^20.0 | Claude Code integration |
+| **Lint** | ESLint | ^8.0 | Plugin ecosystem, CI integration |
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│  SIGIL WORKBENCH v1.0                                     [session] │
-├─────────────────────────────┬───────────────────────────────────────┤
-│                             │                                       │
-│  $ claude                   │                                       │
-│                             │         [Chrome MCP Preview]          │
-│  /craft ConfirmButton       │                                       │
-│  src/features/checkout/     │    ┌───────────────────────────┐      │
-│                             │    │                           │      │
-│  🔨 Loading physics...      │    │    [ Claim 1,234 TOKENS ] │      │
-│                             │    │                           │      │
-│  Zone: critical             │    │    Pending...             │      │
-│  Material: clay             │    │                           │      │
-│  Sync: server_authoritative │    └───────────────────────────┘      │
-│                             │                                       │
-├─────────────────────────────┼───────────────────────────────────────┤
-│  TENSIONS [critical zone]   │  VALIDATION                           │
-│                             │                                       │
-│  Weight      ████████░░ 80  │  Physics:   ✓ PASS                    │
-│  Speed       ███░░░░░░░ 30  │  Sync:      ✓ server_authoritative    │
-│  Playfulness ██░░░░░░░░ 20  │  Budgets:   ✓ 3/5 elements            │
-│  Density     █████░░░░░ 50  │  Fidelity:  ✓ within ceiling          │
-│                             │  Material:  ✓ clay physics            │
-│  [Auto-refresh: ON]         │                                       │
-│                             │  Status: READY FOR /approve           │
-└─────────────────────────────┴───────────────────────────────────────┘
-```
+### 2.2 Recipe Dependencies
 
-### 2.2 Panel Architecture
-
-#### Claude Panel (Top-Left)
-
-**Purpose:** Claude Code CLI for `/craft` commands
-
-**Implementation:**
-```bash
-# Pane 0: Claude Code
-tmux send-keys -t sigil:0.0 'claude' Enter
-```
-
-**Features:**
-- Full Claude Code CLI
-- All 8 Sigil commands available
-- Hammer/Chisel toolkit
-- Zone context in output
-
-#### Chrome Panel (Top-Right)
-
-**Purpose:** Live preview via Chrome MCP
-
-**Implementation:**
-```bash
-# Pane 1: Chrome preview
-# Uses existing claude-in-chrome MCP connection
-# Hot reload via dev server websocket
-```
-
-**Features:**
-- Live component preview
-- Auto-refresh on file change
-- Uses existing Chrome MCP extension
-- Falls back to manual refresh if MCP unavailable
-
-#### Tensions Panel (Bottom-Left)
-
-**Purpose:** Display current zone tensions as ASCII progress bars
-
-**Implementation:**
-```bash
-#!/usr/bin/env bash
-# sigil-tensions.sh - Display tensions in terminal
-
-while true; do
-  clear
-  echo "TENSIONS [$(get_current_zone) zone]"
-  echo ""
-
-  # Read tensions from zone or defaults
-  tensions=$(yq '.zones.'$(get_current_zone)'.tension_overrides // .zones.default.tensions' sigil-mark/resonance/zones.yaml)
-
-  # Display as ASCII bars
-  for tension in weight speed playfulness density; do
-    value=$(echo "$tensions" | yq ".$tension // 50")
-    bar=$(printf '█%.0s' $(seq 1 $((value / 10))))
-    empty=$(printf '░%.0s' $(seq 1 $((10 - value / 10))))
-    printf "%-12s %s%s %d\n" "$tension" "$bar" "$empty" "$value"
-  done
-
-  echo ""
-  echo "[Auto-refresh: ON]"
-
-  # Refresh every 2 seconds
-  sleep 2
-done
-```
-
-**Output Format:**
-```
-TENSIONS [critical zone]
-
-Weight      ████████░░ 80
-Speed       ███░░░░░░░ 30
-Playfulness ██░░░░░░░░ 20
-Density     █████░░░░░ 50
-
-[Auto-refresh: ON]
-```
-
-#### Validation Panel (Bottom-Right)
-
-**Purpose:** Real-time physics validation via file watcher
-
-**Implementation:**
-```bash
-#!/usr/bin/env bash
-# sigil-validate.sh - Real-time validation watcher
-
-# Watch for file changes
-fswatch -o src/ components/ app/ | while read; do
-  clear
-  echo "VALIDATION"
-  echo ""
-
-  # Get current file (most recently modified)
-  current_file=$(find src components app -name "*.tsx" -mmin -1 2>/dev/null | head -1)
-
-  if [ -z "$current_file" ]; then
-    echo "Watching for changes..."
-    continue
-  fi
-
-  # Detect zone
-  zone=$(sigil-detect-zone "$current_file")
-
-  # Run validation
-  result=$(sigil-validate "$current_file")
-
-  # Display results
-  echo "File: $(basename $current_file)"
-  echo "Zone: $zone"
-  echo ""
-
-  # Physics check
-  if echo "$result" | grep -q "physics:pass"; then
-    echo "Physics:   ✓ PASS"
-  else
-    echo "Physics:   ✗ IMPOSSIBLE VIOLATION"
-  fi
-
-  # Sync check
-  sync_mode=$(echo "$result" | grep "sync:" | cut -d: -f2)
-  echo "Sync:      ✓ $sync_mode"
-
-  # Budget check
-  elements=$(echo "$result" | grep "elements:" | cut -d: -f2)
-  max=$(echo "$result" | grep "max_elements:" | cut -d: -f2)
-  if [ "$elements" -le "$max" ]; then
-    echo "Budgets:   ✓ $elements/$max elements"
-  else
-    echo "Budgets:   ✗ $elements/$max elements (BLOCK)"
-  fi
-
-  # Fidelity check
-  if echo "$result" | grep -q "fidelity:pass"; then
-    echo "Fidelity:  ✓ within ceiling"
-  else
-    echo "Fidelity:  ⚠ exceeds ceiling (BLOCK)"
-  fi
-
-  # Material check
-  material=$(echo "$result" | grep "material:" | cut -d: -f2)
-  echo "Material:  ✓ $material physics"
-
-  echo ""
-
-  # Overall status
-  if echo "$result" | grep -q "status:pass"; then
-    echo "Status: READY FOR /approve"
-  elif echo "$result" | grep -q "status:block"; then
-    echo "Status: BLOCKED - needs Taste Key ruling"
-  else
-    echo "Status: IMPOSSIBLE - physics violation"
-  fi
-done
-```
-
-### 2.3 Launch Script
-
-```bash
-#!/usr/bin/env bash
-# sigil-workbench.sh - Launch Sigil Workbench
-
-set -e
-
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(pwd)"
-
-# Check prerequisites
-check_prerequisites() {
-  command -v tmux >/dev/null 2>&1 || { echo "tmux required"; exit 1; }
-  command -v claude >/dev/null 2>&1 || { echo "Claude Code required"; exit 1; }
-  command -v fswatch >/dev/null 2>&1 || { echo "fswatch required (brew install fswatch)"; exit 1; }
-  [ -f ".sigil-setup-complete" ] || { echo "Run /sigil-setup first"; exit 1; }
+```json
+{
+  "dependencies": {
+    "framer-motion": "^10.16.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "eslint-plugin-sigil": "^1.0.0",
+    "vite": "^5.0.0"
+  }
 }
+```
 
-# Create tmux session
-create_session() {
-  # Kill existing session if present
-  tmux kill-session -t sigil 2>/dev/null || true
+### 2.3 Path Alias Configuration
 
-  # Create new session with 4 panes
-  tmux new-session -d -s sigil -n workbench
-
-  # Split into 4 panes (2x2 grid)
-  tmux split-window -h -t sigil:workbench
-  tmux split-window -v -t sigil:workbench.0
-  tmux split-window -v -t sigil:workbench.1
-
-  # Pane 0 (top-left): Claude Code
-  tmux send-keys -t sigil:workbench.0 'claude' Enter
-
-  # Pane 1 (top-right): Chrome placeholder (MCP handles this)
-  tmux send-keys -t sigil:workbench.1 'echo "Chrome preview via MCP. Run /craft to see component."' Enter
-
-  # Pane 2 (bottom-left): Tensions display
-  tmux send-keys -t sigil:workbench.2 "$SCRIPT_DIR/sigil-tensions.sh" Enter
-
-  # Pane 3 (bottom-right): Validation watcher
-  tmux send-keys -t sigil:workbench.3 "$SCRIPT_DIR/sigil-validate.sh" Enter
-
-  # Select Claude pane
-  tmux select-pane -t sigil:workbench.0
+**tsconfig.json**:
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@sigil/recipes/*": ["./sigil-mark/recipes/*"],
+      "@sigil/hooks": ["./sigil-mark/hooks/index.ts"]
+    }
+  }
 }
-
-# Main
-check_prerequisites
-create_session
-
-echo "Sigil Workbench started. Attaching..."
-tmux attach-session -t sigil
 ```
 
-### 2.4 File Watcher (Validation)
+**vite.config.ts**:
+```typescript
+import { defineConfig } from 'vite';
+import path from 'path';
 
-**Tool:** `fswatch` (cross-platform)
-
-**Installation:**
-```bash
-# macOS
-brew install fswatch
-
-# Linux
-sudo apt-get install fswatch
+export default defineConfig({
+  resolve: {
+    alias: {
+      '@sigil/recipes': path.resolve(__dirname, './sigil-mark/recipes'),
+      '@sigil/hooks': path.resolve(__dirname, './sigil-mark/hooks'),
+    }
+  }
+});
 ```
-
-**Watched Paths:**
-- `src/`
-- `components/`
-- `app/`
-- Any paths in `.sigilrc.yaml` component_paths
-
-**Debounce:** 500ms to avoid rapid refreshes
 
 ---
 
 ## 3. Component Design
 
-### 3.1 The 8 Skills
+### 3.1 Recipe Architecture
 
-| # | Skill | Command | Purpose |
-|---|-------|---------|---------|
-| 1 | `envisioning-soul` | `/envision` | Capture product essence via interview |
-| 2 | `codifying-materials` | `/codify` | Define material physics (clay/machinery/glass) |
-| 3 | `mapping-zones` | `/map` | Define zones and path patterns |
-| 4 | `crafting-components` | `/craft` | Generate with Hammer/Chisel toolkit |
-| 5 | `validating-fidelity` | `/validate` | Check physics/budget/fidelity violations |
-| 6 | `gardening-entropy` | `/garden` | Detect drift, stale decisions, mutations |
-| 7 | `approving-patterns` | `/approve` | Taste Key rulings on patterns |
-| 8 | `greenlighting-concepts` | `/greenlight` | Concept approval before building |
+Each recipe is a self-contained TSX component with embedded physics.
 
-### 3.2 Skill Structure
+**Recipe Anatomy**:
+```tsx
+/**
+ * @sigil-recipe {zone}/{ComponentName}
+ * @physics {spring_config}, {timing_config}, {behavior_tags}
+ * @zone {applicable_zones}
+ * @sync {server_authoritative | client_authoritative}
+ */
 
-Each skill follows Claude Code conventions:
+// 1. IMPORTS
+import { motion } from 'framer-motion';
+import { useState, forwardRef, type ReactNode } from 'react';
+
+// 2. TYPES
+export interface Props { /* ... */ }
+
+// 3. PHYSICS CONSTANTS
+const SPRING_CONFIG = {
+  type: 'spring' as const,
+  stiffness: 180,
+  damping: 12,
+};
+
+// 4. HOOKS (if needed)
+function useServerTick(action: () => Promise<void>) { /* ... */ }
+
+// 5. STYLES
+const baseStyles = `/* tailwind classes */`;
+
+// 6. COMPONENT
+export const Component = forwardRef<HTMLElement, Props>(/* ... */);
+
+// 7. EXPORTS
+export default Component;
+```
+
+### 3.2 Recipe Sets
+
+#### Decisive (checkout, transactions)
+```typescript
+// Physics: Heavy, deliberate, trustworthy
+const DECISIVE_SPRING = { stiffness: 180, damping: 12 };
+const DECISIVE_TIMING = { min: 150, max: 250 }; // ms
+
+// Constraints
+sync: 'server_authoritative'
+tick: 600 // ms server response budget
+optimistic_ui: 'forbidden'
+```
+
+#### Machinery (admin, dashboards)
+```typescript
+// Physics: Instant, efficient, precise
+const MACHINERY_SPRING = { stiffness: 400, damping: 30 };
+// Or: no animation (instant state changes)
+
+// Constraints
+sync: 'client_authoritative'
+animations: 'minimal'
+```
+
+#### Glass (marketing, landing)
+```typescript
+// Physics: Delightful, polished, inviting
+const GLASS_SPRING = { stiffness: 200, damping: 20 };
+const FLOAT_AMOUNT = -8; // pixels on hover
+
+// Behaviors
+glow: true
+float: true
+entrance_delay: 100 // ms stagger
+```
+
+### 3.3 Variant System
+
+Variants are created through refinement and live alongside base recipes:
 
 ```
-.claude/skills/{skill-name}/
-├── index.yaml          # Metadata (~100 tokens)
-├── SKILL.md            # Instructions (~2000 tokens)
-└── tools/              # Sub-tools (optional)
-    └── *.md
+sigil-mark/recipes/decisive/
+├── Button.tsx              # Base: spring(180, 12)
+├── Button.nintendo.tsx     # Snappier: spring(300, 8)
+├── Button.relaxed.tsx      # Softer: spring(140, 16)
+├── Button.nintendo.extra.tsx  # Hierarchical variant
+└── index.ts                # Barrel exports
 ```
 
-**Example: crafting-components**
-```
-.claude/skills/crafting-components/
-├── index.yaml
-├── SKILL.md
-└── tools/
-    ├── hammer.md       # Diagnose + Route
-    └── chisel.md       # Execute aesthetics
+**Variant Index Pattern**:
+```typescript
+// sigil-mark/recipes/decisive/index.ts
+export { Button } from './Button';
+export { Button as ButtonNintendo } from './Button.nintendo';
+export { Button as ButtonRelaxed } from './Button.relaxed';
+export { ConfirmFlow } from './ConfirmFlow';
 ```
 
-### 3.3 Command Structure
+### 3.4 Core Hooks
 
-Each command is a markdown file:
+#### useServerTick
+Ensures async actions complete before UI updates. Prevents optimistic UI in server_authoritative zones.
 
-```
-.claude/commands/{command}.md
+```typescript
+interface ServerTickResult<T> {
+  execute: () => Promise<T>;
+  isPending: boolean;
+  error: Error | null;
+}
+
+function useServerTick<T>(action: () => Promise<T>): ServerTickResult<T> {
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  const execute = async () => {
+    if (isPending) return;
+    setIsPending(true);
+    setError(null);
+
+    try {
+      const result = await action();
+      return result;
+    } catch (e) {
+      setError(e instanceof Error ? e : new Error('Action failed'));
+      throw e;
+    } finally {
+      setIsPending(false);
+    }
+  };
+
+  return { execute, isPending, error };
+}
 ```
 
 ---
 
-## 4. Physics Engine
+## 4. Zone System
 
-### 4.1 Temporal Governor
-
-**Implementation:** `sigil-mark/core/sync.yaml`
+### 4.1 Zone Configuration Schema
 
 ```yaml
-temporal_governor:
-  zone_mapping:
-    critical:
-      tick: discrete
-      rate_ms: 600
-      authority: server_authoritative
+# .sigilrc.yaml
+sigil: "1.2.4"                    # Version requirement
+recipes: decisive                  # Recipe set to use
+sync: server_authoritative        # Sync model
+tick: 600                         # Server response budget (ms)
 
-    transactional:
-      tick: continuous
-      rate_ms: 0
-      authority: client_authoritative
+# Optional constraints
+constraints:
+  optimistic_ui: forbidden        # IMPOSSIBLE: never allowed
+  loading_spinners: forbidden     # BLOCK: requires sandbox
+  raw_physics: blocked            # BLOCK: requires sandbox
+
+# Optional sandbox whitelist
+sandbox:
+  - "Experiment.tsx"
+  - "Prototype/**"
 ```
 
-**Validation Logic:**
-```python
-def check_temporal_physics(zone, proposed_ui):
-    if zone.authority == "server_authoritative":
-        if proposed_ui.uses_optimistic_updates:
-            return PhysicsViolation(
-                type="IMPOSSIBLE",
-                message="Cannot use optimistic UI in server_authoritative zone"
-            )
-    return Valid()
+### 4.2 Zone Resolution Algorithm
+
+```typescript
+interface ZoneConfig {
+  sigil: string;
+  recipes: 'decisive' | 'machinery' | 'glass';
+  sync: 'server_authoritative' | 'client_authoritative';
+  tick?: number;
+  constraints?: Record<string, 'forbidden' | 'blocked' | 'warned'>;
+  sandbox?: string[];
+}
+
+function resolveZone(filePath: string): ZoneConfig {
+  const parts = filePath.split('/');
+  let config: Partial<ZoneConfig> = {};
+
+  // Walk up directory tree, merging configs
+  for (let i = 1; i <= parts.length; i++) {
+    const dir = parts.slice(0, i).join('/');
+    const configPath = `${dir}/.sigilrc.yaml`;
+
+    if (exists(configPath)) {
+      const dirConfig = parseYaml(readFile(configPath));
+      config = { ...config, ...dirConfig };
+    }
+  }
+
+  // Default to machinery if no config found
+  return {
+    sigil: config.sigil ?? '1.2.4',
+    recipes: config.recipes ?? 'machinery',
+    sync: config.sync ?? 'client_authoritative',
+    tick: config.tick,
+    constraints: config.constraints ?? {},
+    sandbox: config.sandbox ?? [],
+  };
+}
 ```
 
-### 4.2 Budget Engine
-
-**Implementation:** `sigil-mark/core/budgets.yaml`
-
-```yaml
-budgets:
-  cognitive:
-    interactive_elements:
-      critical: 5
-      transactional: 8
-      exploratory: 20
-      marketing: 15
-      admin: 25
-```
-
-**Validation Logic:**
-```python
-def check_budget(zone, component):
-    budget = load_budget(zone)
-    if component.interactive_elements > budget.interactive_elements:
-        return BudgetViolation(
-            type="BLOCK",
-            message=f"Exceeds {zone} budget: {component.interactive_elements}/{budget.interactive_elements}",
-            override_available=True  # Taste Key can override
-        )
-    return Valid()
-```
-
-### 4.3 Fidelity Ceiling
-
-**Implementation:** `sigil-mark/core/fidelity.yaml`
-
-```yaml
-fidelity:
-  ceiling:
-    gradients: { max_stops: 2 }
-    shadows: { max_layers: 3 }
-    animation: { max_duration_ms: 800 }
-    blur: { max_radius_px: 16 }
-    border_radius: { max_px: 24 }
-```
-
-### 4.4 Violation Hierarchy
-
-| Type | Severity | Override | Workbench Display |
-|------|----------|----------|-------------------|
-| Physics | IMPOSSIBLE | None | ✗ IMPOSSIBLE VIOLATION |
-| Budget | BLOCK | Taste Key | ✗ X/Y elements (BLOCK) |
-| Fidelity | BLOCK | Taste Key | ⚠ exceeds ceiling (BLOCK) |
-| Drift | WARN | None needed | ⚠ drift detected |
-
----
-
-## 5. Data Architecture
-
-### 5.1 State Zone Structure
+### 4.3 Zone Directory Structure
 
 ```
-sigil-mark/
-├── core/                       # Immutable physics (version controlled)
-│   ├── sync.yaml              # Temporal Governor + Authority
-│   ├── budgets.yaml           # Cognitive, Visual, Complexity
-│   ├── fidelity.yaml          # Mod Ghost Rule
-│   └── lens.yaml              # Rendering layers
+src/
+├── .sigilrc.yaml              # Default: recipes: machinery
 │
-├── resonance/                  # Product tuning (editable)
-│   ├── essence.yaml           # Product soul (from /envision)
-│   ├── materials.yaml         # Clay, Machinery, Glass
-│   ├── zones.yaml             # Critical, Transactional, Exploratory
-│   └── tensions.yaml          # Tuning sliders (0-100)
+├── checkout/
+│   ├── .sigilrc.yaml          # recipes: decisive, sync: server_authoritative
+│   ├── ConfirmButton.tsx      # Uses decisive/Button
+│   └── ClaimFlow.tsx          # Uses decisive/ConfirmFlow
 │
-├── memory/                     # Era-versioned history
-│   ├── eras/
-│   ├── decisions/
-│   ├── mutations/active/
-│   └── graveyard/
+├── admin/
+│   ├── .sigilrc.yaml          # recipes: machinery (inherited or explicit)
+│   ├── Dashboard.tsx          # Uses machinery/Table
+│   └── Settings.tsx           # Uses machinery/Toggle
 │
-└── taste-key/                  # Authority
-    ├── holder.yaml
-    └── rulings/
-```
-
-### 5.2 YAML Schemas
-
-**Zone Definition:**
-```yaml
-# resonance/zones.yaml
-zones:
-  critical:
-    description: "High-stakes, irreversible actions"
-    physics:
-      sync: server_authoritative
-      tick: discrete
-      material: clay
-    paths:
-      - "**/checkout/**"
-      - "**/claim/**"
-    budgets:
-      interactive_elements: 5
-      animations: 1
-    tension_overrides:
-      weight: 80
-      speed: 30
-      playfulness: 20
-```
-
-**Material Definition:**
-```yaml
-# resonance/materials.yaml
-materials:
-  clay:
-    physics:
-      light: diffuse
-      weight: heavy
-      motion: spring
-      feedback: depress
-    spring_config:
-      stiffness: 120
-      damping: 14
+└── marketing/
+    ├── .sigilrc.yaml          # recipes: glass
+    ├── Hero.tsx               # Uses glass/HeroCard
+    └── Features.tsx           # Uses glass/FeatureCard
 ```
 
 ---
 
-## 6. Craft Toolkit Design
+## 5. Workbench Architecture
 
-### 6.1 Tool Selection Algorithm
-
-```python
-def select_tool(user_input: str) -> Tool:
-    """Select Hammer or Chisel based on input patterns."""
-
-    # Chisel patterns (explicit, measurable)
-    chisel_patterns = [
-        r'\d+px',           # "4px", "16px"
-        r'\d+ms',           # "200ms", "800ms"
-        'padding', 'margin', 'shadow', 'border',
-    ]
-
-    # Hammer patterns (ambiguous, feeling-based)
-    hammer_patterns = [
-        'feels', 'seems', 'looks',
-        'trustworthy', 'heavy', 'fast', 'slow',
-        "doesn't feel right", "something's off",
-    ]
-
-    if any(re.search(p, user_input, re.I) for p in chisel_patterns):
-        return Chisel()
-    if any(re.search(p, user_input, re.I) for p in hammer_patterns):
-        return Hammer()
-
-    # Default to Hammer for ambiguous input
-    return Hammer()
-```
-
-### 6.2 Hammer Workflow
+### 5.1 tmux Session Layout
 
 ```
-INPUT: Ambiguous symptom
-         │
-         ▼
-┌─────────────────────────────────────┐
-│  1. CLARIFYING QUESTION             │
-│  "What kind of slow?"               │
-└─────────────────────────────────────┘
-         │
-         ▼
-┌─────────────────────────────────────┐
-│  2. ROOT CAUSE DETERMINATION        │
-│  ├─ Aesthetic → Route to Chisel     │
-│  ├─ Structural → Generate Loa handoff│
-│  ├─ Taste → Route to /approve       │
-│  └─ Physics → Explain constraint    │
-└─────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  sigil workbench                                      [checkout/decisive]   │
+├────────────────────────┬────────────────────────────────────────────────────┤
+│ PANE 0: DIFF           │ PANE 1: BROWSER                                    │
+│ (40% width)            │ (60% width)                                        │
+│                        │                                                    │
+│ File: Button.tsx       │ ┌──────────────────────────────────────────────┐  │
+│                        │ │                                              │  │
+│ - stiffness: 180       │ │         [Confirm Purchase]                   │  │
+│ + stiffness: 300       │ │                                              │  │
+│ - damping: 12          │ │         ← Click to test                      │  │
+│ + damping: 8           │ │                                              │  │
+│                        │ └──────────────────────────────────────────────┘  │
+│ PHYSICS                │                                                    │
+│ spring(300, 8)         │ Hot-swap active                                    │
+│                        │ Version: B (after)                                 │
+│ COMPARE                │                                                    │
+│ [A] 180/12  [B] 300/8  │                                                    │
+├────────────────────────┴────────────────────────────────────────────────────┤
+│ PANE 2: CLAUDE CODE                                                         │
+│                                                                             │
+│ > More Nintendo Switch                                                      │
+│ Adjusted: spring(180, 12) → spring(300, 8)                                  │
+│ [Toggle A/B to feel the difference]                                         │
+│                                                                             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ STATUS: [A] Before  [B] After  │  Press Space to toggle  │  ● Learning     │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 6.3 Loa Handoff Protocol
+### 5.2 Workbench Scripts
 
-When Hammer diagnoses a structural issue:
-
-```yaml
-# loa-grimoire/context/sigil-handoff.md
----
-from: sigil
-to: loa
-timestamp: "2026-01-04T12:00:00Z"
----
-
-## Problem
-
-**Symptom:** Claim button feels laggy
-**Diagnosis:** Envio indexer latency (3-4s)
-
-## Investigation
-
-| Question | Answer |
-|----------|--------|
-| What kind of lag? | Takes too long to confirm |
-| How long? | 3-4 seconds consistently |
-
-## Sigil Constraints
-
-- Zone: critical
-- Sync: server_authoritative
-- Physics note: Cannot use optimistic UI
-
-## Target
-
-- Current: 3-4s confirmation
-- Goal: <500ms confirmation
-
-## Requirements
-
-Whatever solution Loa implements, Sigil requires:
-- No optimistic UI (server must confirm first)
-- Pending state must be visible
-- If latency cannot be fixed, make wait feel intentional
-```
-
----
-
-## 7. Zone Detection
-
-### 7.1 Path Matching Algorithm
-
-```python
-def detect_zone(file_path: str) -> Zone:
-    """Detect zone from file path using glob patterns."""
-
-    zones = load_yaml("resonance/zones.yaml")
-
-    # Priority order
-    for zone_name in ["critical", "transactional", "exploratory", "marketing", "admin"]:
-        zone = zones.get(zone_name)
-        if not zone:
-            continue
-
-        for pattern in zone.get("paths", []):
-            if fnmatch.fnmatch(file_path, pattern):
-                return Zone(
-                    name=zone_name,
-                    physics=zone["physics"],
-                    budgets=zone.get("budgets", {}),
-                    tension_overrides=zone.get("tension_overrides", {})
-                )
-
-    return zones.get("default", DEFAULT_ZONE)
-```
-
-### 7.2 Zone CLI Tool
-
+**sigil-workbench.sh**:
 ```bash
-#!/usr/bin/env bash
-# sigil-detect-zone.sh - Detect zone for a file path
+#!/bin/bash
+# Launch Sigil workbench tmux session
 
-FILE_PATH="$1"
+SESSION_NAME="sigil-workbench"
+COMPONENT_PATH="${1:-src/components}"
 
-# Load zones
-ZONES_FILE="sigil-mark/resonance/zones.yaml"
+# Kill existing session if exists
+tmux kill-session -t $SESSION_NAME 2>/dev/null
 
-# Check each zone's patterns
-for zone in critical transactional exploratory marketing admin; do
-  patterns=$(yq ".zones.$zone.paths[]" "$ZONES_FILE" 2>/dev/null)
+# Create new session with 3 panes
+tmux new-session -d -s $SESSION_NAME -n "workbench"
 
-  for pattern in $patterns; do
-    # Convert glob to regex
-    regex=$(echo "$pattern" | sed 's/\*\*/.*/' | sed 's/\*/.*/g')
+# Pane 0: Diff view (left, 40%)
+tmux send-keys -t $SESSION_NAME "sigil diff --watch $COMPONENT_PATH" Enter
 
-    if echo "$FILE_PATH" | grep -qE "$regex"; then
-      echo "$zone"
-      exit 0
-    fi
-  done
-done
+# Split horizontally for browser (right, 60%)
+tmux split-window -h -t $SESSION_NAME -p 60
 
-echo "default"
+# Pane 1: Browser preview (will be controlled by Chrome MCP)
+tmux send-keys -t $SESSION_NAME "echo 'Browser preview ready'" Enter
+
+# Split Pane 0 vertically for Claude
+tmux select-pane -t 0
+tmux split-window -v -t $SESSION_NAME -p 30
+
+# Pane 2: Claude Code
+tmux send-keys -t $SESSION_NAME "claude --workbench" Enter
+
+# Set up status bar with Adhesion branding
+tmux set-option -t $SESSION_NAME status-style "bg=#000000,fg=#FFFFFF"
+tmux set-option -t $SESSION_NAME status-left "[SIGIL] "
+tmux set-option -t $SESSION_NAME status-right "[A]Before [B]After │ Space toggle"
+
+# Attach to session
+tmux attach-session -t $SESSION_NAME
+```
+
+### 5.3 A/B Toggle Implementation
+
+#### Hot-Swap (Granular Changes)
+
+For single-component changes, use CSS variable hot-swap:
+
+```typescript
+// workbench/ab-toggle.ts
+interface PhysicsState {
+  stiffness: number;
+  damping: number;
+}
+
+class ABToggle {
+  private stateA: PhysicsState;
+  private stateB: PhysicsState;
+  private current: 'A' | 'B' = 'A';
+
+  constructor(before: PhysicsState, after: PhysicsState) {
+    this.stateA = before;
+    this.stateB = after;
+  }
+
+  toggle(): void {
+    this.current = this.current === 'A' ? 'B' : 'A';
+    this.applyState();
+  }
+
+  private applyState(): void {
+    const state = this.current === 'A' ? this.stateA : this.stateB;
+
+    // Update CSS variables for immediate effect
+    document.documentElement.style.setProperty(
+      '--sigil-stiffness',
+      String(state.stiffness)
+    );
+    document.documentElement.style.setProperty(
+      '--sigil-damping',
+      String(state.damping)
+    );
+
+    // Trigger re-render of components using these variables
+    window.dispatchEvent(new CustomEvent('sigil:physics-change', {
+      detail: state
+    }));
+  }
+}
+```
+
+#### Iframe (Flow Comparison)
+
+For entire zone or multi-step flow comparison:
+
+```typescript
+// workbench/iframe-compare.ts
+interface IframeCompareOptions {
+  urlA: string;  // Preview URL with version A
+  urlB: string;  // Preview URL with version B
+  container: HTMLElement;
+}
+
+class IframeCompare {
+  private iframeA: HTMLIFrameElement;
+  private iframeB: HTMLIFrameElement;
+  private active: 'A' | 'B' = 'A';
+
+  constructor(options: IframeCompareOptions) {
+    this.iframeA = this.createIframe(options.urlA);
+    this.iframeB = this.createIframe(options.urlB);
+
+    // Show A, hide B initially
+    this.iframeB.style.display = 'none';
+
+    options.container.appendChild(this.iframeA);
+    options.container.appendChild(this.iframeB);
+  }
+
+  toggle(): void {
+    this.active = this.active === 'A' ? 'B' : 'A';
+
+    this.iframeA.style.display = this.active === 'A' ? 'block' : 'none';
+    this.iframeB.style.display = this.active === 'B' ? 'block' : 'none';
+  }
+
+  private createIframe(url: string): HTMLIFrameElement {
+    const iframe = document.createElement('iframe');
+    iframe.src = url;
+    iframe.style.width = '100%';
+    iframe.style.height = '100%';
+    iframe.style.border = 'none';
+    return iframe;
+  }
+}
+```
+
+### 5.4 Chrome MCP Integration
+
+The browser pane is controlled via Claude's Chrome MCP:
+
+```typescript
+// Claude's context when in workbench mode
+const workbenchContext = {
+  mode: 'workbench',
+  chrome_mcp: true,
+
+  // Browser control via MCP
+  browser: {
+    navigate: (url: string) => mcp.navigate({ url, tabId }),
+    screenshot: () => mcp.computer({ action: 'screenshot', tabId }),
+    click: (x: number, y: number) => mcp.computer({
+      action: 'left_click',
+      coordinate: [x, y],
+      tabId
+    }),
+  },
+
+  // A/B toggle state
+  ab: {
+    current: 'A' | 'B',
+    stateA: { stiffness: 180, damping: 12 },
+    stateB: { stiffness: 300, damping: 8 },
+    toggle: () => { /* swap and hot-reload */ },
+  }
+};
 ```
 
 ---
 
-## 8. Output Formats
+## 6. Claude Integration
 
-### 8.1 Physics Context Header
+### 6.1 Context Injection Format
 
-```
-🎛️ SIGIL RESONANCE
-═══════════════════════════════════════════════════════════════
+Claude receives zone-aware context for each command:
 
-PHYSICS CONTEXT
-Zone: critical
-Material: clay (heavy, spring, depress)
-Temporal: discrete tick (600ms) — delay is intentional
-Sync: server_authoritative (NO optimistic)
-Tensions: weight=80, speed=30, playfulness=20
+```xml
+<sigil_context version="1.2.4">
+  <zone path="src/checkout">
+    <recipes>decisive</recipes>
+    <sync>server_authoritative</sync>
+    <tick>600</tick>
+  </zone>
 
-BUDGETS
-Cognitive: 3/5 interactive elements ✓
-Visual: 1/1 animations ✓
+  <available_recipes>
+    <recipe name="Button" physics="spring(180, 12)">
+      <variant name="nintendo" physics="spring(300, 8)" />
+      <variant name="relaxed" physics="spring(140, 16)" />
+    </recipe>
+    <recipe name="ConfirmFlow" physics="spring(150, 14), timing(600ms)" />
+  </available_recipes>
 
-─────────────────────────────────────────────────────────────────
-```
+  <constraints>
+    <rule level="impossible">Optimistic UI in server_authoritative</rule>
+    <rule level="block">Raw physics outside sandbox</rule>
+  </constraints>
 
-### 8.2 Validation Output (Workbench)
+  <sandbox_files>
+    <file path="src/checkout/Experiment.tsx" age="3d" />
+  </sandbox_files>
 
-**Pass:**
-```
-VALIDATION
+  <history>
+    <entry date="2026-01-04" feedback="Nintendo Switch" result="spring(300, 8)" />
+    <entry date="2026-01-03" feedback="too anxious" result="spring(140, 16)" />
+  </history>
 
-File: ConfirmButton.tsx
-Zone: critical
-
-Physics:   ✓ PASS
-Sync:      ✓ server_authoritative
-Budgets:   ✓ 3/5 elements
-Fidelity:  ✓ within ceiling
-Material:  ✓ clay physics
-
-Status: READY FOR /approve
-```
-
-**Block:**
-```
-VALIDATION
-
-File: ConfirmButton.tsx
-Zone: critical
-
-Physics:   ✓ PASS
-Sync:      ✓ server_authoritative
-Budgets:   ✗ 8/5 elements (BLOCK)
-Fidelity:  ✓ within ceiling
-Material:  ✓ clay physics
-
-Status: BLOCKED - needs Taste Key ruling
+  <workbench active="true">
+    <mode>learning</mode>
+    <diff_visible>true</diff_visible>
+    <ab_toggle>enabled</ab_toggle>
+  </workbench>
+</sigil_context>
 ```
 
-**Impossible:**
+### 6.2 CLAUDE.md Prompt Structure
+
+```markdown
+# Sigil v1.2.4: Design Physics Framework
+
+You are operating within **Sigil**, a design physics framework...
+
+## Core Philosophy
+<sigil_philosophy>
+**Apprenticeship Through Diff + Feel**
+...
+</sigil_philosophy>
+
+## Commands
+<sigil_commands>
+### /craft [description] [--file path]
+...
+</sigil_commands>
+
+## Zone Resolution
+<sigil_zones>
+...
+</sigil_zones>
+
+## Behavioral Guidelines
+<sigil_behavior>
+**DO:**
+- Use recipes for all physics
+- Show diffs prominently after changes
+...
+
+**DON'T:**
+- Generate raw spring/timing values outside sandbox
+- Lecture about physics (the diff is the lesson)
+...
+</sigil_behavior>
 ```
-VALIDATION
 
-File: ConfirmButton.tsx
-Zone: critical
+### 6.3 Skill Structure
 
-Physics:   ✗ IMPOSSIBLE VIOLATION
-           Optimistic UI in server_authoritative zone
-
-Status: IMPOSSIBLE - physics violation
+```
+.claude/skills/sigil-core/
+├── index.yaml            # Metadata (~100 tokens)
+├── SKILL.md              # Full instructions (~2000 tokens)
+└── scripts/
+    ├── resolve-zone.sh   # Zone resolution utility
+    ├── parse-recipe.sh   # Recipe metadata extraction
+    └── validate.sh       # Compliance check
 ```
 
----
-
-## 9. Scripts Manifest
-
-### 9.1 Core Scripts
-
-| Script | Purpose | Location |
-|--------|---------|----------|
-| `mount-sigil.sh` | Initialize Sigil on repo | `.claude/scripts/` |
-| `sigil-workbench.sh` | Launch Workbench | `.claude/scripts/` |
-| `sigil-tensions.sh` | Display tensions panel | `.claude/scripts/` |
-| `sigil-validate.sh` | Real-time validation | `.claude/scripts/` |
-| `sigil-detect-zone.sh` | Zone detection CLI | `.claude/scripts/` |
-
-### 9.2 Mount Script
-
-```bash
-#!/usr/bin/env bash
-# mount-sigil.sh - Mount Sigil v1.0 on a repository
-
-SIGIL_HOME="${SIGIL_HOME:-$HOME/.sigil/sigil}"
-
-# Create directories
-mkdir -p .claude/skills .claude/commands .claude/scripts
-mkdir -p sigil-mark/{core,resonance,memory/{eras,decisions,mutations/active,graveyard},taste-key/rulings}
-
-# Symlink skills
-for skill in envisioning-soul codifying-materials mapping-zones crafting-components \
-             validating-fidelity gardening-entropy approving-patterns greenlighting-concepts; do
-  ln -sf "$SIGIL_HOME/.claude/skills/$skill" ".claude/skills/$skill"
-done
-
-# Symlink commands
-for cmd in envision codify map craft validate garden approve greenlight; do
-  ln -sf "$SIGIL_HOME/.claude/commands/${cmd}.md" ".claude/commands/${cmd}.md"
-done
-
-# Symlink scripts
-for script in sigil-workbench.sh sigil-tensions.sh sigil-validate.sh sigil-detect-zone.sh; do
-  ln -sf "$SIGIL_HOME/.claude/scripts/$script" ".claude/scripts/$script"
-done
-
-# Create version marker
-echo "Sigil v1.0 setup completed at $(date -u +%Y-%m-%dT%H:%M:%SZ)" > .sigil-setup-complete
-
-cat << 'EOF'
-Sigil v1.0 mounted.
-
-Next steps:
-  1. Run /envision to capture product soul
-  2. Run /codify to define materials
-  3. Run /map to configure zones
-  4. Run sigil-workbench.sh to launch Workbench
-
-Or start crafting: /craft
-EOF
+**index.yaml**:
+```yaml
+name: sigil-core
+version: 1.2.4
+description: Design Physics Framework for apprenticeship learning
+commands:
+  - /craft
+  - /sandbox
+  - /codify
+  - /inherit
+  - /validate
+  - /garden
 ```
 
 ---
 
-## 10. Dependencies
+## 7. Command Implementation
 
-### 10.1 Required
+### 7.1 /craft
 
-| Dependency | Purpose | Install |
-|------------|---------|---------|
-| Claude Code | AI agent CLI | `npm i -g @anthropic-ai/claude-code` |
-| tmux | Workbench layout | `brew install tmux` |
-| yq | YAML parsing | `brew install yq` |
+Generate component using zone-appropriate recipes.
 
-### 10.2 Optional
+**Input**: Component description, optional file path
+**Output**: Generated TSX using recipe import
 
-| Dependency | Purpose | Install |
-|------------|---------|---------|
-| fswatch | File watching | `brew install fswatch` |
-| Chrome MCP | Live preview | Already installed |
+```typescript
+// Command handler pseudocode
+async function craft(description: string, filePath?: string) {
+  // 1. Resolve zone
+  const zone = resolveZone(filePath ?? process.cwd());
 
-### 10.3 Fallbacks
+  // 2. Load available recipes
+  const recipes = loadRecipes(zone.recipes);
 
-| If Missing | Fallback |
-|------------|----------|
-| fswatch | Manual `/validate` command |
-| Chrome MCP | Manual browser refresh |
-| tmux | Run commands individually |
+  // 3. Claude selects appropriate recipe based on description
+  const selectedRecipe = await claude.selectRecipe(description, recipes);
+
+  // 4. Generate component
+  const component = await claude.generate({
+    template: 'recipe-consumer',
+    recipe: selectedRecipe,
+    description,
+    zone,
+  });
+
+  // 5. Output with physics summary
+  return {
+    code: component,
+    zone: zone.recipes,
+    physics: selectedRecipe.physics,
+  };
+}
+```
+
+**Output Format**:
+```
+ZONE: src/checkout (decisive)
+RECIPE: decisive/Button
+
+[generated code]
+
+PHYSICS: spring(180, 12), server-tick
+```
+
+### 7.2 /sandbox
+
+Enable exploration mode for a file.
+
+```typescript
+async function sandbox(filePath: string) {
+  // 1. Add sandbox header to file
+  const content = readFile(filePath);
+  const sandboxed = `// sigil-sandbox\n${content}`;
+  writeFile(filePath, sandboxed);
+
+  // 2. Update .sigilrc.yaml sandbox list
+  const zone = resolveZone(filePath);
+  zone.sandbox = [...(zone.sandbox ?? []), path.basename(filePath)];
+  writeZoneConfig(filePath, zone);
+
+  // 3. Report
+  return {
+    status: 'sandbox_enabled',
+    file: filePath,
+    rules_relaxed: ['raw_physics', 'recipe_import'],
+  };
+}
+```
+
+### 7.3 /codify
+
+Extract physics from sandbox to recipe.
+
+```typescript
+async function codify(filePath: string, recipeName?: string) {
+  // 1. Parse sandbox file for physics values
+  const content = readFile(filePath);
+  const physics = extractPhysics(content);
+
+  // 2. Determine recipe name
+  const name = recipeName ?? inferRecipeName(filePath);
+  const zone = resolveZone(filePath);
+
+  // 3. Generate recipe file
+  const recipe = generateRecipe({
+    name,
+    physics,
+    zone: zone.recipes,
+    sourceFile: filePath,
+  });
+
+  // 4. Write recipe
+  const recipePath = `sigil-mark/recipes/${zone.recipes}/${name}.tsx`;
+  writeFile(recipePath, recipe);
+
+  // 5. Update source file to use recipe
+  const updated = replaceRawPhysicsWithRecipe(content, name, zone.recipes);
+
+  // 6. Remove sandbox markers
+  const cleaned = updated.replace('// sigil-sandbox\n', '');
+  writeFile(filePath, cleaned);
+
+  return {
+    recipe: recipePath,
+    physics,
+    updated: filePath,
+  };
+}
+```
+
+### 7.4 /inherit
+
+Analyze existing codebase for physics patterns.
+
+```typescript
+async function inherit() {
+  // 1. Scan component directories
+  const components = glob('src/**/*.tsx');
+
+  // 2. Extract physics values
+  const physicsPatterns = [];
+  for (const file of components) {
+    const content = readFile(file);
+    const values = extractPhysicsValues(content);
+    if (values.length > 0) {
+      physicsPatterns.push({ file, values });
+    }
+  }
+
+  // 3. Cluster patterns
+  const clusters = clusterByPhysics(physicsPatterns);
+
+  // 4. Report (NO auto-generation)
+  return {
+    total_components: components.length,
+    with_physics: physicsPatterns.length,
+    patterns: clusters.map(c => ({
+      physics: c.centroid,
+      files: c.files,
+      suggested_recipe: c.suggestedName,
+    })),
+    action_required: 'Review analysis and create recipes manually',
+  };
+}
+```
+
+### 7.5 /validate
+
+Check compliance across codebase.
+
+```typescript
+async function validate() {
+  const violations = [];
+  const compliant = [];
+
+  const components = glob('src/**/*.tsx');
+
+  for (const file of components) {
+    const zone = resolveZone(file);
+    const content = readFile(file);
+
+    // Check for raw physics
+    if (hasRawPhysics(content) && !isSandbox(file, zone)) {
+      violations.push({
+        file,
+        rule: 'no-raw-physics',
+        level: 'BLOCK',
+      });
+    }
+
+    // Check for recipe import
+    if (!hasRecipeImport(content) && !isSandbox(file, zone)) {
+      violations.push({
+        file,
+        rule: 'require-recipe',
+        level: 'BLOCK',
+      });
+    }
+
+    // Check zone constraints
+    for (const [constraint, level] of Object.entries(zone.constraints)) {
+      if (violatesConstraint(content, constraint)) {
+        violations.push({
+          file,
+          rule: constraint,
+          level,
+        });
+      }
+    }
+
+    if (violations.filter(v => v.file === file).length === 0) {
+      compliant.push(file);
+    }
+  }
+
+  return {
+    total: components.length,
+    compliant: compliant.length,
+    violations,
+    coverage: `${Math.round(compliant.length / components.length * 100)}%`,
+  };
+}
+```
+
+### 7.6 /garden
+
+Health report on recipes, sandboxes, variants.
+
+```typescript
+async function garden() {
+  // Recipe coverage
+  const components = glob('src/**/*.tsx');
+  const withRecipes = components.filter(f => hasRecipeImport(readFile(f)));
+
+  // Sandbox status
+  const sandboxes = glob('src/**/*.tsx')
+    .filter(f => readFile(f).startsWith('// sigil-sandbox'))
+    .map(f => ({
+      file: f,
+      age: daysSinceModified(f),
+      stale: daysSinceModified(f) > 7,
+    }));
+
+  // Variant inventory
+  const recipes = glob('sigil-mark/recipes/**/*.tsx');
+  const variants = recipes.filter(r => r.includes('.'));
+
+  return {
+    coverage: {
+      total: components.length,
+      using_recipes: withRecipes.length,
+      percentage: `${Math.round(withRecipes.length / components.length * 100)}%`,
+    },
+    sandboxes: sandboxes.map(s => ({
+      ...s,
+      recommendation: s.stale ? 'Consider /codify' : 'Active',
+    })),
+    variants: variants.map(v => ({
+      name: path.basename(v, '.tsx'),
+      recipe: path.dirname(v).split('/').pop(),
+    })),
+    recommendations: generateRecommendations(sandboxes, variants),
+  };
+}
+```
 
 ---
 
-## 11. File Manifest
+## 8. Enforcement Layer
 
-### Commands (8)
-```
-.claude/commands/
-├── envision.md
-├── codify.md
-├── map.md
-├── craft.md
-├── validate.md
-├── garden.md
-├── approve.md
-└── greenlight.md
+### 8.1 ESLint Plugin
+
+**eslint-plugin-sigil**:
+
+```typescript
+// rules/no-raw-physics.ts
+export default {
+  meta: {
+    type: 'problem',
+    docs: {
+      description: 'Disallow raw spring/timing values outside sandbox',
+    },
+    schema: [],
+  },
+
+  create(context) {
+    // Check if file is sandbox
+    const sourceCode = context.getSourceCode();
+    const isSandbox = sourceCode.text.startsWith('// sigil-sandbox');
+
+    if (isSandbox) return {};
+
+    return {
+      Property(node) {
+        if (
+          node.key.name === 'stiffness' ||
+          node.key.name === 'damping' ||
+          node.key.name === 'transition'
+        ) {
+          context.report({
+            node,
+            message: 'Raw physics values not allowed. Use recipes from @sigil/recipes or mark file as sandbox.',
+          });
+        }
+      },
+    };
+  },
+};
 ```
 
-### Skills (8)
-```
-.claude/skills/
-├── envisioning-soul/
-├── codifying-materials/
-├── mapping-zones/
-├── crafting-components/
-│   └── tools/
-│       ├── hammer.md
-│       └── chisel.md
-├── validating-fidelity/
-├── gardening-entropy/
-├── approving-patterns/
-└── greenlighting-concepts/
+**eslint.config.js**:
+```javascript
+import sigil from 'eslint-plugin-sigil';
+
+export default [
+  {
+    plugins: { sigil },
+    rules: {
+      'sigil/no-raw-physics': 'error',
+      'sigil/require-recipe': 'error',
+      'sigil/no-optimistic-in-decisive': 'error',
+      'sigil/sandbox-stale': 'warn',
+    },
+  },
+];
 ```
 
-### Scripts (5)
-```
-.claude/scripts/
-├── mount-sigil.sh
-├── sigil-workbench.sh
-├── sigil-tensions.sh
-├── sigil-validate.sh
-└── sigil-detect-zone.sh
-```
+### 8.2 CI Validation
 
-### State Zone
-```
-sigil-mark/
-├── core/
-│   ├── sync.yaml
-│   ├── budgets.yaml
-│   ├── fidelity.yaml
-│   └── lens.yaml
-├── resonance/
-│   ├── essence.yaml
-│   ├── materials.yaml
-│   ├── zones.yaml
-│   └── tensions.yaml
-├── memory/
-│   ├── eras/
-│   ├── decisions/
-│   ├── mutations/active/
-│   └── graveyard/
-└── taste-key/
-    ├── holder.yaml
-    └── rulings/
+**.github/workflows/sigil.yml**:
+```yaml
+name: Sigil Validation
+
+on: [pull_request]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - run: npm ci
+
+      - name: ESLint (Sigil rules)
+        run: npx eslint --ext .tsx,.ts src/
+
+      - name: Sigil validate
+        run: npx sigil validate
+
+      - name: Check for IMPOSSIBLE violations
+        run: |
+          if npx sigil validate --json | jq '.violations[] | select(.level == "IMPOSSIBLE")' | grep -q .; then
+            echo "IMPOSSIBLE violations found. Build cannot proceed."
+            exit 1
+          fi
 ```
 
 ---
 
-## 12. Success Criteria Validation
+## 9. Refinement History
 
-| Criterion | Implementation |
-|-----------|----------------|
-| Workbench launches | `sigil-workbench.sh` creates 4-pane tmux |
-| Tensions panel works | `sigil-tensions.sh` shows ASCII bars |
-| Validation is real-time | `sigil-validate.sh` with fswatch |
-| Pass/Fail output | Clear status in validation panel |
-| Physics block impossible | IMPOSSIBLE violations cannot override |
-| Budget violations block | BLOCK with Taste Key option |
-| 8 commands only | Strict command list |
-| Clean removal | `rm -rf sigil-mark/` removes all state |
+### 9.1 History Storage
+
+History is stored in-repo at `sigil-mark/history/`:
+
+```
+sigil-mark/history/
+├── 2026-01-05.md
+├── 2026-01-04.md
+└── ...
+```
+
+**History Entry Format**:
+```markdown
+# 2026-01-05
+
+## CheckoutButton
+- Feedback: "More Nintendo Switch"
+- Before: spring(180, 12)
+- After: spring(300, 8)
+- Saved as variant: Button.nintendo
+
+## ClaimModal
+- Feedback: "feels too anxious"
+- Before: spring(200, 10)
+- After: spring(140, 16)
+- Notes: User prefers relaxed feel for claim flows
+```
+
+### 9.2 History Parsing
+
+Claude parses history to calibrate vibe interpretation:
+
+```typescript
+interface HistoryEntry {
+  date: string;
+  component: string;
+  feedback: string;
+  before: PhysicsState;
+  after: PhysicsState;
+  variant?: string;
+}
+
+function parseHistory(historyDir: string): HistoryEntry[] {
+  const files = glob(`${historyDir}/*.md`).sort().reverse();
+  const entries: HistoryEntry[] = [];
+
+  for (const file of files.slice(0, 30)) { // Last 30 days
+    const content = readFile(file);
+    entries.push(...parseHistoryFile(content));
+  }
+
+  return entries;
+}
+
+function calibrateVibe(feedback: string, history: HistoryEntry[]): PhysicsState {
+  // Find similar feedback patterns
+  const similar = history.filter(h =>
+    h.feedback.toLowerCase().includes(feedback.toLowerCase()) ||
+    feedback.toLowerCase().includes(h.feedback.toLowerCase())
+  );
+
+  if (similar.length > 0) {
+    // Average the "after" states
+    return averagePhysics(similar.map(s => s.after));
+  }
+
+  // Fall back to Claude's inference
+  return null;
+}
+```
+
+---
+
+## 10. File Structure
+
+### 10.1 Complete Directory Layout
+
+```
+project/
+├── CLAUDE.md                      # Sigil prompt for Claude CLI
+├── .sigilrc.yaml                  # Root config
+├── .sigil-version.json            # Version tracking
+│
+├── src/
+│   ├── .sigilrc.yaml              # Default: recipes: machinery
+│   │
+│   ├── checkout/
+│   │   ├── .sigilrc.yaml          # recipes: decisive
+│   │   ├── ConfirmButton.tsx      # Uses @sigil/recipes/decisive/Button
+│   │   ├── ClaimFlow.tsx          # Uses @sigil/recipes/decisive/ConfirmFlow
+│   │   └── Experiment.tsx         # Sandbox file (// sigil-sandbox)
+│   │
+│   ├── admin/
+│   │   ├── .sigilrc.yaml          # recipes: machinery
+│   │   ├── Dashboard.tsx          # Uses @sigil/recipes/machinery/Table
+│   │   └── Settings.tsx           # Uses @sigil/recipes/machinery/Toggle
+│   │
+│   └── marketing/
+│       ├── .sigilrc.yaml          # recipes: glass
+│       ├── Hero.tsx               # Uses @sigil/recipes/glass/HeroCard
+│       └── Features.tsx           # Uses @sigil/recipes/glass/FeatureCard
+│
+├── sigil-mark/
+│   ├── recipes/
+│   │   ├── decisive/
+│   │   │   ├── Button.tsx
+│   │   │   ├── Button.nintendo.tsx
+│   │   │   ├── Button.relaxed.tsx
+│   │   │   ├── ConfirmFlow.tsx
+│   │   │   ├── ServerTickWrapper.tsx
+│   │   │   └── index.ts
+│   │   │
+│   │   ├── machinery/
+│   │   │   ├── Table.tsx
+│   │   │   ├── Toggle.tsx
+│   │   │   ├── Form.tsx
+│   │   │   └── index.ts
+│   │   │
+│   │   └── glass/
+│   │       ├── HeroCard.tsx
+│   │       ├── FeatureCard.tsx
+│   │       ├── Tooltip.tsx
+│   │       └── index.ts
+│   │
+│   ├── hooks/
+│   │   ├── useServerTick.ts
+│   │   ├── useABToggle.ts
+│   │   └── index.ts
+│   │
+│   ├── history/
+│   │   ├── 2026-01-05.md
+│   │   ├── 2026-01-04.md
+│   │   └── ...
+│   │
+│   └── reports/
+│       └── garden-2026-01-05.yaml
+│
+├── .claude/
+│   ├── commands/
+│   │   ├── craft.md
+│   │   ├── sandbox.md
+│   │   ├── codify.md
+│   │   ├── inherit.md
+│   │   ├── validate.md
+│   │   └── garden.md
+│   │
+│   ├── skills/
+│   │   └── sigil-core/
+│   │       ├── index.yaml
+│   │       ├── SKILL.md
+│   │       └── scripts/
+│   │           ├── resolve-zone.sh
+│   │           ├── parse-recipe.sh
+│   │           ├── workbench.sh
+│   │           └── validate.sh
+│   │
+│   └── settings.json
+│
+├── assets/
+│   └── fonts/
+│       └── Adhesion-Regular.otf
+│
+├── eslint.config.js               # With sigil plugin
+├── tsconfig.json                  # With @sigil/* path aliases
+├── vite.config.ts                 # With resolve aliases
+└── package.json
+```
+
+### 10.2 Version Tracking
+
+**.sigil-version.json**:
+```json
+{
+  "version": "1.2.4",
+  "installed": "2026-01-05T00:00:00Z",
+  "recipes": {
+    "decisive": 3,
+    "machinery": 3,
+    "glass": 3
+  },
+  "variants": 2,
+  "last_garden": "2026-01-05"
+}
+```
+
+---
+
+## 11. Security Considerations
+
+### 11.1 Trust Model
+
+Sigil operates on a "trust the team" model:
+
+| Actor | Trust Level | Capabilities |
+|-------|-------------|--------------|
+| Engineer | Full | All commands, sandbox access |
+| Designer | PR comments | Trigger refinements via comments |
+| Claude | Guided | Generates within zone constraints |
+| CI | Enforcer | Blocks IMPOSSIBLE violations |
+
+### 11.2 Constraints
+
+| Level | Description | Enforcement | Override |
+|-------|-------------|-------------|----------|
+| IMPOSSIBLE | Violates trust (e.g., optimistic UI in transactions) | CI fails | Never |
+| BLOCK | Requires sandbox | ESLint error | Sandbox mode |
+| WARN | Advisory | /garden report | N/A |
+
+### 11.3 Data Handling
+
+- **No remote calls**: All operations are local-first
+- **No secrets**: Sigil doesn't handle credentials
+- **Clean removal**: `rm -rf sigil-mark/` removes all state
+- **Git-friendly**: All state is text files (YAML, MD, TSX)
+
+---
+
+## 12. Deployment Architecture
+
+### 12.1 Development Environment
+
+```
+Local Development:
+┌─────────────────────────────────────────────────────────────────┐
+│                         Developer Machine                        │
+│                                                                 │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────┐ │
+│  │   VS Code   │  │   Claude    │  │     Sigil Workbench     │ │
+│  │             │  │   Code      │  │                         │ │
+│  │  Editing    │  │  Commands   │  │  tmux + Chrome MCP      │ │
+│  └─────────────┘  └─────────────┘  └─────────────────────────┘ │
+│        │                │                      │                │
+│        └────────────────┴──────────────────────┘                │
+│                         │                                       │
+│                    ┌────▼────┐                                  │
+│                    │  Vite   │                                  │
+│                    │   HMR   │                                  │
+│                    └─────────┘                                  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 12.2 CI/CD Pipeline
+
+```
+Pull Request:
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   GitHub    │────▶│   Actions   │────▶│   Vercel    │
+│   PR Open   │     │   CI Run    │     │   Preview   │
+└─────────────┘     └─────────────┘     └─────────────┘
+                          │
+                    ┌─────┴─────┐
+                    │           │
+              ┌─────▼───┐ ┌─────▼───┐
+              │ ESLint  │ │ sigil   │
+              │ sigil/* │ │validate │
+              └─────────┘ └─────────┘
+                    │           │
+                    └─────┬─────┘
+                          │
+                    ┌─────▼───┐
+                    │  Pass/  │
+                    │  Fail   │
+                    └─────────┘
+```
+
+### 12.3 PR-Native Refinement Flow
+
+```
+PR Refinement:
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Designer  │────▶│   Vercel    │────▶│   GitHub    │
+│   Comment   │     │   Preview   │     │   Webhook   │
+└─────────────┘     └─────────────┘     └─────────────┘
+                                              │
+                                        ┌─────▼─────┐
+                                        │  Claude   │
+                                        │  Action   │
+                                        └─────┬─────┘
+                                              │
+                    ┌─────────────────────────┼─────────────────────────┐
+                    │                         │                         │
+              ┌─────▼───┐               ┌─────▼───┐               ┌─────▼───┐
+              │  Parse  │               │  Infer  │               │  Commit │
+              │ Comment │               │ Physics │               │  Change │
+              └─────────┘               └─────────┘               └─────────┘
+```
 
 ---
 
 ## 13. Development Workflow
 
-### 13.1 Setup Flow
+### 13.1 New Project Setup
 
-```
-./mount-sigil.sh
-     │
-     ▼
-/envision (interview for product soul)
-     │
-     ▼
-/codify (define materials)
-     │
-     ▼
-/map (define zones)
-     │
-     ▼
-sigil-workbench.sh (launch Workbench)
+```bash
+# 1. Install Sigil
+curl -fsSL https://sigil.dev/install.sh | bash
+
+# 2. Initialize in project
+sigil init
+
+# 3. Start Claude Code
+claude
+
+# 4. (Optional) Open workbench
+sigil workbench
 ```
 
-### 13.2 Build Flow (in Workbench)
+### 13.2 Brownfield Migration
 
+```bash
+# 1. Analyze existing codebase
+/inherit
+
+# 2. Review analysis output
+# (Claude shows patterns, does NOT auto-generate)
+
+# 3. Create recipes manually based on analysis
+# Edit sigil-mark/recipes/{zone}/*.tsx
+
+# 4. Gradually migrate components
+# Replace raw physics with recipe imports
+
+# 5. Enable enforcement
+# Add eslint-plugin-sigil
 ```
-Claude Panel:
-/craft ConfirmButton src/features/checkout/
-     │
-     ▼
-Validation Panel:
-Real-time feedback on physics compliance
-     │
-     ▼
-Chrome Panel:
-Live preview of component
-     │
-     ▼
-When Status: READY FOR /approve
-     │
-     ▼
-Claude Panel:
-/approve ConfirmButton
+
+### 13.3 Daily Development
+
+```bash
+# Start workbench (optional)
+sigil workbench
+
+# Generate component
+/craft "confirmation button for claim flow"
+
+# Experiment with new physics
+/sandbox src/checkout/Experiment.tsx
+
+# Extract to recipe when ready
+/codify src/checkout/Experiment.tsx --name Button.snappy
+
+# Check health
+/garden
 ```
 
 ---
 
-## Next Step
+## 14. Testing Strategy
 
-`/sprint-plan` to break down implementation into sprints
+### 14.1 Unit Tests
+
+```typescript
+// sigil-mark/recipes/decisive/__tests__/Button.test.tsx
+import { render, fireEvent, waitFor } from '@testing-library/react';
+import { Button } from '../Button';
+
+describe('Decisive Button', () => {
+  it('calls onAction and shows pending state', async () => {
+    const onAction = jest.fn(() => new Promise(r => setTimeout(r, 100)));
+    const { getByText } = render(
+      <Button onAction={onAction}>Confirm</Button>
+    );
+
+    fireEvent.click(getByText('Confirm'));
+
+    expect(onAction).toHaveBeenCalled();
+    expect(getByText('Processing...')).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(getByText('Confirm')).toBeInTheDocument();
+    });
+  });
+
+  it('applies correct spring physics', () => {
+    const { container } = render(
+      <Button onAction={async () => {}}>Test</Button>
+    );
+
+    // Check motion component has correct transition config
+    // (Would need motion mock or integration test)
+  });
+});
+```
+
+### 14.2 Integration Tests
+
+```typescript
+// tests/integration/zone-resolution.test.ts
+import { resolveZone } from '@sigil/core';
+
+describe('Zone Resolution', () => {
+  it('resolves checkout zone to decisive', () => {
+    const zone = resolveZone('src/checkout/ConfirmButton.tsx');
+    expect(zone.recipes).toBe('decisive');
+    expect(zone.sync).toBe('server_authoritative');
+  });
+
+  it('cascades config from parent', () => {
+    const zone = resolveZone('src/checkout/nested/Button.tsx');
+    expect(zone.recipes).toBe('decisive');
+  });
+
+  it('defaults to machinery', () => {
+    const zone = resolveZone('src/unknown/Component.tsx');
+    expect(zone.recipes).toBe('machinery');
+  });
+});
+```
+
+### 14.3 Visual Regression Tests
+
+```typescript
+// tests/visual/button-variants.test.ts
+import { chromium } from 'playwright';
+
+describe('Button Variants Visual', () => {
+  it('matches snapshot for decisive/Button', async () => {
+    const browser = await chromium.launch();
+    const page = await browser.newPage();
+
+    await page.goto('/storybook/?path=/story/decisive-button');
+    await page.click('button');
+
+    // Wait for animation to complete
+    await page.waitForTimeout(300);
+
+    expect(await page.screenshot()).toMatchSnapshot('decisive-button.png');
+
+    await browser.close();
+  });
+});
+```
+
+---
+
+## 15. Risks & Mitigations
+
+| Risk | Likelihood | Impact | Mitigation |
+|------|------------|--------|------------|
+| **Claude vibe interpretation varies** | High | Medium | Refinement history calibrates over time |
+| **Hot-swap technically challenging** | Medium | Medium | Fall back to iframes for flow comparison |
+| **Recipe sprawl** | Medium | Low | /garden reports, hierarchical naming |
+| **Brownfield codebases too messy** | Medium | High | /inherit flags only, human decides |
+| **tmux unfamiliar to users** | Medium | Medium | Provide setup script, document shortcuts |
+| **Chrome MCP rate limits** | Low | Medium | Batch operations, cache screenshots |
+
+---
+
+## 16. Future Considerations
+
+### 16.1 v1.3+ Roadmap
+
+| Feature | Priority | Notes |
+|---------|----------|-------|
+| `@sigil/crypto-recipes` package | P3 | Optional addon for web3 patterns |
+| Cross-team learning (cloud) | P3 | Share refinement history across teams |
+| Visual GUI for workbench | P3 | Electron/web alternative to tmux |
+| Multi-framework support | P4 | Vue, Svelte adapters |
+
+### 16.2 Technical Debt Considerations
+
+- **Recipe bundling**: Currently individual files, may need barrel optimization
+- **History parsing**: Markdown parsing is fragile, consider structured format
+- **Path alias resolution**: IDE support varies, may need additional config
+
+---
+
+## Appendix A: Physics Reference
+
+### Spring Parameters
+
+| Parameter | Range | Effect |
+|-----------|-------|--------|
+| **stiffness** | 50-500 | Higher = snappier, more responsive |
+| **damping** | 5-30 | Higher = less oscillation, more controlled |
+| **mass** | 0.5-2 | Higher = heavier, more momentum |
+
+### Common Configurations
+
+| Feel | Stiffness | Damping | Example |
+|------|-----------|---------|---------|
+| Nintendo Switch | 300 | 8 | Snappy, satisfying |
+| Decisive | 180 | 12 | Deliberate, trustworthy |
+| Relaxed | 140 | 16 | Soft, gentle |
+| Instant | 400+ | 30 | No perceivable animation |
+| Bouncy | 150 | 8 | Playful, attention-grabbing |
+| Float | 200 | 20 | Delightful, polished |
+
+---
+
+## Appendix B: ESLint Rules Reference
+
+| Rule | Level | Description |
+|------|-------|-------------|
+| `sigil/no-raw-physics` | error | No inline spring/timing values outside sandbox |
+| `sigil/require-recipe` | error | Components must import from @sigil/recipes |
+| `sigil/no-optimistic-in-decisive` | error | No optimistic UI in server_authoritative zones |
+| `sigil/sandbox-stale` | warn | Sandbox files older than 7 days |
+| `sigil/valid-zone-config` | error | .sigilrc.yaml must have valid schema |
+
+---
+
+## Appendix C: Keyboard Shortcuts
+
+### Workbench (tmux)
+
+| Shortcut | Action |
+|----------|--------|
+| `Space` | Toggle A/B |
+| `Ctrl-b 0` | Focus diff pane |
+| `Ctrl-b 1` | Focus browser pane |
+| `Ctrl-b 2` | Focus Claude pane |
+| `Ctrl-b d` | Detach session |
+| `q` | Quit workbench |
+
+---
+
+*End of SDD*
