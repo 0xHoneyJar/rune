@@ -1,16 +1,23 @@
 name: gardening-entropy
-version: "1.0.0"
-description: "Detects drift from essence, reviews mutations, manages era transitions. Entropy Gardener role."
-role: "Entropy Gardener"
+version: "4.0.0"
+description: "Context health monitoring with drift detection and validation. v4.0 Sharp Tools."
+role: "Health Monitor"
 command: /garden
 outputs:
-  - sigil-mark/memory/eras/*.yaml
-  - sigil-mark/memory/graveyard/*.yaml
+  - sigil-mark/reports/garden-{date}.yaml
 reads:
-  - sigil-mark/resonance/essence.yaml
-  - sigil-mark/memory/mutations/active/*.yaml
-  - sigil-mark/memory/decisions/*.yaml
-  - sigil-mark/taste-key/rulings/*.yaml
+  - sigil-mark/moodboard.md
+  - sigil-mark/rules.md
+  - sigil-mark/personas/personas.yaml
+  - sigil-mark/evidence/
+  - sigil-mark/.sigil-observations/feedback/
+  - sigil-mark/consultation-chamber/decisions/
+  - .sigilrc.yaml
 
 prerequisites:
   - sigil_mark_exists
+tags:
+  - garden
+  - health
+  - drift
+  - validation

@@ -476,82 +476,83 @@ REFINEMENT (Evolve)       MAINTENANCE (Tend)
 
 ---
 
-## Sprint 7: /garden Health Monitoring
+## Sprint 7: /garden Health Monitoring ✅
 
 **Goal:** Implement drift detection and health reporting.
+**Status:** COMPLETED
 
 ### Tasks
 
-#### v4.0-S7-T1: Health Check Framework
+#### v4.0-S7-T1: Health Check Framework ✅
 - **Description:** Framework for running health checks
 - **Acceptance Criteria:**
-  - [ ] Check interface: id, name, severity, check function
-  - [ ] Supports critical/warning/info severity
-  - [ ] Returns CheckResult with pass and issues
+  - [x] Check interface: id, name, severity, check function
+  - [x] Supports critical/warning/info severity
+  - [x] Returns CheckResult with pass and issues
 - **Dependencies:** None
 - **Testing:** Framework tests
 
-#### v4.0-S7-T2: Persona Evidence Check
+#### v4.0-S7-T2: Persona Evidence Check ✅
 - **Description:** Check that personas have evidence
 - **Acceptance Criteria:**
-  - [ ] Warns if personas lack evidence field
-  - [ ] Lists personas without evidence
-  - [ ] Suggests `/refine --persona <name>`
+  - [x] Warns if personas lack evidence field
+  - [x] Lists personas without evidence
+  - [x] Suggests `/refine --persona <name>`
 - **Dependencies:** v4.0-S7-T1
 - **Testing:** Evidence check tests
 
-#### v4.0-S7-T3: Feedback Applied Check
+#### v4.0-S7-T3: Feedback Applied Check ✅
 - **Description:** Check for unapplied observation feedback
 - **Acceptance Criteria:**
-  - [ ] Scans `.sigil-observations/feedback/` for `applied: false`
-  - [ ] Lists unapplied feedback files
-  - [ ] Suggests `/refine --from-feedback`
+  - [x] Scans `.sigil-observations/feedback/` for `applied: false`
+  - [x] Lists unapplied feedback files
+  - [x] Suggests `/refine --from-feedback`
 - **Dependencies:** v4.0-S7-T1
 - **Testing:** Feedback check tests
 
-#### v4.0-S7-T4: Zone Journey Check
+#### v4.0-S7-T4: Zone Journey Check ✅
 - **Description:** Check that zones have journey context
 - **Acceptance Criteria:**
-  - [ ] Info-level warning if zones lack journey_stage
-  - [ ] Lists zones without journey context
-  - [ ] Suggests `/refine --zone <name>`
+  - [x] Info-level warning if zones lack journey_stage
+  - [x] Lists zones without journey context
+  - [x] Suggests `/refine --zone <name>`
 - **Dependencies:** v4.0-S7-T1
 - **Testing:** Journey check tests
 
-#### v4.0-S7-T5: Decision Expiry Check
+#### v4.0-S7-T5: Decision Expiry Check ✅
 - **Description:** Check for expired decision locks
 - **Acceptance Criteria:**
-  - [ ] Info-level for expired locks
-  - [ ] Lists expired decisions
-  - [ ] Suggests review and re-lock or remove
+  - [x] Info-level for expired locks
+  - [x] Lists expired decisions
+  - [x] Suggests review and re-lock or remove
 - **Dependencies:** v4.0-S7-T1
 - **Testing:** Expiry check tests
 
-#### v4.0-S7-T6: Schema Validation Mode
+#### v4.0-S7-T6: Schema Validation Mode ✅
 - **Description:** `--validate` mode for CI/CD
 - **Acceptance Criteria:**
-  - [ ] `/garden --validate` validates all YAML against schemas
-  - [ ] Returns exit code 0/1 for CI
-  - [ ] Lists validation errors
+  - [x] `/garden --validate` validates all YAML against schemas
+  - [x] Returns exit code 0/1 for CI
+  - [x] Lists validation errors
 - **Dependencies:** v4.0-S7-T1
 - **Testing:** Validation mode tests
 
-#### v4.0-S7-T7: Health Report Format
+#### v4.0-S7-T7: Health Report Format ✅
 - **Description:** Formatted health report output
 - **Acceptance Criteria:**
-  - [ ] Groups by severity (Critical, Warning, Info)
-  - [ ] Shows context health percentage
-  - [ ] Suggests next action
+  - [x] Groups by severity (Critical, Warning, Info)
+  - [x] Shows context health percentage
+  - [x] Suggests next action
 - **Dependencies:** v4.0-S7-T1 through T6
 - **Testing:** Report format tests
 
-#### v4.0-S7-T8: Create gardening-health Skill
-- **Description:** Create skill directory and files
+#### v4.0-S7-T8: Update gardening-entropy Skill ✅
+- **Description:** Update existing skill for v4.0
 - **Acceptance Criteria:**
-  - [ ] `gardening-health/index.yaml` created
-  - [ ] `gardening-health/SKILL.md` created
-  - [ ] All checks documented
-  - [ ] Report format documented
+  - [x] `gardening-entropy/index.yaml` updated
+  - [x] `gardening-entropy/SKILL.md` updated
+  - [x] All checks documented
+  - [x] Report format documented
 - **Dependencies:** v4.0-S7-T1 through T7
 - **Testing:** Manual review
 
