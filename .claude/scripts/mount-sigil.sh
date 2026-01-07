@@ -99,37 +99,56 @@ setup_sigil_home() {
   log "Sigil home ready at $SIGIL_HOME"
 }
 
-# === Sigil v1.0 Skills (8 total) ===
+# === Sigil v3.x Skills ===
 SIGIL_SKILLS=(
-  "envisioning-soul"
-  "codifying-materials"
-  "mapping-zones"
-  "crafting-components"
-  "validating-fidelity"
   "approving-patterns"
-  "greenlighting-concepts"
+  "canonizing-flaws"
+  "codifying-materials"
+  "codifying-recipes"
+  "codifying-rules"
+  "consulting-decisions"
+  "crafting-components"
+  "crafting-guidance"
+  "envisioning-moodboard"
+  "envisioning-soul"
   "gardening-entropy"
+  "greenlighting-concepts"
+  "inheriting-design"
+  "initializing-sigil"
+  "mapping-zones"
+  "unlocking-decisions"
+  "updating-framework"
+  "validating-fidelity"
 )
 
-# === Sigil v1.0 Commands (8 total) ===
+# === Sigil v3.x Commands ===
 SIGIL_COMMANDS=(
-  "envision"
-  "codify"
-  "map"
-  "craft"
-  "validate"
   "approve"
-  "greenlight"
+  "canonize"
+  "codify"
+  "consult"
+  "craft"
+  "envision"
   "garden"
+  "greenlight"
+  "inherit"
+  "map"
+  "material"
+  "recipe"
+  "sigil-setup"
+  "unlock"
+  "update"
+  "validate"
 )
 
-# === Sigil v1.0 Scripts (5 total) ===
+# === Sigil v3.x Scripts ===
 SIGIL_SCRIPTS=(
   "mount-sigil.sh"
   "sigil-workbench.sh"
   "sigil-tensions.sh"
   "sigil-validate.sh"
   "sigil-detect-zone.sh"
+  "sigil-diff.sh"
 )
 
 # === Create Symlinks ===
@@ -183,14 +202,23 @@ create_symlinks() {
 create_state_zone() {
   step "Creating sigil-mark/ state zone..."
 
-  # Create v1.0 directory structure
-  mkdir -p sigil-mark/core
-  mkdir -p sigil-mark/resonance
-  mkdir -p sigil-mark/memory/eras
-  mkdir -p sigil-mark/memory/decisions
-  mkdir -p sigil-mark/memory/mutations/active
-  mkdir -p sigil-mark/memory/graveyard
-  mkdir -p sigil-mark/taste-key/rulings
+  # Create v3.x directory structure
+  mkdir -p sigil-mark/moodboard/references
+  mkdir -p sigil-mark/moodboard/anti-patterns
+  mkdir -p sigil-mark/moodboard/articles
+  mkdir -p sigil-mark/moodboard/gtm
+  mkdir -p sigil-mark/moodboard/screenshots
+  mkdir -p sigil-mark/soul-binder
+  mkdir -p sigil-mark/lens-array
+  mkdir -p sigil-mark/consultation-chamber
+  mkdir -p sigil-mark/proving-grounds
+
+  # Create .gitkeep files
+  touch sigil-mark/moodboard/references/.gitkeep
+  touch sigil-mark/moodboard/anti-patterns/.gitkeep
+  touch sigil-mark/moodboard/articles/.gitkeep
+  touch sigil-mark/moodboard/gtm/.gitkeep
+  touch sigil-mark/moodboard/screenshots/.gitkeep
 
   log "State zone structure created"
 }
@@ -199,7 +227,7 @@ create_state_zone() {
 create_version_file() {
   step "Creating version manifest..."
 
-  local sigil_version="1.0.0"
+  local sigil_version="3.1.0"
   if [[ -f "$SIGIL_HOME/VERSION" ]]; then
     sigil_version=$(cat "$SIGIL_HOME/VERSION" | tr -d '[:space:]')
   fi
@@ -211,7 +239,7 @@ create_version_file() {
   "updated_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "sigil_home": "$SIGIL_HOME",
   "branch": "$SIGIL_BRANCH",
-  "architecture": "design-physics-engine"
+  "architecture": "design-context-framework"
 }
 EOF
 
@@ -222,8 +250,8 @@ EOF
 main() {
   echo ""
   log "======================================================================="
-  log "  Sigil v1.0 — Design Physics Engine"
-  log "  Physics constraints for AI-assisted design"
+  log "  Sigil v3.x — Design Context Framework"
+  log "  Making the right path easy, wrong path visible"
   log "======================================================================="
   log "  Branch: $SIGIL_BRANCH"
   echo ""
@@ -241,28 +269,28 @@ main() {
   echo ""
   info "Next steps:"
   info "  1. Run 'claude' to start Claude Code"
-  info "  2. Run '/envision' to capture product soul"
-  info "  3. Run '/codify' to define materials"
-  info "  4. Run '/map' to configure zones"
-  info "  5. Run 'sigil-workbench.sh' to launch Workbench"
+  info "  2. Run '/sigil-setup' to initialize Sigil"
+  info "  3. Run '/envision' to capture product moodboard"
+  info "  4. Run '/codify' to define design rules"
+  info "  5. Run '/craft' to get design guidance"
   echo ""
   info "Framework structure:"
-  info "  .claude/skills/     -> 8 Sigil agents symlinked"
-  info "  .claude/commands/   -> 8 Sigil commands symlinked"
-  info "  .claude/scripts/    -> 5 Sigil scripts symlinked"
+  info "  .claude/skills/     -> ${#SIGIL_SKILLS[@]} Sigil skills symlinked"
+  info "  .claude/commands/   -> ${#SIGIL_COMMANDS[@]} Sigil commands symlinked"
+  info "  .claude/scripts/    -> ${#SIGIL_SCRIPTS[@]} Sigil scripts symlinked"
   info "  sigil-mark/         -> Your design context (state zone)"
   info "  .sigil-version.json -> Version tracking"
   echo ""
-  info "The v1.0 Architecture:"
-  info "  core/       -> Physics (sync, budgets, fidelity, lens)"
-  info "  resonance/  -> Tuning (materials, zones, tensions, essence)"
-  info "  memory/     -> History (eras, decisions, mutations, graveyard)"
-  info "  taste-key/  -> Authority (holder, rulings)"
+  info "Key directories:"
+  info "  sigil-mark/moodboard/    -> Design inspiration collection"
+  info "  sigil-mark/moodboard.md  -> Product feel descriptors"
+  info "  sigil-mark/rules.md      -> Design rules"
+  info "  .sigilrc.yaml            -> Zone configuration"
   echo ""
-  info "The Three Laws:"
-  info "  1. Physics violations are IMPOSSIBLE (no override)"
-  info "  2. Budget/fidelity violations are BLOCK (Taste Key can override)"
-  info "  3. Drift warnings are WARN (suggestions only)"
+  info "Philosophy:"
+  info "  - Make the right path easy"
+  info "  - Make the wrong path visible (not impossible)"
+  info "  - Human accountable for all decisions"
   echo ""
 }
 
