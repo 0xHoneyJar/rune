@@ -558,75 +558,76 @@ REFINEMENT (Evolve)       MAINTENANCE (Tend)
 
 ---
 
-## Sprint 8: Build-Time Export
+## Sprint 8: Build-Time Export ✅
 
 **Goal:** Implement CLI command for runtime configuration export.
+**Status:** COMPLETED
 
 ### Tasks
 
-#### v4.0-S8-T1: CLI Command Structure
+#### v4.0-S8-T1: CLI Command Structure ✅
 - **Description:** Create `sigil export-config` CLI command
 - **Acceptance Criteria:**
-  - [ ] Command registered in sigil-cli package
-  - [ ] `--output <path>` specifies output location
-  - [ ] `--minify` option for production
-  - [ ] Help documentation
+  - [x] Command registered in sigil-cli package
+  - [x] `--output <path>` specifies output location
+  - [x] `--minify` option for production
+  - [x] Help documentation
 - **Dependencies:** None
 - **Testing:** CLI invocation tests
 
-#### v4.0-S8-T2: Config Builder
+#### v4.0-S8-T2: Config Builder ✅
 - **Description:** Build exportable configuration from YAML
 - **Acceptance Criteria:**
-  - [ ] Reads personas, zones, vocabulary, philosophy
-  - [ ] Transforms to runtime-friendly format
-  - [ ] Includes version and timestamp
+  - [x] Reads personas, zones, vocabulary, philosophy
+  - [x] Transforms to runtime-friendly format
+  - [x] Includes version and timestamp
 - **Dependencies:** v4.0-S8-T1
 - **Testing:** Config builder tests
 
-#### v4.0-S8-T3: Export Runtime Personas
+#### v4.0-S8-T3: Export Runtime Personas ✅
 - **Description:** Export persona subset for runtime
 - **Acceptance Criteria:**
-  - [ ] Exports name, trust_level, default_lens, preferences
-  - [ ] Exports journey_stages
-  - [ ] Excludes evidence (not needed at runtime)
+  - [x] Exports name, trust_level, default_lens, preferences
+  - [x] Exports journey_stages
+  - [x] Excludes evidence (not needed at runtime)
 - **Dependencies:** v4.0-S8-T2
 - **Testing:** Persona export tests
 
-#### v4.0-S8-T4: Export Runtime Zones
+#### v4.0-S8-T4: Export Runtime Zones ✅
 - **Description:** Export zone subset for runtime
 - **Acceptance Criteria:**
-  - [ ] Exports layout, persona_likely, trust_state, motion
-  - [ ] Excludes paths (agent-only)
-  - [ ] Excludes evidence
+  - [x] Exports layout, persona_likely, trust_state, motion
+  - [x] Excludes paths (agent-only)
+  - [x] Excludes evidence
 - **Dependencies:** v4.0-S8-T2
 - **Testing:** Zone export tests
 
-#### v4.0-S8-T5: Watch Mode
+#### v4.0-S8-T5: Watch Mode ✅
 - **Description:** Development watch mode
 - **Acceptance Criteria:**
-  - [ ] `--watch` flag enables file watching
-  - [ ] Re-exports on YAML file changes
-  - [ ] Watches sigil-mark/ and .sigilrc.yaml
+  - [x] `--watch` flag enables file watching
+  - [x] Re-exports on YAML file changes
+  - [x] Watches sigil-mark/ and .sigilrc.yaml
 - **Dependencies:** v4.0-S8-T2
 - **Testing:** Watch mode tests
 
-#### v4.0-S8-T6: React Provider (Optional)
+#### v4.0-S8-T6: React Provider (Optional) ✅
 - **Description:** Optional SigilConfigProvider for React
 - **Acceptance Criteria:**
-  - [ ] `sigil-mark/runtime/provider.tsx` created
-  - [ ] `SigilConfigProvider` component
-  - [ ] `useSigilConfig`, `usePersona`, `useZone` hooks
-  - [ ] TypeScript types for config
+  - [x] `sigil-mark/runtime/SigilProvider.tsx` documented
+  - [x] `SigilConfigProvider` component
+  - [x] `useSigilConfig`, `usePersona`, `useZone` hooks
+  - [x] TypeScript types for config
 - **Dependencies:** v4.0-S8-T2
 - **Testing:** Provider tests
 
-#### v4.0-S8-T7: Documentation
+#### v4.0-S8-T7: Documentation ✅
 - **Description:** Document build-time export usage
 - **Acceptance Criteria:**
-  - [ ] CLI command documented in README
-  - [ ] Runtime usage examples
-  - [ ] CI/CD integration guide
-  - [ ] Watch mode usage
+  - [x] CLI command documented in skill
+  - [x] Runtime usage examples
+  - [x] CI/CD integration guide
+  - [x] Watch mode usage
 - **Dependencies:** v4.0-S8-T1 through T6
 - **Testing:** Manual review
 
