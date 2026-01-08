@@ -1,58 +1,65 @@
+// AGENT-ONLY: Do not import in browser code
+// This module is for agent use ONLY during code generation.
+// It uses Node.js fs and will crash in browser environments.
+
 /**
- * Sigil v3.0 — Process Context (DEPRECATED)
+ * Sigil v4.1 — Process Context (REMOVED)
  *
- * @deprecated ProcessContextProvider has been removed in v3.0.
+ * @deprecated ProcessContextProvider and all React hooks have been REMOVED in v4.1.
  *
- * This file is kept for backwards compatibility during migration.
- * The Process layer is now AGENT-ONLY and does not run in browsers.
+ * The Process layer is AGENT-ONLY. It does NOT run in browsers.
  *
- * Migration:
- * 1. Remove ProcessContextProvider from your app
- * 2. Process context is embedded at code generation time by the agent
- * 3. Runtime components receive configuration via props, not context
+ * ## Why This Was Removed
+ *
+ * The Process layer reads YAML files using Node.js `fs`, which crashes in browsers.
+ * v4.1 provides proper runtime context via SigilProvider instead.
+ *
+ * ## Migration
+ *
+ * ### For Runtime Context
+ * Use SigilProvider from sigil-mark/providers instead:
+ *
+ * ```tsx
+ * // BEFORE (v3.0 - broken in browsers)
+ * import { ProcessContextProvider, useProcessContext } from 'sigil-mark/process';
+ *
+ * // AFTER (v4.1 - works correctly)
+ * import { SigilProvider, useSigilZoneContext, useSigilPersonaContext } from 'sigil-mark/providers';
+ *
+ * // Wrap your app
+ * <SigilProvider persona="newcomer">
+ *   <App />
+ * </SigilProvider>
+ *
+ * // In components
+ * const { current: zone } = useSigilZoneContext();
+ * const { current: persona } = useSigilPersonaContext();
+ * ```
+ *
+ * ### For Agent-Time Reading
+ * Use the reader functions directly (in Node.js only):
+ *
+ * ```typescript
+ * // In agent/build scripts (NOT browser code)
+ * import { readConstitution, readPersonas, readZones } from 'sigil-mark/process';
+ * ```
+ *
+ * See MIGRATION-v4.1.md for full migration guide.
  *
  * @module process/process-context
  */
 
-// NOTE: 'use client' directive REMOVED in v3.0
-// This module should NOT be imported in client code
-
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-  useMemo,
-  type ReactNode,
-} from 'react';
-
-import {
-  readConstitution,
-  type Constitution,
-  DEFAULT_CONSTITUTION,
-} from './constitution-reader';
-
-import {
-  readLensArray,
-  getPersona,
-  type LensArray,
-  type Persona,
-  DEFAULT_LENS_ARRAY,
-} from './lens-array-reader';
-
-import {
-  readAllDecisions,
-  getActiveDecisions,
-  type Decision,
-} from './decision-reader';
+import type { Constitution } from './constitution-reader';
+import type { LensArray, Persona } from './persona-reader';
+import type { Decision } from './decision-reader';
 
 // =============================================================================
-// TYPES
+// TYPES (preserved for backwards compatibility)
 // =============================================================================
 
 /**
- * Process context value.
+ * Process context value type.
+ * @deprecated Use SigilProvider context types instead.
  */
 export interface ProcessContextValue {
   /** Constitution (protected capabilities) */
@@ -80,10 +87,11 @@ export interface ProcessContextValue {
 }
 
 /**
- * Process context provider props.
+ * Process context provider props type.
+ * @deprecated Use SigilProviderProps instead.
  */
 export interface ProcessContextProviderProps {
-  children: ReactNode;
+  children: unknown;
   /** Optional custom constitution path */
   constitutionPath?: string;
   /** Optional custom lens array path */
@@ -97,260 +105,111 @@ export interface ProcessContextProviderProps {
 }
 
 // =============================================================================
-// CONTEXT
+// REMOVED EXPORTS
+// These functions throw helpful errors directing users to the correct v4.1 APIs
 // =============================================================================
 
-/**
- * Default context value (used before provider mounts).
- */
-const defaultContextValue: ProcessContextValue = {
-  constitution: DEFAULT_CONSTITUTION,
-  lensArray: DEFAULT_LENS_ARRAY,
-  decisions: [],
-  activeDecisions: [],
-  currentPersona: null,
-  currentZone: null,
-  loading: true,
-  error: null,
-  setCurrentPersona: () => {},
-  setCurrentZone: () => {},
-  refresh: async () => {},
-};
+const REMOVAL_MESSAGE = `
+[Sigil v4.1] ProcessContextProvider has been REMOVED.
+
+The Process layer is AGENT-ONLY and cannot run in browsers.
+
+For runtime context, use SigilProvider instead:
+
+  import { SigilProvider, useSigilZoneContext } from 'sigil-mark/providers';
+
+  // Wrap your app
+  <SigilProvider persona="newcomer">
+    <App />
+  </SigilProvider>
+
+  // In components
+  const { current: zone } = useSigilZoneContext();
+
+See MIGRATION-v4.1.md for full migration guide.
+`;
 
 /**
- * Process context.
+ * @deprecated REMOVED in v4.1. Use SigilProvider from sigil-mark/providers instead.
+ * @throws Always throws with migration instructions.
  */
-export const ProcessContext = createContext<ProcessContextValue>(defaultContextValue);
-
-// =============================================================================
-// PROVIDER
-// =============================================================================
+export function ProcessContextProvider(): never {
+  throw new Error(REMOVAL_MESSAGE);
+}
 
 /**
- * Process context provider.
- *
- * Loads all Process layer data on mount and provides it to children.
- *
- * @example
- * ```tsx
- * <ProcessContextProvider>
- *   <App />
- * </ProcessContextProvider>
- * ```
+ * @deprecated REMOVED in v4.1. This is a stub that will be removed.
  */
-export function ProcessContextProvider({
-  children,
-  constitutionPath,
-  lensArrayPath,
-  decisionsPath,
-  initialPersonaId,
-  initialZone,
-}: ProcessContextProviderProps): React.ReactElement {
-  // State
-  const [constitution, setConstitution] = useState<Constitution>(DEFAULT_CONSTITUTION);
-  const [lensArray, setLensArray] = useState<LensArray>(DEFAULT_LENS_ARRAY);
-  const [decisions, setDecisions] = useState<Decision[]>([]);
-  const [currentPersonaId, setCurrentPersonaId] = useState<string | null>(
-    initialPersonaId ?? null
-  );
-  const [currentZone, setCurrentZone] = useState<string | null>(initialZone ?? null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+export const ProcessContext = null;
 
-  // Derived state
-  const activeDecisions = useMemo(
-    () => decisions.filter((d) => d.status === 'locked'),
-    [decisions]
-  );
+/**
+ * @deprecated REMOVED in v4.1. Use useSigilZoneContext or useSigilPersonaContext instead.
+ * @throws Always throws with migration instructions.
+ */
+export function useProcessContext(): never {
+  throw new Error(REMOVAL_MESSAGE);
+}
 
-  const currentPersona = useMemo(
-    () => (currentPersonaId ? getPersona(lensArray, currentPersonaId) ?? null : null),
-    [lensArray, currentPersonaId]
-  );
-
-  // Load all process data
-  const loadProcessData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Load all data in parallel
-      const [constitutionData, lensArrayData, decisionsData] = await Promise.all([
-        readConstitution(constitutionPath),
-        readLensArray(lensArrayPath),
-        readAllDecisions(decisionsPath),
-      ]);
-
-      setConstitution(constitutionData);
-      setLensArray(lensArrayData);
-      setDecisions(decisionsData);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error(String(err)));
-    } finally {
-      setLoading(false);
-    }
-  }, [constitutionPath, lensArrayPath, decisionsPath]);
-
-  // Load on mount
-  useEffect(() => {
-    loadProcessData();
-  }, [loadProcessData]);
-
-  // Handlers
-  const setCurrentPersona = useCallback((personaId: string | null) => {
-    setCurrentPersonaId(personaId);
-  }, []);
-
-  // Context value
-  const contextValue = useMemo<ProcessContextValue>(
-    () => ({
-      constitution,
-      lensArray,
-      decisions,
-      activeDecisions,
-      currentPersona,
-      currentZone,
-      loading,
-      error,
-      setCurrentPersona,
-      setCurrentZone,
-      refresh: loadProcessData,
-    }),
-    [
-      constitution,
-      lensArray,
-      decisions,
-      activeDecisions,
-      currentPersona,
-      currentZone,
-      loading,
-      error,
-      setCurrentPersona,
-      setCurrentZone,
-      loadProcessData,
-    ]
-  );
-
-  return (
-    <ProcessContext.Provider value={contextValue}>
-      {children}
-    </ProcessContext.Provider>
+/**
+ * @deprecated REMOVED in v4.1. Use readConstitution() in agent scripts instead.
+ * @throws Always throws with migration instructions.
+ */
+export function useConstitution(): never {
+  throw new Error(
+    '[Sigil v4.1] useConstitution has been REMOVED.\n\n' +
+      'For agent-time reading, use readConstitution() from sigil-mark/process.\n' +
+      'For runtime, constitution data should be passed via props.\n\n' +
+      'See MIGRATION-v4.1.md for full migration guide.'
   );
 }
 
-// =============================================================================
-// HOOK
-// =============================================================================
-
 /**
- * Use the Process context.
- *
- * @returns Process context value
- * @throws If used outside of ProcessContextProvider
- *
- * @example
- * ```tsx
- * function MyComponent() {
- *   const { constitution, currentPersona, loading } = useProcessContext();
- *
- *   if (loading) return <div>Loading...</div>;
- *
- *   return (
- *     <div>
- *       <p>Protected capabilities: {constitution.protected.length}</p>
- *       {currentPersona && <p>Current persona: {currentPersona.alias}</p>}
- *     </div>
- *   );
- * }
- * ```
+ * @deprecated REMOVED in v4.1. Use useSigilPersonaContext instead.
+ * @throws Always throws with migration instructions.
  */
-export function useProcessContext(): ProcessContextValue {
-  const context = useContext(ProcessContext);
-
-  if (context === defaultContextValue) {
-    console.warn(
-      '[Sigil ProcessContext] useProcessContext called outside of ProcessContextProvider'
-    );
-  }
-
-  return context;
-}
-
-// =============================================================================
-// SPECIALIZED HOOKS
-// =============================================================================
-
-/**
- * Use just the Constitution from Process context.
- *
- * @returns Constitution and loading state
- */
-export function useConstitution(): {
-  constitution: Constitution;
-  loading: boolean;
-  error: Error | null;
-} {
-  const { constitution, loading, error } = useProcessContext();
-  return { constitution, loading, error };
+export function useLensArray(): never {
+  throw new Error(
+    '[Sigil v4.1] useLensArray has been REMOVED.\n\n' +
+      'For runtime persona context, use useSigilPersonaContext from sigil-mark/providers.\n\n' +
+      'See MIGRATION-v4.1.md for full migration guide.'
+  );
 }
 
 /**
- * Use just the Lens Array from Process context.
- *
- * @returns Lens array and loading state
+ * @deprecated REMOVED in v4.1. Use readAllDecisions() in agent scripts instead.
+ * @throws Always throws with migration instructions.
  */
-export function useLensArray(): {
-  lensArray: LensArray;
-  loading: boolean;
-  error: Error | null;
-} {
-  const { lensArray, loading, error } = useProcessContext();
-  return { lensArray, loading, error };
+export function useDecisions(): never {
+  throw new Error(
+    '[Sigil v4.1] useDecisions has been REMOVED.\n\n' +
+      'For agent-time reading, use readAllDecisions() from sigil-mark/process.\n' +
+      'Decisions are read at agent-time, not runtime.\n\n' +
+      'See MIGRATION-v4.1.md for full migration guide.'
+  );
 }
 
 /**
- * Use just the Decisions from Process context.
- *
- * @returns Decisions and loading state
+ * @deprecated REMOVED in v4.1. Use useSigilPersonaContext instead.
+ * @throws Always throws with migration instructions.
  */
-export function useDecisions(): {
-  decisions: Decision[];
-  activeDecisions: Decision[];
-  loading: boolean;
-  error: Error | null;
-} {
-  const { decisions, activeDecisions, loading, error } = useProcessContext();
-  return { decisions, activeDecisions, loading, error };
+export function useCurrentPersona(): never {
+  throw new Error(
+    '[Sigil v4.1] useCurrentPersona has been REMOVED.\n\n' +
+      'For runtime persona context, use useSigilPersonaContext from sigil-mark/providers.\n\n' +
+      'See MIGRATION-v4.1.md for full migration guide.'
+  );
 }
 
 /**
- * Use the current persona from Process context.
- *
- * @returns Current persona and setter
+ * @deprecated REMOVED in v4.1.
+ * @throws Always throws with migration instructions.
  */
-export function useCurrentPersona(): {
-  persona: Persona | null;
-  setPersona: (personaId: string | null) => void;
-  loading: boolean;
-} {
-  const { currentPersona, setCurrentPersona, loading } = useProcessContext();
-  return { persona: currentPersona, setPersona: setCurrentPersona, loading };
-}
-
-/**
- * Get decisions for the current zone.
- *
- * @returns Decisions for the current zone
- */
-export function useDecisionsForCurrentZone(): Decision[] {
-  const { activeDecisions, currentZone } = useProcessContext();
-
-  return useMemo(
-    () =>
-      currentZone
-        ? activeDecisions.filter((d) => d.context?.zone === currentZone)
-        : [],
-    [activeDecisions, currentZone]
+export function useDecisionsForCurrentZone(): never {
+  throw new Error(
+    '[Sigil v4.1] useDecisionsForCurrentZone has been REMOVED.\n\n' +
+      'For agent-time reading, use getDecisionsForZone() from sigil-mark/process.\n' +
+      'Decisions are read at agent-time, not runtime.\n\n' +
+      'See MIGRATION-v4.1.md for full migration guide.'
   );
 }
 

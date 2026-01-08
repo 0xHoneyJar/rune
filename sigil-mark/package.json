@@ -1,7 +1,7 @@
 {
   "name": "sigil-mark",
-  "version": "2.6.0",
-  "description": "Sigil Design Context Framework - Reality Engine + Craftsman's Flow",
+  "version": "4.1.0",
+  "description": "Sigil Design Context Framework - Living Guardrails",
   "type": "module",
   "main": "./index.ts",
   "types": "./index.ts",

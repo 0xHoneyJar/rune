@@ -1,17 +1,26 @@
 /**
- * Sigil v2.0 — Layouts Module
+ * Sigil v4.1 - Layouts Module
  *
  * Layout primitives that provide both zone context AND structural physics.
  * Layouts ARE Zones. Physics is DOM, not lint.
  *
- * v2.0 introduces:
- * - CriticalZone — High-stakes UI (financial, destructive actions)
- * - MachineryLayout — Keyboard-driven admin UI (Sprint 4)
- * - GlassLayout — Hover-driven marketing UI (Sprint 4)
+ * v4.1 Changes:
+ * - All layouts now set zone context via SigilProvider on mount
+ * - Zone context is cleared on unmount
+ * - data-sigil-zone attribute added for debugging
  *
- * @example v2.0 Usage
+ * @example v4.1 Usage with SigilProvider
  * ```tsx
+ * import { SigilProvider } from 'sigil-mark/providers';
  * import { CriticalZone, useZoneContext } from 'sigil-mark/layouts';
+ *
+ * function App() {
+ *   return (
+ *     <SigilProvider persona="newcomer">
+ *       <PaymentForm />
+ *     </SigilProvider>
+ *   );
+ * }
  *
  * function PaymentForm() {
  *   return (

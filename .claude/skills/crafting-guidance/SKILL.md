@@ -6,6 +6,7 @@ zones:
       - sigil-mark/moodboard.md
       - sigil-mark/rules.md
       - sigil-mark/vocabulary/vocabulary.yaml
+      - sigil-mark/kernel/physics.yaml
       - sigil-mark/constitution/protected-capabilities.yaml
       - sigil-mark/personas/personas.yaml
       - sigil-mark/consultation-chamber/decisions/
@@ -19,13 +20,13 @@ zones:
     permission: read
 ---
 
-# Crafting Guidance Skill (v4.0)
+# Crafting Guidance Skill (v4.1)
 
 ## Purpose
 
 Provide design guidance during implementation with full context, gap detection, and journey awareness. Present **options with tradeoffs** — do NOT make taste decisions for the craftsman.
 
-## Philosophy (v4.0)
+## Philosophy (v4.1)
 
 > "Sweat the art. We handle the mechanics. Return to flow."
 
@@ -34,6 +35,10 @@ v4.0 adds:
 2. **Gap detection** — Surface missing context at end of output
 3. **Journey context** — Show zone journey_stage and persona trust_level
 4. **Decision checking** — Respect locked decisions with conflict warnings
+
+v4.1 adds:
+5. **Vocabulary integration** — Auto-detect terms, use recommended physics
+6. **Physics timing** — Load from kernel/physics.yaml for motion values
 
 ---
 
@@ -95,8 +100,9 @@ Proceeding with default context...
 3. **Zone Config**: Load zones from `.sigilrc.yaml`
 4. **Personas**: Load from `sigil-mark/personas/personas.yaml`
 5. **Vocabulary**: Load from `sigil-mark/vocabulary/vocabulary.yaml`
-6. **Philosophy**: Load from `sigil-mark/philosophy/philosophy.yaml`
-7. **Decisions**: Load from `sigil-mark/consultation-chamber/decisions/`
+6. **Physics**: Load from `sigil-mark/kernel/physics.yaml` (v4.1)
+7. **Philosophy**: Load from `sigil-mark/philosophy/philosophy.yaml`
+8. **Decisions**: Load from `sigil-mark/consultation-chamber/decisions/`
 
 ---
 
@@ -112,6 +118,7 @@ Each context file has a fallback if missing:
 | `rules.md` | "No rules — run /codify" |
 | `personas.yaml` | Default generic persona |
 | `vocabulary.yaml` | "No vocabulary defined" |
+| `physics.yaml` | Hardcoded defaults (v4.1) |
 | `philosophy.yaml` | Built-in defaults |
 | `.sigilrc.yaml` | Default zone (marketing, newcomer) |
 
@@ -238,6 +245,74 @@ scope:
 ```
 
 Only warn when current zone/component matches decision scope.
+
+---
+
+## Vocabulary Integration (v4.1)
+
+### Component Name Detection
+
+When generating code, check if the component name matches a vocabulary term:
+
+```
+1. Parse component name (e.g., "ClaimButton", "DepositForm")
+2. Check vocabulary.yaml for matching terms:
+   - pot, vault, claim, deposit, withdraw, boost, stake, unstake, harvest, connect
+3. If match found:
+   - Use term's recommended material, motion, tone
+   - Surface term's mental model in comments
+4. If no match:
+   - Use zone defaults
+   - Surface as potential gap at end
+```
+
+### Using Term Physics
+
+When a term matches, apply its recommended physics:
+
+```
+Term: claim
+  Material: decisive
+  Motion: celebratory_then_deliberate
+  Tone: exciting
+
+→ Use decisive material (high contrast, clear action)
+→ Use celebratory motion followed by deliberate confirmation
+→ Use exciting tone ("You earned this!", "Claim your reward")
+```
+
+### Gap Detection for Undefined Terms
+
+If component name contains an undefined term:
+
+```
+═══════════════════════════════════════════════════════════
+                     CONTEXT GAPS
+═══════════════════════════════════════════════════════════
+
+⚠️ 1 gap detected:
+
+1. UNDEFINED VOCABULARY: "zap"
+   Component "ZapButton" uses term not in vocabulary.
+   → /refine --vocab zap "instant action feel"
+
+Define this term to ensure consistent physics across components.
+```
+
+### 10 Core Terms (v4.1)
+
+| Term | Material | Motion | Tone | Mental Model |
+|------|----------|--------|------|--------------|
+| pot | glass | warm | friendly | Piggy bank, casual saving |
+| vault | machinery | deliberate | serious | Bank vault, protected assets |
+| claim | decisive | celebratory_then_deliberate | exciting | Receiving earned reward |
+| deposit | decisive | deliberate | reassuring | Adding to position |
+| withdraw | decisive | deliberate | serious | Accessing your funds |
+| boost | glass | celebratory_then_deliberate | exciting | Amplifying rewards |
+| stake | decisive | deliberate | serious | Locking for rewards |
+| unstake | decisive | deliberate | reassuring | Returning to liquid |
+| harvest | glass | celebratory_then_deliberate | exciting | Collecting accumulated rewards |
+| connect | glass | warm | friendly | Linking wallet |
 
 ---
 

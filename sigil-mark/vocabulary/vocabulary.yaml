@@ -1,4 +1,4 @@
-# Sigil v3.0 — Vocabulary
+# Sigil v4.1 - Vocabulary
 # Maps product terms to design recommendations
 #
 # Philosophy: "Same backend, different feel. Term determines experience."
@@ -6,12 +6,16 @@
 # This is the API surface between Product and Engineering.
 # Product defines terms and mental models.
 # Engineering implements with appropriate materials.
+#
+# v4.1 Additions:
+# - last_refined: ISO date when term was last updated via /refine
+# - 10 core terms: pot, vault, claim, deposit, withdraw, boost, stake, unstake, harvest, connect
 
-version: "3.0.0"
+version: "4.1.0"
 
 terms:
   # ============================================================================
-  # FINANCIAL CONTAINERS
+  # CORE 10 TERMS (Sprint 4 v4.1)
   # ============================================================================
 
   pot:
@@ -23,6 +27,7 @@ terms:
       motion: warm
       tone: friendly
     zones: [marketing, dashboard]
+    last_refined: null
 
   vault:
     engineering_name: "savings_container"
@@ -33,20 +38,7 @@ terms:
       motion: deliberate
       tone: serious
     zones: [critical]
-
-  wallet:
-    engineering_name: "user_wallet"
-    user_facing: "Wallet"
-    mental_model: "Personal wallet, immediate access, everyday use"
-    recommended:
-      material: glass
-      motion: snappy
-      tone: friendly
-    zones: [dashboard, admin]
-
-  # ============================================================================
-  # FINANCIAL ACTIONS
-  # ============================================================================
+    last_refined: null
 
   claim:
     engineering_name: "reward_claim"
@@ -57,6 +49,7 @@ terms:
       motion: celebratory_then_deliberate
       tone: exciting
     zones: [critical]
+    last_refined: null
 
   deposit:
     engineering_name: "deposit_funds"
@@ -67,6 +60,7 @@ terms:
       motion: deliberate
       tone: reassuring
     zones: [critical]
+    last_refined: null
 
   withdraw:
     engineering_name: "withdraw_funds"
@@ -77,6 +71,18 @@ terms:
       motion: deliberate
       tone: serious
     zones: [critical]
+    last_refined: null
+
+  boost:
+    engineering_name: "boost_position"
+    user_facing: "Boost"
+    mental_model: "Amplifying rewards, accelerating gains"
+    recommended:
+      material: glass
+      motion: celebratory_then_deliberate
+      tone: exciting
+    zones: [critical, marketing]
+    last_refined: null
 
   stake:
     engineering_name: "stake_position"
@@ -87,6 +93,7 @@ terms:
       motion: deliberate
       tone: serious
     zones: [critical]
+    last_refined: null
 
   unstake:
     engineering_name: "unstake_position"
@@ -97,10 +104,44 @@ terms:
       motion: deliberate
       tone: reassuring
     zones: [critical]
+    last_refined: null
+
+  harvest:
+    engineering_name: "harvest_rewards"
+    user_facing: "Harvest"
+    mental_model: "Collecting accumulated rewards, reaping what you sowed"
+    recommended:
+      material: glass
+      motion: celebratory_then_deliberate
+      tone: exciting
+    zones: [critical, dashboard]
+    last_refined: null
+
+  connect:
+    engineering_name: "wallet_connect"
+    user_facing: "Connect"
+    mental_model: "Linking wallet, establishing identity"
+    recommended:
+      material: glass
+      motion: warm
+      tone: friendly
+    zones: [marketing, dashboard]
+    last_refined: null
 
   # ============================================================================
-  # NAVIGATION & STRUCTURE
+  # ADDITIONAL TERMS (from v3.0)
   # ============================================================================
+
+  wallet:
+    engineering_name: "user_wallet"
+    user_facing: "Wallet"
+    mental_model: "Personal wallet, immediate access, everyday use"
+    recommended:
+      material: glass
+      motion: snappy
+      tone: friendly
+    zones: [dashboard, admin]
+    last_refined: null
 
   dashboard:
     engineering_name: "user_dashboard"
@@ -111,6 +152,7 @@ terms:
       motion: snappy
       tone: serious
     zones: [admin, dashboard]
+    last_refined: null
 
   settings:
     engineering_name: "user_settings"
@@ -121,6 +163,7 @@ terms:
       motion: snappy
       tone: serious
     zones: [admin]
+    last_refined: null
 
   profile:
     engineering_name: "user_profile"
@@ -131,10 +174,7 @@ terms:
       motion: warm
       tone: friendly
     zones: [dashboard, marketing]
-
-  # ============================================================================
-  # STATES & STATUS
-  # ============================================================================
+    last_refined: null
 
   pending:
     engineering_name: "pending_state"
@@ -145,6 +185,7 @@ terms:
       motion: deliberate
       tone: reassuring
     zones: [critical, dashboard]
+    last_refined: null
 
   confirmed:
     engineering_name: "confirmed_state"
@@ -155,6 +196,7 @@ terms:
       motion: celebratory_then_deliberate
       tone: friendly
     zones: [critical, dashboard]
+    last_refined: null
 
   failed:
     engineering_name: "failed_state"
@@ -165,10 +207,7 @@ terms:
       motion: deliberate
       tone: serious
     zones: [critical, dashboard]
-
-  # ============================================================================
-  # INFORMATIONAL
-  # ============================================================================
+    last_refined: null
 
   balance:
     engineering_name: "account_balance"
@@ -179,6 +218,7 @@ terms:
       motion: snappy
       tone: serious
     zones: [dashboard, critical]
+    last_refined: null
 
   fee:
     engineering_name: "transaction_fee"
@@ -189,6 +229,7 @@ terms:
       motion: deliberate
       tone: serious
     zones: [critical]
+    last_refined: null
 
   reward:
     engineering_name: "earned_reward"
@@ -199,6 +240,7 @@ terms:
       motion: celebratory_then_deliberate
       tone: exciting
     zones: [dashboard, marketing]
+    last_refined: null
 
   risk:
     engineering_name: "risk_indicator"
@@ -209,3 +251,4 @@ terms:
       motion: deliberate
       tone: serious
     zones: [critical]
+    last_refined: null

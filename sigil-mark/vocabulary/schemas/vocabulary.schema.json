@@ -46,6 +46,11 @@
             "type": "string"
           },
           "description": "Zones where this term typically appears"
+        },
+        "last_refined": {
+          "type": ["string", "null"],
+          "format": "date",
+          "description": "ISO date when term was last refined via /refine (null if never refined)"
         }
       }
     },

@@ -1,540 +1,436 @@
-# Sigil v1.2.4 Security Audit Report
+# Sigil v4.1 "Living Guardrails" Security Audit Report
 
-**Audit Date:** 2026-01-05
-**Auditor:** Paranoid Cypherpunk Auditor (Claude Opus 4.5)
-**Framework Version:** 1.2.4
-**Audit Scope:** Complete Sigil Design Physics Framework codebase
-**Previous Audit:** v11.0.0 (2026-01-03)
+**Audit Date**: 2026-01-07
+**Auditor**: Paranoid Cypherpunk Auditor (Claude Opus 4.5)
+**Version Audited**: Sigil v4.1.0 "Living Guardrails"
+**Previous Audit**: v1.2.4 (2026-01-05)
+**Audit Scope**: Runtime code, ESLint plugin, configuration files, process layer, scripts
 
 ---
 
-## Executive Summary
+## 1. Executive Summary
 
 ### Overall Risk Level: LOW
 
-Sigil v1.2.4 is a **local development tool** (design context framework for AI-assisted development) with a well-structured security posture. The codebase demonstrates security-conscious design patterns appropriate for its intended use case.
+Sigil v4.1 demonstrates **solid security practices** overall. The codebase follows defensive programming patterns, implements proper input validation, uses safe configuration loading, and maintains clear boundaries between agent-only and runtime code.
 
-| Category | Risk Level | Notes |
-|----------|------------|-------|
-| File System Operations | LOW | Controlled paths, no arbitrary file access |
-| Shell Scripts | LOW | Proper quoting, `set -euo pipefail`, no injection risks |
-| CI/CD Workflows | LOW | Pinned actions, appropriate permissions |
-| ESLint Plugin | NEGLIGIBLE | Pure AST analysis, no code execution |
-| React Components | NEGLIGIBLE | Standard React patterns, no XSS vectors |
-| Secrets Management | LOW | No hardcoded secrets, proper scanning workflows |
-| Dependencies | MEDIUM | Standard npm ecosystem risks |
+**Key Findings:**
+- **0 Critical Issues** - No hardcoded secrets, command injection, or XSS vulnerabilities found
+- **1 High Priority Issue** - Potential ReDoS in ESLint rule regex patterns
+- **3 Medium Priority Issues** - Minor improvements recommended
+- **7 Positive Findings** - Notable security-conscious design decisions
 
-**Summary:** No critical or high-severity vulnerabilities found. The framework follows security best practices for a local development tool.
+The framework is **APPROVED for production use** with minor recommendations addressed below.
 
 ---
 
-## Detailed Findings
+## 2. Critical Issues
 
-### Critical Findings (0)
+### None Found
 
-None identified.
+The audit did not identify any critical security vulnerabilities including:
 
-### High Severity Findings (0)
+| Check | Status | Notes |
+|-------|--------|-------|
+| Hardcoded secrets/API keys | PASS | No secrets found in codebase |
+| Command injection | PASS | Shell scripts use proper quoting and `set -euo pipefail` |
+| XSS vectors | PASS | No dangerouslySetInnerHTML, no raw HTML injection |
+| Path traversal | PASS | All file operations use proper path resolution |
+| Prototype pollution | PASS | Object spreads are safe, no unsafe merging |
 
-None identified. Previous HIGH issues from v11.0.0 audit have been resolved.
+---
 
-### Medium Severity Findings (4)
+## 3. High Priority Issues
 
-#### MED-001: Unvalidated URL Construction in ab-iframe.ts
+### H1: Potential ReDoS in ESLint Regex Patterns
 
-**Location:** `/Users/zksoju/Documents/GitHub/sigil/sigil-mark/workbench/ab-iframe.ts`
+**Location**: `/packages/eslint-plugin-sigil/src/rules/enforce-tokens.ts`
 
-**Description:** The `initIframeToggle` function accepts user-provided URLs (`urlA`, `urlB`) and assigns them directly to iframe `src` attributes without validation.
+**Issue**: The regex patterns for detecting arbitrary Tailwind values could potentially be exploited with crafted input to cause excessive backtracking:
 
 ```typescript
-// Line 53-56
-function createIframe(url: string, visible: boolean): HTMLIFrameElement {
-  const iframe = document.createElement('iframe');
-  iframe.src = url;  // No validation
+// Lines 32-38
+const ARBITRARY_VALUE_PATTERN = /\[[\d.]+(?:px|rem|em|%|vh|vw|ch|ex|fr)?\]|\[#[a-fA-F0-9]+\]/g;
+const TAILWIND_ARBITRARY_PATTERN = /[\w-]+-\[[\d.]+(?:px|rem|em|%|vh|vw|ch|ex|fr)?\]|[\w-]+-\[#[a-fA-F0-9]+\]/g;
 ```
 
-**Risk:** In a development context, malicious URLs could be injected if configuration is compromised. However, this is intentional behavior for A/B testing local dev servers.
+**Risk**: LOW-MEDIUM (ESLint rules run at dev time, not production)
 
-**Mitigation:**
-- Consider adding URL validation for localhost/trusted domains
-- Document that URLs should only point to local development servers
-
-**CVSS:** 4.3 (Medium) - Local context reduces exploitability
+**Recommendation**:
+1. Add length limits before regex matching
+2. Consider using atomic groups or possessive quantifiers if regex engine supports them
+3. This is mitigated by the fact that ESLint runs at development time, not in production
 
 ---
 
-#### MED-002: Potential ReDoS in Regex Patterns
+## 4. Medium Priority Issues
 
-**Location:** `/Users/zksoju/Documents/GitHub/sigil/sigil-mark/eslint-plugin/rules/no-optimistic-in-decisive.js`
+### M1: Console Warnings May Leak Internal Paths
 
-**Description:** Regular expressions like `set[A-Z].*await` could be vulnerable to ReDoS attacks with crafted input, though this is unlikely in the ESLint context.
+**Locations**:
+- `/sigil-mark/providers/remote-soul.ts:643`
+- `/sigil-mark/process/physics-reader.ts:431-435`
+- `/packages/eslint-plugin-sigil/src/config-loader.ts:189-193`
 
-```javascript
-// Line 36-38
-const OPTIMISTIC_PATTERNS = [
-  /set\w+.*\n.*await/,
+**Issue**: Error messages include file paths which could expose internal directory structure:
+
+```typescript
+console.warn(`[Sigil Physics] File not found: ${filePath}, using defaults`);
+```
+
+**Risk**: LOW (informational disclosure)
+
+**Recommendation**: In production builds, consider:
+1. Using generic error messages
+2. Conditionalizing verbose logging on `process.env.NODE_ENV !== 'production'`
+
+---
+
+### M2: Missing Timeout on Remote Config Subscriptions
+
+**Location**: `/sigil-mark/providers/remote-soul.ts`
+
+**Issue**: While the initial fetch has a proper 100ms timeout (NFR-3 compliant), the subscription callbacks don't have timeout protection. A slow or malicious remote config provider could potentially block the main thread during updates.
+
+**Risk**: LOW (DoS potential in edge cases)
+
+**Recommendation**: Consider wrapping subscription callbacks with timeout protection:
+```typescript
+const unsubscribe = adapter.subscribe((newVibes) => {
+  const timeoutId = setTimeout(() => {
+    console.warn('[Sigil] Subscription callback timed out');
+  }, 100);
+
+  try {
+    // ... process vibes
+  } finally {
+    clearTimeout(timeoutId);
+  }
+});
+```
+
+---
+
+### M3: Timing Modifier Bounds Could Be Tighter
+
+**Location**: `/sigil-mark/providers/remote-soul.ts:455-468`
+
+**Issue**: The timing modifier allows values from 0.5 to 2.0, meaning animations could be halved or doubled. While not a security issue, extreme values could impact UX.
+
+**Current Implementation**:
+```typescript
+const MIN = 0.5;
+const MAX = 2.0;
+```
+
+**Risk**: LOW (UX impact only)
+
+**Recommendation**: Consider tighter bounds (0.8-1.5) or add monitoring for extreme values:
+```typescript
+if (value < 0.8 || value > 1.5) {
+  console.warn(`[Sigil] Unusual timing_modifier: ${value}`);
+}
+```
+
+---
+
+## 5. Low Priority Issues
+
+### L1: Global Cache Without TTL in Config Loader
+
+**Location**: `/packages/eslint-plugin-sigil/src/config-loader.ts:122-124`
+
+**Issue**: The config cache uses `mtime` for invalidation but has no TTL. In long-running processes (like ESLint with `--cache`), stale configs could persist.
+
+**Recommendation**: Consider adding a TTL check in addition to mtime:
+```typescript
+const CACHE_TTL = 60000; // 1 minute
+let configCacheTime: number | null = null;
+
+if (Date.now() - (configCacheTime ?? 0) > CACHE_TTL) {
+  clearConfigCache();
+}
+```
+
+---
+
+### L2: Synchronous Requires in Reader Functions
+
+**Locations**:
+- `/sigil-mark/process/physics-reader.ts:461`
+- `/sigil-mark/process/vocabulary-reader.ts:310`
+- `/sigil-mark/process/constitution-reader.ts:258`
+
+**Issue**: Sync reader functions use `require('fs')` dynamically, which works but could be more explicit:
+
+```typescript
+// Current
+const fsSync = require('fs');
+
+// Better
+import * as fsSync from 'fs';
+// Then use readFileSync directly
+```
+
+**Risk**: MINIMAL (works correctly, just a code quality issue)
+
+---
+
+## 6. Positive Findings
+
+The audit identified several security-conscious design decisions:
+
+### P1: Proper Separation of Kernel and Vibe Configuration
+
+**Location**: `/sigil-mark/remote-soul.yaml`
+
+The framework correctly separates engineering-controlled "kernel" values from marketing-controlled "vibe" values. Critical settings like physics timing and sync strategies are explicitly locked:
+
+```yaml
+kernel_locked:
+  - physics
+  - sync
+  - protected_zones
+  - zones.critical
+```
+
+**Impact**: Prevents marketing from accidentally breaking critical UX through A/B tests.
+
+---
+
+### P2: Agent-Only Process Layer with Runtime Protection
+
+**Location**: `/sigil-mark/process/index.ts`
+
+The process layer correctly:
+1. Documents that it's agent-only with clear warnings
+2. Uses Node.js `fs` (which would crash in browsers, providing fail-fast behavior)
+3. Provides `SigilProvider` as the correct runtime alternative
+
+```typescript
+// AGENT-ONLY: Do not import in browser code
+// This module uses Node.js fs and will crash in browser environments.
+```
+
+---
+
+### P3: Shell Scripts Use Safe Practices
+
+**Locations**:
+- `/scripts/check-process-imports.sh`
+- `/scripts/verify-version.sh`
+
+Both scripts:
+1. Use `set -euo pipefail` (exit on error, unset variables, pipe failures)
+2. Quote all variables properly
+3. Use arrays for exclude patterns instead of string concatenation
+4. Handle edge cases gracefully
+
+---
+
+### P4: YAML Parsing with Graceful Degradation
+
+**All Reader Files**
+
+The readers implement defensive parsing:
+1. Never throw exceptions - always return valid defaults
+2. Log warnings for invalid configurations
+3. Skip invalid entries rather than failing entirely
+4. Use the `yaml` library (not `js-yaml` which has known issues)
+
+---
+
+### P5: Input Validation in Physics Resolver
+
+**Location**: `/sigil-mark/hooks/physics-resolver.ts`
+
+Motion and sync strategy names are validated against allowlists:
+```typescript
+const VALID_MOTION_NAMES: MotionName[] = [
+  'instant', 'snappy', 'warm', 'deliberate', 'reassuring', 'celebratory', 'reduced'
 ];
-```
 
-**Risk:** Low - ESLint rules process source files, not user input. Worst case is slow linting.
-
-**Mitigation:** Consider using non-backtracking patterns or adding match limits.
-
-**CVSS:** 3.1 (Low)
-
----
-
-#### MED-003: External Script Execution Without Verification
-
-**Location:** `.claude/scripts/mount-loa.sh` (lines 121-124)
-
-**Description:** The beads installation downloads and executes a remote script:
-```bash
-if curl --output /dev/null --silent --head --fail "$installer_url"; then
-    curl -fsSL "$installer_url" | bash
-```
-
-**Risk:** Remote code execution without integrity verification.
-
-**Recommendation:**
-1. Pin to specific versions/commits
-2. Verify checksums before execution
-3. Consider bundling dependencies instead of remote fetching
-
----
-
-#### MED-004: `rm -rf` Usage on Computed Paths
-
-**Location:** Multiple scripts
-
-**Affected Files:**
-- `.claude/scripts/update.sh:375` - `ls -dt .claude.backup.* 2>/dev/null | tail -n +4 | xargs rm -rf`
-- `.claude/scripts/mount-sigil.sh:115` - `rm -rf ".claude/skills/$skill_name"`
-
-**Description:** Using `rm -rf` on dynamically computed paths creates risk if path computation is compromised.
-
-**Risk:** Path traversal or variable injection could lead to unintended file deletion.
-
-**Recommendation:**
-1. Validate paths before deletion
-2. Use `--` to prevent option injection: `rm -rf -- "$path"`
-3. Consider using more defensive patterns
-
----
-
-### Low Severity Findings (5)
-
-#### LOW-001: File System Path Construction Without Sanitization
-
-**Location:** `/Users/zksoju/Documents/GitHub/sigil/sigil-mark/core/history.ts`
-
-**Description:** The `logRefinement` function constructs file paths using the current date without sanitization. While dates are internally generated, the pattern could be risky if extended.
-
-```typescript
-// Line 47-49
-const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-const time = new Date().toTimeString().slice(0, 5); // HH:MM
-const filename = path.join(HISTORY_DIR, `${today}.md`);
-```
-
-**Risk:** Currently safe as date values are internally generated. Would become vulnerable if external input is added.
-
-**Recommendation:** Add path validation if function signature changes to accept external input.
-
----
-
-#### LOW-002: Custom YAML Parser Implementation
-
-**Location:** `/Users/zksoju/Documents/GitHub/sigil/sigil-mark/core/zone-resolver.ts`
-
-**Description:** The codebase implements a custom YAML parser (`parseSimpleYaml`) rather than using a battle-tested library.
-
-```typescript
-// Line 51 comment
-// Note: For production, use a proper YAML parser
-```
-
-**Risk:** Custom parsers may have edge cases that could be exploited. The code itself acknowledges this limitation.
-
-**Recommendation:** For production deployments, consider using `js-yaml` or similar validated parser.
-
----
-
-#### LOW-003: Git Operations in Shell Scripts Without Sanitization
-
-**Location:** `/Users/zksoju/Documents/GitHub/sigil/.claude/scripts/sigil-diff.sh`
-
-**Description:** Git diff commands are executed with user-provided file paths.
-
-```bash
-# Line 66-69
-if git diff --quiet "$file" 2>/dev/null; then
-  echo "  |   (no changes)                 |"
-else
-  git diff "$file" 2>/dev/null | grep -E "^[-+].*($PHYSICS_PATTERNS)" ...
-```
-
-**Risk:** Proper quoting is used (`"$file"`), mitigating command injection. However, files with unusual names could cause issues.
-
-**Recommendation:** Already properly quoted. Consider adding file existence validation.
-
----
-
-#### LOW-004: Environment Variable Usage in Shell Scripts
-
-**Location:** `/Users/zksoju/Documents/GitHub/sigil/.claude/scripts/sigil-workbench.sh`
-
-**Description:** Environment variables are used for configuration without explicit validation.
-
-```bash
-# Line 21-22
-SESSION_NAME="${SIGIL_SESSION:-sigil-workbench}"
-DEV_URL="${SIGIL_DEV_URL:-http://localhost:3000}"
-```
-
-**Risk:** Malicious environment values could affect behavior. In local development context, user controls their environment.
-
-**Recommendation:** Add URL validation for `SIGIL_DEV_URL` if security-sensitive.
-
----
-
-#### LOW-005: No Input Sanitization in Zone Detection
-
-**Location:** `.claude/scripts/detect-zone.sh`
-
-**Description:** User-provided file paths are passed to grep without sanitization:
-```bash
-matches_pattern() {
-    local path="$1"
-    local pattern="$2"
-    local regex=$(glob_to_regex "$pattern")
-    echo "$path" | grep -qE "$regex"
-}
-```
-
-**Risk:** Malformed paths could potentially cause regex injection.
-
-**Recommendation:** Validate file paths before processing.
-
----
-
-### Informational Findings (3)
-
-#### INFO-001: db.exec Usage in Workbench
-
-**Location:** `/Users/zksoju/Documents/GitHub/sigil/sigil-workbench/src/lib/db.ts`
-
-**Description:** SQL.js `db.exec` is used for database queries. While this could be a SQL injection vector, queries are constructed with controlled values.
-
-**Assessment:** No user input flows directly to SQL queries. Safe as implemented.
-
----
-
-#### INFO-002: External CDN Reference
-
-**Location:** `/Users/zksoju/Documents/GitHub/sigil/sigil-workbench/src/lib/db.ts`
-
-**Description:** SQL.js is loaded from external CDN.
-
-```typescript
-// Line 22
-`https://sql.js.org/dist/${file}`,
-```
-
-**Assessment:** Normal for browser-based SQL.js usage. Consider local bundling for offline use.
-
----
-
-#### INFO-003: Template Guard Bypass Available
-
-**Location:** `/Users/zksoju/Documents/GitHub/sigil/.github/workflows/ci.yml`
-
-**Description:** Template protection can be bypassed with `[skip-template-guard]` in commit message.
-
-```yaml
-# Line 64
-if: failure() && contains(github.event.head_commit.message, '[skip-template-guard]')
-```
-
-**Assessment:** Intentional escape hatch. Documented and requires explicit action.
-
----
-
-## Positive Security Findings
-
-### PS-001: Comprehensive Secret Scanning
-
-The repository implements robust secret scanning:
-
-- **TruffleHog** integration for verified secret detection
-- **GitLeaks** for pattern-based scanning
-- **Weekly scheduled scans** of entire history
-- **Discord alerting** for security events
-- **PR blocking** when secrets detected
-
-**Location:** `/Users/zksoju/Documents/GitHub/sigil/.github/workflows/secret-scanning.yml`
-
----
-
-### PS-002: Proper Shell Script Hardening
-
-All shell scripts use defensive patterns:
-
-```bash
-set -euo pipefail  # Exit on error, undefined vars, pipe failures
-```
-
-**Files with proper hardening:**
-- `sigil-workbench.sh`
-- `sigil-diff.sh`
-- `sigil-validate.sh`
-- `mount-sigil.sh`
-
-49 out of 49 shell scripts (100%) properly use `set -euo pipefail` or `set -e`.
-
----
-
-### PS-003: Action Version Pinning
-
-CI workflows use pinned action versions:
-
-```yaml
-uses: actions/checkout@v4
-uses: actions/setup-node@v4
-uses: actions/github-script@v7
-```
-
-**Assessment:** Good practice preventing supply chain attacks via action hijacking.
-
----
-
-### PS-004: No Hardcoded Secrets
-
-Grep scan for secret patterns found only:
-- Configuration references (e.g., `server_authoritative`)
-- Documentation about secret handling
-- CI workflow secret references (proper `${{ secrets.* }}` syntax)
-
-**No actual secrets, API keys, or credentials were found in the codebase.**
-
----
-
-### PS-005: ESLint Plugin Security
-
-The ESLint plugin rules are purely static analysis:
-- No `eval()` or dynamic code execution
-- No file system operations beyond source file reading
-- No network operations
-- Standard ESLint context API usage
-
----
-
-### PS-006: React Component Safety
-
-Recipe components follow secure React patterns:
-- No `dangerouslySetInnerHTML`
-- No raw HTML injection
-- Proper prop validation with TypeScript
-- No URL/input sanitization bypass
-
----
-
-### PS-007: Dependabot Enabled
-
-**Location:** `/Users/zksoju/Documents/GitHub/sigil/.github/dependabot.yml`
-
-Automated dependency updates are configured, reducing exposure to known vulnerabilities.
-
----
-
-### PS-008: CodeQL Analysis
-
-**Location:** `/Users/zksoju/Documents/GitHub/sigil/.github/workflows/security-audit.yml`
-
-GitHub CodeQL is configured for JavaScript/TypeScript analysis with security-extended query pack.
-
----
-
-### PS-009: Cryptographic Integrity Checking
-
-The update script (`update.sh`) implements SHA256 checksum verification for system zone integrity:
-```bash
-generate_checksums() {
-    local hash=$(sha256sum "$file" | cut -d' ' -f1)
+function isValidMotionName(name: string): name is MotionName {
+  return VALID_MOTION_NAMES.includes(name as MotionName);
 }
 ```
 
 ---
 
-### PS-010: Proper Variable Quoting
+### P6: Proper React Context Cleanup
 
-All shell scripts demonstrate proper variable quoting practices:
-```bash
-validate_yaml_syntax "$file"
-yq eval '.strictness' "$CONFIG_PATH"
+**Location**: `/sigil-mark/layouts/*.tsx`
+
+All layout components properly cleanup zone context on unmount:
+```typescript
+useEffect(() => {
+  sigilZone.setZone('critical');
+  return () => {
+    sigilZone.setZone(null); // Cleanup
+  };
+}, [sigilZone]);
 ```
 
 ---
 
-## Security Checklist
+### P7: No Eval or Dynamic Code Execution
 
-### Code Security
-- [x] No hardcoded secrets or credentials
-- [x] No SQL injection vulnerabilities
-- [x] No command injection vulnerabilities
-- [x] No XSS vulnerabilities in React components
-- [x] Proper input validation where applicable
-- [ ] URL validation in iframe handling (PARTIAL)
-
-### Infrastructure Security
-- [x] GitHub Actions properly configured
-- [x] Secrets managed via GitHub Secrets
-- [x] Dependabot enabled
-- [x] Secret scanning enabled
-- [x] CodeQL analysis enabled
-
-### Shell Script Security
-- [x] `set -euo pipefail` used
-- [x] Proper variable quoting
-- [x] No unsafe eval/exec patterns
-- [x] Error handling implemented
-
-### CI/CD Security
-- [x] Action versions pinned
-- [x] Minimal permissions used
-- [x] PR checks before merge
-- [x] Branch protection documented
-
-### Documentation
-- [x] SECURITY.md exists
-- [x] Contributing guidelines present
-- [x] Installation instructions clear
+The entire codebase was checked and contains:
+- No `eval()`
+- No `new Function()`
+- No `innerHTML` or `dangerouslySetInnerHTML`
+- No dynamic script injection
 
 ---
 
-## Recommendations
+## 7. Recommendations
 
-### Priority 1 (Should Address)
+### Immediate (Before Next Release)
 
-1. **Add URL validation** in `ab-iframe.ts` to restrict iframe sources to localhost/trusted domains
-2. **Consider js-yaml** for production YAML parsing instead of custom implementation
+1. **Add input length validation before regex matching in ESLint rules** (addresses H1)
+   - Limit className string length before applying regex
 
-### Priority 2 (Consider Addressing)
+### Short-term (Within 1-2 Sprints)
 
-3. **Add regex complexity limits** or refactor potentially slow patterns in ESLint rules
-4. **Add file path validation** in history.ts if function signature changes to accept external input
-5. **Document security considerations** for the workbench browser integration
-6. **Add `--` to rm -rf commands** on computed paths
+2. **Conditionalize verbose logging** (addresses M1)
+   - Wrap detailed error messages in `NODE_ENV !== 'production'` checks
 
-### Priority 3 (Nice to Have)
+3. **Add subscription timeout protection** (addresses M2)
+   - Wrap remote config subscription callbacks with timeout
 
-7. **Bundle SQL.js locally** instead of CDN for offline/airgapped usage
-8. **Add environment variable validation** in shell scripts
-9. **Consider CSP headers** for workbench browser integration
-10. **Implement exponential backoff** for network requests
+### Long-term (Backlog)
+
+4. **Consider tighter timing modifier bounds** (addresses M3)
+5. **Add TTL to config cache** (addresses L1)
+6. **Refactor sync requires to static imports** (addresses L2)
 
 ---
 
-## Architecture Threat Model
+## 8. Full Security Checklist
 
-### Trust Boundaries
+### Critical (Must Pass)
+| Item | Status | Notes |
+|------|--------|-------|
+| No hardcoded secrets/API keys | PASS | Checked all files |
+| No command injection vulnerabilities | PASS | Shell scripts use safe practices |
+| No XSS vectors | PASS | No raw HTML injection |
+| No path traversal vulnerabilities | PASS | Proper path resolution used |
+| Proper input validation | PASS | Allowlists and validation throughout |
 
-```
-+------------------+     +------------------+     +------------------+
-|   User Machine   |---->|   GitHub Repo    |---->|  External APIs   |
-|   (High Trust)   |     | (Medium Trust)   |     |   (Low Trust)    |
-+------------------+     +------------------+     +------------------+
-        |                        |                        |
-        v                        v                        v
-   Local Scripts            Remote Code              Network Data
-   YAML Configs             Dependencies            License Server
-   sigil-mark/              npm packages           constructs API
-```
+### High Priority
+| Item | Status | Notes |
+|------|--------|-------|
+| Network requests have timeouts | PASS | 100ms timeout per NFR-3 |
+| Error handling doesn't leak sensitive info | WARN | File paths exposed in logs (M1) |
+| State properly cleaned up | PASS | useEffect cleanup in all layouts |
+| No memory leaks in hooks/contexts | PASS | Proper ref cleanup |
+| YAML parsing is safe | PASS | Uses yaml library with validation |
+
+### Medium Priority
+| Item | Status | Notes |
+|------|--------|-------|
+| Process layer truly agent-only | PASS | Uses Node.js fs (crashes in browser) |
+| Deprecation warnings are helpful | PASS | Clear migration path provided |
+| CSS variable generation is safe | PASS | No user input in CSS values |
+| Remote config has fallbacks | PASS | DEFAULT_VIBES fallback always available |
+
+---
+
+## 9. Threat Model Summary
+
+### Assets Protected
+1. **User financial data** - Protected by critical zone enforcement
+2. **Application state** - Protected by proper sync strategies
+3. **UX consistency** - Protected by kernel-locked configurations
+4. **Accessibility** - Protected by reduced motion settings
 
 ### Attack Vectors Considered
+| Vector | Status | Mitigation |
+|--------|--------|------------|
+| Malicious remote config | MITIGATED | Kernel values locked, timing modifier clamped |
+| Process layer in browser | MITIGATED | Crashes fast with Node.js fs |
+| ReDoS in ESLint | LOW RISK | Dev-time only, recommendation provided |
+| Config file tampering | MITIGATED | Validation and graceful degradation |
 
-| Vector | Risk Level | Mitigation Status |
-|--------|------------|-------------------|
-| Supply Chain (npm) | Medium | Partial - Dependabot enabled |
-| MITM on install | Medium | Partial - HTTPS used |
-| Malicious YAML | Low | Parsed but not validated |
-| Path Traversal | Low | Mostly mitigated |
-| Command Injection | Very Low | Good quoting practices |
-| XSS in HUD | Very Low | No user input rendered as HTML |
-| Prototype Pollution | Very Low | Standard React patterns |
-
----
-
-## Delta from v11.0.0 Audit
-
-| Aspect | v11.0.0 | v1.2.4 |
-|--------|---------|--------|
-| Overall Risk Level | MEDIUM | LOW |
-| Critical Issues | 0 | 0 |
-| High Issues | 2 (fixed) | 0 |
-| Medium Issues | 4 | 4 |
-| Low Issues | 5 | 5 |
-| Shell Script Safety | 100% | 100% |
-
-The decrease in risk level from MEDIUM to LOW reflects:
-1. All HIGH issues from previous audit have been resolved
-2. Shell script safety flags are universally applied
-3. Documentation improvements for security considerations
+### Trust Boundaries
+1. **Engineering (kernel)** -> Immutable at runtime
+2. **Marketing (vibes)** -> Constrained by validation
+3. **Remote config** -> Timeout + fallback protection
+4. **User input** -> Never reaches CSS/HTML generation directly
 
 ---
 
-## Files Audited
+## 10. Files Audited
 
-### Core TypeScript/JavaScript
-- `sigil-mark/core/history.ts`
-- `sigil-mark/core/zone-resolver.ts`
-- `sigil-mark/hooks/useServerTick.ts`
-- `sigil-mark/recipes/decisive/Button.tsx`
-- `sigil-mark/recipes/decisive/ConfirmFlow.tsx`
-- `sigil-mark/workbench/ab-toggle.ts`
-- `sigil-mark/workbench/ab-iframe.ts`
-- `sigil-mark/eslint-plugin/index.js`
-- `sigil-mark/eslint-plugin/rules/*.js`
+### Runtime Code
+- `sigil-mark/providers/sigil-provider.tsx`
+- `sigil-mark/providers/remote-soul.ts`
+- `sigil-mark/hooks/use-sigil-mutation.ts`
+- `sigil-mark/hooks/physics-resolver.ts`
+- `sigil-mark/core/use-critical-action.ts`
+- `sigil-mark/layouts/critical-zone.tsx`
+- `sigil-mark/layouts/glass-layout.tsx`
+- `sigil-mark/layouts/machinery-layout.tsx`
 
-### Shell Scripts
-- `.claude/scripts/sigil-workbench.sh`
-- `.claude/scripts/sigil-diff.sh`
-- `.claude/scripts/sigil-validate.sh`
-- `.claude/scripts/mount-sigil.sh`
-- All 49 shell scripts in `.claude/scripts/`
+### ESLint Plugin
+- `packages/eslint-plugin-sigil/src/config-loader.ts`
+- `packages/eslint-plugin-sigil/src/zone-resolver.ts`
+- `packages/eslint-plugin-sigil/src/rules/enforce-tokens.ts`
+- `packages/eslint-plugin-sigil/src/rules/zone-compliance.ts`
+- `packages/eslint-plugin-sigil/src/rules/input-physics.ts`
 
-### CI/CD Workflows
-- `.github/workflows/sigil.yml`
-- `.github/workflows/ci.yml`
-- `.github/workflows/secret-scanning.yml`
-- `.github/workflows/security-audit.yml`
-
-### Configuration
+### Configuration Files
 - `.sigilrc.yaml`
-- `src/*/.sigilrc.yaml`
-- `.trufflehog.yaml`
-- `.github/dependabot.yml`
+- `sigil-mark/remote-soul.yaml`
+- `sigil-mark/kernel/physics.yaml`
+- `sigil-mark/vocabulary/vocabulary.yaml`
 
-### Tests
-- `sigil-mark/__tests__/zone-resolver.test.ts`
-- `sigil-mark/__tests__/useServerTick.test.ts`
-- `sigil-mark/__tests__/recipes.test.tsx`
-- `sigil-mark/__tests__/integration.test.ts`
+### Process Layer
+- `sigil-mark/process/index.ts`
+- `sigil-mark/process/physics-reader.ts`
+- `sigil-mark/process/vocabulary-reader.ts`
+- `sigil-mark/process/constitution-reader.ts`
+
+### Scripts
+- `scripts/check-process-imports.sh`
+- `scripts/verify-version.sh`
 
 ---
 
-## Conclusion
+## 11. Delta from Previous Audit (v1.2.4)
 
-Sigil v1.2.4 demonstrates a mature security posture appropriate for a local development tool. The framework:
+| Aspect | v1.2.4 | v4.1.0 |
+|--------|--------|--------|
+| Overall Risk Level | LOW | LOW |
+| Critical Issues | 0 | 0 |
+| High Issues | 0 | 1 (new ReDoS pattern) |
+| Medium Issues | 4 | 3 |
+| Low Issues | 5 | 2 |
+| Positive Findings | 10 | 7 |
 
-1. **Does not handle sensitive user data** in production contexts
-2. **Operates entirely locally** without network exposure
-3. **Follows security best practices** for shell scripts and CI/CD
-4. **Has no critical vulnerabilities** requiring immediate action
+**New in v4.1:**
+- SigilProvider with full RemoteSoul integration
+- ESLint plugin (3 rules)
+- Process layer separation (agent-only)
+- Shell scripts for validation
 
-The medium-severity findings are contextually appropriate for a development tool and represent defense-in-depth improvements rather than exploitable vulnerabilities.
+**Improvements since v1.2.4:**
+- Better separation of kernel/vibe configuration
+- Explicit agent-only boundaries
+- Proper timeout handling for remote config
+- Comprehensive deprecation warnings
 
-**Recommendation:** Approve for use in development environments. Address Priority 1 recommendations before any production deployment.
+---
+
+## 12. Conclusion
+
+Sigil v4.1 "Living Guardrails" demonstrates mature security practices appropriate for a design system framework. The clear separation between kernel and vibe configurations, the proper isolation of agent-only code, and the defensive programming throughout the codebase provide a solid security foundation.
+
+**Approval Status**: APPROVED
+
+**Conditions**:
+1. Address H1 (ReDoS potential) before next release
+2. Consider M1-M3 recommendations for future sprints
 
 ---
 
@@ -542,16 +438,12 @@ The medium-severity findings are contextually appropriate for a development tool
 
 | Role | Status | Date |
 |------|--------|------|
-| Paranoid Cypherpunk Auditor | APPROVED | 2026-01-05 |
-| Recommended Fixes | 0 HIGH, 4 MEDIUM, 5 LOW | - |
+| Paranoid Cypherpunk Auditor | APPROVED | 2026-01-07 |
+| Recommended Fixes | 1 HIGH, 3 MEDIUM, 2 LOW | - |
 | Production Deployment | APPROVED with conditions | - |
-
-**Conditions for Production:**
-1. Run `npm audit` and address any critical/high findings
-2. Address Priority 1 recommendations (URL validation, YAML parser)
 
 ---
 
-*Report generated by Paranoid Cypherpunk Auditor (Claude Opus 4.5)*
+*Audit completed by Paranoid Cypherpunk Auditor (Claude Opus 4.5)*
 *Audit methodology: Static code analysis, pattern matching, threat modeling*
-*"Physics, not opinions. Constraints, not debates."*
+*"Trust nothing. Verify everything. Ship with confidence."*

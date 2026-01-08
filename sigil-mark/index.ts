@@ -1,5 +1,5 @@
 /**
- * Sigil v3.0 — Living Engine
+ * Sigil v4.1 - Living Guardrails
  *
  * Design physics framework for AI-assisted UI development.
  *
@@ -18,26 +18,35 @@
  * ┌─────────────────────────────────────────────────────────────────────────┐
  * │                         RUNTIME (Browser)                              │
  * │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐                  │
- * │  │     Core     │  │    Layout    │  │     Lens     │                  │
- * │  │  (Hooks,     │  │ (CriticalZone│  │ (DefaultLens │                  │
- * │  │   Physics)   │  │  Machinery)  │  │  StrictLens) │                  │
+ * │  │  Providers   │  │    Layout    │  │     Lens     │                  │
+ * │  │ (SigilProv., │  │ (CriticalZone│  │ (DefaultLens │                  │
+ * │  │  Hooks)      │  │  Machinery)  │  │  StrictLens) │                  │
  * │  └──────────────┘  └──────────────┘  └──────────────┘                  │
  * │                                                                         │
  * │               Pure React, no fs, no YAML parsing                        │
  * └─────────────────────────────────────────────────────────────────────────┘
  * ```
  *
+ * ## v4.1 Changes (Living Guardrails)
+ *
+ * - SigilProvider for runtime zone/persona context
+ * - useSigilMutation (future) replaces useCriticalAction
+ * - Persona overrides in zone configuration
+ * - eslint-plugin-sigil (future) for compile-time enforcement
+ *
  * ## Quick Start
  *
  * ```tsx
- * import {
- *   // Core
- *   useCriticalAction,
- *   // Layouts
- *   CriticalZone,
- *   // Lenses
- *   useLens,
- * } from 'sigil-mark';
+ * import { SigilProvider } from 'sigil-mark/providers';
+ * import { CriticalZone, useLens } from 'sigil-mark';
+ *
+ * function App() {
+ *   return (
+ *     <SigilProvider persona="newcomer">
+ *       <PaymentForm amount={500} />
+ *     </SigilProvider>
+ *   );
+ * }
  *
  * function PaymentForm({ amount }: { amount: number }) {
  *   const payment = useCriticalAction({
@@ -74,7 +83,7 @@
  * ```
  *
  * @module sigil-mark
- * @version 3.0.0
+ * @version 4.1.0
  */
 
 // =============================================================================
@@ -266,11 +275,38 @@ export {
 } from './core';
 
 // =============================================================================
+// v4.1 PROVIDERS
+// =============================================================================
+
+export {
+  // Main provider
+  SigilProvider,
+  // Hooks
+  useSigilZoneContext,
+  useSigilPersonaContext,
+  useSigilRemoteSoulContext,
+  // Aliases
+  useZoneContext as useSigilZone,
+  usePersonaContext,
+  useRemoteSoulContext,
+  // Types
+  type PersonaId as SigilPersonaId,
+  type ZoneId as SigilZoneId,
+  type MotionName,
+  type VibeConfig,
+  type PersonaTraits,
+  type SigilZoneContextValue,
+  type SigilPersonaContextValue,
+  type SigilRemoteSoulContextValue,
+  type SigilProviderProps,
+} from './providers';
+
+// =============================================================================
 // VERSION
 // =============================================================================
 
 /** Sigil version */
-export const VERSION = '3.0.0';
+export const VERSION = '4.1.0';
 
 /** Architecture codename */
-export const CODENAME = "Living Engine";
+export const CODENAME = "Living Guardrails";

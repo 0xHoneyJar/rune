@@ -1,8 +1,11 @@
 /**
- * Sigil v2.0 — Zone Context
+ * Sigil v4.1 - Zone Context
  *
  * All layouts provide zone context via React Context.
  * Layouts ARE Zones. Physics is DOM, not lint.
+ *
+ * v4.1 Note: This context is for backwards compatibility with existing layouts.
+ * New code should use the SigilProvider from sigil-mark/providers instead.
  *
  * @module layouts/context
  */

@@ -1,10 +1,15 @@
 /**
- * Sigil v2.0 — GlassLayout
+ * Sigil v4.1 - GlassLayout
  *
  * Layout primitive for exploratory/marketing UI. Provides zone context
  * AND structural physics (hover effects) in a single component.
  *
  * Layouts ARE Zones. Physics is DOM, not lint.
+ *
+ * v4.1 Changes:
+ * - Sets zone context via SigilProvider on mount
+ * - Clears zone context on unmount
+ * - Adds data-sigil-zone attribute for debugging
  *
  * @module layouts/GlassLayout
  */
@@ -14,12 +19,14 @@ import React, {
   useContext,
   useState,
   useMemo,
+  useEffect,
   type ReactNode,
   type ReactElement,
   type FC,
   type CSSProperties,
 } from 'react';
 import { ZoneContext, type ZoneContextValue } from './context';
+import { useSigilZoneContext } from '../providers/sigil-provider';
 
 // =============================================================================
 // TYPES
@@ -397,7 +404,18 @@ function GlassLayout({
 }: GlassLayoutProps): ReactElement {
   const [isHovered, setIsHovered] = useState(false);
 
-  // Create zone context value
+  // v4.1: Set zone context via SigilProvider
+  const sigilZone = useSigilZoneContext();
+
+  // v4.1: Set zone on mount, clear on unmount
+  useEffect(() => {
+    sigilZone.setZone('marketing');
+    return () => {
+      sigilZone.setZone(null);
+    };
+  }, [sigilZone]);
+
+  // Create zone context value (for backwards compatibility with existing layouts)
   const zoneContextValue: ZoneContextValue = useMemo(
     () => ({
       type: 'marketing',

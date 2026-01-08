@@ -1,24 +1,32 @@
+// AGENT-ONLY: Do not import in browser code
+// This module uses Node.js fs and will crash in browser environments.
+
 /**
- * Sigil v4.0 — Process Layer (AGENT-ONLY)
+ * Sigil v4.1 — Process Layer (AGENT-ONLY)
  *
  * @server-only
  *
+ * ===============================================================================
  * ⚠️  WARNING: This module is for AGENT USE ONLY during code generation.
  * ⚠️  DO NOT import this module in client-side (browser) code.
  * ⚠️  This module uses Node.js `fs` and will crash in browser environments.
+ * ===============================================================================
  *
  * The Process layer provides design context to the agent during code generation:
  * - Constitution: Protected capabilities that always work
- * - Personas: User archetypes with evidence-based characteristics and journey stages (v4.0)
- * - Zones: Context-specific UI with journey stages and trust states (v4.0)
+ * - Personas: User archetypes with evidence-based characteristics and journey stages
+ * - Zones: Context-specific UI with journey stages and trust states
  * - Consultation Chamber: Locked decisions with time-based expiry
  * - Vibe Checks: Micro-surveys and behavioral signals
+ * - Physics: Motion timing and easing configurations
+ * - Vocabulary: Term → feel mapping
  *
- * ## v4.0 Additions
+ * ## v4.1 Changes
  *
- * - Evidence-based personas: source, evidence[], journey_stages[], last_refined
- * - Journey-based zones: journey_stage, persona_likely, trust_state, evidence[]
- * - Zone reader: resolveZoneFromPath() for agent-time file → zone mapping
+ * - REMOVED: ProcessContextProvider, useProcessContext, useConstitution, useDecisions
+ * - These were React hooks that incorrectly used Node.js fs in browsers
+ * - For runtime context, use SigilProvider from sigil-mark/providers
+ * - Process layer now ONLY exports reader functions for agent/build-time use
  *
  * ## Agent Protocol
  *
@@ -27,19 +35,16 @@
  * 3. Runtime components receive configuration via props
  * 4. No YAML reading happens at runtime
  *
- * ## Migration from v3.0
+ * ## For Runtime Context
  *
- * ```typescript
- * // v3.0
- * import { readPersonas } from 'sigil-mark/process';
+ * Use SigilProvider from sigil-mark/providers instead:
  *
- * // v4.0 - same imports, new fields available
- * import { readPersonas, readZones } from 'sigil-mark/process';
- * const personas = await readPersonas();
- * console.log(personas.personas.power_user.evidence); // v4.0 field
+ * ```tsx
+ * import { SigilProvider, useSigilZoneContext } from 'sigil-mark/providers';
  *
- * const zones = await readZones();
- * console.log(zones.zones.critical.journey_stage); // v4.0 field
+ * <SigilProvider persona="newcomer">
+ *   <App />
+ * </SigilProvider>
  * ```
  *
  * @module process
@@ -53,7 +58,7 @@ export {
   // Reader
   readVocabulary,
   readVocabularySync,
-  // Helpers
+  // Helpers (core)
   getTerm,
   getAllTerms,
   getTermsForZone,
@@ -61,6 +66,13 @@ export {
   hasTerm,
   getEngineeringName,
   getTermsByEngineeringName,
+  // Helpers (v4.1)
+  getRecommendedPhysics,
+  findByEngineeringName,
+  getUnrefinedTerms,
+  getTermsRefinedAfter,
+  matchComponentToTerm,
+  getVocabularyStats,
   // Display
   formatTermSummary,
   formatVocabularySummary,
@@ -76,6 +88,46 @@ export {
   type Motion,
   type Tone,
 } from './vocabulary-reader';
+
+// =============================================================================
+// PHYSICS (v4.1)
+// =============================================================================
+
+export {
+  // Reader
+  readPhysics,
+  readPhysicsSync,
+  clearPhysicsCache,
+  // Helpers
+  getMotionConfig,
+  getMotionTiming,
+  getMotionEasing,
+  getMotionConstraints,
+  getSyncStrategyConfig,
+  getDefaultMotionForSync,
+  getAllMotionNames,
+  getAllSyncStrategyNames,
+  validateTimingForMotion,
+  // Display
+  formatMotionSummary,
+  formatPhysicsSummary,
+  // Constants
+  DEFAULT_PHYSICS_CONFIG,
+  DEFAULT_PHYSICS_PATH,
+  DEFAULT_MOTION_CONFIGS,
+  DEFAULT_CONSTRAINTS,
+  DEFAULT_SYNC_STRATEGIES,
+  // Types
+  type PhysicsConfig,
+  type MotionConfig,
+  type MotionName,
+  type SyncStrategyName,
+  type SyncStrategyConfig,
+  type DurationConfig,
+  type TimingConstraint,
+  type ZonePreferences,
+  type PhysicsDefaults,
+} from './physics-reader';
 
 // =============================================================================
 // CONSTITUTION
@@ -236,22 +288,18 @@ export {
 } from './zone-reader';
 
 // =============================================================================
-// PROCESS CONTEXT (React)
+// PROCESS CONTEXT (REMOVED in v4.1 — Types Only)
+// =============================================================================
+// IMPORTANT: Runtime hooks have been REMOVED in v4.1.
+// The Process layer is AGENT-ONLY and cannot run in browsers.
+// For runtime context, use SigilProvider from sigil-mark/providers.
+//
+// These exports now throw helpful errors directing users to the correct APIs.
+// Types are preserved for backwards compatibility during migration.
 // =============================================================================
 
 export {
-  // Provider
-  ProcessContextProvider,
-  ProcessContext,
-  // Main hook
-  useProcessContext,
-  // Specialized hooks
-  useConstitution,
-  useLensArray,
-  useDecisions,
-  useCurrentPersona,
-  useDecisionsForCurrentZone,
-  // Types
+  // Types only - preserved for migration
   type ProcessContextValue,
   type ProcessContextProviderProps,
 } from './process-context';

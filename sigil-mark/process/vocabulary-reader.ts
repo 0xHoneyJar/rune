@@ -1,10 +1,16 @@
 /**
- * Sigil v3.0 — Vocabulary Reader
+ * Sigil v4.1 - Vocabulary Reader
  *
- * Reads and manages the vocabulary layer (term → feel mapping).
+ * Reads and manages the vocabulary layer (term -> feel mapping).
  * Implements graceful degradation: never throws, always returns valid data.
  *
  * Philosophy: "Same backend, different feel. Term determines experience."
+ *
+ * v4.1 Additions:
+ * - last_refined field support
+ * - getRecommendedPhysics(termId) for physics integration
+ * - findByEngineeringName(name) for reverse lookup
+ * - getAllTerms() returns array for gap detection
  *
  * @module process/vocabulary-reader
  */
@@ -60,6 +66,8 @@ export interface VocabularyTerm {
   recommended: TermFeel;
   /** Zones where this term typically appears */
   zones: string[];
+  /** ISO date when term was last refined (null if never refined) */
+  last_refined: string | null;
 }
 
 /**
@@ -186,6 +194,12 @@ function normalizeTerm(obj: Record<string, unknown>, id: string): VocabularyTerm
   const recommended = obj.recommended as Record<string, unknown>;
   const zones = obj.zones as unknown[];
 
+  // Parse last_refined - can be null, undefined, or a date string
+  let last_refined: string | null = null;
+  if (typeof obj.last_refined === 'string' && obj.last_refined.length > 0) {
+    last_refined = obj.last_refined;
+  }
+
   return {
     id: id.toLowerCase(),
     engineering_name: obj.engineering_name as string,
@@ -197,6 +211,7 @@ function normalizeTerm(obj: Record<string, unknown>, id: string): VocabularyTerm
       tone: recommended.tone as Tone,
     },
     zones: zones.filter((z): z is string => typeof z === 'string'),
+    last_refined,
   };
 }
 
@@ -505,4 +520,151 @@ ${termList}
 
 Zone Coverage:
 ${zoneList}`;
+}
+
+// =============================================================================
+// v4.1 ADDITIONS
+// =============================================================================
+
+/**
+ * Gets the recommended physics for a term.
+ * Returns { material, motion, tone } for physics integration.
+ *
+ * @param vocabulary - The vocabulary to search
+ * @param termId - The term ID to find (case-insensitive)
+ * @returns Recommended physics, or null if term not found
+ *
+ * @example
+ * ```ts
+ * const vocabulary = await readVocabulary();
+ * const physics = getRecommendedPhysics(vocabulary, 'claim');
+ * // { material: 'decisive', motion: 'celebratory_then_deliberate', tone: 'exciting' }
+ * ```
+ */
+export function getRecommendedPhysics(
+  vocabulary: Vocabulary,
+  termId: string
+): TermFeel | null {
+  const term = getTerm(vocabulary, termId);
+  return term ? term.recommended : null;
+}
+
+/**
+ * Finds a term by its engineering name.
+ * Returns the first matching term (use getTermsByEngineeringName for all).
+ *
+ * @param vocabulary - The vocabulary to search
+ * @param engineeringName - The engineering name to find
+ * @returns The first term with this engineering name, or null if not found
+ *
+ * @example
+ * ```ts
+ * const vocabulary = await readVocabulary();
+ * const term = findByEngineeringName(vocabulary, 'reward_claim');
+ * // Returns the 'claim' term
+ * ```
+ */
+export function findByEngineeringName(
+  vocabulary: Vocabulary,
+  engineeringName: string
+): VocabularyTerm | null {
+  const terms = getTermsByEngineeringName(vocabulary, engineeringName);
+  return terms.length > 0 ? terms[0] : null;
+}
+
+/**
+ * Gets all terms that have never been refined.
+ * Useful for identifying terms that may need review.
+ *
+ * @param vocabulary - The vocabulary to search
+ * @returns Array of terms with last_refined === null
+ */
+export function getUnrefinedTerms(vocabulary: Vocabulary): VocabularyTerm[] {
+  return getAllTerms(vocabulary).filter((term) => term.last_refined === null);
+}
+
+/**
+ * Gets terms that were refined after a specific date.
+ *
+ * @param vocabulary - The vocabulary to search
+ * @param afterDate - ISO date string (e.g., '2026-01-01')
+ * @returns Array of terms refined after the date
+ */
+export function getTermsRefinedAfter(
+  vocabulary: Vocabulary,
+  afterDate: string
+): VocabularyTerm[] {
+  const cutoff = new Date(afterDate);
+  return getAllTerms(vocabulary).filter((term) => {
+    if (!term.last_refined) return false;
+    return new Date(term.last_refined) > cutoff;
+  });
+}
+
+/**
+ * Checks if a component name matches any vocabulary term.
+ * Useful for /craft vocabulary integration.
+ *
+ * @param vocabulary - The vocabulary to search
+ * @param componentName - Component name to check (e.g., 'ClaimButton', 'DepositForm')
+ * @returns Matching term if found, null otherwise
+ *
+ * @example
+ * ```ts
+ * const vocabulary = await readVocabulary();
+ * const term = matchComponentToTerm(vocabulary, 'ClaimButton');
+ * // Returns 'claim' term because 'Claim' matches
+ * ```
+ */
+export function matchComponentToTerm(
+  vocabulary: Vocabulary,
+  componentName: string
+): VocabularyTerm | null {
+  const lowerName = componentName.toLowerCase();
+
+  // Check each term to see if the component name contains it
+  for (const term of getAllTerms(vocabulary)) {
+    // Check term ID
+    if (lowerName.includes(term.id)) {
+      return term;
+    }
+    // Check user_facing (lowercase)
+    if (lowerName.includes(term.user_facing.toLowerCase())) {
+      return term;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Gets vocabulary statistics for gap detection.
+ *
+ * @param vocabulary - The vocabulary to analyze
+ * @returns Statistics object
+ */
+export function getVocabularyStats(vocabulary: Vocabulary): {
+  totalTerms: number;
+  refinedTerms: number;
+  unrefinedTerms: number;
+  zonesCovered: string[];
+  termsByZone: Record<string, number>;
+} {
+  const terms = getAllTerms(vocabulary);
+  const refined = terms.filter((t) => t.last_refined !== null);
+
+  const zoneCount: Record<string, number> = {};
+  for (const term of terms) {
+    for (const zone of term.zones) {
+      zoneCount[zone] = (zoneCount[zone] || 0) + 1;
+    }
+  }
+
+  return {
+    totalTerms: terms.length,
+    refinedTerms: refined.length,
+    unrefinedTerms: terms.length - refined.length,
+    zonesCovered: Object.keys(zoneCount),
+    termsByZone: zoneCount,
+  };
 }

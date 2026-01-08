@@ -1,10 +1,15 @@
 /**
- * Sigil v2.0 — MachineryLayout
+ * Sigil v4.1 - MachineryLayout
  *
  * Layout primitive for keyboard-driven admin UI. Provides zone context
  * AND structural physics (keyboard navigation) in a single component.
  *
  * Layouts ARE Zones. Physics is DOM, not lint.
+ *
+ * v4.1 Changes:
+ * - Sets zone context via SigilProvider on mount
+ * - Clears zone context on unmount
+ * - Adds data-sigil-zone attribute for debugging
  *
  * @module layouts/MachineryLayout
  */
@@ -24,6 +29,7 @@ import React, {
   type ChangeEvent,
 } from 'react';
 import { ZoneContext, type ZoneContextValue } from './context';
+import { useSigilZoneContext } from '../providers/sigil-provider';
 
 // =============================================================================
 // TYPES
@@ -452,7 +458,18 @@ function MachineryLayout({
   const [itemIds, setItemIds] = useState<string[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Create zone context value
+  // v4.1: Set zone context via SigilProvider
+  const sigilZone = useSigilZoneContext();
+
+  // v4.1: Set zone on mount, clear on unmount
+  useEffect(() => {
+    sigilZone.setZone('admin');
+    return () => {
+      sigilZone.setZone(null);
+    };
+  }, [sigilZone]);
+
+  // Create zone context value (for backwards compatibility with existing layouts)
   const zoneContextValue: ZoneContextValue = useMemo(
     () => ({
       type: 'admin',

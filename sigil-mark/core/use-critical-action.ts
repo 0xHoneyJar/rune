@@ -1,13 +1,89 @@
 /**
- * Sigil v2.0 — useCriticalAction Hook
+ * Sigil v4.1 - useCriticalAction Hook (DEPRECATED)
+ *
+ * DEPRECATED: Use useSigilMutation from sigil-mark/hooks instead.
+ * This hook is maintained for backwards compatibility.
  *
  * The primary physics engine hook. Emits state streams that lenses consume.
  * Supports three time authorities: optimistic, server-tick, hybrid.
  *
+ * @deprecated Use useSigilMutation instead for zone+persona-aware mutations.
  * @module core/useCriticalAction
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react';
+
+// =============================================================================
+// DEPRECATION WARNING
+// =============================================================================
+
+/**
+ * Flag to track if deprecation warning has been logged this session.
+ * @internal
+ */
+let deprecationWarningLogged = false;
+
+/**
+ * Log deprecation warning once per session.
+ * @internal
+ */
+function logDeprecationWarning(): void {
+  if (deprecationWarningLogged) {
+    return;
+  }
+
+  deprecationWarningLogged = true;
+
+  console.warn(
+    `[Sigil v4.1] DEPRECATION WARNING: useCriticalAction is deprecated.
+
+================================================================================
+Use useSigilMutation from 'sigil-mark/hooks' instead.
+useSigilMutation auto-resolves physics from zone+persona context.
+================================================================================
+
+MIGRATION EXAMPLE:
+
+  // BEFORE (v3.0 - manual time authority)
+  import { useCriticalAction } from 'sigil-mark/core';
+
+  const payment = useCriticalAction({
+    mutation: () => api.pay(amount),
+    timeAuthority: 'server-tick',  // Manual configuration
+  });
+  payment.commit();
+
+  // AFTER (v4.1 - auto-resolved physics)
+  import { useSigilMutation } from 'sigil-mark/hooks';
+
+  const { execute, isPending, disabled, style, physics } = useSigilMutation({
+    mutation: () => api.pay(amount),
+    // Physics auto-resolved from zone context:
+    // - In CriticalZone: sync='pessimistic', timing=800ms
+    // - In MachineryLayout: sync='optimistic', timing=150ms
+    // - In GlassLayout: sync='optimistic', timing=300ms
+  });
+
+  return (
+    <button
+      onClick={() => execute()}
+      disabled={disabled}
+      style={style}
+    >
+      {isPending ? 'Processing...' : 'Pay'}
+    </button>
+  );
+
+BENEFITS OF useSigilMutation:
+  - No manual timeAuthority configuration
+  - Persona-aware physics overrides (newcomer vs power_user)
+  - Remote vibe support (timing_modifier from LaunchDarkly)
+  - CSS custom properties for animations
+  - Consistent physics across zones
+
+See MIGRATION-v4.1.md for full migration guide.`
+  );
+}
 import type {
   CriticalActionOptions,
   CriticalActionState,
@@ -72,6 +148,9 @@ const globalCache = createCache();
 export function useCriticalAction<TData = unknown, TVariables = void>(
   options: CriticalActionOptions<TData, TVariables>
 ): CriticalAction<TData, TVariables> {
+  // Log deprecation warning once per session
+  logDeprecationWarning();
+
   const {
     mutation,
     timeAuthority,

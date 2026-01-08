@@ -6,37 +6,41 @@
 
 Sigil is a design context framework that helps AI agents make consistent design decisions by:
 
-1. **Providing zone context** — Knowing if you're in "critical" vs "marketing" context
-2. **Surfacing design rules** — Colors, typography, spacing, motion patterns
-3. **Capturing product feel** — Moodboard with references and anti-patterns
-4. **Human accountability** — All validation is human approval, not automation
+1. **Providing zone context** - Knowing if you're in "critical" vs "marketing" context
+2. **Surfacing design rules** - Colors, typography, spacing, motion patterns
+3. **Capturing product feel** - Moodboard with references and anti-patterns
+4. **Human accountability** - All validation is human approval, not automation
 
 ---
 
-## v4.0 "Sharp Tools" — 7 Discrete Tools
+## v4.1 "Living Guardrails" - Enforcement Layer
 
-v4.0 consolidates 37 commands into 7 discrete tools with progressive disclosure:
+v4.1 adds enforcement capabilities to the v4.0 context documentation system:
 
 ```
-CAPTURE              CREATE               OBSERVE
-───────              ──────               ───────
-/envision            /craft               /observe
-/codify
-
-REFINE               DECIDE               TEND
-──────               ──────               ────
-/refine              /consult             /garden
+                         AGENT TIME
+  zone-reader -> persona-reader -> vocab-reader -> physics-reader
+                           |
+             +-------------+-------------+
+             |                           |
+             v                           v
+      COMPILE TIME                  RUNTIME
+  eslint-plugin-sigil        SigilProvider + useSigilMutation
+  - enforce-tokens           - Auto-resolved physics
+  - zone-compliance          - Persona overrides
+  - input-physics            - Remote soul vibes
 ```
 
-### Progressive Disclosure (L1/L2/L3)
+### Key v4.1 Features
 
-All tools support three grip levels:
-
-| Level | Usage | Example |
-|-------|-------|---------|
-| L1 | Default behavior | `/craft "button"` |
-| L2 | Targeted options | `/craft "button" --zone critical` |
-| L3 | Full control | `/craft "button" --zone critical --persona depositor --no-gaps` |
+| Feature | Description |
+|---------|-------------|
+| SigilProvider | Runtime context for zone/persona state |
+| useSigilMutation | Hook that auto-resolves physics from context |
+| eslint-plugin-sigil | Compile-time enforcement (3 rules) |
+| Vocabulary Layer | Term -> feel mapping with 10 core terms |
+| Physics Timing | Motion name -> ms mapping |
+| Remote Soul | Marketing-controlled vibes via LaunchDarkly |
 
 ---
 
@@ -61,27 +65,27 @@ All tools support three grip levels:
 | `sigil-mark/moodboard.md` | Product feel, references, anti-patterns |
 | `sigil-mark/rules.md` | Design rules by category |
 | `sigil-mark/personas/personas.yaml` | User archetypes with evidence |
-| `sigil-mark/evidence/` | Analytics, interviews, observations |
-| `sigil-mark/.sigil-observations/` | Screenshots and feedback |
-| `sigil-mark/consultation-chamber/decisions/` | Locked decisions |
-| `.sigilrc.yaml` | Zone definitions with journey context |
+| `sigil-mark/vocabulary/vocabulary.yaml` | Term -> feel mapping |
+| `sigil-mark/kernel/physics.yaml` | Motion timing definitions |
+| `sigil-mark/remote-soul.yaml` | Kernel/vibe boundary |
+| `.sigilrc.yaml` | Zone definitions with physics & persona overrides |
 | `.sigil-version.json` | Version tracking |
 
 ---
 
-## Agent Protocol (v4.0)
+## Agent Protocol (v4.1)
 
 ### Before Generating UI Code
 
-1. **Check for Sigil setup**: Look for `sigil-mark/` (auto-created by first /envision or /codify)
+1. **Check for Sigil setup**: Look for `sigil-mark/`
 
 2. **Load design context** (graceful fallbacks):
    ```
-   sigil-mark/moodboard.md     → Product feel
-   sigil-mark/rules.md         → Design rules
-   sigil-mark/personas/personas.yaml → User archetypes
-   sigil-mark/vocabulary.yaml  → Term → feel mapping
-   sigil-mark/philosophy.yaml  → Decision hierarchy
+   sigil-mark/moodboard.md         -> Product feel
+   sigil-mark/rules.md             -> Design rules
+   sigil-mark/personas/personas.yaml -> User archetypes
+   sigil-mark/vocabulary/vocabulary.yaml -> Term -> feel mapping
+   sigil-mark/kernel/physics.yaml  -> Motion timing
    ```
 
 3. **Determine zone**: Match current file path to zones in `.sigilrc.yaml`
@@ -89,12 +93,17 @@ All tools support three grip levels:
    zones:
      critical:
        paths: ["src/features/claim/**"]
-       journey_stage: active
-       persona_likely: depositor
-       trust_state: critical
+       default_physics:
+         sync: pessimistic
+         timing: deliberate
+         motion: deliberate
+       persona_overrides:
+         newcomer:
+           timing: reassuring
+           show_help: true
    ```
 
-4. **Check active decisions**: Load from `consultation-chamber/decisions/`
+4. **Check vocabulary**: If component name matches a term, use term's recommended physics
 
 5. **Generate code with context**
 
@@ -104,8 +113,8 @@ All tools support three grip levels:
 1. Get current file path
 2. Read .sigilrc.yaml zones section
 3. For each zone, check if path matches any glob pattern
-4. Return matching zone with journey context
-5. Resolve persona from zone.persona_likely
+4. Return matching zone with default_physics
+5. Apply persona_overrides if persona context available
 ```
 
 ### Gap Detection
@@ -113,219 +122,238 @@ All tools support three grip levels:
 At the END of /craft output, surface missing context:
 
 ```
-═══════════════════════════════════════════════════════════
-                     CONTEXT GAPS
-═══════════════════════════════════════════════════════════
+CONTEXT GAPS
 
-⚠️ 2 gaps detected that may affect this guidance:
+2 gaps detected that may affect this guidance:
 
 1. UNDEFINED PERSONA: "whale"
    You mentioned "whale users" but no whale persona exists.
-   → /refine --persona whale "high-value depositor"
+   -> /refine --persona whale "high-value depositor"
 
-2. MISSING EVIDENCE: depositor persona
-   No evidence linked to depositor persona.
-   → /refine --persona depositor --evidence analytics.yaml
+2. MISSING VOCABULARY: "claim"
+   No vocabulary term defined for "claim".
+   -> /refine --vocab claim
 ```
 
 ---
 
-## Evidence-Based Context (v4.0)
+## useSigilMutation Hook
 
-### Personas with Evidence
+The primary hook for mutations in v4.1. Auto-resolves physics from zone+persona context.
 
-```yaml
-# sigil-mark/personas/personas.yaml
-personas:
-  - name: depositor
-    trust_level: high
-    default_lens: power_user
-    source: analytics           # NEW: where data came from
-    evidence:                   # NEW: supporting evidence
-      - id: EV-2026-001
-        summary: "Mixpanel data shows 80% completion"
-    journey_stages:             # NEW: which zones they visit
-      - discovery
-      - onboarding
-      - active
-    characteristics:
-      patience: low
-      technical_skill: high
-    preferences:
-      motion: deliberate
-      density: high
-    last_refined: "2026-01-07"  # NEW: update tracking
-```
+### Basic Usage
 
-### Zones with Journey Context
+```tsx
+import { useSigilMutation } from 'sigil-mark/hooks';
 
-```yaml
-# .sigilrc.yaml
-zones:
-  critical:
-    paths:
-      - "src/features/claim/**"
-      - "src/features/deposit/**"
-    journey_stage: active       # NEW: where in user journey
-    persona_likely: depositor   # NEW: expected user
-    trust_state: critical       # NEW: building/established/critical
-    motion: deliberate
-    evidence:                   # NEW: supporting evidence
-      - id: EV-2026-002
-```
+function PaymentButton() {
+  const { execute, isPending, disabled, style, physics } = useSigilMutation({
+    mutation: (amount) => api.pay(amount),
+    onSuccess: () => toast.success('Payment complete!'),
+  });
 
-### Evidence Files
-
-```yaml
-# sigil-mark/evidence/analytics-2026-01.yaml
-source_type: analytics
-source_name: Mixpanel
-date_range:
-  start: "2026-01-01"
-  end: "2026-01-31"
-metrics:
-  - name: deposit_completion
-    value: 0.82
-insights:
-  - "82% of users complete deposits on first try"
-  - "Average time to first deposit: 4.2 minutes"
-```
-
----
-
-## /observe Feedback Loop (v4.0)
-
-Visual feedback via Claude in Chrome MCP:
-
-```
-/observe                         # Capture current screen
-/observe --component ClaimButton # Focus on component
-```
-
-### Workflow
-
-```
-/craft "button" → generates code
-           ↓
-/observe → captures screenshot, compares to rules
-           ↓
-User answers: "Yes — update rules" or "No — fix component"
-           ↓
-/refine → applies feedback to context
-```
-
-### MCP Requirement
-
-- Requires Claude in Chrome extension for automatic screenshots
-- Falls back to manual screenshot upload when MCP unavailable
-
----
-
-## Decision Recording (v4.0)
-
-### Consolidated /consult
-
-```bash
-# L1: Quick decision (30d lock)
-/consult "button border radius is 8px"
-
-# L2: Scoped decision
-/consult "use deliberate motion" --scope critical --lock 90d
-
-# L3: Protected capability
-/consult "withdraw must always work" --protect --evidence OBS-2026-001
-
-# Unlock existing decision
-/consult DEC-2026-001 --unlock "new user research"
-```
-
-### Decision File
-
-```yaml
-# consultation-chamber/decisions/DEC-2026-001.yaml
-id: "DEC-2026-001"
-topic: "Button border radius"
-decision: "All buttons use 8px border radius"
-scope: execution
-protected: false
-locked_at: "2026-01-07T14:30:00Z"
-expires_at: "2026-02-06T14:30:00Z"
-status: locked
-evidence:
-  - type: observation
-    id: OBS-2026-0107-001
-context:
-  zone: critical
-  components: ["*Button*"]
-```
-
----
-
-## Health Monitoring (v4.0)
-
-### /garden Output
-
-```
-╔══════════════════════════════════════════════════════════╗
-║                    SIGIL HEALTH: 78%                     ║
-╠══════════════════════════════════════════════════════════╣
-║                                                          ║
-║  TOP ISSUES:                                             ║
-║  ⚠️ 2 personas lack evidence                             ║
-║  ⚠️ 3 feedback sessions unapplied                        ║
-║  ℹ️ 2 zones missing journey context                      ║
-║                                                          ║
-║  Run /garden --personas for details                      ║
-╚══════════════════════════════════════════════════════════╝
-```
-
-### CI Mode
-
-```bash
-/garden --validate  # Returns exit code 0/1
-```
-
----
-
-## Build-Time Export (v4.0)
-
-Export design context for runtime use:
-
-```bash
-sigil export-config                    # Default JSON
-sigil export-config --minify           # Production
-sigil export-config --typescript       # With types
-sigil export-config --watch            # Development
-```
-
-### Output
-
-```json
-{
-  "version": "4.0.0",
-  "personas": [...],  // Runtime fields only (no evidence)
-  "zones": [...],     // Runtime fields only (no paths)
-  "vocabulary": {...},
-  "philosophy": {...}
+  return (
+    <button
+      onClick={() => execute(100)}
+      disabled={disabled}
+      style={style}
+    >
+      {isPending ? 'Processing...' : 'Pay $100'}
+    </button>
+  );
 }
 ```
 
+### Physics Auto-Resolution
+
+| Zone | Sync | Timing | Disabled While Pending |
+|------|------|--------|----------------------|
+| critical | pessimistic | 800ms (deliberate) | true |
+| admin | optimistic | 150ms (snappy) | false |
+| marketing | optimistic | 300ms (warm) | false |
+| default | optimistic | 300ms (warm) | false |
+
+### Persona Overrides
+
+In critical zone:
+
+| Persona | Timing | Motion |
+|---------|--------|--------|
+| newcomer | 1200ms (reassuring) | reassuring |
+| power_user | 800ms (deliberate) | deliberate |
+| accessibility | 0ms (reduced) | reduced |
+
+### API Reference
+
+```tsx
+const {
+  // State
+  status,        // 'idle' | 'pending' | 'confirmed' | 'failed'
+  data,          // TData | null
+  error,         // Error | null
+
+  // Resolved physics
+  physics,       // { sync, timing, easing, disabled_while_pending, vibes }
+
+  // Computed UI state
+  disabled,      // boolean (pessimistic sync + pending)
+  isPending,     // boolean
+
+  // CSS variables
+  style,         // { '--sigil-duration', '--sigil-easing' }
+
+  // Actions
+  execute,       // (variables) => Promise<void>
+  reset,         // () => void
+} = useSigilMutation(config);
+```
+
 ---
 
-## Deprecation Warnings
+## ESLint Plugin
 
-When you use deprecated commands, you'll see warnings:
+Three rules for compile-time enforcement:
 
-| Deprecated | Replacement | Message |
-|------------|-------------|---------|
-| /setup | (automatic) | "Setup is automatic. First /envision or /codify initializes." |
-| /inherit | /envision | "/envision auto-detects existing codebase" |
-| /approve | /consult | "Use /consult to record decisions" |
-| /canonize | /consult --protect | "Use /consult --protect" |
-| /unlock | /consult --unlock | "Use /consult --unlock" |
-| /validate | /garden --validate | "Use /garden --validate" |
+### enforce-tokens (error)
 
-See `MIGRATION-v4.md` for full migration guide.
+Prevents arbitrary Tailwind values:
+
+```jsx
+// Error: Use token value instead of arbitrary value: [13px]
+<div className="gap-[13px]">
+
+// OK
+<div className="gap-2">
+```
+
+### zone-compliance (warn)
+
+Warns when timing doesn't match zone's motion type:
+
+```jsx
+// In critical zone (motion: deliberate):
+// Warning: Duration 200ms is too fast for critical zone (min: 500ms)
+<motion.div animate={{ transition: { duration: 0.2 } }}>
+
+// OK
+<motion.div animate={{ transition: { duration: 0.8 } }}>
+```
+
+### input-physics (warn)
+
+Warns about missing keyboard navigation in admin zones:
+
+```jsx
+// In admin zone:
+// Warning: Interactive element should have onKeyDown and tabIndex
+<div onClick={handleClick}>
+
+// OK
+<div onClick={handleClick} onKeyDown={handleKey} tabIndex={0}>
+```
+
+### Configuration
+
+```js
+// eslint.config.js
+import sigil from 'eslint-plugin-sigil';
+
+export default [
+  sigil.configs.recommended,
+];
+```
+
+---
+
+## Vocabulary Layer
+
+Define product terms for consistent language:
+
+```yaml
+# sigil-mark/vocabulary/vocabulary.yaml
+terms:
+  deposit:
+    engineering_name: deposit
+    user_facing: Deposit
+    mental_model: "Adding funds to grow"
+    recommended:
+      material: glass
+      motion: deliberate
+      tone: confident
+    zones:
+      - critical
+      - onboarding
+```
+
+### In /craft
+
+When generating components, /craft checks vocabulary:
+1. If component name matches a term, uses term's recommended physics
+2. Surfaces undefined terms as gaps at end of output
+
+---
+
+## Physics Timing Reference
+
+| Motion | Duration | Easing | Use Case |
+|--------|----------|--------|----------|
+| instant | 0ms | linear | Power user actions |
+| snappy | 150ms | ease-out | Admin interfaces |
+| warm | 300ms | ease-in-out | Marketing, default |
+| deliberate | 800ms | ease-out | Critical zone base |
+| reassuring | 1200ms | ease-in-out | Newcomer in critical |
+| celebratory | 1200ms | bouncy | Success moments |
+| reduced | 0ms | linear | Accessibility |
+
+---
+
+## Remote Soul (Optional)
+
+Marketing-controlled vibes via LaunchDarkly:
+
+### Kernel (Engineering-Locked)
+
+- physics (all motion timings)
+- sync (pessimistic/optimistic/hybrid)
+- protected_zones (critical zone config)
+- persona_overrides.accessibility
+
+### Vibe (Marketing-Controlled)
+
+- seasonal_theme
+- color_temp
+- hero_energy
+- warmth_level
+- celebration_intensity
+- timing_modifier (0.5-2.0 multiplier)
+
+### Usage
+
+```tsx
+<SigilProvider
+  persona={persona}
+  remoteConfigProvider="launchdarkly"
+  remoteConfigKey="sigil-vibes"
+>
+  <App />
+</SigilProvider>
+```
+
+See `docs/MARKETING-VIBES.md` for full setup.
+
+---
+
+## Process Layer (Agent-Only)
+
+**IMPORTANT**: The Process layer (`sigil-mark/process`) is AGENT-ONLY.
+
+- Uses Node.js `fs` to read YAML files
+- Cannot run in browsers
+- Runtime hooks were REMOVED in v4.1
+
+For runtime context, use SigilProvider from `sigil-mark/providers`.
+
+See `MIGRATION-v4.1.md` for migration guide.
 
 ---
 
@@ -354,6 +382,20 @@ The agent:
 
 ---
 
+## Deprecation Warnings
+
+| Deprecated | Replacement | Message |
+|------------|-------------|---------|
+| useCriticalAction | useSigilMutation | "Use useSigilMutation for auto-resolved physics" |
+| ProcessContextProvider | SigilProvider | "Process layer is agent-only" |
+| useProcessContext | useSigilZoneContext | "Use SigilProvider hooks" |
+| /setup | (automatic) | "Setup is automatic" |
+| /inherit | /envision | "/envision auto-detects existing codebase" |
+
+See `MIGRATION-v4.1.md` for full migration guide.
+
+---
+
 ## Coexistence with Loa
 
 Sigil and Loa can coexist. They have separate:
@@ -361,9 +403,9 @@ Sigil and Loa can coexist. They have separate:
 - Config files (.sigilrc.yaml vs .loa.config.yaml)
 - Skills (design-focused vs workflow-focused)
 
-No automatic cross-loading — developer decides when to reference design context.
+No automatic cross-loading - developer decides when to reference design context.
 
 ---
 
-*Sigil v4.0.0 "Sharp Tools"*
+*Sigil v4.1.0 "Living Guardrails"*
 *Last Updated: 2026-01-07*

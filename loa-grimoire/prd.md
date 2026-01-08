@@ -1,57 +1,78 @@
-# Sigil v3.0 PRD — "Living Engine"
+# Sigil v4.1 PRD — "Living Guardrails"
 
-**Version:** 3.0.0
-**Codename:** Living Engine
+**Version:** 4.1.0
+**Codename:** Living Guardrails
 **Status:** Draft
-**Date:** 2026-01-06
+**Date:** 2026-01-07
 
-> *"Sweat the art. We handle the mechanics. Return to flow."*
+> *"Make the right path easy. Make the wrong path visible. Respond to the living market."*
 
 ---
 
 ## Executive Summary
 
-Sigil v3.0 evolves from a "Physics Engine for a closed system" to a "Product Engine for a living market." This release addresses fatal runtime bugs, naming confusion, and fundamental product strategy gaps identified in the v2.6 review.
+Sigil v4.0 "Sharp Tools" successfully consolidated 37 commands into 7 discrete tools with progressive disclosure. However, two independent reviews reveal the implementation is a **hollow shell**: rich context documentation without runtime enforcement, and a static physics engine that ignores user fluidity.
 
-**Core Insight:** Users are fluid, markets are living, and soul must resonate — not just enforce.
+**v4.1 "Living Guardrails"** addresses both the technical and product strategy gaps:
+
+1. **Add Teeth** — Connect readers to enforcement (ESLint + runtime hooks)
+2. **Add Fluidity** — Context-aware physics based on (Zone + Persona), not just Path
+3. **Add Vocabulary** — Map product terms to physics feels
+4. **Add Remote Soul** — Enable marketing vibe testing without code commits
 
 ### Key Changes
 
-| Area | v2.6 (Current) | v3.0 (Target) |
+| Area | v4.0 (Current) | v4.1 (Target) |
 |------|----------------|---------------|
-| Process Layer | Runtime (crashes in browser) | Agent-only (generation time) |
-| Personas | Called "Lenses" (confusing) | Renamed, distinct from UI Lenses |
-| Zone Detection | Path-based claims, layout-based code | Layout-based only |
-| User Experience | One persona per zone | Persona fluidity per zone |
-| Vocabulary | None | Rosetta Stone (term → feel mapping) |
-| Philosophy | Implicit | Explicit Intent Layer |
-| Vibe Testing | Git commits only | Remote config for marketing |
+| Enforcement | Readers without consumers | ESLint + `useSigilMutation` |
+| Zone Resolution | Path-based only | Path + Persona + Intent |
+| Soul Configuration | Git commits only | Remote config for vibe layer |
+| Vocabulary | None | Term → Physics mapping |
+| Physics Binding | Manual (`timeAuthority` param) | Auto-resolved from context |
+| Version Coherence | Multiple versions in codebase | Single v4.1 throughout |
 
 ---
 
 ## Problem Statement
 
-### What We Built (v2.6)
-A sophisticated design physics engine with clean Core/Layout/Lens separation, Constitution-based governance, and time-locked decisions.
+### What We Built (v4.0)
+
+A comprehensive context documentation system with:
+- 7 discrete tools (envision, codify, craft, observe, refine, consult, garden)
+- Progressive disclosure (L1/L2/L3)
+- Evidence-based personas and zones
+- Visual feedback loop via MCP
+- 10 YAML readers for agent context
 
 ### What's Broken
 
-1. **Fatal Runtime Bug:** Process layer uses Node.js `fs` but is marked `'use client'` — crashes in browser
-2. **Naming Collision:** "Lens" means both UI components AND user personas
-3. **Philosophy Drift:** Skills contradict agreed principles
-4. **Static World Model:** Same zone = same experience, regardless of user type
-5. **No Vocabulary:** "Pot" and "Vault" have same physics but need different feels
-6. **Locked Soul:** Marketing can't test vibes without engineering PRs
+#### Technical Review Findings (Grade: C-)
+
+1. **Hollow Shell** — Readers exist but nothing enforces behavior at runtime or compile time
+2. **Version Schizophrenia** — CLAUDE.md claims v4.0, .sigilrc.yaml claims v3.0, hooks claim v2.0
+3. **Layout Primitives Persist** — `CriticalZone` wrapper requires proprietary DSL learning
+4. **No Transaction Objects** — `useCriticalAction` requires manual `timeAuthority` parameter
+5. **No Token Enforcement** — ESLint plugin is a shell with no rules
+6. **Process Layer Confusion** — Deprecated code still ships and works
+7. **Physics Without Timing** — `motion: deliberate` has no concrete ms mapping
+
+#### Product Strategy Review Findings (Grade: C)
+
+1. **Path is Destiny Fallacy** — A Henlocker (novice) and Chef (power user) in `/trade` get identical physics
+2. **Hardcoded Soul Trap** — Marketing can't test "Summer Gold" vibe without PR
+3. **Democracy ≠ Research** — Polling favors retention over growth
+4. **Physics Without Language** — "Pot" and "Vault" need different feels despite same backend
 
 ### Success Criteria
 
-| Metric | Target |
-|--------|--------|
-| Runtime crashes from Process layer | 0 |
-| Naming collisions in documentation | 0 |
-| Skill files matching philosophy | 100% |
-| Vocabulary coverage for core terms | 100% |
-| Agent can generate correct code | Yes |
+| Metric | v4.0 | v4.1 Target |
+|--------|------|-------------|
+| ESLint rules enforcing tokens | 0 | 3 (enforce-tokens, zone-compliance, input-physics) |
+| Physics auto-resolved from context | No | Yes |
+| Persona-aware zone physics | No | Yes |
+| Remote vibe configuration | No | Yes |
+| Vocabulary coverage for core terms | 0% | 10 terms |
+| Version coherence | 4 different versions | 1 (v4.1) |
 
 ---
 
@@ -59,72 +80,205 @@ A sophisticated design physics engine with clean Core/Layout/Lens separation, Co
 
 ### Primary: The Craftsman (Agent User)
 
-The developer using Claude Code with Sigil installed. They want to:
-- Generate UI that feels right without manual design decisions
-- Get clear guidance on zones, materials, and motions
-- Focus on product logic, not design system mechanics
+The developer using Claude Code with Sigil installed.
 
-**Pain Points (v2.6):**
-- Agent tries to use missing components (InspectorOverlay, VibeSurvey)
-- Confusing "Lens" terminology
-- Skills say "decide fast" but philosophy says "sweat the art"
+**Pain Points (v4.0):**
+- Must manually pass `timeAuthority` to hooks (can get wrong)
+- Zone readers don't connect to runtime behavior
+- No lint errors for wrong physics in zone
 
-### Secondary: The Newcomer (End User - Henlocker)
+**Desired State (v4.1):**
+- `useSigilMutation` auto-resolves physics from zone
+- ESLint catches `duration-200` in critical zone
+- Wrong path is visible, not invisible
 
-A novice user visiting high-stakes pages. They need:
-- Reassurance and warmth
-- Guidance through complex flows
-- Clear error messages and recovery paths
+### Secondary: The Henlocker (Novice End User)
 
-**Pain Point (v2.6):** Gets same "power user" experience as experts because zone = path.
+First-time user visiting high-stakes pages.
 
-### Secondary: The Power User (End User - Chef)
+**Pain Point (v4.0):** Gets same machinery physics as power users because zone = path.
 
-An expert user who lives in the product. They need:
-- Density and speed
-- Keyboard shortcuts
-- Minimal hand-holding
+**Desired State (v4.1):** Zone physics adapt based on persona (warmer, more guidance).
 
-**Pain Point (v2.6):** Gets same "newcomer" experience as novices in marketing zones.
+### Secondary: The Chef (Power User)
+
+Expert who lives in the product.
+
+**Pain Point (v4.0):** Gets same novice physics in all zones.
+
+**Desired State (v4.1):** Zone physics adapt based on persona (denser, snappier).
+
+### Secondary: The Marketer
+
+Non-engineer who owns campaigns and vibes.
+
+**Pain Point (v4.0):** Can't test seasonal vibes without engineering PR.
+
+**Desired State (v4.1):** Can toggle vibe flags in remote config (LaunchDarkly/Statsig).
 
 ---
 
 ## Functional Requirements
 
-### FR-1: Agent-Only Process Layer (P0)
+### FR-1: useSigilMutation Hook (P0)
 
-**Problem:** Process readers use `fs` module but ProcessContextProvider is `'use client'`.
+**Problem:** Current `useCriticalAction` requires manual `timeAuthority` parameter. Developer can use `optimistic` in critical zone. Wrong path is invisible.
 
-**Solution:** Process layer becomes agent-context-only. The agent reads YAML during code generation. Runtime never touches these files.
+**Solution:** Create `useSigilMutation` that auto-resolves physics from zone context.
 
-**Changes:**
-- Remove `ProcessContextProvider` from exports
-- Remove `'use client'` directive from process files
-- Add agent protocol to CLAUDE.md for Process context loading
-- Document clearly: "Process = Generation Time, Core = Runtime"
+**Current (v4.0):**
+```typescript
+// Developer must know what to pass - can get wrong
+const payment = useCriticalAction({
+  mutation: () => api.pay(amount),
+  timeAuthority: 'server-tick',  // Manual
+});
+```
+
+**Target (v4.1):**
+```typescript
+// Physics auto-resolved from file path + persona context
+const payment = useSigilMutation({
+  mutation: () => api.pay(amount),
+  // Zone determines: pessimistic + 800ms + disabled-while-pending
+});
+
+// Override requires explicit unsafe_ prefix
+const payment = useSigilMutation({
+  mutation: () => api.pay(amount),
+  unsafe_override_physics: { duration: 200 },
+  unsafe_override_reason: 'User research showed 800ms felt slow',
+});
+```
+
+**Implementation:**
+```typescript
+function useSigilMutation<T>(config: SigilMutationConfig<T>) {
+  const zone = useZoneFromFilePath();
+  const persona = usePersonaContext();
+  const physics = resolvePhysics(zone, persona);
+
+  return {
+    execute: async () => { /* mutation with physics */ },
+    isPending,
+    disabled: physics.sync === 'pessimistic' && isPending,
+    style: { '--sigil-duration': `${physics.timing}ms` },
+  };
+}
+```
 
 **Acceptance Criteria:**
-- [ ] No `fs` imports in any file that could be bundled for browser
-- [ ] CLAUDE.md clearly states Process is agent-only
-- [ ] Agent can load Constitution, Personas, Decisions during generation
-- [ ] No runtime errors when using Sigil in Next.js app
+- [ ] Hook auto-resolves zone from file path
+- [ ] Hook auto-resolves persona from context
+- [ ] Physics determined by (zone × persona) matrix
+- [ ] Override requires `unsafe_` prefix + reason
+- [ ] TypeScript errors if physics mismatch zone
 
 ---
 
-### FR-2: Vocabulary Layer — The Rosetta Stone (P1)
+### FR-2: Persona-Aware Zone Physics (P0)
 
-**Problem:** Same physics can apply to different concepts that need different feels.
+**Problem:** Path determines physics. Henlocker and Chef in same path get identical experience.
 
-**Solution:** Add vocabulary.yaml that maps product terms to recommended materials and motions.
+**Solution:** Zone provides defaults, persona provides overrides.
+
+**Schema Update (.sigilrc.yaml):**
+```yaml
+zones:
+  critical:
+    default_physics:
+      sync: pessimistic
+      timing: 800
+      motion: deliberate
+    persona_overrides:
+      newcomer:
+        timing: 1200        # Slower, more reassuring
+        show_help: always
+        motion: reassuring
+      power_user:
+        timing: 500         # Faster for experts
+        show_help: on_demand
+        motion: snappy
+```
+
+**Resolution Algorithm:**
+```
+1. Detect zone from file path
+2. Load zone.default_physics
+3. Detect persona from context/props
+4. If persona_overrides[persona] exists:
+   - Merge overrides onto defaults
+5. Return final physics
+```
+
+**Acceptance Criteria:**
+- [ ] Zones support `persona_overrides` in schema
+- [ ] `useSigilMutation` consumes persona overrides
+- [ ] Agent can detect and apply persona context
+- [ ] At least critical + marketing zones have overrides defined
+
+---
+
+### FR-3: ESLint Plugin with Enforcement (P0)
+
+**Problem:** ESLint plugin folder exists but has no rules. Developers can write any CSS values.
+
+**Solution:** Implement three core rules that enforce tokens.
+
+**Rules:**
+
+1. **`sigil/enforce-tokens`**
+   ```javascript
+   // ✗ Error: Magic number
+   <div className="gap-[13px]">
+
+   // ✓ OK: Token value
+   <div className="gap-2">
+   ```
+
+2. **`sigil/zone-compliance`**
+   ```javascript
+   // In critical zone file:
+   // ✗ Warning: duration-200 too fast for critical zone (min: 500ms)
+   <motion.div animate={{ transition: { duration: 0.2 } }}>
+
+   // ✓ OK
+   <motion.div animate={{ transition: { duration: 0.8 } }}>
+   ```
+
+3. **`sigil/input-physics`**
+   ```javascript
+   // In machinery zone:
+   // ✗ Warning: Missing keyboard navigation
+   <div onClick={handleClick}>
+
+   // ✓ OK
+   <div onClick={handleClick} onKeyDown={handleKey} tabIndex={0}>
+   ```
+
+**Acceptance Criteria:**
+- [ ] `eslint-plugin-sigil` npm package exists
+- [ ] Three rules implemented with tests
+- [ ] Rules read zone from file path
+- [ ] Rules read physics constraints from .sigilrc.yaml
+- [ ] Integration documented in CLAUDE.md
+
+---
+
+### FR-4: Vocabulary Layer (P1)
+
+**Problem:** "Pot" and "Vault" share backend but need different feels. No language-to-physics mapping.
+
+**Solution:** Add vocabulary.yaml that maps product terms to recommended physics.
 
 **Schema:**
 ```yaml
-# sigil-mark/vocabulary.yaml
-version: "3.0.0"
+# sigil-mark/vocabulary/vocabulary.yaml
+version: "4.1.0"
 
 terms:
   pot:
-    engineering_name: "savings_container"
+    engineering_name: savings_container
     user_facing: "Pot"
     mental_model: "Piggy bank, casual saving"
     recommended:
@@ -134,7 +288,7 @@ terms:
     zones: [marketing, dashboard]
 
   vault:
-    engineering_name: "savings_container"  # Same backend!
+    engineering_name: savings_container  # Same backend!
     user_facing: "Vault"
     mental_model: "Bank vault, security"
     recommended:
@@ -144,289 +298,193 @@ terms:
     zones: [critical]
 
   claim:
-    engineering_name: "reward_claim"
+    engineering_name: reward_claim
     user_facing: "Claim"
     mental_model: "Receiving earned reward"
     recommended:
       material: decisive
       motion: celebratory_then_deliberate
-      tone: exciting
-    zones: [critical]
+    zones: [critical, celebration]
 ```
 
 **Agent Protocol:**
-1. Agent identifies the noun being rendered (e.g., "Pot")
+1. Agent identifies noun being rendered (e.g., "Pot")
 2. Agent looks up term in vocabulary.yaml
-3. Agent applies term's recommended material/motion, not just zone's default
-4. Zone physics still apply, but material adapts to noun
+3. Agent applies term's recommended material, adapting zone defaults
+4. Gap detection surfaces undefined terms
 
 **Acceptance Criteria:**
-- [ ] vocabulary.yaml schema defined with JSON Schema validation
-- [ ] Agent protocol documented in CLAUDE.md
-- [ ] README mentions vocabulary as API surface
-- [ ] At least 10 core terms defined for initial vocabulary
+- [ ] vocabulary.yaml schema with JSON Schema validation
+- [ ] At least 10 core terms defined
+- [ ] `/craft` references vocabulary when generating
+- [ ] Gap detection surfaces undefined terms
+- [ ] `/refine --vocab` adds new terms
 
 ---
 
-### FR-3: Persona Rename (P1)
-
-**Problem:** "Lens" means both UI components and user personas.
-
-**Solution:** Rename `lens-array/` to `personas/` throughout codebase.
-
-**Changes:**
-| Old | New |
-|-----|-----|
-| `sigil-mark/lens-array/` | `sigil-mark/personas/` |
-| `sigil-mark/lens-array/lenses.yaml` | `sigil-mark/personas/personas.yaml` |
-| `LensArray` type | `PersonaArray` type |
-| `readLensArray()` | `readPersonaArray()` |
-| `getPersona()` (from lens-array) | `getPersona()` (from personas) |
-
-**Keep "Lens" for:**
-- `sigil-mark/lenses/` — UI rendering components (DefaultLens, StrictLens, A11yLens)
-- `useLens()` hook — Returns UI Lens based on zone + preference
-- `LensProvider` — Context for user lens preference
-
-**Acceptance Criteria:**
-- [ ] No file or type uses "Lens" to mean persona
-- [ ] Documentation consistently uses "Persona" for user archetypes
-- [ ] Documentation consistently uses "Lens" for UI rendering variants
-
----
-
-### FR-4: Persona Fluidity (P2)
-
-**Problem:** Zone determines experience. Novice and expert in same zone get same treatment.
-
-**Solution:** Persona overrides per zone. Zone provides default, but persona can customize.
-
-**Schema:**
-```yaml
-# .sigilrc.yaml
-zones:
-  critical:
-    layout: CriticalZone
-    default_persona: power_user
-    persona_overrides:
-      newcomer:
-        lens: guided          # Softer UI
-        motion: reassuring    # Slower, more explanatory
-        show_help: always
-      power_user:
-        lens: strict
-        motion: snappy
-        show_help: on_demand
-```
-
-**Runtime Behavior:**
-1. User's persona is determined (from preferences, onboarding, or detection)
-2. Zone provides base configuration
-3. Persona override (if present) modifies zone behavior
-4. Final config = Zone defaults + Persona overrides
-
-**Acceptance Criteria:**
-- [ ] persona_overrides schema defined in .sigilrc.yaml
-- [ ] Agent can read persona overrides and apply them
-- [ ] Documentation shows persona fluidity example
-- [ ] At least critical + marketing zones have persona overrides defined
-
----
-
-### FR-5: Philosophy Alignment (P0)
-
-**Problem:** Skills say "Decide fast. Lock it. Move on." Philosophy says "Sweat the art."
-
-**Solution:** Rewrite all skill files to match agreed philosophy.
-
-**Philosophy Principles:**
-1. **Craftsman SHOULD think deeply** — Deliberation is valuable
-2. **Agent handles mechanics** — Not taste decisions
-3. **/consult locks AFTER deliberation** — Not to shortcut thinking
-4. **Return to flow** — Remove friction, not judgment
-
-**Skill Rewrites:**
-| Skill | Current Problem | Fix |
-|-------|-----------------|-----|
-| consulting-decisions | "Decide fast" | "Record your deliberated decision" |
-| crafting-guidance | "Just pick one" | "Here are the tradeoffs to consider" |
-| gardening-entropy | "Fix this pattern" | "This pattern may need attention" |
-
-**Acceptance Criteria:**
-- [ ] All skill files reviewed for philosophy alignment
-- [ ] No skill encourages rushing decisions
-- [ ] Skills present options with tradeoffs, not mandates
-- [ ] CLAUDE.md philosophy section is explicit and cited in skills
-
----
-
-### FR-6: Intent Layer (P2)
-
-**Problem:** Constitution governs what's protected, but no explicit "why."
-
-**Solution:** Add philosophy.yaml that documents intent hierarchy.
-
-**Schema:**
-```yaml
-# sigil-mark/soul-binder/philosophy.yaml
-version: "3.0.0"
-
-intent:
-  primary: "Protect user trust in high-stakes moments"
-  secondary: "Enable power user efficiency without sacrificing newcomer safety"
-
-principles:
-  - id: trust_over_speed
-    when: "Trust conflicts with speed"
-    decision: "Trust wins"
-    rationale: "Speed can be recovered. Trust cannot."
-
-  - id: newcomer_safety
-    when: "Newcomer needs conflict with power user preferences"
-    decision: "Newcomer safety first"
-    rationale: "Power users can customize. Newcomers can't recover from mistakes."
-
-  - id: security_over_marketing
-    when: "Marketing wants to modify protected capabilities"
-    decision: "Security wins"
-    rationale: "Constitution exists for a reason."
-
-conflict_resolution:
-  - trust_vs_speed: trust_wins
-  - newcomer_vs_power_user: newcomer_safety_first
-  - marketing_vs_security: security_wins
-```
-
-**Agent Protocol:**
-When generating UI, agent checks philosophy for:
-1. Does this decision involve conflicting concerns?
-2. What does the intent hierarchy say?
-3. Apply the winning principle
-
-**Acceptance Criteria:**
-- [ ] philosophy.yaml schema defined
-- [ ] At least 5 principles documented
-- [ ] Agent protocol for conflict resolution documented
-- [ ] CLAUDE.md references philosophy for decision-making
-
----
-
-### FR-7: Layout-Only Zone Detection (P1)
-
-**Problem:** Documentation claims path-based zones, code uses layout-based zones.
-
-**Solution:** Remove all path-based zone claims. Zones are declared via Layout components.
-
-**Changes:**
-- Remove `component_paths` from .sigilrc.yaml (deprecated)
-- Remove path-based examples from CLAUDE.md
-- Update zone detection documentation to layout-only
-- Remove `get-zone.sh` references (never implemented)
-
-**Zone Declaration:**
-```tsx
-// Zones are declared by wrapping in Layout components
-<CriticalZone financial>
-  {/* This is now in critical zone */}
-</CriticalZone>
-
-<MachineryLayout>
-  {/* This is now in admin zone */}
-</MachineryLayout>
-
-<GlassLayout>
-  {/* This is now in marketing zone */}
-</GlassLayout>
-```
-
-**Acceptance Criteria:**
-- [ ] No documentation mentions path-based zone detection
-- [ ] .sigilrc.yaml zones section only configures layout behavior
-- [ ] Agent instructions use layout-based zone examples only
-
----
-
-### FR-8: Remote Soul Configuration (P3)
+### FR-5: Remote Soul Configuration (P2)
 
 **Problem:** Marketing can't test vibe changes without code commits.
 
-**Solution:** Support remote config for marketing-controlled aspects, while engineering controls Constitution.
+**Solution:** Split soul into immutable kernel (engineering) and mutable vibe (marketing).
 
 **Schema:**
 ```yaml
-# sigil-mark/remote-config.yaml
-version: "3.0.0"
+# sigil-mark/remote-soul.yaml
+version: "4.1.0"
 
-marketing_controlled:
-  - campaigns.seasonal_vibe     # Summer gold, winter silver
-  - landing.hero_energy         # Playful vs professional
-  - onboarding.warmth_level     # How friendly vs direct
+# Engineering controlled (immutable without PR)
+kernel_locked:
+  - physics            # Timing constraints
+  - sync               # Server-tick rules
+  - protected_zones    # Critical zone behavior
 
-engineering_controlled:
-  - constitution                # Protected capabilities
-  - protected_capabilities      # Never remote
-  - physics                     # Core timing unchanged
+# Marketing controlled (remote config)
+vibe_remote:
+  - essence.seasonal_theme    # Summer Gold, Winter Silver
+  - landing.hero_energy       # Playful vs Professional
+  - onboarding.warmth         # How friendly vs direct
+  - celebration.intensity     # How triumphant
 
 integration:
-  provider: "launchdarkly"  # or statsig, split, etc.
-  fallback: "local_yaml"    # When offline
+  provider: launchdarkly  # or statsig, split
+  fallback: local_yaml
+  refresh: 5m
 ```
 
-**Constraint:** Physics (Core) stays immutable. Vibe (Material tones, copy warmth) can be remote.
+**Runtime Behavior:**
+```typescript
+function useEssence() {
+  const local = readLocalEssence();
+  const remote = useRemoteConfig('sigil.essence');
+
+  // Remote overrides local for vibe keys only
+  return {
+    ...local,
+    ...remote?.vibe,  // Only vibe keys from remote
+  };
+}
+```
 
 **Acceptance Criteria:**
-- [ ] remote-config.yaml schema defined
-- [ ] Clear separation: physics local, vibe remote-capable
-- [ ] Agent knows which aspects can be dynamic
-- [ ] Fallback to local YAML when offline
+- [ ] remote-soul.yaml schema defines boundary
+- [ ] Clear separation: kernel local, vibe remote-capable
+- [ ] Hook that merges local + remote
+- [ ] Fallback to local when offline
+- [ ] Marketing docs for flag setup
 
 ---
 
-### FR-9: Observer Pattern for Vibe Checks (P3)
+### FR-6: Physics Timing Mapping (P1)
 
-**Problem:** Polling favors existing users, misses potential users.
+**Problem:** `motion: deliberate` has no concrete ms value. Agent doesn't know what CSS to generate.
 
-**Solution:** Add behavioral triggers to vibe checks, not just explicit surveys.
+**Solution:** Map motion names to concrete timing values.
 
-**Schema:**
+**Schema Update:**
 ```yaml
-# sigil-mark/surveys/vibe-checks.yaml
-version: "3.0.0"
-
-# Existing: Explicit surveys (keep)
-explicit_checks:
-  - id: claim_flow_satisfaction
-    trigger: after_claim_success
-    type: micro_survey
-
-# New: Behavioral observations
-behavioral_signals:
-  - id: information_seeking
-    trigger: "card_expanded_5x_in_session"
-    insight: "User seeking information not immediately visible"
-    recommendation: "Consider surfacing key data earlier"
-
-  - id: confirmation_friction
-    trigger: "abandon_at_confirmation_step"
-    insight: "Confirmation may be too heavy"
-    recommendation: "Review deliberate motion timing"
-
-  - id: rage_clicking
-    trigger: "same_element_clicked_3x_in_2s"
-    insight: "Element not responding as expected"
-    recommendation: "Check loading states and feedback"
+# sigil-mark/kernel/physics.yaml
+motion:
+  instant:
+    duration: { value: 0, unit: ms }
+    easing: linear
+  snappy:
+    duration: { value: 150, unit: ms }
+    easing: ease-out
+  warm:
+    duration: { value: 300, unit: ms }
+    easing: ease-in-out
+  deliberate:
+    duration: { min: 500, max: 1000, default: 800, unit: ms }
+    easing: ease-out
+    wait_for_confirm: true
+  celebratory:
+    duration: { value: 1200, unit: ms }
+    easing: spring
+    spring: { stiffness: 100, damping: 10 }
 ```
 
 **Agent Protocol:**
-Agent can reference behavioral signals when making recommendations:
-- "Based on `information_seeking` signal, consider surfacing X"
-- "Based on `confirmation_friction` signal, review timing"
+```
+When generating motion:
+1. Resolve motion name from zone
+2. Look up concrete timing in physics.yaml
+3. Generate CSS: transition: all ${physics.duration.default}ms ${physics.easing}
+```
 
 **Acceptance Criteria:**
-- [ ] behavioral_signals schema added to vibe-checks.yaml
-- [ ] At least 5 behavioral signals defined
-- [ ] Agent can cite behavioral signals in recommendations
-- [ ] /garden report includes behavioral signal analysis
+- [ ] All motion names have concrete ms values
+- [ ] ESLint rule can validate timing against motion
+- [ ] Agent generates correct CSS from motion name
+- [ ] CLAUDE.md documents motion → timing mapping
+
+---
+
+### FR-7: Version Coherence (P0)
+
+**Problem:** Codebase claims v2.0, v3.0, v4.0 in different files.
+
+**Solution:** Single source of truth in `.sigil-version.json`, all files reference it.
+
+**Changes:**
+- [ ] Update `.sigilrc.yaml` version to `4.1.0`
+- [ ] Update all hook files to remove version comments
+- [ ] Update process files to v4.1
+- [ ] Add version check to ESLint plugin
+- [ ] `sigil version` CLI command
+
+**Acceptance Criteria:**
+- [ ] `grep -r "v2\|v3\|3\.0\|2\.0" .` returns 0 results (excluding changelogs)
+- [ ] Single version source: `.sigil-version.json`
+- [ ] CI check for version consistency
+
+---
+
+### FR-8: Delete Deprecated Code (P1)
+
+**Problem:** `process-context.tsx` marked deprecated but ships working React hooks.
+
+**Solution:** Agent-only means no runtime exports. Delete or make clearly runtime.
+
+**Decision:** Delete runtime exports. Process is agent-only.
+
+**Changes:**
+- [ ] Remove `ProcessContextProvider` export
+- [ ] Remove `useProcessContext` export
+- [ ] Remove `useConstitution` export
+- [ ] Remove `useDecisions` export
+- [ ] Keep readers as agent-only (no 'use client')
+- [ ] Add clear comment: "// AGENT-ONLY: Do not import in browser code"
+
+**Acceptance Criteria:**
+- [ ] No React hooks exported from process/
+- [ ] No 'use client' in process files
+- [ ] Attempting to import in browser = build error
+- [ ] CLAUDE.md clearly states agent-only
+
+---
+
+### FR-9: /observe Skill Implementation (P1)
+
+**Problem:** CLAUDE.md lists `/observe` but no `observing-*` skill exists.
+
+**Solution:** Create `observing-feedback` skill.
+
+**Location:** `.claude/skills/observing-feedback/`
+
+**Workflow:**
+1. Capture screenshot via MCP (Claude in Chrome)
+2. Load rules.md constraints
+3. Analyze screenshot against rules
+4. Generate feedback questions
+5. Store in `.sigil-observations/feedback/`
+
+**Acceptance Criteria:**
+- [ ] `observing-feedback/SKILL.md` exists
+- [ ] Skill uses MCP for screenshot
+- [ ] Skill references rules.md
+- [ ] Output stored in feedback directory
+- [ ] Links to `/refine` for updates
 
 ---
 
@@ -434,178 +492,145 @@ Agent can reference behavioral signals when making recommendations:
 
 ### NFR-1: No Runtime Dependencies on Process Layer
 
-The Process layer (YAML readers) must not be bundled for browser. All Process access happens at agent generation time or build time.
+Process layer readers must not be bundleable for browser. Build must fail if imported in client code.
 
-### NFR-2: Documentation Consistency
+### NFR-2: Enforcement Surfaces in Dev Experience
 
-Every concept must have exactly one name:
-- "Persona" = user archetype (power_user, newcomer)
-- "Lens" = UI rendering variant (DefaultLens, StrictLens)
-- "Zone" = Layout-declared context (CriticalZone, MachineryLayout)
-- "Material" = deprecated v1 concept, use Zone
+- ESLint errors show in IDE
+- Type errors show in IDE
+- Console warnings at runtime for violations
+- `/garden --validate` for CI
 
-### NFR-3: Vocabulary as API Surface
+### NFR-3: Remote Config Latency
 
-The vocabulary.yaml is the primary interface between product and engineering:
-- Product defines terms and mental models
-- Engineering implements with appropriate materials
-- README prominently features vocabulary concept
+Vibe flags must resolve within 100ms. Use cached values if remote unavailable.
 
 ### NFR-4: Backward Compatibility
 
-v2.6 code should work in v3.0 with deprecation warnings:
-- Old imports work but warn
-- Old file locations work but warn
-- Migration guide provided
+v4.0 code should work with deprecation warnings:
+- `useCriticalAction` → warning to use `useSigilMutation`
+- Old zone schema → warning to add `persona_overrides`
 
 ---
 
-## Out of Scope (v3.0)
+## Out of Scope (v4.1)
 
 | Feature | Reason | Future Version |
 |---------|--------|----------------|
-| ESLint plugin enforcement | Requires build tooling | v3.1 |
-| CI/CD integration | Requires pipeline work | v3.1 |
-| Real-time collaboration | Complex infrastructure | v4.0 |
-| Visual editor for vocabulary | Nice-to-have | v4.0 |
-| A/B testing integration | Requires analytics | v3.2 |
+| Type markers (Gold/Silver/Draft) | Complex TypeScript | v4.2 |
+| Friction budget tracking | Requires metrics | v4.2 |
+| PR-time taste debt | Requires CI integration | v4.2 |
+| Visual editor for vocabulary | Nice-to-have | v5.0 |
+| Real-time collaboration | Infrastructure | v5.0 |
 
 ---
 
-## Architecture Changes
+## Architecture
 
-### v2.6 Architecture
+### v4.0 Architecture (Hollow Shell)
 ```
-Process (YAML) ──runtime──> ProcessContext (React) ──> Core ──> Layout ──> Lens
-       ↑
-       └── fs module (CRASHES IN BROWSER)
-```
-
-### v3.0 Architecture
-```
-Process (YAML) ──agent reads──> CLAUDE.md context ──> Agent generates code
-                                                              ↓
-                                              Core ──> Layout ──> Lens (runtime)
+Readers (zone, persona, vocab)
+         ↓
+         ??? (nothing consumes)
+         ↓
+useCriticalAction (manual params, no enforcement)
 ```
 
-**Key Change:** Process layer is agent-context-only. No runtime YAML reading.
+### v4.1 Architecture (Living Guardrails)
+```
+Readers (zone, persona, vocab)
+         ↓
+    ┌────┴────┐
+    ↓         ↓
+ESLint    useSigilMutation
+(compile)  (runtime)
+    ↓         ↓
+Errors    Auto-physics
+in IDE    + CSS vars
+```
 
 ---
 
 ## Migration Guide
 
-### From v2.6 to v3.0
+### From v4.0 to v4.1
 
-1. **Remove ProcessContextProvider** — No longer exported
-2. **Rename imports:**
-   - `readLensArray` → `readPersonaArray`
-   - `lens-array/` → `personas/`
-3. **Update .sigilrc.yaml:**
-   - Remove `component_paths`
+1. **Update .sigilrc.yaml:**
    - Add `persona_overrides` to zones
-4. **Add vocabulary.yaml** — Define your product terms
-5. **Add philosophy.yaml** — Document your intent hierarchy
+   - Add concrete timing to motion names
+
+2. **Replace hooks:**
+   ```typescript
+   // Before
+   useCriticalAction({ timeAuthority: 'server-tick' })
+
+   // After
+   useSigilMutation() // Auto-resolved
+   ```
+
+3. **Add ESLint config:**
+   ```javascript
+   // eslint.config.js
+   import sigil from 'eslint-plugin-sigil';
+
+   export default [
+     sigil.configs.recommended,
+   ];
+   ```
+
+4. **Add vocabulary.yaml:**
+   - Define 10 core product terms
+   - Map to recommended physics
+
+5. **Remove deprecated imports:**
+   - Delete any imports from `sigil-mark/process`
 
 ---
 
 ## Success Metrics
 
-| Metric | v2.6 Baseline | v3.0 Target |
-|--------|---------------|-------------|
-| Runtime errors from Process | Crashes | 0 |
-| Naming confusion reports | High | 0 |
-| Agent code generation accuracy | ~70% | 95% |
-| Time to add new product term | N/A | <5 min |
-| Philosophy alignment in skills | 0% | 100% |
+| Metric | v4.0 | v4.1 Target |
+|--------|------|-------------|
+| ESLint violations caught | 0 | >90% of magic numbers |
+| Manual physics params | Required | Auto-resolved |
+| Persona-aware zones | 0 | All zones |
+| Vocabulary terms | 0 | 10 |
+| Version strings | 4 different | 1 |
+| Runtime process imports | Possible | Build error |
 
 ---
 
 ## Timeline
 
-| Phase | Duration | Deliverables |
-|-------|----------|--------------|
-| P0 Fixes | 1 sprint | fs removal, philosophy alignment |
-| P1 Fixes | 1 sprint | Persona rename, layout-only zones, vocabulary |
-| P2 Features | 1 sprint | Persona fluidity, intent layer |
-| P3 Features | 1 sprint | Remote config, observer pattern |
-| Documentation | Continuous | README, CLAUDE.md, migration guide |
+| Phase | Sprints | Deliverables |
+|-------|---------|--------------|
+| P0 Foundation | 2 | useSigilMutation, ESLint rules, version coherence |
+| P1 Context | 2 | Persona overrides, vocabulary, physics timing |
+| P2 Marketing | 1 | Remote soul, /observe skill |
+| Polish | 1 | Migration guide, deprecated code removal |
 
 ---
 
-## Appendix A: Vocabulary Layer README Section
+## Review Traceability
 
-```markdown
-## Vocabulary — The API Surface
+This PRD addresses findings from:
 
-Sigil's vocabulary layer maps product terms to design recommendations.
+**SIGIL-V4-LITE-REVIEW.md (Technical, Grade C-):**
+- Issue 1 (Version Schizophrenia) → FR-7
+- Issue 2 (Layout Primitives) → Out of scope, tracked for v4.2
+- Issue 3 (No Transaction Objects) → FR-1
+- Issue 4 (No Token Enforcement) → FR-3
+- Issue 5 (Hollow Shell) → FR-1, FR-3
+- Issue 6 (Process Layer Confusion) → FR-8
+- Issue 7 (Physics Without Timing) → FR-6
+- Issue 11 (Commands vs Skills) → FR-9
 
-### Why Vocabulary Matters
-
-A "Pot" and a "Vault" might share the same backend (`savings_container`),
-but they evoke completely different mental models:
-
-| Term | Mental Model | Recommended Feel |
-|------|--------------|------------------|
-| Pot | Piggy bank | Warm, glass, friendly |
-| Vault | Bank vault | Cold, machinery, secure |
-
-### Defining Terms
-
-```yaml
-# sigil-mark/vocabulary.yaml
-terms:
-  pot:
-    user_facing: "Pot"
-    mental_model: "Piggy bank, casual saving"
-    recommended:
-      material: glass
-      motion: warm
-```
-
-### Agent Protocol
-
-When generating UI for a "Pot," the agent will:
-1. Check vocabulary.yaml for "pot"
-2. Apply recommended material (glass) and motion (warm)
-3. Zone physics still apply, but material adapts to the noun
-
-This ensures consistent UX across the product without manual specification.
-```
+**V4-REVIEW-2.md (Product, Grade A-/C):**
+- Issue 1 (Path is Destiny) → FR-2
+- Issue 2 (Hardcoded Soul) → FR-5
+- Issue 3 (Democracy ≠ Research) → Out of scope (metrics)
+- Issue 4 (Physics Without Language) → FR-4
 
 ---
 
-## Appendix B: Philosophy Section for CLAUDE.md
-
-```markdown
-## Philosophy
-
-> "Sweat the art. We handle the mechanics. Return to flow."
-
-### What This Means
-
-1. **Sweat the art** — Craftsman deliberation is valuable. Don't rush decisions.
-2. **We handle the mechanics** — Agent manages physics, zones, materials.
-3. **Return to flow** — Once decided, lock it and move on.
-
-### Decision Hierarchy
-
-When concerns conflict, apply this hierarchy:
-
-| Conflict | Winner | Rationale |
-|----------|--------|-----------|
-| Trust vs Speed | Trust | Speed can be recovered. Trust cannot. |
-| Newcomer vs Power User | Newcomer safety | Power users can customize. |
-| Marketing vs Security | Security | Constitution exists for a reason. |
-
-### Agent Role
-
-The agent:
-- Presents options with tradeoffs
-- Does NOT make taste decisions
-- Respects locked decisions
-- Cites philosophy when relevant
-```
-
----
-
-*Sources: loa-grimoire/context/SIGIL-v2.6-REVIEW.md, v2.6 implementation*
+*Sources: loa-grimoire/context/SIGIL-V4-LITE-REVIEW.md, loa-grimoire/context/V4-REVIEW-2.md*

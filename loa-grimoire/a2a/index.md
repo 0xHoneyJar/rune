@@ -6,6 +6,19 @@ This document tracks all sprint artifacts and their approval status.
 
 ## Sprint Status Summary
 
+### Sigil v4.1 (Living Guardrails — Enforcement Layer)
+
+| Sprint | Theme | Status | Reviewer | Auditor |
+|--------|-------|--------|----------|---------|
+| 1 | Version Coherence & Provider | COMPLETED | ✅ Approved | ✅ Approved |
+| 2 | useSigilMutation Hook | COMPLETED | ✅ Approved | ✅ Approved |
+| 3 | ESLint Plugin | COMPLETED | ✅ Approved | ✅ Approved |
+| 4 | Vocabulary & Physics Timing | COMPLETED | ✅ Approved | ✅ Approved |
+| 5 | Remote Soul & /observe Skill | COMPLETED | ✅ Approved | ✅ Approved |
+| 6 | Polish & Migration | COMPLETED | ✅ Approved | ✅ Approved |
+
+---
+
 ### Sigil v4.0 (Sharp Tools — 7 Discrete Tools)
 
 | Sprint | Theme | Status | Reviewer | Auditor |
@@ -278,6 +291,8 @@ This document tracks all sprint artifacts and their approval status.
 | v2.0.0 | 2026-01-05 | 1-8 | Reality Engine | Released |
 | v2.6.0 | 2026-01-06 | 1-7 | Craftsman's Flow | Released |
 | v3.0.0 | 2026-01-06 | 1-4 | Living Engine | Released |
+| v4.0.0 | 2026-01-07 | 1-10 | Sharp Tools | Released |
+| v4.1.0 | 2026-01-07 | 1-6 | Living Guardrails | Released |
 
 ---
 
@@ -441,4 +456,4 @@ This document tracks all sprint artifacts and their approval status.
 ---
 
 *Last Updated: 2026-01-07*
-*Current Version: Sigil v4.0.0 "Sharp Tools" — IN DEVELOPMENT*
+*Current Version: Sigil v4.1.0 "Living Guardrails" — ALL SPRINTS COMPLETED*

@@ -1,10 +1,15 @@
 /**
- * Sigil v2.0 — CriticalZone Layout
+ * Sigil v4.1 - CriticalZone Layout
  *
  * Layout primitive for high-stakes UI. Provides both zone context
  * AND structural physics in a single component.
  *
  * Layouts ARE Zones. Physics is DOM, not lint.
+ *
+ * v4.1 Changes:
+ * - Sets zone context via SigilProvider on mount
+ * - Clears zone context on unmount
+ * - Adds data-sigil-zone attribute for debugging
  *
  * @module layouts/CriticalZone
  */
@@ -13,6 +18,7 @@ import React, {
   createContext,
   useContext,
   useMemo,
+  useEffect,
   Children,
   isValidElement,
   cloneElement,
@@ -21,6 +27,7 @@ import React, {
   type FC,
 } from 'react';
 import { ZoneContext, type ZoneContextValue } from './context';
+import { useSigilZoneContext } from '../providers/sigil-provider';
 
 // =============================================================================
 // TYPES
@@ -305,7 +312,18 @@ function CriticalZone({
   financial = true,
   className = '',
 }: CriticalZoneProps): ReactElement {
-  // Create zone context value
+  // v4.1: Set zone context via SigilProvider
+  const sigilZone = useSigilZoneContext();
+
+  // v4.1: Set zone on mount, clear on unmount
+  useEffect(() => {
+    sigilZone.setZone('critical');
+    return () => {
+      sigilZone.setZone(null);
+    };
+  }, [sigilZone]);
+
+  // Create zone context value (for backwards compatibility with existing layouts)
   const zoneContextValue: ZoneContextValue = useMemo(
     () => ({
       type: 'critical',

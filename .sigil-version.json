@@ -1,9 +1,9 @@
 {
-  "sigil_version": "4.0.0",
-  "framework_version": "4.0.0",
-  "schema_version": 5,
-  "philosophy": "Sharp Tools",
-  "description": "7 discrete tools with progressive disclosure, evidence-based context, visual feedback loop",
+  "sigil_version": "4.1.0",
+  "framework_version": "4.1.0",
+  "codename": "Living Guardrails",
+  "schema_version": 6,
+  "description": "Enforcement capabilities: compile + runtime + agent all consume context",
   "zones": {
     "system": ".claude/",
     "state": "sigil-mark/"
@@ -22,7 +22,19 @@
     "evidence_based_context": true,
     "visual_feedback_loop": true,
     "mcp_integration": "claude-in-chrome",
-    "build_time_export": true
+    "build_time_export": true,
+    "sigil_provider": true,
+    "use_sigil_mutation": true,
+    "eslint_plugin": true
+  },
+  "runtime": {
+    "provider": "sigil-mark/providers/sigil-provider.tsx",
+    "hooks": [
+      "useSigilMutation",
+      "useZoneContext",
+      "usePersonaContext",
+      "useRemoteSoulContext"
+    ]
   },
   "process": {
     "path": "sigil-mark/process/",
@@ -37,43 +49,39 @@
       "moodboard-reader.ts",
       "evidence-reader.ts",
       "feedback-reader.ts",
-      "zone-reader.ts"
+      "zone-reader.ts",
+      "physics-reader.ts"
     ]
   },
   "schemas": {
     "persona": "sigil-mark/personas/schemas/personas.schema.json",
     "zone": "sigil-mark/zones/schemas/zones.schema.json",
     "evidence": "sigil-mark/evidence/schemas/evidence.schema.json",
-    "feedback": "sigil-mark/.sigil-observations/schemas/feedback.schema.json"
+    "feedback": "sigil-mark/.sigil-observations/schemas/feedback.schema.json",
+    "physics": "sigil-mark/kernel/schemas/physics.schema.json",
+    "vocabulary": "sigil-mark/vocabulary/schemas/vocabulary.schema.json"
   },
   "garden": {
     "last_run": null,
     "reports_path": "sigil-mark/reports/"
   },
   "migration": {
-    "from_version": "3.0.0",
-    "migrated_at": "2026-01-07T00:00:00Z",
-    "migration_guide": "MIGRATION-v4.md",
+    "from_version": "4.0.0",
+    "migrated_at": null,
+    "migration_guide": "MIGRATION-v4.1.md",
     "changes": [
-      "37 commands consolidated to 7 tools",
-      "Progressive disclosure (L1/L2/L3)",
-      "/observe visual feedback via MCP",
-      "/refine incremental context updates",
-      "/consult consolidated decision recording",
-      "Evidence-based personas and zones",
-      "Journey context for zones",
-      "/garden health monitoring with CI mode",
-      "Build-time export for runtime",
-      "Auto-setup (no explicit /setup required)"
+      "SigilProvider context for runtime zone/persona state",
+      "useSigilMutation hook replaces useCriticalAction",
+      "Persona overrides in zone configuration",
+      "Default physics block in zones",
+      "eslint-plugin-sigil (future)",
+      "Vocabulary layer (future)",
+      "Physics timing mapping (future)",
+      "Remote soul adapter (future)"
     ]
   },
   "deprecated": {
-    "/setup": "Automatic with first /envision or /codify",
-    "/inherit": "/envision auto-detects existing codebase",
-    "/approve": "/consult",
-    "/canonize": "/consult --protect",
-    "/unlock": "/consult --unlock",
-    "/validate": "/garden --validate"
+    "useCriticalAction": "Use useSigilMutation instead"
   },
   "setup_completed_at": "2026-01-05T00:00:00Z",
   "last_updated": "2026-01-07T00:00:00Z"
