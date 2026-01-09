@@ -815,3 +815,42 @@ export {
   DEFAULT_SEED_PATH,
   SEED_LIBRARY_PATH,
 } from './seed-manager';
+
+// =============================================================================
+// EPHEMERAL INSPIRATION (v6.0 - Sprint 7)
+// =============================================================================
+
+export {
+  // Trigger detection
+  detectInspirationTrigger,
+  extractUrl,
+  // Context forking
+  createForkedContext,
+  getForkedContext,
+  updateForkedContext,
+  discardForkedContext,
+  isContextActive,
+  getActiveContextIds,
+  clearAllContexts,
+  // Style extraction
+  extractColors,
+  extractTypography,
+  extractSpacing,
+  extractGradients,
+  extractStylesFromCSS,
+  // Sanctification
+  storeRecentGeneration,
+  getRecentGeneration,
+  getMostRecentGeneration,
+  formatSanctifyEntry,
+  clearRecentGenerations,
+  // Integration
+  createEphemeralFlow,
+  // Types
+  type InspirationTrigger,
+  type ExtractedStyles,
+  type ForkedContext,
+  type SanctifyRequest,
+  type SanctifyResult,
+  type EphemeralFlow,
+} from './ephemeral-inspiration';

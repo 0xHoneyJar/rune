@@ -757,11 +757,11 @@ The MVP delivers:
 **Description:** Create skill definition for ephemeral inspiration.
 
 **Acceptance Criteria:**
-- [ ] SKILL.md in `.claude/skills/inspiring-ephemerally/`
-- [ ] Purpose: One-time external fetch in forked context
-- [ ] Trigger: "like [url]", "inspired by [url]" in prompt
-- [ ] Flow: Fork → Fetch → Extract → Generate → Discard
-- [ ] Output: Generated code only (no fetched content persists)
+- [x] SKILL.md in `.claude/skills/inspiring-ephemerally/`
+- [x] Purpose: One-time external fetch in forked context
+- [x] Trigger: "like [url]", "inspired by [url]" in prompt
+- [x] Flow: Fork → Fetch → Extract → Generate → Discard
+- [x] Output: Generated code only (no fetched content persists)
 
 **Dependencies:** None
 **Effort:** Small
@@ -772,11 +772,11 @@ The MVP delivers:
 **Description:** Detect inspiration triggers in prompts.
 
 **Acceptance Criteria:**
-- [ ] Detect "like stripe.com" pattern
-- [ ] Detect "inspired by [url]" pattern
-- [ ] Detect "reference [url]" pattern
-- [ ] Extract URL from detected pattern
-- [ ] Return trigger type and URL
+- [x] Detect "like stripe.com" pattern
+- [x] Detect "inspired by [url]" pattern
+- [x] Detect "reference [url]" pattern
+- [x] Extract URL from detected pattern
+- [x] Return trigger type and URL
 
 **Dependencies:** S7-T1
 **Effort:** Small
@@ -787,10 +787,10 @@ The MVP delivers:
 **Description:** Create isolated context for ephemeral operations.
 
 **Acceptance Criteria:**
-- [ ] Fork context preserves core Sigil state
-- [ ] Forked context has no access to survival.json
-- [ ] Forked context cannot write to Sanctuary
-- [ ] Clear boundary for fork/return
+- [x] Fork context preserves core Sigil state
+- [x] Forked context has no access to survival.json
+- [x] Forked context cannot write to Sanctuary
+- [x] Clear boundary for fork/return
 
 **Dependencies:** S7-T1
 **Effort:** Large
@@ -801,11 +801,11 @@ The MVP delivers:
 **Description:** Extract design tokens from fetched content.
 
 **Acceptance Criteria:**
-- [ ] Extract color palette (background, text, accent)
-- [ ] Extract typography (font-family, sizes, weights)
-- [ ] Extract spacing patterns
-- [ ] Extract gradient definitions
-- [ ] Return structured style object
+- [x] Extract color palette (background, text, accent)
+- [x] Extract typography (font-family, sizes, weights)
+- [x] Extract spacing patterns
+- [x] Extract gradient definitions
+- [x] Return structured style object
 
 **Dependencies:** S7-T3
 **Effort:** Medium
@@ -816,11 +816,11 @@ The MVP delivers:
 **Description:** Generate code using extracted styles.
 
 **Acceptance Criteria:**
-- [ ] Apply extracted colors to component
-- [ ] Apply extracted typography
-- [ ] Apply extracted spacing
-- [ ] Respect physics constraints (still validated)
-- [ ] Return generated code to main context
+- [x] Apply extracted colors to component
+- [x] Apply extracted typography
+- [x] Apply extracted spacing
+- [x] Respect physics constraints (still validated)
+- [x] Return generated code to main context
 
 **Dependencies:** S7-T4
 **Effort:** Medium
@@ -831,11 +831,11 @@ The MVP delivers:
 **Description:** Discard fetched content after generation.
 
 **Acceptance Criteria:**
-- [ ] Fetched content never persists
-- [ ] No trace in Sanctuary
-- [ ] No trace in workshop
-- [ ] Only generated code remains
-- [ ] Log cleanup
+- [x] Fetched content never persists
+- [x] No trace in Sanctuary
+- [x] No trace in workshop
+- [x] Only generated code remains
+- [x] Log cleanup
 
 **Dependencies:** S7-T5
 **Effort:** Small
@@ -846,11 +846,11 @@ The MVP delivers:
 **Description:** Promote ephemeral inspiration to permanent rule.
 
 **Acceptance Criteria:**
-- [ ] `/sanctify "pattern-name"` command
-- [ ] Extracts pattern from recent generation
-- [ ] Adds to rules.md
-- [ ] Logs sanctification
-- [ ] Confirmation message
+- [x] `/sanctify "pattern-name"` command
+- [x] Extracts pattern from recent generation
+- [x] Adds to rules.md
+- [x] Logs sanctification
+- [x] Confirmation message
 
 **Dependencies:** S7-T5
 **Effort:** Medium
