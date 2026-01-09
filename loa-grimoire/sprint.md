@@ -980,10 +980,10 @@ The MVP delivers:
 **Description:** Define era tracking in survival.json.
 
 **Acceptance Criteria:**
-- [ ] `era` field in survival.json
-- [ ] `era_started` field with date
-- [ ] Era name is human-readable (e.g., "v1-Flat")
-- [ ] Default era: "v1"
+- [x] `era` field in survival.json
+- [x] `era_started` field with date
+- [x] Era name is human-readable (e.g., "v1-Flat")
+- [x] Default era: "v1"
 
 **Dependencies:** None
 **Effort:** Small
@@ -994,11 +994,11 @@ The MVP delivers:
 **Description:** Implement era transition command.
 
 **Acceptance Criteria:**
-- [ ] `/new-era "Tactile"` command
-- [ ] Archives current patterns as "Era: [old-name]"
-- [ ] Creates new era with provided name
-- [ ] Resets pattern counts (but keeps history)
-- [ ] Updates survival.json
+- [x] `/new-era "Tactile"` command
+- [x] Archives current patterns as "Era: [old-name]"
+- [x] Creates new era with provided name
+- [x] Resets pattern counts (but keeps history)
+- [x] Updates survival.json
 
 **Dependencies:** S9-T1
 **Effort:** Medium
@@ -1009,10 +1009,10 @@ The MVP delivers:
 **Description:** Archive patterns when era changes.
 
 **Acceptance Criteria:**
-- [ ] Create `.sigil/eras/[era-name].json`
-- [ ] Copy current survival patterns to archive
-- [ ] Add era_ended timestamp
-- [ ] Keep archive read-only
+- [x] Create `.sigil/eras/[era-name].json`
+- [x] Copy current survival patterns to archive
+- [x] Add era_ended timestamp
+- [x] Keep archive read-only
 
 **Dependencies:** S9-T2
 **Effort:** Medium
@@ -1023,10 +1023,10 @@ The MVP delivers:
 **Description:** Start fresh tracking in new era.
 
 **Acceptance Criteria:**
-- [ ] New era starts with empty patterns
-- [ ] Old patterns don't block exploration
-- [ ] Canonical status doesn't carry over
-- [ ] Each era has independent survival
+- [x] New era starts with empty patterns
+- [x] Old patterns don't block exploration
+- [x] Canonical status doesn't carry over
+- [x] Each era has independent survival
 
 **Dependencies:** S9-T3
 **Effort:** Medium
@@ -1037,9 +1037,9 @@ The MVP delivers:
 **Description:** Include era in craft log entries.
 
 **Acceptance Criteria:**
-- [ ] Craft log includes current era name
-- [ ] Era visible in log header
-- [ ] Can filter logs by era
+- [x] Craft log includes current era name
+- [x] Era visible in log header
+- [x] Can filter logs by era
 
 **Dependencies:** S9-T1
 **Effort:** Small
@@ -1050,10 +1050,10 @@ The MVP delivers:
 **Description:** Add era markers to rules.md.
 
 **Acceptance Criteria:**
-- [ ] Era section in rules.md
-- [ ] Current era highlighted
-- [ ] Historical eras listed
-- [ ] Auto-updated on era change
+- [x] Era section in rules.md
+- [x] Current era highlighted
+- [x] Historical eras listed
+- [x] Auto-updated on era change
 
 **Dependencies:** S9-T2
 **Effort:** Small
@@ -1064,10 +1064,10 @@ The MVP delivers:
 **Description:** Test era transition flow.
 
 **Acceptance Criteria:**
-- [ ] Test new era creation
-- [ ] Test pattern archiving
-- [ ] Test fresh tracking
-- [ ] Test rules.md update
+- [x] Test new era creation
+- [x] Test pattern archiving
+- [x] Test fresh tracking
+- [x] Test rules.md update
 
 **Dependencies:** S9-T1 through S9-T6
 **Effort:** Medium

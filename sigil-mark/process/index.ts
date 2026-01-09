@@ -900,3 +900,44 @@ export {
   type PatternCheckOptions,
   type ForgeFlow,
 } from './forge-mode';
+
+// =============================================================================
+// ERA MANAGER (v6.0 - Sprint 9)
+// =============================================================================
+
+export {
+  // Constants
+  DEFAULT_ERA,
+  ERAS_DIRECTORY,
+  SURVIVAL_PATH,
+  // Era reading
+  getCurrentEra,
+  getCurrentEraName,
+  eraExists,
+  // Era archiving
+  archiveEra,
+  loadEraArchive,
+  listArchivedEras,
+  // Era transition
+  transitionToNewEra,
+  initializeDefaultEra,
+  // Craft log integration
+  addEraToLogEntry,
+  filterLogsByEra,
+  getErasFromLogs,
+  // Rules.md markers
+  formatEraSection,
+  updateRulesWithEra,
+  // Validation
+  isValidEraName,
+  canTransitionToEra,
+  // Formatting
+  formatEraTransitionMessage,
+  formatEraSummary,
+  // Types
+  type Era,
+  type EraArchive,
+  type EraTransitionResult,
+  type SurvivalEraInfo,
+  type EraLogEntry,
+} from './era-manager';
