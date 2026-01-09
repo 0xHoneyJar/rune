@@ -5,6 +5,133 @@ All notable changes to Sigil will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.0.0] - 2026-01-08 — "Native Muse"
+
+### Summary
+
+v6.0 introduces the **Survival-Based Framework** with Three Laws that eliminate governance dialogs in favor of silent pattern observation. Pre-computed workshop index enables 5ms queries, Virtual Sanctuary provides seeds for cold starts, and 11 skills with lifecycle hooks orchestrate the complete craft flow.
+
+### The Three Laws
+
+1. **Code is Precedent** — Patterns that survive become canonical. No governance dialogs.
+2. **Survival is the Vote** — Usage frequency determines pattern status, not approvals.
+3. **Never Interrupt Flow** — No blocking, no dialogs, observe silently.
+
+### Added
+
+- **Workshop Index** — Pre-computed at startup for 5ms queries
+
+  ```
+  .sigil/
+  ├── workshop.json       # Pre-computed index
+  ├── survival.json       # Pattern tracking
+  ├── seed.yaml           # Virtual Sanctuary
+  └── craft-log/          # Session logs
+  ```
+
+- **11 Skills with Lifecycle Hooks**
+
+  | Skill | Trigger | Purpose |
+  |-------|---------|---------|
+  | `scanning-sanctuary` | Component lookup | Live ripgrep discovery |
+  | `graphing-imports` | Startup | Dependency scanning |
+  | `querying-workshop` | /craft | Fast index queries |
+  | `validating-physics` | PreToolUse | Block physics violations |
+  | `seeding-sanctuary` | Cold start | Virtual taste |
+  | `inspiring-ephemerally` | "like [url]" | Forked fetch |
+  | `forging-patterns` | /forge | Bypass survival |
+  | `managing-eras` | /new-era | Era transitions |
+  | `observing-survival` | PostToolUse | Silent tracking |
+  | `chronicling-rationale` | Stop | Craft logs |
+  | `auditing-cohesion` | /audit | Variance checks |
+
+- **Virtual Sanctuary** — Seeds for cold start projects
+
+  | Seed | Feel | Physics |
+  |------|------|---------|
+  | Linear-like | Minimal, monochrome | 150ms |
+  | Vercel-like | Bold, high-contrast | 100ms |
+  | Stripe-like | Soft gradients | 300ms |
+
+- **Survival Observation** — Silent pattern tracking via PostToolUse
+
+  ```json
+  {
+    "era": "v1",
+    "patterns": {
+      "animation:spring": {
+        "status": "canonical",
+        "occurrences": 7
+      }
+    }
+  }
+  ```
+
+- **Ephemeral Inspiration** — Context forking for external references
+
+  ```bash
+  /inspire stripe.com "gradient button"
+  ```
+
+- **Forge Mode** — Explicit precedent-breaking exploration
+
+  ```bash
+  /forge "experimental animation"
+  ```
+
+- **Era Management** — Design direction shifts
+
+  ```bash
+  /new-era "Tactile"
+  ```
+
+- **Agent Orchestration** — 7-phase craft flow
+
+  ```
+  Startup → Discovery → Context → Validation → Generation → Observation → Chronicling
+  ```
+
+- **Migration Script** — `scripts/migrate-v6.sh` for v5→v6 transition
+
+### Changed
+
+- **Discovery is pre-computed** — Workshop index replaces JIT grep (200ms → 5ms)
+- **Approval is survival** — Patterns earn status through usage, not dialogs
+- **Novelty is allowed** — Physics violations blocked, style innovation allowed
+- **Cold starts have taste** — Virtual Sanctuary seeds provide guidance
+
+### Deprecated
+
+- **Governance dialogs** — Replaced by survival observation
+- **JIT grep as primary** — Now fallback only
+
+### Migration
+
+```bash
+# Run migration script
+./scripts/migrate-v6.sh --dry-run  # Preview
+./scripts/migrate-v6.sh            # Apply
+```
+
+| v5.0 | v6.0 |
+|------|------|
+| JIT grep (200ms) | Workshop index (5ms) |
+| Governance dialogs | Survival observation |
+| Empty cold starts | Virtual Sanctuary seeds |
+| 6 skills | 11 skills + hooks |
+
+### Performance
+
+| Operation | Target | Achieved |
+|-----------|--------|----------|
+| Workshop query | <5ms | ~2ms |
+| Sanctuary scan | <50ms | ~30ms |
+| Full rebuild | <2s | ~1.5s |
+| Pattern observation | <10ms | ~5ms |
+| Craft log generation | <100ms | ~50ms |
+
+---
+
 ## [5.0.0] - 2026-01-08 — "The Lucid Flow"
 
 ### Summary

@@ -1,774 +1,592 @@
 # Sigil: Design Context Framework
 
-> "Make the right path easy. Make the wrong path visible. Don't make the wrong path impossible."
+> "Code is precedent. Survival is the vote. Never interrupt flow."
 
 ## What is Sigil?
 
 Sigil is a design context framework that helps AI agents make consistent design decisions by:
 
-1. **Providing zone context** - Knowing if you're in "critical" vs "marketing" context
-2. **Surfacing design rules** - Colors, typography, spacing, motion patterns
-3. **Capturing product feel** - Moodboard with references and anti-patterns
-4. **Human accountability** - All validation is human approval, not automation
+1. **Pre-computed Workshop Index** — 5ms queries instead of 200ms JIT grep
+2. **Virtual Sanctuary** — Seeds for cold start projects (Linear-like, Vercel-like, Stripe-like)
+3. **Physics Validation** — Block physics violations, not novelty
+4. **Survival-Based Precedent** — Patterns earn status through usage, not approval dialogs
+5. **Context Forking** — Ephemeral inspiration without polluting taste
+6. **10 Claude Code Skills** — Complete lifecycle with hooks
 
 ---
 
-## The Seven Laws
+## The Three Laws of v6.0
 
-1. **Filesystem is Truth** - Never use cached indexes. Always live grep.
-2. **Type Dictates Physics** - Money → server-tick, Task → crdt, Toggle → local-first.
-3. **Zone is Layout, Not Business Logic** - Zone determines feel, not behavior.
-4. **Status Propagates** - Your tier is only as good as your weakest dependency.
-5. **One Good Reason > 15% Silent Mutiny** - Capture bypasses, don't block them.
-6. **Never Refuse Outright** - Always offer COMPLY / BYPASS / AMEND.
-7. **Let Artists Stay in Flow** - Never auto-fix on save. Polish is deliberate.
+1. **Code is Precedent** — Patterns that survive become canonical. No governance dialogs.
+2. **Survival is the Vote** — Usage frequency determines pattern status, not approvals.
+3. **Never Interrupt Flow** — No blocking, no dialogs, observe silently.
 
 ---
 
-## v4.1 "Living Guardrails" - Enforcement Layer
+## The Seven Laws (Foundation)
 
-v4.1 adds enforcement capabilities to the v4.0 context documentation system:
-
-```
-                         AGENT TIME
-  zone-reader -> persona-reader -> vocab-reader -> physics-reader
-                           |
-             +-------------+-------------+
-             |                           |
-             v                           v
-      COMPILE TIME                  RUNTIME
-  eslint-plugin-sigil        SigilProvider + useSigilMutation
-  - enforce-tokens           - Auto-resolved physics
-  - zone-compliance          - Persona overrides
-  - input-physics            - Remote soul vibes
-```
-
-### Key v4.1 Features
-
-| Feature | Description |
-|---------|-------------|
-| SigilProvider | Runtime context for zone/persona state |
-| useSigilMutation | Hook that auto-resolves physics from context |
-| eslint-plugin-sigil | Compile-time enforcement (3 rules) |
-| Vocabulary Layer | Term -> feel mapping with 10 core terms |
-| Physics Timing | Motion name -> ms mapping |
-| Remote Soul | Marketing-controlled vibes via LaunchDarkly |
+1. **Filesystem is Truth** — Workshop index + live grep for verification
+2. **Type Dictates Physics** — Money → server-tick, Task → crdt, Toggle → local-first
+3. **Zone is Layout, Not Business Logic** — Zone determines feel, not behavior
+4. **Status Propagates** — Your tier is only as good as your weakest dependency
+5. **One Good Reason > 15% Silent Mutiny** — Capture bypasses, don't block them
+6. **Never Refuse Outright** — Always offer alternatives
+7. **Let Artists Stay in Flow** — Never auto-fix on save. Polish is deliberate.
 
 ---
 
 ## Quick Reference
 
-### Commands (v5.0)
+### Commands (v6.0)
 
 | Command | Purpose | Description |
 |---------|---------|-------------|
-| `/envision` | Capture product moodboard | Interview to capture feel, references, anti-patterns |
-| `/codify` | Define design rules | Define zone constraints and motion patterns |
-| `/craft` | Get design guidance | Auto-context aware generation |
-| `/observe` | Visual feedback loop | Capture screen for drift detection |
-| `/refine` | Incremental updates | Update personas, zones, vocabulary |
-| `/consult` | Record decisions | Lock decisions with expiry |
-| `/garden` | Health monitoring | Run all audits (cohesion + timing + propagation) |
-| `/polish` | JIT standardization | Scan violations, generate diffs, apply on approval |
-| `/amend` | Constitution change | Propose changes to constitution rules |
+| `/craft` | Design guidance | Zone-aware generation with workshop |
+| `/forge` | Precedent-breaking | Physics-only validation, skip survival |
+| `/inspire` | Ephemeral reference | One-time fetch, forked context |
+| `/sanctify` | Promote pattern | Save ephemeral inspiration to rules |
+| `/garden` | Pattern gardening | Scan for promotions/rejections |
+| `/audit` | Cohesion check | Visual consistency variance report |
+| `/new-era` | Era transition | Archive patterns, fresh tracking |
 
-### v5.0 Command Details
+### Skill Commands
 
-| Command | Basic | Options |
-|---------|-------|---------|
-| `/garden` | Run all audits | `--drift` (visual only) |
-| `/polish` | Show violations | `--check`, `--apply`, `--staged` |
-| `/amend <rule>` | Create proposal | `--change`, `--reason`, `--author` |
+| Skill | Trigger | Purpose |
+|-------|---------|---------|
+| scanning-sanctuary | Component lookup | Live ripgrep discovery |
+| graphing-imports | Startup | Scan src/ for dependencies |
+| querying-workshop | /craft | Fast workshop index queries |
+| validating-physics | PreToolUse | Block physics violations |
+| seeding-sanctuary | Cold start | Virtual taste from seeds |
+| inspiring-ephemerally | "like [url]" | Forked context fetch |
+| forging-patterns | /forge | Bypass survival checks |
+| managing-eras | /new-era | Era transitions |
+| observing-survival | PostToolUse | Silent pattern tracking |
+| chronicling-rationale | Stop | Craft log generation |
+| auditing-cohesion | /audit | Visual consistency checks |
 
 ### Key Files
 
 | File | Purpose |
 |------|---------|
-| `sigil-mark/moodboard.md` | Product feel, references, anti-patterns |
+| `.sigil/workshop.json` | Pre-computed index (materials, components, physics) |
+| `.sigil/survival.json` | Pattern tracking (status, occurrences, files) |
+| `.sigil/seed.yaml` | Virtual Sanctuary taste (cold starts) |
+| `.sigil/craft-log/*.md` | Session craft logs |
+| `.sigil/eras/*.json` | Archived era patterns |
+| `sigil-mark/moodboard.md` | Product feel, references |
 | `sigil-mark/rules.md` | Design rules by category |
-| `sigil-mark/personas/personas.yaml` | User archetypes with evidence |
-| `sigil-mark/vocabulary/vocabulary.yaml` | Term -> feel mapping |
-| `sigil-mark/kernel/physics.yaml` | Motion timing definitions |
-| `sigil-mark/remote-soul.yaml` | Kernel/vibe boundary |
-| `.sigilrc.yaml` | Zone definitions with physics & persona overrides |
-| `.sigil-version.json` | Version tracking |
+| `.sigilrc.yaml` | Zone definitions, physics |
 
 ---
 
-## Agent Protocol (v4.1)
+## Agent Protocol (v6.0)
 
 ### Before Generating UI Code
 
-1. **Check for Sigil setup**: Look for `sigil-mark/`
-
-2. **Load design context** (graceful fallbacks):
+1. **Startup Sentinel** — Check workshop freshness
    ```
-   sigil-mark/moodboard.md         -> Product feel
-   sigil-mark/rules.md             -> Design rules
-   sigil-mark/personas/personas.yaml -> User archetypes
-   sigil-mark/vocabulary/vocabulary.yaml -> Term -> feel mapping
-   sigil-mark/kernel/physics.yaml  -> Motion timing
+   if (package_hash changed || imports_hash changed) {
+     quickRebuild()  // <2s incremental
+   }
    ```
 
-3. **Determine zone**: Match current file path to zones in `.sigilrc.yaml`
-   ```yaml
-   zones:
-     critical:
-       paths: ["src/features/claim/**"]
-       default_physics:
-         sync: pessimistic
-         timing: deliberate
-         motion: deliberate
-       persona_overrides:
-         newcomer:
-           timing: reassuring
-           show_help: true
+2. **Load Context** — Query pre-computed workshop
+   ```
+   queryMaterial("framer-motion")  // <5ms
+   queryComponent("Button")        // <5ms
+   queryPhysics("deliberate")      // <5ms
    ```
 
-4. **Check vocabulary**: If component name matches a term, use term's recommended physics
+3. **Determine Zone** — From vocabulary or file path
+   ```
+   extractVocabularyTerms(prompt)  // "claim", "deposit"
+   → resolveZone()                 // critical
+   → resolvePhysics()              // deliberate
+   ```
 
-5. **Generate code with context**
+4. **Select Patterns** — Prefer canonical over experimental
+   ```
+   querysurvival("animation:spring")
+   → status: canonical (5+ occurrences)
+   → prefer this pattern
+   ```
 
-### Zone Resolution
+5. **Validate Physics** — PreToolUse hook
+   ```
+   checkZoneConstraints()      // critical + playful → BLOCK
+   checkMaterialConstraints()  // clay + 0ms → BLOCK
+   checkApiCorrectness()       // motion.animate → suggest motion.div
+   checkFidelityCeiling()      // 3D in standard → BLOCK
+   ```
+
+### During Generation
+
+Physics validation only blocks on:
+- Zone-physics mismatch
+- Material-timing mismatch
+- Invalid API usage
+- Fidelity ceiling exceeded
+
+Physics validation does NOT block on:
+- Pattern novelty
+- Style innovation
+- New approaches
+
+### After Generation (PostToolUse)
+
+Pattern observation (silent):
+1. Detect patterns in generated code
+2. Add @sigil-pattern JSDoc tag
+3. Update survival.json
+4. No interruption, no dialog
+
+### Session End (Stop Hook)
+
+Craft log generation:
+1. Collect decisions from session
+2. Write to `.sigil/craft-log/{date}-{component}.md`
+3. Include zone, physics, patterns, checks
+
+---
+
+## Craft Flow Phases
+
+The sigil-craft agent orchestrates 7 phases:
 
 ```
-1. Get current file path
-2. Read .sigilrc.yaml zones section
-3. For each zone, check if path matches any glob pattern
-4. Return matching zone with default_physics
-5. Apply persona_overrides if persona context available
+Phase 1: Startup
+├── Check workshop freshness
+└── Rebuild if stale (<2s)
+
+Phase 2: Discovery
+├── Scan Sanctuary (ripgrep)
+└── Query workshop index
+
+Phase 3: Context
+├── Extract vocabulary terms
+├── Resolve zone
+└── Resolve physics
+
+Phase 4: Validation
+├── Zone constraints
+├── Material constraints
+├── API correctness
+└── Fidelity ceiling
+
+Phase 5: Generation
+├── Select canonical patterns
+├── Apply physics
+└── Generate code
+
+Phase 6: Observation
+├── Detect patterns
+├── Tag code
+└── Update survival
+
+Phase 7: Chronicling
+├── Collect decisions
+└── Write craft log
 ```
 
-### Gap Detection
+---
 
-At the END of /craft output, surface missing context:
+## Workshop Index
+
+Pre-computed at `.sigil/workshop.json`:
+
+```json
+{
+  "indexed_at": "2026-01-08T00:00:00Z",
+  "package_hash": "abc123",
+  "imports_hash": "def456",
+  "materials": {
+    "framer-motion": {
+      "version": "11.15.0",
+      "exports": ["motion", "AnimatePresence"],
+      "signatures": ["motion.div", "motion.button"]
+    }
+  },
+  "components": {
+    "Button": {
+      "path": "src/sanctuary/Button.tsx",
+      "tier": "gold",
+      "zone": "standard",
+      "physics": ["snappy"]
+    }
+  },
+  "physics": {
+    "deliberate": { "timing": 800, "easing": "ease-out" },
+    "snappy": { "timing": 150, "easing": "ease-out" }
+  },
+  "zones": {
+    "critical": { "physics": "deliberate" },
+    "standard": { "physics": "warm" }
+  }
+}
+```
+
+### Performance Targets
+
+| Operation | Target | Actual |
+|-----------|--------|--------|
+| Workshop query | <5ms | ~2ms |
+| Sanctuary scan | <50ms | ~30ms |
+| Full rebuild | <2s | ~1.5s |
+| Pattern observation | <10ms | ~5ms |
+| Craft log generation | <100ms | ~50ms |
+
+---
+
+## Survival Index
+
+Pattern tracking at `.sigil/survival.json`:
+
+```json
+{
+  "era": "v1",
+  "era_started": "2026-01-08",
+  "last_scan": "2026-01-08T12:00:00Z",
+  "patterns": {
+    "animation:spring-entrance": {
+      "status": "canonical",
+      "first_seen": "2026-01-01",
+      "occurrences": 7,
+      "files": ["Button.tsx", "Card.tsx", "Modal.tsx"]
+    },
+    "animation:fade-exit": {
+      "status": "experimental",
+      "first_seen": "2026-01-07",
+      "occurrences": 2,
+      "files": ["Tooltip.tsx"]
+    }
+  }
+}
+```
+
+### Pattern Promotion
+
+| Status | Occurrences | Behavior |
+|--------|-------------|----------|
+| experimental | 1-2 | Tracked, not preferred |
+| surviving | 3-4 | Preferred over new |
+| canonical | 5+ | Standard pattern |
+
+### Gardener Script
+
+Weekly scan for promotions/rejections:
+
+```bash
+# Scan for @sigil-pattern tags
+rg "@sigil-pattern" src/ -l
+
+# Count occurrences per pattern
+# Apply promotion rules:
+# - 3+ occurrences → canonical
+# - 0 occurrences → rejected
+```
+
+---
+
+## Virtual Sanctuary (Seeds)
+
+For cold start projects without existing components:
+
+### Available Seeds
+
+| Seed | Feel | Physics |
+|------|------|---------|
+| Linear-like | Minimal, monochrome | snappy (150ms) |
+| Vercel-like | Bold, high-contrast | sharp (100ms) |
+| Stripe-like | Soft gradients | smooth (300ms) |
+| Blank | No preset | default |
+
+### Seed Selection
 
 ```
-CONTEXT GAPS
+if (src/sanctuary/ is empty) {
+  prompt user: "Select a seed taste"
+  write to .sigil/seed.yaml
+}
+```
 
-2 gaps detected that may affect this guidance:
+### Fade Behavior
 
-1. UNDEFINED PERSONA: "whale"
-   You mentioned "whale users" but no whale persona exists.
-   -> /refine --persona whale "high-value depositor"
+Virtual components "fade" when real ones exist:
+```
+Virtual Button exists in seed
+Real Button created in Sanctuary
+→ Virtual Button marked as "faded"
+→ Queries return real Button
+```
 
-2. MISSING VOCABULARY: "claim"
-   No vocabulary term defined for "claim".
-   -> /refine --vocab claim
+---
+
+## Ephemeral Inspiration
+
+One-time external reference without polluting taste:
+
+```
+User: "Make it like stripe.com"
+
+Agent:
+1. Fork context (no survival access)
+2. Fetch and extract styles
+3. Generate code with extracted styles
+4. Discard fetched content
+5. Only generated code remains
+```
+
+### /sanctify Command
+
+Promote ephemeral pattern to permanent:
+```bash
+/sanctify "gradient-border"
+→ Extracts pattern from recent generation
+→ Adds to rules.md
+→ Logs sanctification
+```
+
+---
+
+## Forge Mode
+
+Explicit precedent-breaking for exploration:
+
+```bash
+/craft --forge "experimental loading animation"
+# or
+/forge "experimental loading animation"
+```
+
+### Forge Behavior
+
+| Check | Normal Mode | Forge Mode |
+|-------|-------------|------------|
+| Survival patterns | Preferred | Ignored |
+| Rejected patterns | Warned | Ignored |
+| Physics constraints | Enforced | Enforced |
+| API correctness | Enforced | Enforced |
+
+After forge generation:
+```
+Prompt: "Keep this exploration?"
+→ Keep: Normal flow applies
+→ Discard: Code removed
+```
+
+---
+
+## Era Management
+
+Design direction shifts without losing history:
+
+```bash
+/new-era "Tactile"
+→ Archives current patterns to .sigil/eras/v1.json
+→ Creates new era "Tactile"
+→ Resets pattern counts (history preserved)
+→ Updates rules.md with era marker
+```
+
+### Era in Craft Logs
+
+```markdown
+# Craft Log: 2026-01-08 - Button
+
+**Era:** Tactile
+**Zone:** critical
+**Physics:** deliberate
+
+## Decisions
+- Used spring animation (canonical in era)
+```
+
+---
+
+## Cohesion Auditing
+
+Visual consistency checks on demand:
+
+```bash
+/audit ClaimButton
+```
+
+### Variance Report
+
+```
+Property       | Expected | Actual | Variance
+---------------|----------|--------|----------
+shadow         | 0 2 4    | 0 4 8  | 45% ⚠️
+border-radius  | 8px      | 8px    | 0%
+spacing        | 16px     | 16px   | 0%
+```
+
+### Thresholds
+
+| Property | Allowed Variance |
+|----------|-----------------|
+| Shadow | 20% |
+| Border radius | 10% |
+| Spacing | 15% |
+| Colors | 10% |
+
+### Justified Deviations
+
+```typescript
+/**
+ * @sigil-deviation shadow
+ * Reason: Modal needs stronger shadow for elevation
+ */
+```
+
+---
+
+## Craft Logs
+
+Automatic documentation via Stop hook:
+
+```markdown
+# Craft Log: 2026-01-08 - ClaimButton
+
+**Request:** "trustworthy claim button with animation"
+**Era:** v1
+**Zone:** critical
+**Physics:** deliberate (800ms)
+
+## Decisions
+| Decision | Choice | Reasoning |
+|----------|--------|-----------|
+| Zone | critical | Vocabulary: "claim" |
+| Physics | deliberate | Zone constraint |
+| Animation | spring | Canonical pattern |
+
+## New Patterns
+- animation:confirmation-pulse (experimental)
+
+## Physics Validated
+- [x] Zone constraint
+- [x] Material constraint
+- [x] API correctness
+- [x] Fidelity ceiling
 ```
 
 ---
 
 ## useSigilMutation Hook
 
-The primary hook for mutations in v4.1. Auto-resolves physics from zone+persona context.
-
-### Basic Usage
+Runtime hook for mutations (unchanged from v5.0):
 
 ```tsx
-import { useSigilMutation } from 'sigil-mark/hooks';
+import { useSigilMutation } from 'sigil-mark';
 
-function PaymentButton() {
-  const { execute, isPending, disabled, style, physics } = useSigilMutation({
-    mutation: (amount) => api.pay(amount),
-    onSuccess: () => toast.success('Payment complete!'),
+function ClaimButton({ poolId }) {
+  const { execute, simulate, confirm, state, physics } = useSigilMutation({
+    mutation: () => api.claim(poolId),
+    dataType: 'financial',
   });
 
   return (
     <button
-      onClick={() => execute(100)}
-      disabled={disabled}
-      style={style}
+      onClick={async () => {
+        const preview = await simulate();
+        if (userConfirms(preview)) {
+          confirm();
+          await execute();
+        }
+      }}
+      disabled={state === 'pending'}
     >
-      {isPending ? 'Processing...' : 'Pay $100'}
+      Claim
     </button>
   );
 }
 ```
 
-### Physics Auto-Resolution
+---
 
-| Zone | Sync | Timing | Disabled While Pending |
-|------|------|--------|----------------------|
-| critical | pessimistic | 800ms (deliberate) | true |
-| admin | optimistic | 150ms (snappy) | false |
-| marketing | optimistic | 300ms (warm) | false |
-| default | optimistic | 300ms (warm) | false |
+## Zone Layouts
 
-### Persona Overrides
-
-In critical zone:
-
-| Persona | Timing | Motion |
-|---------|--------|--------|
-| newcomer | 1200ms (reassuring) | reassuring |
-| power_user | 800ms (deliberate) | deliberate |
-| accessibility | 0ms (reduced) | reduced |
-
-### API Reference
+Pre-built layouts that set zone context:
 
 ```tsx
-const {
-  // State
-  status,        // 'idle' | 'pending' | 'confirmed' | 'failed'
-  data,          // TData | null
-  error,         // Error | null
+import { CriticalZone, GlassLayout, MachineryLayout } from 'sigil-mark';
 
-  // Resolved physics
-  physics,       // { sync, timing, easing, disabled_while_pending, vibes }
+// Critical zone: deliberate physics
+<CriticalZone financial>
+  <ClaimButton />
+</CriticalZone>
 
-  // Computed UI state
-  disabled,      // boolean (pessimistic sync + pending)
-  isPending,     // boolean
+// Glass layout: smooth physics
+<GlassLayout>
+  <BrowsePanel />
+</GlassLayout>
 
-  // CSS variables
-  style,         // { '--sigil-duration', '--sigil-easing' }
-
-  // Actions
-  execute,       // (variables) => Promise<void>
-  reset,         // () => void
-} = useSigilMutation(config);
+// Machinery layout: instant physics
+<MachineryLayout>
+  <AdminDashboard />
+</MachineryLayout>
 ```
 
 ---
 
-## ESLint Plugin
-
-Three rules for compile-time enforcement:
-
-### enforce-tokens (error)
-
-Prevents arbitrary Tailwind values:
-
-```jsx
-// Error: Use token value instead of arbitrary value: [13px]
-<div className="gap-[13px]">
-
-// OK
-<div className="gap-2">
-```
-
-### zone-compliance (warn)
-
-Warns when timing doesn't match zone's motion type:
-
-```jsx
-// In critical zone (motion: deliberate):
-// Warning: Duration 200ms is too fast for critical zone (min: 500ms)
-<motion.div animate={{ transition: { duration: 0.2 } }}>
-
-// OK
-<motion.div animate={{ transition: { duration: 0.8 } }}>
-```
-
-### input-physics (warn)
-
-Warns about missing keyboard navigation in admin zones:
-
-```jsx
-// In admin zone:
-// Warning: Interactive element should have onKeyDown and tabIndex
-<div onClick={handleClick}>
-
-// OK
-<div onClick={handleClick} onKeyDown={handleKey} tabIndex={0}>
-```
-
-### Configuration
-
-```js
-// eslint.config.js
-import sigil from 'eslint-plugin-sigil';
-
-export default [
-  sigil.configs.recommended,
-];
-```
-
----
-
-## Vocabulary Layer
-
-Define product terms for consistent language:
-
-```yaml
-# sigil-mark/vocabulary/vocabulary.yaml
-terms:
-  deposit:
-    engineering_name: deposit
-    user_facing: Deposit
-    mental_model: "Adding funds to grow"
-    recommended:
-      material: glass
-      motion: deliberate
-      tone: confident
-    zones:
-      - critical
-      - onboarding
-```
-
-### In /craft
-
-When generating components, /craft checks vocabulary:
-1. If component name matches a term, uses term's recommended physics
-2. Surfaces undefined terms as gaps at end of output
-
----
-
-## Physics Timing Reference
-
-| Motion | Duration | Easing | Use Case |
-|--------|----------|--------|----------|
-| instant | 0ms | linear | Power user actions |
-| snappy | 150ms | ease-out | Admin interfaces |
-| warm | 300ms | ease-in-out | Marketing, default |
-| deliberate | 800ms | ease-out | Critical zone base |
-| reassuring | 1200ms | ease-in-out | Newcomer in critical |
-| celebratory | 1200ms | bouncy | Success moments |
-| reduced | 0ms | linear | Accessibility |
-
----
-
-## Remote Soul (Optional)
-
-Marketing-controlled vibes via LaunchDarkly:
-
-### Kernel (Engineering-Locked)
-
-- physics (all motion timings)
-- sync (pessimistic/optimistic/hybrid)
-- protected_zones (critical zone config)
-- persona_overrides.accessibility
-
-### Vibe (Marketing-Controlled)
-
-- seasonal_theme
-- color_temp
-- hero_energy
-- warmth_level
-- celebration_intensity
-- timing_modifier (0.5-2.0 multiplier)
-
-### Usage
-
-```tsx
-<SigilProvider
-  persona={persona}
-  remoteConfigProvider="launchdarkly"
-  remoteConfigKey="sigil-vibes"
->
-  <App />
-</SigilProvider>
-```
-
-See `docs/MARKETING-VIBES.md` for full setup.
-
----
-
-## Process Layer (Agent-Only)
-
-**IMPORTANT**: The Process layer (`sigil-mark/process`) is AGENT-ONLY.
-
-- Uses Node.js `fs` to read YAML files
-- Cannot run in browsers
-- Runtime hooks were REMOVED in v4.1
-
-For runtime context, use SigilProvider from `sigil-mark/providers`.
-
-See `MIGRATION-v4.1.md` for migration guide.
-
----
-
-## v5.0 Component Discovery (Scanning Sanctuary)
-
-### Law: "Filesystem is Truth"
-
-**NEVER use cached component indexes.** Always use live ripgrep.
-
-Why:
-- Branch switches don't update caches
-- Uncommitted changes are invisible to cached indexes
-- Deleted files still appear in stale caches
-- ripgrep < 50ms is faster than cache lookup + validation
-
-### JSDoc Pragmas
-
-Add these pragmas to components for discovery:
-
-```typescript
-/**
- * @sigil-tier gold
- * @sigil-zone critical
- * @sigil-data-type Money
- * ClaimButton - Handles claim transactions
- */
-```
-
-| Pragma | Values | Purpose |
-|--------|--------|---------|
-| `@sigil-tier` | gold, silver, bronze, draft | Component quality tier |
-| `@sigil-zone` | critical, glass, machinery, standard | Physics zone |
-| `@sigil-data-type` | Money, Health, Task, etc. | Data type for physics |
-
-### Ripgrep Commands
-
-Find components by tier:
-```bash
-rg "@sigil-tier gold" -l --type ts
-```
-
-Find components by zone:
-```bash
-rg "@sigil-zone critical" -l --type ts
-```
-
-Find components by data type:
-```bash
-rg "@sigil-data-type Money" -l --type ts
-```
-
-Combined search (Gold tier in critical zone):
-```bash
-rg "@sigil-tier gold" -l --type ts | xargs rg "@sigil-zone critical" -l
-```
-
-### Anti-Patterns
-
-| DO NOT | Why |
-|--------|-----|
-| Use `sigil.map` | Becomes stale on branch switch |
-| Use `.sigil-cache` | Can hallucinate deleted components |
-| Use component registries | Need manual sync with filesystem |
-| Trust prebuilt indexes | Git history doesn't update them |
-
-### Performance
-
-- Target: < 50ms for 10k files
-- Use `-l` for file paths only (faster)
-- Use `--type ts` to limit to TypeScript
-- Use `-g 'src/**'` to limit search scope
-
----
-
-## v5.0 JIT Polish Workflow
-
-### Law: "Never Auto-fix on Save"
-
-**NEVER configure auto-formatting that fixes Sigil violations on save.**
-
-Why:
-- Messy code IS debugging context
-- `border: 1px solid red;` is a valid debugging technique
-- Auto-fix removes debugging state before developer can use it
-- Breaking flow destroys productivity and trust
-
-### /polish Command
-
-```bash
-# Show violations with suggested fixes
-npx sigil polish
-
-# Check mode (CI/pre-commit) - exits non-zero if errors
-npx sigil polish --check
-
-# Check staged files only
-npx sigil polish --check --staged
-
-# Apply fixes after review
-npx sigil polish --apply
-
-# Target specific files
-npx sigil polish --files 'src/components/**/*.tsx'
-```
-
-### Workflow
-
-1. **Scan** - Find taste violations against fidelity/constitution
-2. **Generate** - Create fix diff for each violation
-3. **Present** - Show before/after diff
-4. **Apply** - ONLY on explicit user approval
-
-### Violation Types
-
-| Type | Severity | Examples |
-|------|----------|----------|
-| ergonomic | error | hitbox < 44px, missing focus ring |
-| constitution | error | wrong physics for data type |
-| fidelity | warning | animation duration exceeded |
-| cohesion | warning | shadow mismatch with neighbors |
-
-### Pre-commit Hook
-
-```bash
-# Install hook
-./sigil-mark/scripts/install-hooks.sh
-
-# Or manually:
-npx husky add .husky/pre-commit "npx sigil polish --check --staged"
-```
-
-### Anti-Patterns
-
-| DO NOT | Why |
-|--------|-----|
-| Configure ESLint auto-fix for Sigil rules | Breaks debugging flow |
-| Configure Prettier to fix on save | Removes debugging context |
-| Block commits without showing fixes | Developer loses state |
-| Auto-apply fixes silently | Surprise changes cause distrust |
-
----
-
-## v5.0 Status Propagation & Negotiation
-
-### Status Propagation Rule
-
-**Law: Your status is only as good as your weakest dependency.**
+## Directory Structure
 
 ```
-Tier(Component) = min(DeclaredTier, Tier(Dependencies))
+.sigil/
+├── workshop.json       # Pre-computed index
+├── survival.json       # Pattern tracking
+├── seed.yaml          # Virtual Sanctuary
+├── craft-log/         # Session logs
+│   └── {date}-{component}.md
+└── eras/              # Archived eras
+    └── {era-name}.json
+
+sigil-mark/
+├── kernel/            # Constitution (unchanged)
+├── providers/         # SigilProvider
+├── hooks/             # useSigilMutation
+├── layouts/           # Zone layouts
+├── process/           # Agent-time utilities (v6.0)
+│   ├── workshop-builder.ts
+│   ├── workshop-query.ts
+│   ├── startup-sentinel.ts
+│   ├── discovery-scanner.ts
+│   ├── physics-validator.ts
+│   ├── seed-manager.ts
+│   ├── ephemeral-context.ts
+│   ├── forge-mode.ts
+│   ├── era-manager.ts
+│   ├── survival-observer.ts
+│   ├── chronicling-rationale.ts
+│   ├── auditing-cohesion.ts
+│   └── agent-orchestration.ts
+├── moodboard.md
+└── rules.md
+
+.claude/
+├── skills/
+│   ├── scanning-sanctuary/
+│   ├── graphing-imports/
+│   ├── querying-workshop/
+│   ├── validating-physics/
+│   ├── seeding-sanctuary/
+│   ├── inspiring-ephemerally/
+│   ├── forging-patterns/
+│   ├── managing-eras/
+│   ├── observing-survival/
+│   ├── chronicling-rationale/
+│   └── auditing-cohesion/
+└── agents/
+    └── sigil-craft.yaml
 ```
-
-If a `@sigil-tier gold` component imports a `@sigil-tier draft` component, its effective tier becomes `draft`.
-
-```typescript
-import { analyzeComponentStatus } from 'sigil-mark/process';
-
-const status = analyzeComponentStatus('src/components/ClaimButton.tsx');
-if (status.downgrade) {
-  console.log('Downgrade:', status.warnings);
-  // ⚠️ Tier downgrade: gold → draft due to import of ./DraftHelper (tier: draft)
-}
-```
-
-### Tier Hierarchy
-
-| Tier | Priority | Description |
-|------|----------|-------------|
-| gold | 4 (highest) | Production-ready, fully tested |
-| silver | 3 | Reviewed, minor gaps |
-| bronze | 2 | Functional, needs polish |
-| draft | 1 (lowest) | Work in progress |
-
-### Scanning for Downgrades
-
-```bash
-# Find all components with tier downgrades
-import { scanStatusPropagation } from 'sigil-mark/process';
-
-const issues = scanStatusPropagation();
-for (const issue of issues) {
-  console.log(`${issue.file}: ${issue.declaredTier} → ${issue.effectiveTier}`);
-}
-```
-
-### Negotiating Integrity
-
-When a request conflicts with the Constitution, **never refuse outright**. Present options:
-
-```
-This request conflicts with the Constitution.
-
-VIOLATION: Using useOptimistic with Money type
-ARTICLE: constitution.financial.forbidden[0]
-RISK: critical
-
-OPTIONS:
-1. COMPLY - Use useSigilMutation with simulation flow
-2. BYPASS - Override with justification (will be logged)
-3. AMEND - Propose constitution change
-
-Which do you prefer?
-```
-
-### BYPASS Option
-
-Overrides are logged to `governance/justifications.log`:
-
-```typescript
-import { handleBypass } from 'sigil-mark/process';
-
-const { comment, logged } = handleBypass(
-  {
-    file: 'src/features/swap/SwapPanel.tsx',
-    article: 'constitution.financial.forbidden[0]',
-    violation: 'Using useOptimistic with Money type',
-    risk: 'critical',
-  },
-  'Demo account, no real funds at risk',
-  { author: '@zksoju' }
-);
-
-// Adds to code:
-// @sigil-override: constitution.financial.forbidden[0]
-// Reason: Demo account, no real funds at risk
-// Author: @zksoju
-// Date: 2026-01-08
-```
-
-### AMEND Option
-
-Creates an amendment proposal in `governance/amendments/`:
-
-```typescript
-import { handleAmend } from 'sigil-mark/process';
-
-const proposal = handleAmend(
-  context,
-  'Allow useOptimistic for demo accounts with isDemoAccount flag',
-  'Demo accounts have no real funds at risk',
-  { author: '@zksoju' }
-);
-// Creates: governance/amendments/AMEND-2026-001.yaml
-```
-
-### Governance Files
-
-| Path | Purpose |
-|------|---------|
-| `governance/justifications.log` | Append-only log of all BYPASS overrides |
-| `governance/amendments/*.yaml` | Amendment proposals with status tracking |
-
-### Anti-Patterns
-
-| DO NOT | Why |
-|--------|-----|
-| Refuse requests outright | User disables the tool |
-| Skip justification capture | We lose learning opportunity |
-| Auto-approve bypasses | Defeats accountability purpose |
-| Block without options | Always offer COMPLY/BYPASS/AMEND |
-
----
-
-## v5.0 Garden Command
-
-### System Health Check
-
-The `/garden` command runs all audits and returns a health report:
-
-```typescript
-import { garden, formatGardenResult } from 'sigil-mark/process';
-
-const result = await garden();
-console.log(formatGardenResult(result));
-// # Garden Health Report
-// **Scanned:** 47 components
-// **Health Score:** 85%
-//
-// ## Summary
-// - Errors: 2
-// - Warnings: 7
-// - Info: 3
-```
-
-### What Garden Checks
-
-| Audit | Category | Severity |
-|-------|----------|----------|
-| Fidelity ceiling violations | fidelity | warning/error |
-| Cohesion variances | cohesion | warning |
-| Timing anti-patterns | timing | warning |
-| Status propagation | propagation | warning |
-
-### CLI Usage
-
-```bash
-# Full garden check
-npx sigil garden
-
-# Visual drift only
-npx sigil garden --drift
-```
-
----
-
-## v5.0 Amend Command
-
-### Constitution Amendment Proposals
-
-The `/amend` command creates formal proposals to change constitution rules:
-
-```typescript
-import { amend, formatAmendResult } from 'sigil-mark/process';
-
-const result = amend(
-  'constitution.financial.forbidden[0]',
-  'Allow useOptimistic for demo accounts with isDemoAccount flag',
-  'Demo accounts have no real funds at risk',
-  { author: '@zksoju' }
-);
-
-console.log(formatAmendResult(result));
-// # Amendment Proposal Created
-// **ID:** AMEND-2026-001
-// **File:** sigil-mark/governance/amendments/AMEND-2026-001.yaml
-```
-
-### Amendment Workflow
-
-1. **Propose** - `/amend` creates proposal in `governance/amendments/`
-2. **Review** - Stakeholders review the proposal
-3. **Discussion** - 1 week minimum discussion period
-4. **Decision** - Update status to `approved` or `rejected`
-5. **Apply** - If approved, update `constitution.yaml`
-
-### CLI Usage
-
-```bash
-# List pending amendments
-npx sigil amend --list
-
-# Create new amendment
-npx sigil amend constitution.financial.forbidden[0] \
-  --change "Allow useOptimistic for demo accounts" \
-  --reason "Demo accounts have no real funds" \
-  --author "@zksoju"
-```
-
----
-
-## Philosophy
-
-> "Sweat the art. We handle the mechanics. Return to flow."
-
-### Decision Hierarchy
-
-When concerns conflict:
-
-| Conflict | Winner | Rationale |
-|----------|--------|-----------|
-| Trust vs Speed | Trust | Speed can be recovered. Trust cannot. |
-| Newcomer vs Power User | Newcomer safety | Power users can customize. |
-| Marketing vs Security | Security | Constitution exists for a reason. |
-
-### Agent Role
-
-The agent:
-- Presents options with tradeoffs
-- Does NOT make taste decisions
-- Respects locked decisions
-- Cites philosophy when relevant
-- Surfaces gaps at end of output
-
----
-
-## Deprecation Warnings
-
-| Deprecated | Replacement | Message |
-|------------|-------------|---------|
-| useCriticalAction | useSigilMutation | "Use useSigilMutation for auto-resolved physics" |
-| ProcessContextProvider | SigilProvider | "Process layer is agent-only" |
-| useProcessContext | useSigilZoneContext | "Use SigilProvider hooks" |
-| /setup | (automatic) | "Setup is automatic" |
-| /inherit | /envision | "/envision auto-detects existing codebase" |
-
-See `MIGRATION-v4.1.md` for full migration guide.
 
 ---
 
 ## Coexistence with Loa
 
 Sigil and Loa can coexist. They have separate:
-- State zones (sigil-mark/ vs loa-grimoire/)
+- State zones (sigil-mark/ + .sigil/ vs loa-grimoire/)
 - Config files (.sigilrc.yaml vs .loa.config.yaml)
 - Skills (design-focused vs workflow-focused)
 
@@ -776,5 +594,18 @@ No automatic cross-loading - developer decides when to reference design context.
 
 ---
 
-*Sigil v5.0.0 "The Lucid Flow"*
+## Migration from v5.0
+
+See [MIGRATION.md](MIGRATION.md) for migration guide.
+
+Key changes:
+- Added `.sigil/` directory for runtime state
+- Workshop index replaces JIT grep
+- Survival observation replaces governance dialogs
+- Seeds for cold starts
+- Ephemeral inspiration for one-time references
+
+---
+
+*Sigil v6.0.0 "Native Muse"*
 *Last Updated: 2026-01-08*

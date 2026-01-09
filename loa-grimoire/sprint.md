@@ -1505,12 +1505,12 @@ The MVP delivers:
 **Description:** Update CLAUDE.md with v6.0 protocol.
 
 **Acceptance Criteria:**
-- [ ] All commands documented
-- [ ] All 10 skills referenced
-- [ ] Three Laws stated
-- [ ] Seven Laws referenced
-- [ ] Quick reference table
-- [ ] Agent protocol section
+- [x] All commands documented
+- [x] All 10 skills referenced
+- [x] Three Laws stated
+- [x] Seven Laws referenced
+- [x] Quick reference table
+- [x] Agent protocol section
 
 **Dependencies:** Sprints 1-12
 **Effort:** Medium
@@ -1521,11 +1521,11 @@ The MVP delivers:
 **Description:** Update README with v6.0 features.
 
 **Acceptance Criteria:**
-- [ ] New features highlighted
-- [ ] Workshop index explained
-- [ ] Virtual Sanctuary explained
-- [ ] Commands reference
-- [ ] Quick start guide
+- [x] New features highlighted
+- [x] Workshop index explained
+- [x] Virtual Sanctuary explained
+- [x] Commands reference
+- [x] Quick start guide
 
 **Dependencies:** S13-T1
 **Effort:** Medium
@@ -1536,11 +1536,11 @@ The MVP delivers:
 **Description:** Create migration guide from v5.0.
 
 **Acceptance Criteria:**
-- [ ] Step-by-step migration
-- [ ] What's kept (kernel, runtime)
-- [ ] What's added (.sigil/)
-- [ ] What's removed (old cache)
-- [ ] Migration script reference
+- [x] Step-by-step migration
+- [x] What's kept (kernel, runtime)
+- [x] What's added (.sigil/)
+- [x] What's removed (old cache)
+- [x] Migration script reference
 
 **Dependencies:** Sprints 1-12
 **Effort:** Medium
@@ -1551,11 +1551,11 @@ The MVP delivers:
 **Description:** Create v5→v6 migration script.
 
 **Acceptance Criteria:**
-- [ ] Script at `scripts/migrate-v6.sh`
-- [ ] Creates .sigil/ directory structure
-- [ ] Builds initial workshop
-- [ ] Initializes survival.json
-- [ ] Updates version files
+- [x] Script at `scripts/migrate-v6.sh`
+- [x] Creates .sigil/ directory structure
+- [x] Builds initial workshop
+- [x] Initializes survival.json
+- [x] Updates version files
 
 **Dependencies:** Sprints 1-12
 **Effort:** Medium
@@ -1566,15 +1566,15 @@ The MVP delivers:
 **Description:** Complete end-to-end test suite.
 
 **Acceptance Criteria:**
-- [ ] Test cold start with seed
-- [ ] Test warm start with workshop
-- [ ] Test /craft flow variations
-- [ ] Test /forge mode
-- [ ] Test /inspire + /sanctify
-- [ ] Test /garden
-- [ ] Test /audit
-- [ ] Test /new-era
-- [ ] All tests pass
+- [x] Test cold start with seed
+- [x] Test warm start with workshop
+- [x] Test /craft flow variations
+- [x] Test /forge mode
+- [x] Test /inspire + /sanctify
+- [x] Test /garden
+- [x] Test /audit
+- [x] Test /new-era
+- [x] All tests pass
 
 **Dependencies:** Sprints 1-12
 **Effort:** Large
@@ -1585,12 +1585,12 @@ The MVP delivers:
 **Description:** Validate all performance targets.
 
 **Acceptance Criteria:**
-- [ ] Workshop query <5ms ✓
-- [ ] Sanctuary scan <50ms ✓
-- [ ] Index rebuild <2s ✓
-- [ ] Pattern observation <10ms ✓
-- [ ] Craft log generation <100ms ✓
-- [ ] Document results
+- [x] Workshop query <5ms ✓
+- [x] Sanctuary scan <50ms ✓
+- [x] Index rebuild <2s ✓
+- [x] Pattern observation <10ms ✓
+- [x] Craft log generation <100ms ✓
+- [x] Document results
 
 **Dependencies:** S13-T5
 **Effort:** Medium
@@ -1601,11 +1601,11 @@ The MVP delivers:
 **Description:** Update version files to 6.0.0.
 
 **Acceptance Criteria:**
-- [ ] VERSION file updated
-- [ ] .sigil-version.json updated
-- [ ] package.json version updated
-- [ ] CHANGELOG.md updated
-- [ ] Git tag created
+- [x] VERSION file updated
+- [x] .sigil-version.json updated
+- [x] package.json version updated
+- [x] CHANGELOG.md updated
+- [x] Git tag created
 
 **Dependencies:** S13-T1 through S13-T6
 **Effort:** Small

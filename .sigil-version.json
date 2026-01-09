@@ -1,20 +1,29 @@
 {
-  "sigil_version": "5.0.0",
-  "framework_version": "5.0.0",
-  "codename": "The Lucid Flow",
-  "schema_version": 7,
-  "description": "Constitutional framework with Seven Laws, live grep discovery, and governance system",
+  "sigil_version": "6.0.0",
+  "framework_version": "6.0.0",
+  "codename": "Native Muse",
+  "schema_version": 8,
+  "description": "Survival-based framework with Three Laws, pre-computed workshop, and silent pattern observation",
   "zones": {
     "system": ".claude/",
-    "state": "sigil-mark/"
+    "state": "sigil-mark/",
+    "runtime": ".sigil/"
   },
   "tools": [
     "/envision",
     "/codify",
     "/craft",
-    "/polish",
+    "/forge",
+    "/inspire",
+    "/sanctify",
     "/garden",
-    "/amend"
+    "/audit",
+    "/new-era"
+  ],
+  "three_laws": [
+    "Code is Precedent",
+    "Survival is the Vote",
+    "Never Interrupt Flow"
   ],
   "seven_laws": [
     "Filesystem is Truth",
@@ -26,6 +35,15 @@
     "Let Artists Stay in Flow"
   ],
   "features": {
+    "workshop_index": true,
+    "survival_observation": true,
+    "virtual_sanctuary": true,
+    "ephemeral_inspiration": true,
+    "forge_mode": true,
+    "era_management": true,
+    "craft_logs": true,
+    "cohesion_auditing": true,
+    "agent_orchestration": true,
     "progressive_disclosure": true,
     "evidence_based_context": true,
     "live_grep_discovery": true,
@@ -44,12 +62,22 @@
   },
   "skills": [
     "scanning-sanctuary",
-    "analyzing-data-risk",
-    "polishing-code",
-    "negotiating-integrity",
-    "auditing-cohesion",
-    "simulating-interaction"
+    "graphing-imports",
+    "querying-workshop",
+    "validating-physics",
+    "seeding-sanctuary",
+    "inspiring-ephemerally",
+    "forging-patterns",
+    "managing-eras",
+    "observing-survival",
+    "chronicling-rationale",
+    "auditing-cohesion"
   ],
+  "hooks": {
+    "PreToolUse": "validating-physics",
+    "PostToolUse": "observing-survival",
+    "Stop": "chronicling-rationale"
+  },
   "runtime": {
     "provider": "sigil-mark/providers/sigil-provider.tsx",
     "hooks": [
@@ -61,38 +89,60 @@
     "path": "sigil-mark/process/",
     "agent_only": true,
     "modules": [
-      "component-scanner.ts",
-      "data-risk-analyzer.ts",
-      "polish-command.ts",
-      "governance-logger.ts",
-      "status-propagation.ts",
-      "violation-scanner.ts",
-      "garden-command.ts",
-      "amend-command.ts",
-      "diff-generator.ts"
+      "workshop-builder.ts",
+      "workshop-query.ts",
+      "startup-sentinel.ts",
+      "discovery-scanner.ts",
+      "physics-validator.ts",
+      "seed-manager.ts",
+      "ephemeral-context.ts",
+      "forge-mode.ts",
+      "era-manager.ts",
+      "survival-observer.ts",
+      "chronicling-rationale.ts",
+      "auditing-cohesion.ts",
+      "agent-orchestration.ts"
     ]
+  },
+  "runtime_state": {
+    "workshop": ".sigil/workshop.json",
+    "survival": ".sigil/survival.json",
+    "seed": ".sigil/seed.yaml",
+    "craft_logs": ".sigil/craft-log/",
+    "eras": ".sigil/eras/"
   },
   "governance": {
     "justifications_log": "sigil-mark/governance/justifications.log",
     "amendments_dir": "sigil-mark/governance/amendments/"
   },
+  "performance": {
+    "workshop_query_ms": 5,
+    "sanctuary_scan_ms": 50,
+    "full_rebuild_s": 2,
+    "pattern_observation_ms": 10,
+    "craft_log_ms": 100
+  },
   "migration": {
-    "from_version": "4.1.0",
-    "migrated_at": null,
-    "migration_script": "sigil-mark/scripts/migrate-v5.sh",
+    "from_version": "5.0.0",
+    "migrated_at": "2026-01-08T00:00:00Z",
+    "migration_script": "scripts/migrate-v6.sh",
     "changes": [
-      "Constitutional kernel (YAML-defined physics binding)",
-      "Live grep discovery (no cache, filesystem is truth)",
-      "JIT polish workflow (never auto-fix)",
-      "Governance system (justification logging, amendments)",
-      "6 complete skills",
-      "Simulation flow in useSigilMutation"
+      "Workshop index (5ms queries)",
+      "Survival observation (silent pattern tracking)",
+      "Virtual Sanctuary (seeds for cold starts)",
+      "Ephemeral inspiration (context forking)",
+      "Forge mode (precedent-breaking)",
+      "Era management (design direction shifts)",
+      "Craft logs (automatic documentation)",
+      "Cohesion auditing (visual consistency)",
+      "Agent orchestration (7-phase flow)",
+      "11 skills with lifecycle hooks"
     ]
   },
   "deprecated": {
-    "sigil.map": "Use live grep discovery instead",
-    ".sigil-cache": "Removed - filesystem is truth"
+    "governance_dialogs": "Replaced by survival observation",
+    "jit_grep_primary": "Now fallback only, workshop is primary"
   },
-  "setup_completed_at": "2026-01-05T00:00:00Z",
+  "setup_completed_at": "2026-01-08T00:00:00Z",
   "last_updated": "2026-01-08T00:00:00Z"
 }

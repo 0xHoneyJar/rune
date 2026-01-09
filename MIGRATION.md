@@ -1,238 +1,402 @@
-# Sigil 0.2 → 0.3 Migration Guide
+# Migration Guide: v5.0 → v6.0
 
-This guide covers migrating from Sigil 0.2 (zone-based design context) to Sigil 0.3 (Constitutional Design Framework).
+This guide covers migrating from Sigil v5.0 "The Lucid Flow" to v6.0 "Native Muse".
 
-## Overview
+## Quick Migration
 
-Sigil 0.3 introduces the four-pillar architecture:
+```bash
+# Preview changes
+./scripts/migrate-v6.sh --dry-run
 
-| Pillar | Purpose | 0.2 Equivalent |
-|--------|---------|----------------|
-| **Soul Binder** | Immutable values + Canon of Flaws | Moodboard (partial) |
-| **Lens Array** | User persona validation | Zones (partial) |
-| **Consultation Chamber** | Decision authority layers | New |
-| **Proving Grounds** | Feature validation at scale | New |
+# Apply migration
+./scripts/migrate-v6.sh
+```
 
-## Prerequisites
+## What's New in v6.0
 
-- Backup your existing `sigil-mark/` directory
-- Have access to your 0.2 `.sigilrc.yaml` and `sigil-mark/` state
+### The Three Laws
+
+v6.0 introduces three guiding principles:
+
+1. **Code is Precedent** — Patterns that survive become canonical
+2. **Survival is the Vote** — Usage frequency determines status
+3. **Never Interrupt Flow** — No blocking, no dialogs, observe silently
+
+### Key Changes
+
+| Aspect | v5.0 | v6.0 |
+|--------|------|------|
+| Discovery | JIT grep (200ms) | Workshop index (5ms) |
+| Approval | Governance dialogs | Survival observation |
+| Cold start | Empty room | Virtual Sanctuary seeds |
+| Novelty | Constitutional blocking | Physics-only validation |
+| Skills | 6 skills | 11 skills + hooks |
+
+---
 
 ## Migration Steps
 
-### Step 1: Backup 0.2 State
+### Step 1: Create .sigil Directory
+
+v6.0 introduces a new `.sigil/` directory for runtime state:
 
 ```bash
-# Create backup
-cp -r sigil-mark sigil-mark-0.2-backup
-cp .sigilrc.yaml .sigilrc-0.2-backup.yaml
+mkdir -p .sigil/craft-log
+mkdir -p .sigil/eras
 ```
 
-### Step 2: Run 0.3 Setup
+### Step 2: Build Workshop Index
 
-```
-/setup
-```
+The workshop index replaces JIT grep:
 
-This creates the 0.3 directory structure without overwriting existing files:
-
-```
-sigil-mark/
-├── soul-binder/           [NEW]
-│   ├── immutable-values.yaml
-│   ├── canon-of-flaws.yaml
-│   └── visual-soul.yaml
-├── lens-array/            [NEW]
-│   └── lenses.yaml
-├── consultation-chamber/  [NEW]
-│   ├── config.yaml
-│   └── decisions/
-├── proving-grounds/       [NEW]
-│   ├── config.yaml
-│   └── active/
-├── canon/                 [NEW]
-│   └── graduated/
-├── audit/                 [NEW]
-│   └── overrides.yaml
-├── moodboard.md          [PRESERVED]
-├── rules.md              [PRESERVED]
-└── inventory.md          [PRESERVED]
+```bash
+# The migration script handles this automatically
+# Manual: run the workshop builder
+npx ts-node sigil-mark/process/workshop-builder.ts
 ```
 
-### Step 3: Run /envision Interview
+Creates `.sigil/workshop.json` with:
+- Package hash for staleness detection
+- Imports hash for dependency tracking
+- Materials (framework packages)
+- Components (Sanctuary inventory)
+- Physics definitions
+- Zone mappings
 
+### Step 3: Initialize Survival Tracking
+
+Pattern tracking replaces governance dialogs:
+
+```bash
+# Creates .sigil/survival.json
 ```
-/envision
+
+Initial structure:
+```json
+{
+  "era": "v1",
+  "era_started": "2026-01-08",
+  "last_scan": null,
+  "patterns": {}
+}
 ```
 
-The interview captures:
+Patterns are populated automatically via PostToolUse hooks.
 
-1. **Immutable Values** → `soul-binder/immutable-values.yaml`
-   - Migrate key feelings from moodboard.md
-   - Define enforcement levels (block/warn/suggest)
+### Step 4: Update .sigilrc.yaml (Optional)
 
-2. **User Lenses** → `lens-array/lenses.yaml`
-   - Map 0.2 zones to user personas
-   - Define constraints per lens
-
-### Step 4: Map Zones to Lenses
-
-0.2 zones become 0.3 lenses with persona context:
-
-| 0.2 Zone | 0.3 Lens | Priority | Constraints |
-|----------|----------|----------|-------------|
-| `critical` | `power_user` | 1 (truth test) | Accessibility, performance |
-| `marketing` | `new_visitor` | 3 | Visual appeal |
-| `admin` | `admin_user` | 2 | Efficiency, density |
-
-Example mapping in `.sigilrc.yaml`:
+Add physics definitions if not present:
 
 ```yaml
-# 0.2 (zones)
+# .sigilrc.yaml
+version: "6.0"
+
 zones:
   critical:
-    paths: ["src/features/checkout/**"]
-    motion: "deliberate"
+    paths: ["src/features/claim/**"]
+    physics: deliberate  # NEW: explicit physics
 
-# 0.3 (lenses)
-# Move to sigil-mark/lens-array/lenses.yaml
+physics:  # NEW section
+  deliberate:
+    timing: 800
+    easing: "ease-out"
+  snappy:
+    timing: 150
+    easing: "ease-out"
+  warm:
+    timing: 300
+    easing: "ease-in-out"
 ```
 
-### Step 5: Configure Strictness
-
-0.3 has progressive strictness levels:
-
-| Level | Behavior |
-|-------|----------|
-| `discovery` | All suggestions, no blocks (default) |
-| `guiding` | Warnings on violations |
-| `enforcing` | Blocks on protected flaws/values |
-| `strict` | Blocks on all violations |
-
-Start with `discovery` and increase as needed:
-
-```yaml
-# .sigilrc.yaml
-version: "0.3"
-strictness: "discovery"
-```
-
-### Step 6: Migrate Rejections to Canon of Flaws
-
-0.2 rejections become 0.3 protected behaviors:
-
-```yaml
-# 0.2 (.sigilrc.yaml)
-rejections:
-  - pattern: "Spinner"
-    reason: "Creates anxiety in critical zones"
-
-# 0.3 (sigil-mark/soul-binder/canon-of-flaws.yaml)
-# Run: /canonize "spinner-free loading"
-```
-
-### Step 7: Define Taste Owners
-
-New in 0.3 — define who owns design decisions:
-
-```yaml
-# .sigilrc.yaml
-taste_owners:
-  design:
-    name: "Design Lead"
-    placeholder: "@design-lead"
-    scope:
-      - "sigil-mark/**"
-      - "src/components/**"
-```
-
-### Step 8: Configure Domains (Optional)
-
-If using Proving Grounds, specify your domains:
-
-```yaml
-# .sigilrc.yaml
-domains:
-  - "defi"      # DeFi-specific monitors
-  - "creative"  # Creative-specific monitors
-```
-
-## What Changes
-
-### Commands
-
-| 0.2 Command | 0.3 Command | Notes |
-|-------------|-------------|-------|
-| `/setup` | `/setup` | Creates 0.3 structure |
-| `/envision` | `/envision` | Extended for values + lenses |
-| `/codify` | `/codify` | Same (design rules) |
-| `/craft` | `/craft` | Now respects flaws + lenses |
-| — | `/canonize` | NEW: Protect emergent behaviors |
-| — | `/consult` | NEW: Decision authority |
-| — | `/prove` | NEW: Feature proving |
-| — | `/graduate` | NEW: Feature graduation |
-
-### Behavior Changes
-
-1. **Craft now blocks** in enforcing/strict modes when:
-   - Touching protected flaws
-   - Violating immutable values
-   - Modifying locked decisions
-
-2. **Override logging** — All human overrides are logged to `sigil-mark/audit/overrides.yaml`
-
-3. **Lens validation** — Most constrained lens is the truth test
-
-## Rollback
-
-If you need to rollback to 0.2:
+### Step 5: Update Version Files
 
 ```bash
-# Restore 0.2 state
-rm -rf sigil-mark
-mv sigil-mark-0.2-backup sigil-mark
-mv .sigilrc-0.2-backup.yaml .sigilrc.yaml
+# VERSION file
+echo "6.0.0" > VERSION
 
-# Remove 0.3 markers
-rm .sigil-setup-complete
-rm .sigil-version.json
+# .sigil-version.json
+cat > .sigil-version.json << 'EOF'
+{
+  "version": "6.0.0",
+  "codename": "Native Muse",
+  "migrated_from": "5.0.0",
+  "migration_date": "2026-01-08"
+}
+EOF
 ```
+
+---
+
+## What's Kept from v5.0
+
+These components remain unchanged:
+
+### Kernel Files
+
+```
+sigil-mark/kernel/
+├── constitution.yaml    # Type → physics binding
+├── fidelity.yaml        # Visual ceilings
+├── vocabulary.yaml      # Term mapping
+└── workflow.yaml        # Team rules
+```
+
+### Runtime Components
+
+- SigilProvider
+- useSigilMutation hook
+- Zone layouts (CriticalZone, GlassLayout, MachineryLayout)
+
+### Governance Structure
+
+```
+sigil-mark/governance/
+├── justifications.log   # Bypass audit trail
+└── amendments/          # Amendment proposals
+```
+
+---
+
+## What's Added in v6.0
+
+### .sigil Directory
+
+New runtime state directory:
+
+```
+.sigil/
+├── workshop.json       # Pre-computed index
+├── survival.json       # Pattern tracking
+├── seed.yaml           # Virtual Sanctuary (cold starts)
+├── workshop.lock       # Rebuild locking
+├── craft-log/          # Session logs
+│   └── {date}-{component}.md
+└── eras/               # Archived eras
+    └── {era-name}.json
+```
+
+### New Skills
+
+| Skill | Purpose |
+|-------|---------|
+| graphing-imports | Dependency scanning |
+| querying-workshop | Fast index queries |
+| validating-physics | PreToolUse physics check |
+| seeding-sanctuary | Virtual taste for cold starts |
+| inspiring-ephemerally | Ephemeral external reference |
+| forging-patterns | Precedent-breaking mode |
+| managing-eras | Era transitions |
+| observing-survival | PostToolUse pattern tracking |
+| chronicling-rationale | Stop hook craft logs |
+| auditing-cohesion | Visual consistency checks |
+
+### New Commands
+
+| Command | Purpose |
+|---------|---------|
+| `/forge` | Precedent-breaking exploration |
+| `/inspire` | Ephemeral external reference |
+| `/sanctify` | Promote ephemeral pattern |
+| `/new-era` | Design direction shift |
+| `/audit` | Visual cohesion check |
+
+### Process Modules
+
+```
+sigil-mark/process/
+├── workshop-builder.ts      # Build workshop index
+├── workshop-query.ts        # Query workshop
+├── startup-sentinel.ts      # Freshness check
+├── discovery-scanner.ts     # Ripgrep discovery
+├── physics-validator.ts     # Physics validation
+├── seed-manager.ts          # Virtual Sanctuary
+├── ephemeral-context.ts     # Context forking
+├── forge-mode.ts            # Forge behavior
+├── era-manager.ts           # Era transitions
+├── survival-observer.ts     # Pattern tracking
+├── chronicling-rationale.ts # Craft logs
+├── auditing-cohesion.ts     # Visual auditing
+└── agent-orchestration.ts   # 7-phase flow
+```
+
+---
+
+## What's Removed from v5.0
+
+### Governance Dialogs
+
+v5.0's approval workflow is removed:
+
+```tsx
+// v5.0 - NO LONGER NEEDED
+handlePatternApproval({
+  pattern: "animation:spring",
+  decision: "approve"
+});
+
+// v6.0 - Automatic via survival
+// Patterns are observed silently
+// Status promoted by usage count
+```
+
+### JIT Grep as Primary
+
+v5.0's JIT grep is now fallback only:
+
+```tsx
+// v5.0 - Primary method
+await scanSanctuary(); // 200ms
+
+// v6.0 - Fallback only
+const result = queryWorkshop("Button"); // 5ms
+if (!result) {
+  // Fallback to ripgrep
+  await scanSanctuary();
+}
+```
+
+---
+
+## Breaking Changes
+
+### 1. Governance Functions Deprecated
+
+```tsx
+// v5.0
+import { handleBypass, handleAmend } from 'sigil-mark/process';
+
+// v6.0 - These still exist but are rarely used
+// Survival observation handles most pattern decisions
+```
+
+### 2. Workshop Required
+
+The workshop must be built before /craft:
+
+```bash
+# v5.0 - No setup needed
+/craft "button"
+
+# v6.0 - Workshop built automatically on first run
+# Startup sentinel checks freshness
+```
+
+### 3. New Directory Structure
+
+```
+# v5.0
+sigil-mark/
+└── (everything here)
+
+# v6.0
+.sigil/           # NEW - Runtime state
+sigil-mark/       # Still here - Components and process
+```
+
+---
+
+## Rollback Instructions
+
+If you need to rollback to v5.0:
+
+```bash
+# Remove v6.0 runtime state
+rm -rf .sigil/
+
+# Restore version
+echo "5.0.0" > VERSION
+
+# Update .sigil-version.json
+cat > .sigil-version.json << 'EOF'
+{
+  "version": "5.0.0",
+  "codename": "The Lucid Flow"
+}
+EOF
+```
+
+---
+
+## Verification
+
+After migration, verify:
+
+```bash
+# 1. Workshop exists
+ls -la .sigil/workshop.json
+
+# 2. Survival tracking initialized
+ls -la .sigil/survival.json
+
+# 3. Version updated
+cat VERSION
+# Should show: 6.0.0
+
+# 4. Run a test /craft
+claude
+/craft "test button"
+# Should complete in <2s
+
+# 5. Check craft log created
+ls -la .sigil/craft-log/
+```
+
+---
 
 ## Troubleshooting
 
-### "Setup already complete"
+### Workshop Not Building
 
-Setup is idempotent. To refresh:
-1. Delete `.sigil-setup-complete`
-2. Run `/setup` again
-
-### "Craft is blocking my changes"
-
-Check strictness level:
 ```bash
-.claude/scripts/get-strictness.sh
+# Check for package.json
+ls package.json
+
+# Check for imports
+ls .sigil/imports.yaml
+
+# Manual rebuild
+npx ts-node sigil-mark/process/workshop-builder.ts
 ```
 
-Lower to `discovery` or `guiding` if needed.
+### Patterns Not Tracking
 
-### "Lens validation failing"
-
-The most constrained lens (lowest priority number) is the truth test. If an asset fails in that lens, it fails overall.
-
-Review lens priorities:
 ```bash
-cat sigil-mark/lens-array/lenses.yaml
+# Verify survival.json exists
+cat .sigil/survival.json
+
+# Check for @sigil-pattern tags in generated code
+rg "@sigil-pattern" src/
 ```
+
+### Performance Issues
+
+```bash
+# Check workshop size
+wc -l .sigil/workshop.json
+
+# Check last rebuild time
+jq '.indexed_at' .sigil/workshop.json
+
+# Force rebuild
+rm .sigil/workshop.json
+```
+
+---
+
+## Historical Migrations
+
+### v0.2 → v0.3 Migration
+
+See [docs/MIGRATION-v0.3.md](docs/MIGRATION-v0.3.md) for 0.2 → 0.3 migration guide (Constitutional Design Framework introduction).
+
+### v4.1 → v5.0 Migration
+
+See [docs/MIGRATION-v5.md](docs/MIGRATION-v5.md) for 4.1 → 5.0 migration guide (Seven Laws, Live Grep, JIT Polish).
+
+---
 
 ## Support
 
-For issues or questions:
-- Open an issue on GitHub
-- Reference the migration guide section
-
-## Version History
-
-| Version | Date | Notes |
-|---------|------|-------|
-| 0.3.0 | 2026-01-02 | Constitutional Design Framework |
-| 0.2.0 | Previous | Zone-based design context |
+- [Issues](https://github.com/0xHoneyJar/sigil/issues)
+- [Documentation](CLAUDE.md)
+- [Changelog](CHANGELOG.md)
