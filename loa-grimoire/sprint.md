@@ -619,11 +619,11 @@ The MVP delivers:
 **Description:** Create skill definition for virtual Sanctuary.
 
 **Acceptance Criteria:**
-- [ ] SKILL.md in `.claude/skills/seeding-sanctuary/`
-- [ ] Purpose: Provide virtual taste for cold starts
-- [ ] Trigger: Empty src/sanctuary/ detected
-- [ ] Seeds: Linear-like, Vercel-like, Stripe-like, Blank
-- [ ] Output: .sigil/seed.yaml
+- [x] SKILL.md in `.claude/skills/seeding-sanctuary/`
+- [x] Purpose: Provide virtual taste for cold starts
+- [x] Trigger: Empty src/sanctuary/ detected
+- [x] Seeds: Linear-like, Vercel-like, Stripe-like, Blank
+- [x] Output: .sigil/seed.yaml
 
 **Dependencies:** None
 **Effort:** Small
@@ -634,11 +634,11 @@ The MVP delivers:
 **Description:** Define TypeScript interface for seed.yaml.
 
 **Acceptance Criteria:**
-- [ ] `Seed` interface with seed, version, description
-- [ ] `physics` Record<string, string>
-- [ ] `materials` Record<string, MaterialDef>
-- [ ] `virtual_components` Record<string, VirtualComponent>
-- [ ] Exported from types/seed.ts
+- [x] `Seed` interface with seed, version, description
+- [x] `physics` Record<string, string>
+- [x] `materials` Record<string, MaterialDef>
+- [x] `virtual_components` Record<string, VirtualComponent>
+- [x] Exported from types/seed.ts
 
 **Dependencies:** S6-T1
 **Effort:** Small
@@ -649,11 +649,11 @@ The MVP delivers:
 **Description:** Create Linear-like seed definition.
 
 **Acceptance Criteria:**
-- [ ] Seed YAML at `.claude/skills/seeding-sanctuary/seeds/linear-like.yaml`
-- [ ] Physics: snappy (150ms), smooth (300ms)
-- [ ] Material: minimal, monochrome
-- [ ] Components: Button, Card, Input, Dialog
-- [ ] All components have tier, physics, zones
+- [x] Seed YAML at `.claude/skills/seeding-sanctuary/seeds/linear-like.yaml`
+- [x] Physics: snappy (150ms), smooth (300ms)
+- [x] Material: minimal, monochrome
+- [x] Components: Button, Card, Input, Dialog
+- [x] All components have tier, physics, zones
 
 **Dependencies:** S6-T2
 **Effort:** Medium
@@ -664,11 +664,11 @@ The MVP delivers:
 **Description:** Create Vercel-like seed definition.
 
 **Acceptance Criteria:**
-- [ ] Seed YAML at `.claude/skills/seeding-sanctuary/seeds/vercel-like.yaml`
-- [ ] Physics: sharp (100ms), smooth (200ms)
-- [ ] Material: bold, high-contrast
-- [ ] Components: Button, Card, Badge, Modal
-- [ ] All components have tier, physics, zones
+- [x] Seed YAML at `.claude/skills/seeding-sanctuary/seeds/vercel-like.yaml`
+- [x] Physics: sharp (100ms), smooth (200ms)
+- [x] Material: bold, high-contrast
+- [x] Components: Button, Card, Badge, Modal
+- [x] All components have tier, physics, zones
 
 **Dependencies:** S6-T2
 **Effort:** Medium
@@ -679,11 +679,11 @@ The MVP delivers:
 **Description:** Create Stripe-like seed definition.
 
 **Acceptance Criteria:**
-- [ ] Seed YAML at `.claude/skills/seeding-sanctuary/seeds/stripe-like.yaml`
-- [ ] Physics: smooth (300ms), deliberate (500ms)
-- [ ] Material: soft gradients, generous spacing
-- [ ] Components: Button, Card, Input, Toast
-- [ ] All components have tier, physics, zones
+- [x] Seed YAML at `.claude/skills/seeding-sanctuary/seeds/stripe-like.yaml`
+- [x] Physics: smooth (300ms), deliberate (500ms)
+- [x] Material: soft gradients, generous spacing
+- [x] Components: Button, Card, Input, Toast
+- [x] All components have tier, physics, zones
 
 **Dependencies:** S6-T2
 **Effort:** Medium
@@ -694,10 +694,10 @@ The MVP delivers:
 **Description:** Implement virtual-to-real component transition.
 
 **Acceptance Criteria:**
-- [ ] Check for real component at same path
-- [ ] If real exists, mark virtual as "faded"
-- [ ] Query prefers real over virtual
-- [ ] Faded components don't appear in suggestions
+- [x] Check for real component at same path
+- [x] If real exists, mark virtual as "faded"
+- [x] Query prefers real over virtual
+- [x] Faded components don't appear in suggestions
 
 **Dependencies:** S6-T3 through S6-T5
 **Effort:** Medium
@@ -708,10 +708,10 @@ The MVP delivers:
 **Description:** Prompt user to select seed on cold start.
 
 **Acceptance Criteria:**
-- [ ] Detect empty src/sanctuary/
-- [ ] Present seed options via AskUserQuestion
-- [ ] Write selected seed to .sigil/seed.yaml
-- [ ] Log seed selection
+- [x] Detect empty src/sanctuary/
+- [x] Present seed options via AskUserQuestion
+- [x] Write selected seed to .sigil/seed.yaml
+- [x] Log seed selection
 
 **Dependencies:** S6-T1
 **Effort:** Medium
@@ -722,10 +722,10 @@ The MVP delivers:
 **Description:** Integrate seeds with scanning-sanctuary skill.
 
 **Acceptance Criteria:**
-- [ ] If Sanctuary empty, return virtual components
-- [ ] Virtual components tagged as source: 'seed'
-- [ ] Real components override virtual
-- [ ] Seamless transition
+- [x] If Sanctuary empty, return virtual components
+- [x] Virtual components tagged as source: 'seed'
+- [x] Real components override virtual
+- [x] Seamless transition
 
 **Dependencies:** Sprint 3, S6-T6
 **Effort:** Medium

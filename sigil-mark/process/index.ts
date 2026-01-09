@@ -780,3 +780,38 @@ export {
   type ValidationViolation,
   type ValidationOptions,
 } from './physics-validator';
+
+// =============================================================================
+// SEED MANAGER (v6.0 - Sprint 6)
+// =============================================================================
+
+export {
+  // Seed loading
+  loadSeed,
+  loadSeedFromLibrary,
+  saveSeed,
+  selectSeed,
+  // Sanctuary detection
+  isSanctuaryEmpty,
+  // Fade behavior
+  markAsFaded,
+  isFaded,
+  clearFadedCache,
+  // Virtual component queries
+  queryVirtualComponent,
+  getAllVirtualComponents,
+  findVirtualByTier,
+  findVirtualByZone,
+  findVirtualByVocabulary,
+  // Seed metadata
+  getSeedPhysics,
+  getSeedMaterial,
+  getSeedTypography,
+  getSeedSpacing,
+  // Integration
+  ensureSeedContext,
+  getSeedOptions,
+  // Constants
+  DEFAULT_SEED_PATH,
+  SEED_LIBRARY_PATH,
+} from './seed-manager';
