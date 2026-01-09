@@ -1,62 +1,40 @@
-# Sigil v5 Product Requirements Document
+# Product Requirements Document: Sigil v6.0.0 "Native Muse"
 
-> *"Filesystem is truth. Agency stays with human. Rules evolve. Artists stay in flow."*
+> *"Code is precedent. Survival is approval. Creativity needs no permission."*
 
-**Version:** 5.0
-**Codename:** The Lucid Flow
-**Generated:** 2026-01-08
-**Sources:** ARCHITECTURE-V5.md, sigil-v5.9.zip context
+**Version:** 6.0.0
+**Codename:** Native Muse
+**Status:** PRD Complete
+**Date:** 2026-01-08
+**Sources:** sigil-v3.1.zip context
 
 ---
 
 ## 1. Executive Summary
 
-Sigil v5 unifies two complementary evolutions:
+Sigil v6.0.0 "Native Muse" evolves the v5.0 constitutional framework into a survival-based design context system. Artists describe feel, agents handle implementation, and flow is never interrupted.
 
-1. **The Lucid Studio** (infrastructure) — Transparent, fast, deferential architecture
-2. **The Flow State Engine** (knowledge) — Unified context that keeps artists in feel-thinking
+**Key Evolution from v5.0:**
+- Pre-computed workshop index (5ms lookups vs JIT grep)
+- Survival-based approval (code existence = precedent)
+- Virtual Sanctuary for cold starts
+- Context forking for ephemeral exploration
+- No approval dialogs — silent observation
 
-### The Vision
+**The Three Laws (extending Seven Laws):**
+1. **Code is precedent** — Existence is approval, deletion is rejection
+2. **Survival is the vote** — Patterns that persist become canonical
+3. **Never interrupt flow** — No approval dialogs, silent observation
 
-```
-Artist: /craft "claim button that feels trustworthy"
-
-Agent:  [Infrastructure: Lucid]
-        - Live grep finds components (no stale cache)
-        - Type annotation reveals Money → server-tick physics
-        - JIT polish respects debugging workflow
-
-        [Knowledge: Flow State]
-        - shadcn: Button + AlertDialog patterns
-        - Codebase: your useSigilMutation convention
-        - Gotchas: double-click prevention, a11y
-
-        [Generates complete, working code]
-        [Offers feel refinements, not implementation questions]
-
-Artist: [Paste and refine feel]
-```
-
-> Sources: ARCHITECTURE-V5.md:11-25, sigil-v5.9/README.md:10-32
+> Source: sigil-v3.1/ARCHITECTURE.md:1-20
 
 ---
 
 ## 2. Problem Statement
 
-### 2.1 Infrastructure Problems (from Lucid Studio analysis)
+### 2.1 Core Problem
 
-| Version | Approach | Fatal Flaw |
-|---------|----------|------------|
-| v4.1 | `sigil.map` cache | Branch switch = stale = hallucination |
-| v4.x | Auto-fix on save | Engineers can't debug with red borders |
-| v4.x | Blocking contagion | Copy-paste hacks to bypass |
-| v4.x | Static constitution | Rules can't evolve |
-
-> Source: sigil-v5.9/docs/ARCHITECTURE.md:27-35
-
-### 2.2 Knowledge Problems (from Flow State Engine analysis)
-
-Artists context-switch between two mental modes:
+Artists context-switch between "feel-thinking" and "implementation-thinking" dozens of times per session. Every switch breaks creative flow.
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -76,47 +54,51 @@ Artists context-switch between two mental modes:
 └─────────────────────────────────────────────────────────┘
 ```
 
-**Every context switch breaks flow.** This cycle repeats dozens of times per session.
+**Current Pain Points (even in v5.0):**
+- JIT grep operations add latency (200ms thinking spinners)
+- Approval dialogs interrupt creative momentum
+- Cold starts have no taste reference (empty room problem)
+- New patterns flagged as concerning when innovation is the job
 
-> Source: ARCHITECTURE-V5.md:35-66
+### 2.2 Why v6.0 Now
 
-### 2.3 Combined Problem Statement
+v5.0 established the Seven Laws and governance system. v6.0 optimizes for:
 
-Sigil v4.x forces artists to:
-1. Fight stale caches that hallucinate components
-2. Disable auto-fix to debug properly
-3. Copy-paste to bypass blocking rules
-4. Accept static rules that block innovation
-5. Leave feel-thinking to research library APIs
-6. Look up how they did something in another file
+| Aspect | v5.0 Approach | v6.0 Solution |
+|--------|---------------|---------------|
+| Discovery | JIT grep (200ms) | Pre-computed workshop (5ms) |
+| Approval | Governance dialogs | Survival observation |
+| Cold start | Empty room | Virtual Sanctuary |
+| Novelty | Constitutional blocking | Physics-only validation |
 
-**Result:** Broken flow, disabled tooling, frustrated artists.
+> Source: sigil-v3.1/ARCHITECTURE.md:18-40
 
 ---
 
-## 3. Goals & Success Metrics
+## 3. Vision & Goals
 
-### 3.1 Primary Goals
+### 3.1 Vision
 
-| Goal | Description |
-|------|-------------|
-| **Zero Drift** | Filesystem is truth. No caches. |
-| **Human Agency** | Polish when asked, not on save. |
-| **Evolving Rules** | Amendment protocol for constitution. |
-| **Flow State** | Artists never leave feel-thinking. |
+```
+Artists think in feel. Agents handle implementation. Flow is preserved.
+```
 
-### 3.2 Success Metrics
+### 3.2 Goals
 
-| Metric | v4.1 Baseline | v5 Target |
-|--------|---------------|-----------|
-| Cache-related hallucinations | ~15% of lookups | 0% |
-| Engineers who disable auto-fix | ~40% | N/A (removed) |
-| Context switches per task | 5-10 | 0-1 |
-| Generated code works first try | 60% | 95% |
-| Matches codebase patterns | 40% | 95% |
-| "I had to look up docs" | Often | Never |
+| Goal | Success Metric |
+|------|----------------|
+| Eliminate thinking spinners | Workshop query <5ms |
+| Zero flow interruptions | 0 approval dialogs during /craft |
+| Cold start taste | Virtual Sanctuary provides context in <1s |
+| Pattern survival tracking | Canonical patterns identified within 2 weeks |
+| Physics validation | Block violations, not novelty |
 
-> Sources: sigil-v5.9/MIGRATION-v5.9.md, ARCHITECTURE-V5.md:808-831
+### 3.3 Non-Goals
+
+- Replacing React runtime components (SigilProvider, useSigilMutation)
+- Changing the Seven Laws kernel files
+- Automated code refactoring
+- Real-time collaboration features
 
 ---
 
@@ -124,434 +106,588 @@ Sigil v4.x forces artists to:
 
 ### 4.1 Primary: The Artist
 
-**Description:** Frontend developer who thinks in feel, not implementation.
+**Profile:** Designer or developer who thinks in feel, not implementation details.
 
 **Needs:**
-- Stay in feel-thinking mode
-- Generate code that just works
-- Debug without fighting tooling
-- Evolve rules as product evolves
+- Describe "trustworthy claim button" and get correct physics
+- Never leave feel-thinking to worry about timing values
+- Explore external inspiration without polluting codebase
+- Break from precedent when innovation is needed
 
-**Pain Points:**
-- Researching library APIs breaks flow
-- Stale caches cause confusion
-- Auto-fix prevents debugging
-- Static rules block innovation
+**Journey:**
+```
+/craft "trustworthy claim button"
+  → Agent resolves: claim → critical zone → deliberate physics
+  → Generates with correct timing, no questions asked
+  → Artist iterates on feel, not implementation
+```
 
-### 4.2 Secondary: The Team Lead
+### 4.2 Secondary: The Maintainer
 
-**Description:** Responsible for design consistency across team.
+**Profile:** Team lead or senior developer who curates the design system.
 
 **Needs:**
-- Clean commits (polish at gate, not on keystroke)
-- Honest status propagation (not blocking hacks)
-- Justification capture (why did we override?)
-- Amendment protocol (rules evolve with evidence)
+- See which patterns are surviving
+- Understand why decisions were made (craft logs)
+- Start new design eras when direction shifts
+- Sanctify ephemeral patterns into permanent rules
 
 ---
 
-## 5. Functional Requirements
+## 5. Features & Requirements
 
-### 5.1 Infrastructure Layer (Lucid Studio)
+### 5.1 Feature 1: Pre-Computed Workshop Index
 
-#### FR-1: Live Grep Discovery
+**Problem:** JIT grep on node_modules takes 200ms. Creates thinking spinner.
 
-**Requirement:** Replace `sigil.map` cache with live filesystem search.
+**Solution:** Background-maintained index queried in 5ms.
 
-**Implementation:**
-```bash
-# Find Gold components
-rg "@sigil-tier gold" -l --type ts
+**Requirements:**
+- F1.1: Generate `.sigil/workshop.json` with framework exports
+- F1.2: Hash-based staleness detection (package.json hash)
+- F1.3: Incremental updates via PostToolUse hooks
+- F1.4: Query API for framework exports, types, versions
+- F1.5: Component signatures from Sanctuary
 
-# Find by data type
-rg "@sigil-data-type Money" -l --type ts
+**Schema:**
+```json
+{
+  "indexed_at": "2026-01-08T14:30:00Z",
+  "package_hash": "a1b2c3...",
+  "materials": {
+    "framer-motion": {
+      "version": "11.0.0",
+      "exports": ["motion", "AnimatePresence", "useAnimation"],
+      "types_available": true
+    }
+  },
+  "components": {
+    "ClaimButton": {
+      "path": "src/sanctuary/gold/ClaimButton.tsx",
+      "tier": "gold",
+      "zone": "critical"
+    }
+  }
+}
 ```
 
 **Acceptance Criteria:**
-- [ ] No `sigil.map` file exists
-- [ ] Component lookup uses ripgrep
-- [ ] Lookup completes in < 50ms
-- [ ] Branch switch shows correct components immediately
+- [ ] Workshop query returns in <5ms
+- [ ] Index rebuilds in <2s on package.json change
+- [ ] All imported packages indexed (from src/ imports only)
 
-> Source: sigil-v5.9/docs/ARCHITECTURE.md:74-87
+> Source: sigil-v3.1/ARCHITECTURE.md:185-250
 
-#### FR-2: Type-Driven Physics
+### 5.2 Feature 2: Virtual Sanctuary (Seeding)
 
-**Requirement:** Physics determined by data type, not button name.
+**Problem:** New project, empty src/. Agent has no taste reference.
 
-**Implementation:**
-```typescript
-// Same word "Transfer" — different physics
-function TransferTask({ task }: { task: Task }) { ... }    // CRDT
-function TransferFunds({ amount }: { amount: Money }) { ... } // Server-tick
-```
+**Solution:** Virtual components until real ones exist.
 
-**Constitution Binding:**
+**Requirements:**
+- F2.1: Seed selection UI (Linear-like, Vercel-like, Stripe-like, Blank)
+- F2.2: Virtual component definitions in `.sigil/seed.yaml`
+- F2.3: Fade behavior when real component created
+- F2.4: Seed libraries with physics, materials, components
+
+**Seed Structure:**
 ```yaml
-data_physics:
-  financial:
-    types: [Money, Balance, Transfer, Withdrawal]
-    physics: server-tick
-    requires: [simulation, confirmation]
-    forbidden: [useOptimistic]
+seed: linear-like
+version: 2026.01
+virtual_components:
+  Button:
+    tier: gold
+    physics: snappy
+    timing: 150ms
+    zones: [standard, critical]
+  Card:
+    tier: gold
+    physics: smooth
+    timing: 300ms
+    zones: [standard]
 ```
 
 **Acceptance Criteria:**
-- [ ] Agent reads type annotations from function signatures
-- [ ] Types resolve to physics via constitution
-- [ ] Highest-risk physics wins for mixed types
-- [ ] Vocabulary terms map to data types
+- [ ] New project has taste from minute zero
+- [ ] Virtual components match real component schema
+- [ ] Seed fades when real component exists at same path
 
-> Source: sigil-v5.9/sigil-mark/kernel/constitution.yaml
+> Source: sigil-v3.1/ARCHITECTURE.md:120-175
 
-#### FR-3: JIT Polish
+### 5.3 Feature 3: Physics Validation (Not Novelty)
 
-**Requirement:** Code fixing happens on demand, not on save.
+**Problem:** Previous versions flagged new patterns as concerning. Innovation is the job.
 
-**Triggers:**
-- User runs `/polish`
-- Pre-commit hook
-- CI check
+**Solution:** Block physics violations only. New patterns are expected.
 
-**Behavior:**
+**What Gets Validated:**
+| Check | Example | Action |
+|-------|---------|--------|
+| API correctness | `motion.div` exists? | Block if invalid |
+| Zone constraints | Critical + playful? | Block |
+| Material constraints | Clay + 0ms? | Block |
+| Fidelity ceiling | 3D in standard? | Block |
+
+**What Does NOT Get Validated:**
+| Non-Check | Why |
+|-----------|-----|
+| Pattern existence | New patterns are the job |
+| Style novelty | Experimentation encouraged |
+| Component precedent | Survival decides |
+
+**Requirements:**
+- F3.1: PreToolUse hook for validation
+- F3.2: Zone constraint checking
+- F3.3: Material constraint checking
+- F3.4: API correctness verification (from workshop)
+- F3.5: Never block for pattern novelty
+
+**Acceptance Criteria:**
+- [ ] Critical zone with bounce → BLOCK
+- [ ] New pattern in critical zone with deliberate physics → ALLOW
+- [ ] Invalid API call (motion.animate) → BLOCK with suggestion
+
+> Source: sigil-v3.1/ARCHITECTURE.md:244-295
+
+### 5.4 Feature 4: Survival-Based Precedent
+
+**Problem:** YAML precedent files rot and drift from code.
+
+**Solution:** Code existence IS precedent. grep count = approval level.
+
+**The Rule:**
 ```
-DURING COMPOSITION:
-  Linter marks violations (subtle underline)
-  Linter does NOT fix them
+Approved    = exists in src/
+Rejected    = doesn't exist in src/
+Canonical   = exists 3+ times
+Experimental = exists 1 time, < 2 weeks old
+```
 
-ON /polish:
-  Agent shows diff
-  User approves or rejects
+**Requirements:**
+- F4.1: Pattern tagging via JSDoc comments (`@sigil-pattern`)
+- F4.2: Gardener script for survival scanning
+- F4.3: Survival index at `.sigil/survival.json`
+- F4.4: Promotion rules (1 occurrence → experimental, 3+ → canonical)
+- F4.5: Rejection detection (was >0, now 0)
+
+**Survival Index:**
+```json
+{
+  "patterns": {
+    "useClaimAnimation": {
+      "first_seen": "2026-01-08",
+      "occurrences": 3,
+      "status": "canonical"
+    },
+    "bouncySpring": {
+      "first_seen": "2026-01-05",
+      "occurrences": 0,
+      "status": "rejected",
+      "deleted_at": "2026-01-07"
+    }
+  }
+}
 ```
 
 **Acceptance Criteria:**
-- [ ] No code changes on file save
-- [ ] `/polish` command shows diff before applying
-- [ ] Pre-commit hook enforces clean commits
-- [ ] Engineers can use `border: 1px solid red` for debugging
+- [ ] New patterns tagged with `@sigil-pattern` and date
+- [ ] Gardener detects canonical patterns (3+ occurrences)
+- [ ] Deleted patterns marked as rejected
+- [ ] Agent prefers canonical over experimental
 
-> Source: sigil-v5.9/docs/ARCHITECTURE.md:503-526
+> Source: sigil-v3.1/ARCHITECTURE.md:420-485
 
-#### FR-4: Status Propagation
+### 5.5 Feature 5: Ephemeral Inspiration
 
-**Requirement:** Import status propagates, doesn't block.
+**Problem:** Designers want to reference external sites without polluting codebase.
 
-**Rule:**
+**Solution:** One-time fetch in forked context. Use it, discard it.
+
+**Flow:**
 ```
-Tier(Component) = min(DeclaredTier, Tier(Dependencies))
+/craft "make it feel like stripe.com"
+  ↓
+Fork context (Claude Code 2.1)
+  ↓
+[Forked] Fetch stripe.com
+  ↓
+[Forked] Extract: gradients, spacing, typography
+  ↓
+[Forked] Apply to generation
+  ↓
+Return to main context with generated code only
+  ↓
+Fetched content discarded (never enters Sanctuary)
+```
 
-Gold imports Gold → stays Gold
-Gold imports Draft → becomes Draft (warning, not error)
+**Requirements:**
+- F5.1: Trigger on "like [url]", "inspired by [url]"
+- F5.2: Context fork for isolation
+- F5.3: Style extraction (gradients, spacing, typography)
+- F5.4: Code generation in main context
+- F5.5: Fetched content discarded after use
+
+**Acceptance Criteria:**
+- [ ] `/craft "like stripe.com"` fetches and extracts
+- [ ] Fetched content never persists
+- [ ] Generated code returns to main context
+- [ ] `/sanctify` can promote ephemeral to permanent
+
+> Source: sigil-v3.1/ARCHITECTURE.md:296-360
+
+### 5.6 Feature 6: Forge Mode
+
+**Problem:** Precedent creates echo chambers. Sometimes you need to break the pattern.
+
+**Solution:** Explicit mode that ignores survival history.
+
+**Requirements:**
+- F6.1: Trigger on `/craft --forge` or `/forge`
+- F6.2: Context fork for isolation
+- F6.3: Ignore survival patterns, learned constraints
+- F6.4: Respect physics only (API correctness, zone rules)
+- F6.5: Era versioning for design direction shifts
+
+**Era Transition:**
+```
+/new-era "Tactile"
+  ↓
+Archives current patterns as "Era: v1-Flat"
+  ↓
+Starts fresh precedent tracking
+  ↓
+Old patterns don't block new exploration
 ```
 
 **Acceptance Criteria:**
-- [ ] Gold can import Draft without error
-- [ ] Status downgrades are reported
-- [ ] Status restores when dependency upgrades
-- [ ] No copy-paste needed to bypass rules
+- [ ] Forge mode ignores rejected patterns
+- [ ] Forge mode still validates physics
+- [ ] `/new-era` archives old patterns
+- [ ] User decides keep or discard
 
-> Source: sigil-v5.9/docs/ARCHITECTURE.md:467-499
+> Source: sigil-v3.1/ARCHITECTURE.md:360-420
 
-#### FR-5: Amendment Protocol
+### 5.7 Feature 7: Streamlined Craft Logs
 
-**Requirement:** Constitution can evolve with justification.
+**Problem:** Approval gates disguised as logs.
 
-**Protocol:**
+**Solution:** Lightweight documentation, no blocking.
+
+**Log Structure:**
+```markdown
+# Craft: claim-button (2026-01-08)
+
+## Request
+"trustworthy claim button"
+
+## Decisions
+- Zone: critical (vocabulary "claim")
+- Physics: deliberate (critical zone)
+- Component: ClaimButton (Gold)
+
+## New Patterns
+None (all canonical)
+
+## Physics Validated
+- ✓ Zone constraint
+- ✓ Material constraint
+- ✓ API correctness
 ```
-VIOLATION DETECTED → Negotiate:
-  1. COMPLY (use compliant alternative)
-  2. BYPASS (override with justification)
-  3. AMEND (propose constitution change)
-```
+
+**Requirements:**
+- F7.1: Stop hook for log generation
+- F7.2: Minimal structure: request, decisions, patterns, validation
+- F7.3: No approval checklists
+- F7.4: Storage in `.sigil/craft-log/`
+- F7.5: 30-day retention by default
 
 **Acceptance Criteria:**
-- [ ] Agent never refuses outright
-- [ ] BYPASS logs justification to `governance/justifications.log`
-- [ ] AMEND creates PR to `governance/amendments/`
-- [ ] Constitution can be updated via amendment
+- [ ] Log generated at end of /craft
+- [ ] No blocking prompts during generation
+- [ ] Logs available for Loa integration
 
-> Source: sigil-v5.9/docs/ARCHITECTURE.md:539-580
+> Source: sigil-v3.1/ARCHITECTURE.md:486-525
 
-#### FR-6: JSDoc Pragmas
+### 5.8 Feature 8: Cohesion Auditing
 
-**Requirement:** Components declare status via JSDoc comments.
+**Problem:** Generated components may drift from design system.
 
-**Format:**
-```typescript
-/**
- * @sigil-tier gold
- * @sigil-zone critical
- * @sigil-data-type Money
- */
-export function TransferButton({ amount }: { amount: Money }) { ... }
-```
+**Solution:** Visual consistency checks on demand.
+
+**Requirements:**
+- F8.1: Property comparison (shadows, borders, colors, spacing)
+- F8.2: Variance thresholds by property type
+- F8.3: Justifiable deviation annotations (`@sigil-deviation`)
+- F8.4: On-demand via `/audit [component]`
+- F8.5: Optional auto-audit after /craft
 
 **Acceptance Criteria:**
-- [ ] Discovery works via `rg "@sigil-tier gold"`
-- [ ] Zero runtime cost (comments stripped)
-- [ ] Non-annotated components inherit zone defaults
+- [ ] Audit compares against Sanctuary average
+- [ ] Report shows variance with percentages
+- [ ] Deviations with `@sigil-deviation` not flagged
 
-> Source: sigil-v5.9/docs/ARCHITECTURE.md:630-650
+> Source: sigil-v3.1/skills/auditing-cohesion/SKILL.md
 
 ---
 
-### 5.2 Knowledge Layer (Flow State Engine)
+## 6. Technical Requirements
 
-#### FR-7: Component Context
+### 6.1 Skills Architecture
 
-**Requirement:** Agent knows library APIs (shadcn, Radix, Framer Motion).
-
-**Structure:**
-```
-sigil-mark/components/
-├── registry.yaml           # Libraries in use
-├── shadcn/
-│   ├── button.yaml         # Button API, variants, props
-│   └── alert-dialog.yaml   # AlertDialog patterns
-├── radix/
-│   └── primitives.yaml     # Primitive patterns
-└── framer-motion/
-    └── recipes.yaml        # Animation recipes
-```
-
-**Acceptance Criteria:**
-- [ ] `/craft` suggests correct component APIs
-- [ ] Loading states use correct shadcn patterns
-- [ ] Accessibility follows Radix best practices
-- [ ] Animation uses Framer Motion conventions
-
-> Source: ARCHITECTURE-V5.md:216-296
-
-#### FR-8: Codebase Context
-
-**Requirement:** Agent knows THIS codebase's patterns.
-
-**Structure:**
-```
-sigil-mark/codebase/
-├── analysis.yaml           # Codebase analysis summary
-├── patterns/
-│   ├── hooks.yaml          # Hook patterns (useSigilMutation usage)
-│   ├── compositions.yaml   # Component compositions
-│   └── conventions.yaml    # Naming, file structure
-└── examples/
-    └── *.yaml              # Reference examples
-```
-
-**Acceptance Criteria:**
-- [ ] Generated code matches existing patterns
-- [ ] Uses project's hook conventions
-- [ ] Follows file structure conventions
-- [ ] References similar existing components
-
-> Source: ARCHITECTURE-V5.md:315-409
-
-#### FR-9: Knowledge Context
-
-**Requirement:** Agent handles gotchas automatically.
-
-**Structure:**
-```
-sigil-mark/knowledge/
-├── bugs/
-│   ├── react.yaml          # Double-click prevention, hydration
-│   └── nextjs.yaml         # Server/client boundaries
-├── accessibility/
-│   └── requirements.yaml   # A11y requirements
-└── performance/
-    └── patterns.yaml       # Performance patterns
-```
-
-**Acceptance Criteria:**
-- [ ] Double-click prevention included by default
-- [ ] A11y requirements met (aria-busy, focus management)
-- [ ] Known bugs handled without artist asking
-- [ ] Performance patterns applied automatically
-
-> Source: ARCHITECTURE-V5.md:413-494
-
----
-
-### 5.3 Skills (Combined)
-
-#### The Six Skills
+10 skills with lifecycle hooks:
 
 | Skill | Purpose | Trigger |
 |-------|---------|---------|
-| **Scanning Sanctuary** | Find components via live grep | Any component lookup |
-| **Analyzing Data Risk** | Type → physics lookup | Action handler generation |
-| **Auditing Cohesion** | Visual context check | New component generation |
-| **Negotiating Integrity** | Amendment protocol | Constitution violation |
-| **Simulating Interaction** | Timing verification | Critical components |
-| **Polishing Code** | JIT standardization | `/polish` or commit |
+| scanning-sanctuary | Find components | ripgrep search |
+| seeding-sanctuary | Cold start taste | Empty Sanctuary |
+| graphing-imports | Map src/ deps | Startup |
+| querying-workshop | Fast API lookup | /craft |
+| validating-physics | Constraint check | PreToolUse |
+| inspiring-ephemerally | External fetch | "like [url]" |
+| forging-patterns | Break precedent | --forge flag |
+| observing-survival | Pattern tracking | PostToolUse |
+| chronicling-rationale | Craft logs | Stop |
+| auditing-cohesion | Visual check | /audit |
 
-> Source: sigil-v5.9/README.md:310-358
+### 6.2 File Structure
+
+```
+.sigil/
+├── workshop.json         # Pre-computed index
+├── seed.yaml             # Virtual Sanctuary (fades)
+├── survival.json         # Pattern tracking
+├── imports.yaml          # Scanned dependencies
+├── knowledge/            # Cached docs (fallback)
+└── craft-log/            # Rationale artifacts
+
+sigil.yaml                # Configuration
+rules.md                  # Design constitution
+```
+
+### 6.3 Hook Integration
+
+```yaml
+hooks:
+  PreToolUse:
+    - validate_physics
+    - check_workshop_index
+  PostToolUse:
+    - observe_patterns
+    - update_workshop
+  Stop:
+    - ensure_craft_log
+    - mark_survival
+```
+
+### 6.4 Performance Targets
+
+| Operation | Target |
+|-----------|--------|
+| Workshop query | <5ms |
+| Sanctuary scan | <50ms |
+| Index rebuild | <2s |
+| Pattern observation | <10ms |
+| Craft log generation | <100ms |
+
+### 6.5 Evolution from v5.0
+
+**Kept from v5.0:**
+- Seven Laws kernel (constitution.yaml, fidelity.yaml, vocabulary.yaml, workflow.yaml)
+- SigilProvider runtime context
+- useSigilMutation hook
+- Zone layouts (CriticalZone, GlassLayout, MachineryLayout)
+- Governance structure (justifications.log for bypass audit)
+
+**Added in v6.0:**
+- Workshop index (.sigil/workshop.json)
+- Survival tracking (.sigil/survival.json)
+- Virtual Sanctuary (.sigil/seed.yaml)
+- 10 Claude Code skills
+- Context forking for isolation
+- Lifecycle hooks (Pre/PostToolUse, Stop)
+
+**Changed in v6.0:**
+- Discovery: JIT grep → Pre-computed workshop
+- Approval: Governance dialogs → Survival observation
+- Validation: Constitutional blocking → Physics-only validation
+- Cold start: Empty room → Virtual Sanctuary
 
 ---
 
-## 6. Non-Functional Requirements
+## 7. Testing Strategy
 
-### NFR-1: Performance
+### 7.1 Test Layers
 
-| Operation | Requirement |
-|-----------|-------------|
-| Component lookup (ripgrep) | < 50ms |
-| Context loading | < 200ms |
-| `/craft` generation | < 5s |
-| `/polish` diff | < 1s |
+| Layer | What's Tested | Method |
+|-------|---------------|--------|
+| Mechanics | Scanning, graphing, querying, validation | Unit tests |
+| Craft Flow | Context resolution, pattern selection | Integration tests |
+| Taste | Does the pattern work? | Survival (codebase as test) |
 
-### NFR-2: Reliability
+> The codebase is the final test suite. Deletion is a failing test.
 
-- Zero cache drift (filesystem is truth)
-- Zero false positives (type-driven, not name-guessing)
-- Graceful degradation if context missing
+### 7.2 Coverage Targets
 
-### NFR-3: Developer Experience
+| Area | Target |
+|------|--------|
+| Validation | 100% |
+| Vocabulary resolution | 100% |
+| Workshop queries | 90% |
+| Scanning | 80% |
+| Craft flow | 70% |
+| Survival | 60% |
 
-- Debugging allowed (no auto-fix on save)
-- Clear violation messages with options
-- Justification capture immediate, not threshold-based
+### 7.3 Test Structure
+
+```
+tests/
+├── unit/
+│   ├── scanning.test.ts
+│   ├── graphing.test.ts
+│   ├── querying.test.ts
+│   ├── validation.test.ts
+│   └── vocabulary.test.ts
+├── integration/
+│   └── craft-flow.test.ts
+├── survival/
+│   └── promotion.test.ts
+└── fixtures/
+    ├── workshop.json
+    ├── survival.json
+    └── sigil.yaml
+```
+
+> Source: sigil-v3.1/tests/README.md
 
 ---
 
-## 7. Technical Architecture
+## 8. Success Metrics
 
-### 7.1 File Structure
-
-```
-sigil-mark/
-├── kernel/                   # Core truth (always in system prompt)
-│   ├── constitution.yaml     # Data type → physics
-│   ├── fidelity.yaml         # Visual + ergonomic ceiling
-│   ├── workflow.yaml         # Process rules
-│   └── vocabulary.yaml       # Term → physics mapping
-│
-├── skills/                   # Skill definitions
-│   ├── scanning-sanctuary.yaml
-│   ├── analyzing-data-risk.yaml
-│   ├── auditing-cohesion.yaml
-│   ├── negotiating-integrity.yaml
-│   ├── simulating-interaction.yaml
-│   └── polishing-code.yaml
-│
-├── components/               # Component library context
-│   ├── registry.yaml
-│   ├── shadcn/
-│   ├── radix/
-│   └── framer-motion/
-│
-├── codebase/                 # Inherited patterns
-│   ├── analysis.yaml
-│   ├── patterns/
-│   └── examples/
-│
-├── knowledge/                # Gotchas and tips
-│   ├── bugs/
-│   ├── accessibility/
-│   └── performance/
-│
-├── canon/                    # Gold implementations
-│   ├── components/
-│   └── patterns/
-│
-├── governance/               # Evolution tracking
-│   ├── justifications.log
-│   └── amendments/
-│
-├── hooks/                    # React hooks
-│   └── use-sigil-mutation.ts
-│
-├── providers/                # Runtime context
-│   └── sigil-provider.tsx
-│
-└── layouts/                  # Zone components
-    ├── critical-zone.tsx
-    ├── glass-layout.tsx
-    └── machinery-layout.tsx
-```
-
-> Sources: sigil-v5.9/README.md:471-508, ARCHITECTURE-V5.md:746-800
-
-### 7.2 Physics Resolution Algorithm
-
-```
-1. Parse user prompt for vocabulary terms
-2. Extract data type from function signature (if available)
-3. Look up type in constitution.yaml
-4. Get required physics (server-tick | crdt | local-first)
-5. Apply persona overrides if any
-6. Load component context for that physics
-7. Load codebase patterns for similar components
-8. Load relevant gotchas
-9. Generate with all context merged
-```
-
----
-
-## 8. Migration Path
-
-### 8.1 Breaking Changes
-
-| v4.1 | v5 |
-|------|-----|
-| `sigil.map` cache | Deleted (live grep) |
-| Auto-fix on save | JIT polish on demand |
-| Blocking contagion | Status propagation |
-| Static constitution | Amendment protocol |
-| Zone-based physics | Type-driven physics |
-
-### 8.2 Migration Steps
-
-1. Delete `sigil.map`
-2. Add JSDoc pragmas to components
-3. Create `kernel/` with constitution, fidelity, workflow, vocabulary
-4. Update `useSigilMutation` for simulation flow
-5. Configure pre-commit hook for JIT polish
-6. Create `components/`, `codebase/`, `knowledge/` directories
-
-> Source: sigil-v5.9/MIGRATION-v5.9.md
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| Workshop query latency | <5ms | Benchmark test |
+| Flow interruptions | 0 per /craft | Count of approval dialogs |
+| Cold start time | <1s to taste | Time from init to first /craft |
+| Pattern survival rate | >60% at 2 weeks | Gardener metrics |
+| Physics violation catch rate | 100% | Validation tests |
 
 ---
 
 ## 9. Risks & Mitigations
 
-| Risk | Mitigation |
-|------|------------|
-| ripgrep too slow on large codebases | Benchmarked < 50ms; can add file limits if needed |
-| JSDoc pragma migration effort | Provide migration script; pragmas optional |
-| Component context maintenance | Auto-update from library versions or community-contributed |
-| Context size exceeds token limits | Selective loading based on prompt analysis |
+| Risk | Impact | Mitigation |
+|------|--------|------------|
+| Workshop index staleness | Stale API info | Hash-based freshness check, incremental updates |
+| Survival false positives | Wrong pattern promoted | 2-week waiting period, 3+ occurrence threshold |
+| Context fork complexity | Memory/state issues | Clear fork boundaries, explicit cleanup |
+| Seed library maintenance | Outdated virtual components | Version seeds, allow user customization |
 
 ---
 
-## 10. Out of Scope (v5)
+## 10. Out of Scope
 
-- Visual regression testing
-- Design-to-code from Figma
-- Multi-repo shared context
-- Real-time collaboration on context
-
----
-
-## 11. Open Questions
-
-1. **Component registry maintenance:** Auto-update from library versions or manual curation?
-2. **Codebase analysis frequency:** On every `/craft` or cached with manual refresh?
-3. **Knowledge base source:** Built-in to Sigil or community-contributed?
-4. **Context size management:** How to keep unified context within token limits?
+- Real-time collaboration
+- Git integration beyond pattern tagging
+- Automated refactoring
+- IDE plugins
+- CI/CD integration (future phase)
 
 ---
 
-## 12. Success Definition
+## 11. Sprint Plan (High Level)
 
-Sigil v5 succeeds when:
+### Phase 1: Foundation (Sprints 1-3)
+- Workshop index schema and builder
+- Startup Sentinel (hash check)
+- Graphing Imports skill
+- Scanning Sanctuary skill
 
-1. **Infrastructure is invisible:** No cache drift, no auto-fix fights, no blocking hacks
-2. **Knowledge is complete:** Artists never look up library docs or check other files
-3. **Flow is preserved:** Feel-thinking → working code → feel refinement
-4. **Rules evolve:** Constitution adapts with evidence, not bureaucracy
+### Phase 2: Intelligence (Sprints 4-6)
+- Querying Workshop skill
+- Validating Physics skill
+- Seeding Sanctuary skill
+- Seed libraries (Linear, Vercel, Stripe)
+
+### Phase 3: Evolution (Sprints 7-9)
+- Inspiring Ephemerally skill (context fork)
+- Forging Patterns skill
+- Era versioning
+
+### Phase 4: Verification (Sprints 10-12)
+- Observing Survival skill + Gardener
+- Chronicling Rationale skill
+- Auditing Cohesion skill
+- sigil-craft agent
+
+### Phase 5: Integration (Sprint 13)
+- End-to-end testing
+- Documentation update
+- Migration guide from v5.0
+
+---
+
+## 12. Commands Reference
+
+| Command | Purpose |
+|---------|---------|
+| `/craft "description"` | Generate from feel description |
+| `/craft --forge "desc"` | Break precedent, explore |
+| `/inspire [url]` | One-time fetch, ephemeral |
+| `/sanctify "pattern"` | Promote ephemeral to rule |
+| `/garden` | Run survival scan |
+| `/audit [component]` | Check visual cohesion |
+| `/new-era "name"` | Start fresh precedent epoch |
+
+---
+
+## 13. Appendix
+
+### A. Source Documents
+
+| Document | Path |
+|----------|------|
+| Architecture | sigil-v3.1.zip/ARCHITECTURE.md |
+| README | sigil-v3.1.zip/README.md |
+| CLAUDE.md | sigil-v3.1.zip/CLAUDE.md |
+| Skills | sigil-v3.1.zip/skills/*/SKILL.md |
+| Tests | sigil-v3.1.zip/tests/README.md |
+| Agent | sigil-v3.1.zip/agents/sigil-craft.md |
+
+### B. Seed Library Preview
+
+**Linear-like:**
+- Physics: snappy (150ms)
+- Material: minimal, monochrome
+- Components: Button, Card, Input, Dialog
+
+**Vercel-like:**
+- Physics: sharp (100ms)
+- Material: bold, high-contrast
+- Components: Button, Card, Badge, Modal
+
+**Stripe-like:**
+- Physics: smooth (300ms)
+- Material: soft gradients, generous spacing
+- Components: Button, Card, Input, Toast
+
+### C. The Three Laws + Seven Laws
+
+**The Three Laws (v6.0):**
+1. Code is precedent — Existence is approval
+2. Survival is the vote — Patterns that persist are canonical
+3. Never interrupt flow — No approval dialogs
+
+**The Seven Laws (v5.0, still valid):**
+1. Filesystem is Truth
+2. Type Dictates Physics
+3. Zone is Layout, Not Business Logic
+4. Status Propagates
+5. One Good Reason > 15% Silent Mutiny
+6. Never Refuse Outright
+7. Let Artists Stay in Flow
 
 ---
 
 *PRD Generated: 2026-01-08*
-*Sources: ARCHITECTURE-V5.md, sigil-v5.9.zip*
+*Sources: sigil-v3.1.zip context*
+*Next Step: `/architect` for Software Design Document*

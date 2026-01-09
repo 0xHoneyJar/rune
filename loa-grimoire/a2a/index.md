@@ -585,5 +585,28 @@ This document tracks all sprint artifacts and their approval status.
 
 ---
 
+---
+
+## Sigil v6.0.0 (Native Muse — Survival-Based Design Context)
+
+| Sprint | Theme | Status | Reviewer | Auditor |
+|--------|-------|--------|----------|---------|
+| 1 | Workshop Schema & Builder | COMPLETED | ✅ Approved | ✅ Approved |
+| 2 | Startup Sentinel | PENDING | — | — |
+| 3 | Discovery Skills | PENDING | — | — |
+| 4 | Querying Workshop | PENDING | — | — |
+| 5 | Validating Physics | PENDING | — | — |
+| 6 | Virtual Sanctuary | PENDING | — | — |
+| 7 | Ephemeral Inspiration | PENDING | — | — |
+| 8 | Forge Mode | PENDING | — | — |
+| 9 | Era Management | PENDING | — | — |
+| 10 | Survival Observation | PENDING | — | — |
+| 11 | Chronicling & Auditing | PENDING | — | — |
+| 12 | Agent Integration | PENDING | — | — |
+| 13 | Polish & Documentation | PENDING | — | — |
+
+---
+
 *Last Updated: 2026-01-08*
 *Current Version: Sigil v5.0.0 "The Lucid Flow" — MVP COMPLETE*
+*Next Version: Sigil v6.0.0 "Native Muse" — In Planning*

@@ -1,11 +1,11 @@
-# Sigil v5 Sprint Plan
+# Sigil v6.0.0 Sprint Plan
 
-> *"Filesystem is truth. Agency stays with human. Rules evolve. Artists stay in flow."*
+> *"Code is precedent. Survival is the vote. Never interrupt flow."*
 
-**Version:** 5.0
-**Codename:** The Lucid Flow
+**Version:** 6.0.0
+**Codename:** Native Muse
 **Generated:** 2026-01-08
-**Sources:** PRD v5.0, SDD v5.0
+**Sources:** PRD v6.0.0, SDD v6.0.0
 
 ---
 
@@ -17,854 +17,1609 @@
 
 ### Sprint Duration
 - **Cycle length:** 1 week per sprint
-- **Total sprints:** 8 sprints (MVP complete)
+- **Total sprints:** 13 sprints (MVP complete)
 - **Methodology:** Cycles (Linear Method)
 
 ### MVP Definition
 
 The MVP delivers:
-1. Kernel layer (constitution, fidelity, workflow, vocabulary)
-2. Core runtime (SigilProvider, useSigilMutation with simulation)
-3. Live grep discovery (no cache)
-4. JIT polish workflow
-5. Basic governance (justification logging)
+1. Pre-computed Workshop Index (5ms queries)
+2. Virtual Sanctuary for cold starts
+3. Physics-only validation (no novelty blocking)
+4. Survival-based precedent tracking
+5. Context forking for ephemeral exploration
+6. 10 Claude Code skills with lifecycle hooks
+7. Streamlined craft logs
 
-Post-MVP:
-- Component context population
-- Codebase pattern extraction
-- Knowledge base curation
-- Amendment protocol UI
+### Evolution from v5.0
+
+| Aspect | v5.0 | v6.0 |
+|--------|------|------|
+| Discovery | JIT grep (200ms) | Pre-computed workshop (5ms) |
+| Approval | Governance dialogs | Survival observation |
+| Cold start | Empty room | Virtual Sanctuary |
+| Novelty | Constitutional blocking | Physics-only validation |
+| Skills | 6 skills | 10 skills + hooks |
+
+**Kept from v5.0:**
+- Seven Laws kernel (constitution.yaml, fidelity.yaml, vocabulary.yaml, workflow.yaml)
+- SigilProvider runtime context
+- useSigilMutation hook
+- Zone layouts (CriticalZone, GlassLayout, MachineryLayout)
+- Governance structure (justifications.log)
 
 ---
 
-## Sprint Breakdown
+## Phase 1: Foundation (Sprints 1-3)
 
 ---
 
-## Sprint 1: Foundation & Kernel Setup
+## Sprint 1: Workshop Schema & Builder
 
-**Goal:** Establish directory structure and kernel YAML files
+**Goal:** Create the pre-computed workshop index infrastructure
 
 **Duration:** 1 week
 
 ### Tasks
 
-#### S1-T1: Directory Structure Creation
-**Description:** Create the v5 sigil-mark directory structure per SDD spec.
+#### S1-T1: Workshop TypeScript Interfaces
+**Description:** Define complete TypeScript interfaces for workshop.json schema.
 
 **Acceptance Criteria:**
-- [x] `sigil-mark/kernel/` exists with 4 empty YAML files
-- [x] `sigil-mark/skills/` exists with 6 empty YAML stubs
-- [x] `sigil-mark/components/` structure created
-- [x] `sigil-mark/codebase/` structure created
-- [x] `sigil-mark/knowledge/` structure created
-- [x] `sigil-mark/governance/` with justifications.log
-- [x] `sigil-mark/hooks/` exists
-- [x] `sigil-mark/providers/` exists
-- [x] `sigil-mark/layouts/` exists
+- [x] `Workshop` interface with indexed_at, package_hash, imports_hash
+- [x] `MaterialEntry` interface with version, exports, types_available, signatures
+- [x] `ComponentEntry` interface with path, tier, zone, physics, vocabulary, imports
+- [x] `PhysicsDefinition` interface with timing, easing, description
+- [x] `ZoneDefinition` interface with physics, timing, description
+- [x] All interfaces exported from `types/workshop.ts`
+
+**Dependencies:** None
+**Effort:** Medium
+
+---
+
+#### S1-T2: Package Hash Detection
+**Description:** Implement hash-based staleness detection for package.json.
+
+**Acceptance Criteria:**
+- [x] `getPackageHash()` function returns MD5 of package.json
+- [x] `isWorkshopStale()` compares current hash to stored hash
+- [x] Function runs in <5ms
+- [x] Hash stored in workshop.json.package_hash
+
+**Dependencies:** S1-T1
+**Effort:** Small
+
+---
+
+#### S1-T3: Imports Hash Detection
+**Description:** Implement hash-based staleness detection for imports.yaml.
+
+**Acceptance Criteria:**
+- [x] `getImportsHash()` function returns MD5 of .sigil/imports.yaml
+- [x] Hash stored in workshop.json.imports_hash
+- [x] Mismatch triggers incremental rebuild
+
+**Dependencies:** S1-T1
+**Effort:** Small
+
+---
+
+#### S1-T4: Workshop Builder Core
+**Description:** Implement the main workshop index builder.
+
+**Acceptance Criteria:**
+- [x] `buildWorkshop()` function creates complete workshop.json
+- [x] Reads imports.yaml for package list
+- [x] Extracts version from node_modules/{pkg}/package.json
+- [x] Extracts exports from node_modules/{pkg}/dist/index.d.ts
+- [x] Merges with sigil.yaml physics and zones
+- [x] Writes to .sigil/workshop.json
+
+**Dependencies:** S1-T2, S1-T3
+**Effort:** Large
+
+---
+
+#### S1-T5: Material Extraction
+**Description:** Extract framework material information from node_modules.
+
+**Acceptance Criteria:**
+- [x] Extract version from package.json
+- [x] Parse exports from index.d.ts
+- [x] Check for README.md availability
+- [x] Extract key type signatures (top 10 exports)
+- [x] Store in materials section of workshop
+
+**Dependencies:** S1-T4
+**Effort:** Medium
+
+---
+
+#### S1-T6: Component Extraction
+**Description:** Extract Sanctuary component metadata.
+
+**Acceptance Criteria:**
+- [x] Scan for `@sigil-tier` pragmas via ripgrep
+- [x] Parse JSDoc for zone, physics, vocabulary
+- [x] Extract import list per component
+- [x] Store in components section of workshop
+- [x] Performance: <2s for full Sanctuary scan
+
+**Dependencies:** S1-T4
+**Effort:** Medium
+
+---
+
+#### S1-T7: Workshop Builder Tests
+**Description:** Unit tests for workshop builder.
+
+**Acceptance Criteria:**
+- [x] Test hash generation consistency
+- [x] Test staleness detection
+- [x] Test material extraction with mock node_modules
+- [x] Test component extraction with mock Sanctuary
+- [x] All tests pass
+
+**Dependencies:** S1-T4 through S1-T6
+**Effort:** Medium
+
+---
+
+### Sprint 1 Deliverables
+- `types/workshop.ts` - TypeScript interfaces
+- `scripts/build-workshop.ts` - Builder implementation
+- `.sigil/workshop.json` - Generated index
+- Unit tests for builder
+
+---
+
+## Sprint 2: Startup Sentinel
+
+**Goal:** Implement startup check flow that triggers rebuild when needed
+
+**Duration:** 1 week
+
+### Tasks
+
+#### S2-T1: Startup Sentinel Flow
+**Description:** Implement startup check that runs before /craft.
+
+**Acceptance Criteria:**
+- [ ] Check package.json hash on startup
+- [ ] Check imports.yaml hash on startup
+- [ ] If either stale, trigger rebuild
+- [ ] If both fresh, skip rebuild
+- [ ] Log rebuild decision
+
+**Dependencies:** Sprint 1
+**Effort:** Medium
+
+---
+
+#### S2-T2: Quick Rebuild Trigger
+**Description:** Implement fast incremental rebuild.
+
+**Acceptance Criteria:**
+- [ ] `quickRebuild()` updates only stale sections
+- [ ] If package_hash changed: rebuild materials only
+- [ ] If imports_hash changed: rebuild materials only
+- [ ] If Sanctuary changed: rebuild components only
+- [ ] Total rebuild time <2s
+
+**Dependencies:** S2-T1
+**Effort:** Medium
+
+---
+
+#### S2-T3: Rebuild Locking
+**Description:** Prevent concurrent rebuilds.
+
+**Acceptance Criteria:**
+- [ ] Lock file at .sigil/workshop.lock
+- [ ] Acquire lock before rebuild
+- [ ] Release lock after rebuild
+- [ ] Timeout after 30s
+- [ ] Handle stale locks
+
+**Dependencies:** S2-T1
+**Effort:** Small
+
+---
+
+#### S2-T4: Integration with /craft
+**Description:** Run Startup Sentinel before every /craft.
+
+**Acceptance Criteria:**
+- [ ] /craft checks workshop freshness first
+- [ ] If stale, rebuild silently (no interruption)
+- [ ] If rebuild fails, fallback to JIT grep
+- [ ] Log fallback decision
+
+**Dependencies:** S2-T1, S2-T2
+**Effort:** Medium
+
+---
+
+#### S2-T5: Startup Sentinel Tests
+**Description:** Integration tests for startup flow.
+
+**Acceptance Criteria:**
+- [ ] Test fresh workshop skips rebuild
+- [ ] Test stale package triggers rebuild
+- [ ] Test stale imports triggers rebuild
+- [ ] Test concurrent rebuild handling
+- [ ] Test fallback on failure
+
+**Dependencies:** S2-T1 through S2-T4
+**Effort:** Medium
+
+---
+
+### Sprint 2 Deliverables
+- Startup sentinel implementation
+- Quick rebuild logic
+- Lock file handling
+- Integration with /craft command
+
+---
+
+## Sprint 3: Discovery Skills
+
+**Goal:** Implement scanning-sanctuary and graphing-imports skills
+
+**Duration:** 1 week
+
+### Tasks
+
+#### S3-T1: Scanning Sanctuary SKILL.md
+**Description:** Create skill definition for component discovery.
+
+**Acceptance Criteria:**
+- [ ] SKILL.md in `.claude/skills/scanning-sanctuary/`
+- [ ] Purpose: Find components using ripgrep
+- [ ] Trigger: Search queries during /craft
+- [ ] ripgrep patterns documented
+- [ ] Performance target: <50ms
 
 **Dependencies:** None
 **Effort:** Small
 
 ---
 
-#### S1-T2: Constitution YAML
-**Description:** Create `kernel/constitution.yaml` with data physics binding.
+#### S3-T2: Tier Lookup Function
+**Description:** Find components by tier using ripgrep.
 
 **Acceptance Criteria:**
-- [x] Financial types mapped to server-tick physics
-- [x] Health types mapped to server-tick physics
-- [x] Collaborative types mapped to crdt physics
-- [x] Local types mapped to local-first physics
-- [x] Physics profiles defined with timing, states, hooks
-- [x] Risk hierarchy defined
-- [x] Resolution rule documented
-
-**Dependencies:** S1-T1
-**Effort:** Medium
-
----
-
-#### S1-T3: Fidelity YAML
-**Description:** Create `kernel/fidelity.yaml` with visual/ergonomic constraints.
-
-**Acceptance Criteria:**
-- [x] Visual constraints: animation, gradients, shadows, borders, typography
-- [x] Ergonomic constraints: input_latency, hitbox, focus_ring, keyboard_support
-- [x] Interaction budgets defined
-- [x] Cohesion rules with variance thresholds
-- [x] Enforcement levels (error/warning) specified
-
-**Dependencies:** S1-T1
-**Effort:** Medium
-
----
-
-#### S1-T4: Vocabulary YAML
-**Description:** Create `kernel/vocabulary.yaml` with term→physics mapping.
-
-**Acceptance Criteria:**
-- [x] Financial terms mapped (claim, deposit, withdraw, transfer, swap, approve)
-- [x] Destructive terms mapped (delete, cancel)
-- [x] Collaborative terms mapped (edit, comment, assign)
-- [x] Local terms mapped (toggle, filter, sort, save)
-- [x] Motion profiles defined (instant, snappy, warm, deliberate, reassuring, celebratory)
-- [x] Lookup protocol documented
-
-**Dependencies:** S1-T1
-**Effort:** Medium
-
----
-
-#### S1-T5: Workflow YAML
-**Description:** Create `kernel/workflow.yaml` with methodology rules.
-
-**Acceptance Criteria:**
-- [x] Cycles method defined with rules (no_backlogs, no_story_points, hill_charts)
-- [x] Sprints method defined as alternative
-- [x] Kanban method defined as alternative
-- [x] Terminology translations specified
-- [x] Agent behavior rules documented
-- [x] Governance integration configured
-
-**Dependencies:** S1-T1
-**Effort:** Small
-
----
-
-### Sprint 1 Deliverables
-- Complete sigil-mark directory structure
-- All 4 kernel YAML files populated
-- Ready for runtime implementation
-
----
-
-## Sprint 2: Runtime Provider & Context
-
-**Goal:** Implement SigilProvider and zone context system
-
-**Duration:** 1 week
-
-### Tasks
-
-#### S2-T1: SigilProvider Implementation
-**Description:** Create the React context provider for zones and personas.
-
-**Acceptance Criteria:**
-- [x] `SigilContext` created with zone, persona, vibes
-- [x] `SigilProvider` component accepts zone, persona, vibes props
-- [x] Context memoized correctly
-- [x] Default values: zone='standard', persona='default'
-- [x] TypeScript types exported
-
-**Dependencies:** Sprint 1 complete
-**Effort:** Medium
-
----
-
-#### S2-T2: Zone Context Hooks
-**Description:** Create hooks for accessing zone context.
-
-**Acceptance Criteria:**
-- [x] `useSigilZoneContext()` returns current zone
-- [x] `useSigilPersonaContext()` returns current persona
-- [x] `useSigilVibes()` returns vibes object
-- [x] All hooks handle missing provider gracefully
-
-**Dependencies:** S2-T1
-**Effort:** Small
-
----
-
-#### S2-T3: CriticalZone Layout
-**Description:** Create zone layout component that forces critical zone.
-
-**Acceptance Criteria:**
-- [x] `CriticalZone` component overrides parent zone to 'critical'
-- [x] Renders `data-sigil-zone="critical"` attribute
-- [x] Accepts `financial` prop for data-sigil-financial attribute
-- [x] Children inherit critical zone context
-- [x] TypeScript types defined
-
-**Dependencies:** S2-T1
-**Effort:** Small
-
----
-
-#### S2-T4: GlassLayout Component
-**Description:** Create zone layout for exploratory/marketing areas.
-
-**Acceptance Criteria:**
-- [x] `GlassLayout` component overrides zone to 'glass'
-- [x] Renders `data-sigil-zone="glass"` attribute
-- [x] Children inherit glass zone context
-
-**Dependencies:** S2-T1
-**Effort:** Small
-
----
-
-#### S2-T5: MachineryLayout Component
-**Description:** Create zone layout for admin/power-user areas.
-
-**Acceptance Criteria:**
-- [x] `MachineryLayout` component overrides zone to 'machinery'
-- [x] Renders `data-sigil-zone="machinery"` attribute
-- [x] Children inherit machinery zone context
-
-**Dependencies:** S2-T1
-**Effort:** Small
-
----
-
-#### S2-T6: Provider Tests
-**Description:** Test suite for provider and zone components.
-
-**Acceptance Criteria:**
-- [x] Test context propagation
-- [x] Test zone override nesting
-- [x] Test default values
-- [x] Test TypeScript types
-
-**Dependencies:** S2-T1 through S2-T5
-**Effort:** Medium
-
----
-
-### Sprint 2 Deliverables
-- `sigil-mark/providers/sigil-provider.tsx`
-- `sigil-mark/layouts/critical-zone.tsx`
-- `sigil-mark/layouts/glass-layout.tsx`
-- `sigil-mark/layouts/machinery-layout.tsx`
-- Test coverage for provider layer
-
----
-
-## Sprint 3: useSigilMutation Core
-
-**Goal:** Implement the type-driven physics hook
-
-**Duration:** 1 week
-
-### Tasks
-
-#### S3-T1: Physics Types & Interfaces
-**Description:** Define TypeScript types for physics system.
-
-**Acceptance Criteria:**
-- [x] `SigilState` type: idle | simulating | confirming | committing | done | error
-- [x] `PhysicsClass` type: server-tick | crdt | local-first
-- [x] `SimulationPreview<T>` interface with predictedResult, estimatedDuration, warnings, fees
-- [x] `ResolvedPhysics` interface with class, timing, requires, forbidden
-- [x] `UseSigilMutationOptions<TData, TVariables>` interface
-- [x] `UseSigilMutationResult<TData, TVariables>` interface
-
-**Dependencies:** Sprint 2 complete
-**Effort:** Medium
-
----
-
-#### S3-T2: Physics Resolution Function
-**Description:** Implement physics resolution from zone context.
-
-**Acceptance Criteria:**
-- [x] `resolvePhysics(context, override)` function
-- [x] Maps 'critical' zone → server-tick
-- [x] Maps 'machinery'/'admin' zone → local-first
-- [x] Maps default zone → crdt
-- [x] Applies overrides with warning if no reason provided
-- [x] Returns complete `ResolvedPhysics` object
+- [ ] `findByTier(tier)` function
+- [ ] Uses ripgrep: `rg "@sigil-tier gold" src/sanctuary/ -l`
+- [ ] Returns file paths array
+- [ ] Performance: <50ms
 
 **Dependencies:** S3-T1
-**Effort:** Medium
+**Effort:** Small
 
 ---
 
-#### S3-T3: State Machine Implementation
-**Description:** Implement the mutation state machine.
+#### S3-T3: Zone Lookup Function
+**Description:** Find components by zone using ripgrep.
 
 **Acceptance Criteria:**
-- [x] State transitions: idle→simulating→confirming→committing→done
-- [x] Error state reachable from simulating/committing
-- [x] Reset returns to idle
-- [x] State is reactive (useState)
+- [ ] `findByZone(zone)` function
+- [ ] Uses ripgrep: `rg "@sigil-zone critical" src/ -l`
+- [ ] Returns file paths array
+- [ ] Performance: <50ms
 
 **Dependencies:** S3-T1
-**Effort:** Medium
-
----
-
-#### S3-T4: Simulate Function
-**Description:** Implement simulation flow for server-tick physics.
-
-**Acceptance Criteria:**
-- [x] `simulate(variables)` transitions to 'simulating' state
-- [x] Calls user-provided simulate function if available
-- [x] Creates default preview if no simulate function
-- [x] Transitions to 'confirming' on success
-- [x] Transitions to 'error' on failure
-- [x] Stores pending variables for confirm step
-
-**Dependencies:** S3-T3
-**Effort:** Medium
-
----
-
-#### S3-T5: Confirm Function
-**Description:** Implement confirmation step after simulation.
-
-**Acceptance Criteria:**
-- [x] `confirm()` only works in 'confirming' state
-- [x] Transitions to 'committing' state
-- [x] Executes mutation with stored variables
-- [x] Transitions to 'done' on success
-- [x] Transitions to 'error' on failure
-- [x] Calls onSuccess/onError callbacks
-
-**Dependencies:** S3-T4
-**Effort:** Medium
-
----
-
-#### S3-T6: Execute Function
-**Description:** Implement direct execution (bypasses simulation).
-
-**Acceptance Criteria:**
-- [x] `execute(variables)` for non-server-tick physics
-- [x] Logs warning if used on server-tick physics
-- [x] Transitions through committing→done/error
-- [x] Calls mutation directly
-
-**Dependencies:** S3-T3
 **Effort:** Small
 
 ---
 
-#### S3-T7: Computed UI State
-**Description:** Implement computed properties for UI binding.
+#### S3-T4: Vocabulary Lookup Function
+**Description:** Find components by vocabulary term.
 
 **Acceptance Criteria:**
-- [x] `disabled` = not idle and not confirming
-- [x] `isPending` = state is 'committing'
-- [x] `isSimulating` = state is 'simulating'
-- [x] `isConfirming` = state is 'confirming'
-- [x] `cssVars` object with --sigil-duration, --sigil-easing
+- [ ] `findByVocabulary(term)` function
+- [ ] Uses ripgrep: `rg "@sigil-vocabulary claim" src/ -l`
+- [ ] Returns file paths array
+- [ ] Performance: <50ms
 
-**Dependencies:** S3-T3
+**Dependencies:** S3-T1
 **Effort:** Small
 
 ---
 
-#### S3-T8: Hook Assembly & Export
-**Description:** Assemble complete useSigilMutation hook.
+#### S3-T5: Graphing Imports SKILL.md
+**Description:** Create skill definition for dependency scanning.
 
 **Acceptance Criteria:**
-- [x] Hook uses SigilContext for zone/persona
-- [x] Returns complete result object
-- [x] Exported from sigil-mark/hooks/
-- [x] JSDoc documented with @sigil-tier gold
+- [ ] SKILL.md in `.claude/skills/graphing-imports/`
+- [ ] Purpose: Scan src/ for actual dependencies
+- [ ] Trigger: Startup, after package install
+- [ ] Output: .sigil/imports.yaml
+- [ ] Performance target: <1s
 
-**Dependencies:** S3-T1 through S3-T7
+**Dependencies:** None
+**Effort:** Small
+
+---
+
+#### S3-T6: Scan Imports Script
+**Description:** Create bash script for import scanning.
+
+**Acceptance Criteria:**
+- [ ] Script at `.claude/skills/graphing-imports/scripts/scan-imports.sh`
+- [ ] Uses ripgrep to find ES imports
+- [ ] Extracts unique package names
+- [ ] Writes to .sigil/imports.yaml
+- [ ] Performance: <1s on typical codebase
+
+**Dependencies:** S3-T5
+**Effort:** Medium
+
+---
+
+#### S3-T7: Discovery Skills Tests
+**Description:** Unit tests for discovery functions.
+
+**Acceptance Criteria:**
+- [ ] Test tier lookup with mock Sanctuary
+- [ ] Test zone lookup accuracy
+- [ ] Test vocabulary matching
+- [ ] Test imports scanning
+- [ ] All tests pass
+
+**Dependencies:** S3-T1 through S3-T6
 **Effort:** Medium
 
 ---
 
 ### Sprint 3 Deliverables
-- `sigil-mark/hooks/use-sigil-mutation.ts` (complete)
-- `sigil-mark/types/index.ts` (physics types)
-- Full simulation flow working
+- `.claude/skills/scanning-sanctuary/SKILL.md`
+- `.claude/skills/graphing-imports/SKILL.md`
+- `.claude/skills/graphing-imports/scripts/scan-imports.sh`
+- Discovery function implementations
+- Unit tests
 
 ---
 
-## Sprint 4: Live Grep Discovery
+## Phase 2: Intelligence (Sprints 4-6)
 
-**Goal:** Implement Scanning Sanctuary skill with ripgrep
+---
+
+## Sprint 4: Querying Workshop
+
+**Goal:** Implement fast workshop index lookups
 
 **Duration:** 1 week
 
 ### Tasks
 
-#### S4-T1: JSDoc Pragma Specification
-**Description:** Document the JSDoc pragma system for component discovery.
+#### S4-T1: Querying Workshop SKILL.md
+**Description:** Create skill definition for workshop queries.
 
 **Acceptance Criteria:**
-- [x] `@sigil-tier` pragma: gold | silver | bronze | draft
-- [x] `@sigil-zone` pragma: critical | glass | machinery | standard
-- [x] `@sigil-data-type` pragma: type name for physics resolution
-- [x] Documented in skills/scanning-sanctuary.yaml
-
-**Dependencies:** Sprint 1 complete
-**Effort:** Small
-
----
-
-#### S4-T2: Scanning Sanctuary Skill Definition
-**Description:** Create skill YAML with ripgrep patterns.
-
-**Acceptance Criteria:**
-- [x] Skill definition in `skills/scanning-sanctuary.yaml`
-- [x] ripgrep patterns for tier lookup
-- [x] ripgrep patterns for zone lookup
-- [x] ripgrep patterns for data-type lookup
-- [x] Performance target: < 50ms documented
-
-**Dependencies:** S4-T1
-**Effort:** Small
-
----
-
-#### S4-T3: Component Lookup Utility
-**Description:** Create utility function for component discovery.
-
-**Acceptance Criteria:**
-- [x] `findComponentsByTier(tier)` function
-- [x] `findComponentsByZone(zone)` function
-- [x] `findComponentsByDataType(type)` function
-- [x] Uses ripgrep via shell execution
-- [x] Returns file paths array
-- [x] Performance: < 50ms on typical codebase
-
-**Dependencies:** S4-T2
-**Effort:** Medium
-
----
-
-#### S4-T4: Remove sigil.map Cache
-**Description:** Delete any existing cache infrastructure.
-
-**Acceptance Criteria:**
-- [x] `sigil.map` file deleted if exists
-- [x] `.sigil-cache` directory deleted if exists
-- [x] Any cache-related code removed
-- [x] Migration note added to MIGRATION.md
-
-**Dependencies:** S4-T3
-**Effort:** Small
-
----
-
-#### S4-T5: Agent Integration Documentation
-**Description:** Document how agent uses Scanning Sanctuary.
-
-**Acceptance Criteria:**
-- [x] CLAUDE.md updated with scanning instructions
-- [x] Example ripgrep commands documented
-- [x] "Never use cached index" rule emphasized
-- [x] Fallback behavior documented
-
-**Dependencies:** S4-T2
-**Effort:** Small
-
----
-
-### Sprint 4 Deliverables
-- `sigil-mark/skills/scanning-sanctuary.yaml`
-- Component lookup utilities
-- Cache infrastructure removed
-- Agent documentation updated
-
----
-
-## Sprint 5: Analyzing Data Risk Skill
-
-**Goal:** Implement type-to-physics resolution skill
-
-**Duration:** 1 week
-
-### Tasks
-
-#### S5-T1: Skill Definition YAML
-**Description:** Create Analyzing Data Risk skill definition.
-
-**Acceptance Criteria:**
-- [x] Skill YAML in `skills/analyzing-data-risk.yaml`
-- [x] Type extraction patterns documented
-- [x] Constitution lookup process defined
-- [x] Risk hierarchy applied
-- [x] Error handling for unknown types
-
-**Dependencies:** Sprint 1 kernel complete
-**Effort:** Medium
-
----
-
-#### S5-T2: Type Extraction Parser
-**Description:** Parse TypeScript function signatures for types.
-
-**Acceptance Criteria:**
-- [x] Extract parameter types from function signature
-- [x] Extract return type
-- [x] Extract generic parameters
-- [x] Handle import context for type lookup
-- [x] Return array of type names
-
-**Dependencies:** S5-T1
-**Effort:** Large
-
----
-
-#### S5-T3: Constitution Lookup
-**Description:** Map extracted types to physics via constitution.
-
-**Acceptance Criteria:**
-- [x] Load constitution.yaml
-- [x] Lookup type in data_physics categories
-- [x] Return physics class, requires, forbidden
-- [x] Handle unknown types (ask user)
-
-**Dependencies:** S5-T2, Sprint 1 kernel
-**Effort:** Medium
-
----
-
-#### S5-T4: Risk Hierarchy Resolution
-**Description:** Apply highest-risk physics when multiple types detected.
-
-**Acceptance Criteria:**
-- [x] server-tick > crdt > local-first hierarchy
-- [x] When Money + Task → use server-tick
-- [x] Log when multiple high-risk types detected
-- [x] Return single resolved physics
-
-**Dependencies:** S5-T3
-**Effort:** Small
-
----
-
-#### S5-T5: Integration with useSigilMutation
-**Description:** Connect data risk analysis to hook.
-
-**Acceptance Criteria:**
-- [x] Hook can receive data type hints
-- [x] Physics resolution considers data type
-- [x] Data type overrides zone-based defaults
-- [x] Warning if data type conflicts with zone
-
-**Dependencies:** Sprint 3, S5-T4
-**Effort:** Medium
-
----
-
-### Sprint 5 Deliverables
-- `sigil-mark/skills/analyzing-data-risk.yaml`
-- Type extraction utilities
-- Constitution lookup integrated with hook
-- Data type hints working in useSigilMutation
-
----
-
-## Sprint 6: JIT Polish Workflow
-
-**Goal:** Implement Polishing Code skill with on-demand standardization
-
-**Duration:** 1 week
-
-### Tasks
-
-#### S6-T1: Skill Definition YAML
-**Description:** Create Polishing Code skill definition.
-
-**Acceptance Criteria:**
-- [x] Skill YAML in `skills/polishing-code.yaml`
-- [x] Triggers: /polish, pre-commit, CI
-- [x] Process: scan → diff → approve → apply
-- [x] Never auto-fix on save (documented)
+- [ ] SKILL.md in `.claude/skills/querying-workshop/`
+- [ ] Purpose: Fast lookups from pre-computed index
+- [ ] Trigger: /craft command
+- [ ] Query types: material, component, physics, zone
+- [ ] Performance target: <5ms
 
 **Dependencies:** Sprint 1
 **Effort:** Small
 
 ---
 
-#### S6-T2: Violation Scanner
-**Description:** Scan files for taste violations.
+#### S4-T2: Workshop Schema Documentation
+**Description:** Create schema documentation for workshop.json.
 
 **Acceptance Criteria:**
-- [x] Check fidelity constraints (animation, shadows, etc.)
-- [x] Check constitution requirements
-- [x] Return list of violations with file:line references
-- [x] Severity levels: error, warning, info
+- [ ] WORKSHOP_SCHEMA.md in querying-workshop skill
+- [ ] Full JSON schema documented
+- [ ] Example queries documented
+- [ ] Performance characteristics explained
 
-**Dependencies:** S6-T1, Sprint 1 kernel
-**Effort:** Large
-
----
-
-#### S6-T3: Diff Generator
-**Description:** Generate fix diffs for violations.
-
-**Acceptance Criteria:**
-- [x] For each violation, generate suggested fix
-- [x] Output unified diff format
-- [x] Show before/after context
-- [x] Group by file
-
-**Dependencies:** S6-T2
-**Effort:** Medium
-
----
-
-#### S6-T4: /polish Command Handler
-**Description:** Implement /polish command for agent.
-
-**Acceptance Criteria:**
-- [x] `/polish` scans and shows diff
-- [x] `/polish --diff` shows diff without applying
-- [x] `/polish --apply` applies after confirmation
-- [x] Returns summary of changes
-
-**Dependencies:** S6-T3
-**Effort:** Medium
-
----
-
-#### S6-T5: Pre-commit Hook Script
-**Description:** Create pre-commit hook for polish check.
-
-**Acceptance Criteria:**
-- [x] Script in `.husky/pre-commit`
-- [x] Runs `sigil polish --check`
-- [x] Exits non-zero if violations found
-- [x] Clear error message with fix instructions
-
-**Dependencies:** S6-T2
+**Dependencies:** S4-T1
 **Effort:** Small
 
 ---
 
-#### S6-T6: Remove Auto-fix on Save
-**Description:** Ensure no auto-fix behavior exists.
+#### S4-T3: Query API Implementation
+**Description:** Implement query functions for workshop.
 
 **Acceptance Criteria:**
-- [x] No ESLint auto-fix on save for Sigil rules
-- [x] No Prettier integration that auto-fixes
-- [x] Documented: "Let humans debug with messy code"
+- [ ] `queryMaterial(name)` returns MaterialEntry
+- [ ] `queryComponent(name)` returns ComponentEntry
+- [ ] `queryPhysics(name)` returns PhysicsDefinition
+- [ ] `queryZone(name)` returns ZoneDefinition
+- [ ] All queries <5ms
+
+**Dependencies:** S4-T1, Sprint 1
+**Effort:** Medium
+
+---
+
+#### S4-T4: Fallback to Node Modules
+**Description:** Fallback to direct type reading when signature missing.
+
+**Acceptance Criteria:**
+- [ ] If workshop lacks signature, read from node_modules/*.d.ts
+- [ ] Targeted file read (not full parse)
+- [ ] Cache result in memory for session
+- [ ] Fallback time <50ms
+
+**Dependencies:** S4-T3
+**Effort:** Medium
+
+---
+
+#### S4-T5: Source Resolution
+**Description:** Track where query results come from.
+
+**Acceptance Criteria:**
+- [ ] QueryResult includes `source: 'workshop' | 'seed' | 'fallback'`
+- [ ] Log when using fallback
+- [ ] Prefer workshop > seed > fallback
+
+**Dependencies:** S4-T3
+**Effort:** Small
+
+---
+
+#### S4-T6: Workshop Query Tests
+**Description:** Unit tests for query performance.
+
+**Acceptance Criteria:**
+- [ ] Test material query <5ms
+- [ ] Test component query <5ms
+- [ ] Test fallback behavior
+- [ ] Benchmark 100 queries in <500ms
+- [ ] All tests pass
+
+**Dependencies:** S4-T3 through S4-T5
+**Effort:** Medium
+
+---
+
+### Sprint 4 Deliverables
+- `.claude/skills/querying-workshop/SKILL.md`
+- `.claude/skills/querying-workshop/WORKSHOP_SCHEMA.md`
+- Query API implementation
+- Fallback logic
+- Performance tests
+
+---
+
+## Sprint 5: Validating Physics
+
+**Goal:** Implement physics validation with PreToolUse hook
+
+**Duration:** 1 week
+
+### Tasks
+
+#### S5-T1: Validating Physics SKILL.md
+**Description:** Create skill definition for physics validation.
+
+**Acceptance Criteria:**
+- [ ] SKILL.md in `.claude/skills/validating-physics/`
+- [ ] Purpose: Block physics violations, not novelty
+- [ ] Trigger: PreToolUse hook on Write|Edit
+- [ ] Checks: zone, material, API, fidelity
+- [ ] Non-checks: pattern existence, style novelty
 
 **Dependencies:** None
 **Effort:** Small
 
 ---
 
-### Sprint 6 Deliverables
-- `sigil-mark/skills/polishing-code.yaml`
-- Violation scanner
-- Diff generator
-- `/polish` command working
-- Pre-commit hook script
+#### S5-T2: PreToolUse Hook Configuration
+**Description:** Configure hook in settings.json.
+
+**Acceptance Criteria:**
+- [ ] Hook registered for Write|Edit tools
+- [ ] Calls validate_physics function
+- [ ] Can block generation if violation found
+- [ ] Returns clear error message
+
+**Dependencies:** S5-T1
+**Effort:** Medium
 
 ---
 
-## Sprint 7: Status Propagation & Negotiation
+#### S5-T3: Zone Constraint Checking
+**Description:** Validate zone-physics compatibility.
 
-**Goal:** Implement status propagation and integrity negotiation
+**Acceptance Criteria:**
+- [ ] Critical zone + playful physics → BLOCK
+- [ ] Critical zone + deliberate physics → ALLOW
+- [ ] Standard zone + any physics → ALLOW
+- [ ] Clear error message with suggestion
+
+**Dependencies:** S5-T1
+**Effort:** Medium
+
+---
+
+#### S5-T4: Material Constraint Checking
+**Description:** Validate material-timing compatibility.
+
+**Acceptance Criteria:**
+- [ ] Clay material + 0ms timing → BLOCK
+- [ ] Glass material + heavy spring → BLOCK
+- [ ] Valid combinations → ALLOW
+- [ ] Clear error message with suggestion
+
+**Dependencies:** S5-T1
+**Effort:** Medium
+
+---
+
+#### S5-T5: API Correctness Verification
+**Description:** Validate framework API usage.
+
+**Acceptance Criteria:**
+- [ ] Query workshop for valid exports
+- [ ] motion.animate (invalid) → BLOCK with suggestion
+- [ ] motion.div (valid) → ALLOW
+- [ ] Include correct API in error message
+
+**Dependencies:** Sprint 4 (workshop)
+**Effort:** Medium
+
+---
+
+#### S5-T6: Fidelity Ceiling Check
+**Description:** Validate fidelity level constraints.
+
+**Acceptance Criteria:**
+- [ ] 3D effects in standard zone → BLOCK
+- [ ] Heavy effects in critical zone → BLOCK
+- [ ] Check against fidelity.yaml limits
+- [ ] Clear error with constraint source
+
+**Dependencies:** S5-T1
+**Effort:** Medium
+
+---
+
+#### S5-T7: Physics Validation Tests
+**Description:** Test suite for validation logic.
+
+**Acceptance Criteria:**
+- [ ] Test all zone constraint combinations
+- [ ] Test material constraint combinations
+- [ ] Test API correctness checks
+- [ ] Test fidelity ceiling enforcement
+- [ ] 100% coverage on validation logic
+- [ ] All tests pass
+
+**Dependencies:** S5-T3 through S5-T6
+**Effort:** Large
+
+---
+
+### Sprint 5 Deliverables
+- `.claude/skills/validating-physics/SKILL.md`
+- PreToolUse hook integration
+- Zone, material, API, fidelity validators
+- 100% test coverage
+
+---
+
+## Sprint 6: Virtual Sanctuary
+
+**Goal:** Implement seeding for cold start projects
 
 **Duration:** 1 week
 
 ### Tasks
 
-#### S7-T1: Status Propagation Rule
-**Description:** Implement tier downgrade on import.
+#### S6-T1: Seeding Sanctuary SKILL.md
+**Description:** Create skill definition for virtual Sanctuary.
 
 **Acceptance Criteria:**
-- [x] `Tier(Component) = min(DeclaredTier, Tier(Dependencies))`
-- [x] Gold imports Draft → becomes Draft
-- [x] Warning displayed, not error
-- [x] Status restores when dependency upgrades
+- [ ] SKILL.md in `.claude/skills/seeding-sanctuary/`
+- [ ] Purpose: Provide virtual taste for cold starts
+- [ ] Trigger: Empty src/sanctuary/ detected
+- [ ] Seeds: Linear-like, Vercel-like, Stripe-like, Blank
+- [ ] Output: .sigil/seed.yaml
 
-**Dependencies:** Sprint 4 (scanning)
+**Dependencies:** None
+**Effort:** Small
+
+---
+
+#### S6-T2: Seed Schema Definition
+**Description:** Define TypeScript interface for seed.yaml.
+
+**Acceptance Criteria:**
+- [ ] `Seed` interface with seed, version, description
+- [ ] `physics` Record<string, string>
+- [ ] `materials` Record<string, MaterialDef>
+- [ ] `virtual_components` Record<string, VirtualComponent>
+- [ ] Exported from types/seed.ts
+
+**Dependencies:** S6-T1
+**Effort:** Small
+
+---
+
+#### S6-T3: Linear-like Seed Library
+**Description:** Create Linear-like seed definition.
+
+**Acceptance Criteria:**
+- [ ] Seed YAML at `.claude/skills/seeding-sanctuary/seeds/linear-like.yaml`
+- [ ] Physics: snappy (150ms), smooth (300ms)
+- [ ] Material: minimal, monochrome
+- [ ] Components: Button, Card, Input, Dialog
+- [ ] All components have tier, physics, zones
+
+**Dependencies:** S6-T2
 **Effort:** Medium
 
 ---
 
-#### S7-T2: Import Analyzer
-**Description:** Analyze imports to detect tier conflicts.
+#### S6-T4: Vercel-like Seed Library
+**Description:** Create Vercel-like seed definition.
 
 **Acceptance Criteria:**
-- [x] Parse import statements
-- [x] Lookup imported component tier via ripgrep
-- [x] Compare with current component tier
-- [x] Return list of downgrades
+- [ ] Seed YAML at `.claude/skills/seeding-sanctuary/seeds/vercel-like.yaml`
+- [ ] Physics: sharp (100ms), smooth (200ms)
+- [ ] Material: bold, high-contrast
+- [ ] Components: Button, Card, Badge, Modal
+- [ ] All components have tier, physics, zones
+
+**Dependencies:** S6-T2
+**Effort:** Medium
+
+---
+
+#### S6-T5: Stripe-like Seed Library
+**Description:** Create Stripe-like seed definition.
+
+**Acceptance Criteria:**
+- [ ] Seed YAML at `.claude/skills/seeding-sanctuary/seeds/stripe-like.yaml`
+- [ ] Physics: smooth (300ms), deliberate (500ms)
+- [ ] Material: soft gradients, generous spacing
+- [ ] Components: Button, Card, Input, Toast
+- [ ] All components have tier, physics, zones
+
+**Dependencies:** S6-T2
+**Effort:** Medium
+
+---
+
+#### S6-T6: Fade Behavior Implementation
+**Description:** Implement virtual-to-real component transition.
+
+**Acceptance Criteria:**
+- [ ] Check for real component at same path
+- [ ] If real exists, mark virtual as "faded"
+- [ ] Query prefers real over virtual
+- [ ] Faded components don't appear in suggestions
+
+**Dependencies:** S6-T3 through S6-T5
+**Effort:** Medium
+
+---
+
+#### S6-T7: Seed Selection UI
+**Description:** Prompt user to select seed on cold start.
+
+**Acceptance Criteria:**
+- [ ] Detect empty src/sanctuary/
+- [ ] Present seed options via AskUserQuestion
+- [ ] Write selected seed to .sigil/seed.yaml
+- [ ] Log seed selection
+
+**Dependencies:** S6-T1
+**Effort:** Medium
+
+---
+
+#### S6-T8: Integration with Scanning
+**Description:** Integrate seeds with scanning-sanctuary skill.
+
+**Acceptance Criteria:**
+- [ ] If Sanctuary empty, return virtual components
+- [ ] Virtual components tagged as source: 'seed'
+- [ ] Real components override virtual
+- [ ] Seamless transition
+
+**Dependencies:** Sprint 3, S6-T6
+**Effort:** Medium
+
+---
+
+### Sprint 6 Deliverables
+- `.claude/skills/seeding-sanctuary/SKILL.md`
+- Seed schema and types
+- Three seed libraries (Linear, Vercel, Stripe)
+- Fade behavior working
+- Integration with scanning
+
+---
+
+## Phase 3: Evolution (Sprints 7-9)
+
+---
+
+## Sprint 7: Ephemeral Inspiration
+
+**Goal:** Implement context forking for external reference
+
+**Duration:** 1 week
+
+### Tasks
+
+#### S7-T1: Inspiring Ephemerally SKILL.md
+**Description:** Create skill definition for ephemeral inspiration.
+
+**Acceptance Criteria:**
+- [ ] SKILL.md in `.claude/skills/inspiring-ephemerally/`
+- [ ] Purpose: One-time external fetch in forked context
+- [ ] Trigger: "like [url]", "inspired by [url]" in prompt
+- [ ] Flow: Fork → Fetch → Extract → Generate → Discard
+- [ ] Output: Generated code only (no fetched content persists)
+
+**Dependencies:** None
+**Effort:** Small
+
+---
+
+#### S7-T2: URL Detection Triggers
+**Description:** Detect inspiration triggers in prompts.
+
+**Acceptance Criteria:**
+- [ ] Detect "like stripe.com" pattern
+- [ ] Detect "inspired by [url]" pattern
+- [ ] Detect "reference [url]" pattern
+- [ ] Extract URL from detected pattern
+- [ ] Return trigger type and URL
 
 **Dependencies:** S7-T1
-**Effort:** Medium
-
----
-
-#### S7-T3: Negotiating Integrity Skill
-**Description:** Create skill for handling violations.
-
-**Acceptance Criteria:**
-- [x] Skill YAML in `skills/negotiating-integrity.yaml`
-- [x] COMPLY option with compliant alternative
-- [x] BYPASS option with justification capture
-- [x] AMEND option for constitution change proposal
-- [x] Never refuse outright
-
-**Dependencies:** Sprint 1 kernel
-**Effort:** Medium
-
----
-
-#### S7-T4: Justification Logger
-**Description:** Log overrides to governance file.
-
-**Acceptance Criteria:**
-- [x] Write to `governance/justifications.log`
-- [x] Format: timestamp, file, article, justification, author
-- [x] Append-only log
-- [x] Human-readable format
-
-**Dependencies:** S7-T3
 **Effort:** Small
 
 ---
 
-#### S7-T5: Amendment Proposal Creator
-**Description:** Create amendment YAML from AMEND requests.
+#### S7-T3: Context Fork Implementation
+**Description:** Create isolated context for ephemeral operations.
 
 **Acceptance Criteria:**
-- [x] Create file in `governance/amendments/`
-- [x] Include: id, date, proposer, status, article, proposed_change, justification
-- [x] Status: proposed
-- [x] Template for evidence and approvals
+- [ ] Fork context preserves core Sigil state
+- [ ] Forked context has no access to survival.json
+- [ ] Forked context cannot write to Sanctuary
+- [ ] Clear boundary for fork/return
+
+**Dependencies:** S7-T1
+**Effort:** Large
+
+---
+
+#### S7-T4: Style Extraction Logic
+**Description:** Extract design tokens from fetched content.
+
+**Acceptance Criteria:**
+- [ ] Extract color palette (background, text, accent)
+- [ ] Extract typography (font-family, sizes, weights)
+- [ ] Extract spacing patterns
+- [ ] Extract gradient definitions
+- [ ] Return structured style object
 
 **Dependencies:** S7-T3
+**Effort:** Medium
+
+---
+
+#### S7-T5: Code Generation with Inspiration
+**Description:** Generate code using extracted styles.
+
+**Acceptance Criteria:**
+- [ ] Apply extracted colors to component
+- [ ] Apply extracted typography
+- [ ] Apply extracted spacing
+- [ ] Respect physics constraints (still validated)
+- [ ] Return generated code to main context
+
+**Dependencies:** S7-T4
+**Effort:** Medium
+
+---
+
+#### S7-T6: Cleanup After Use
+**Description:** Discard fetched content after generation.
+
+**Acceptance Criteria:**
+- [ ] Fetched content never persists
+- [ ] No trace in Sanctuary
+- [ ] No trace in workshop
+- [ ] Only generated code remains
+- [ ] Log cleanup
+
+**Dependencies:** S7-T5
 **Effort:** Small
+
+---
+
+#### S7-T7: /sanctify Command
+**Description:** Promote ephemeral inspiration to permanent rule.
+
+**Acceptance Criteria:**
+- [ ] `/sanctify "pattern-name"` command
+- [ ] Extracts pattern from recent generation
+- [ ] Adds to rules.md
+- [ ] Logs sanctification
+- [ ] Confirmation message
+
+**Dependencies:** S7-T5
+**Effort:** Medium
 
 ---
 
 ### Sprint 7 Deliverables
-- Status propagation working
-- `sigil-mark/skills/negotiating-integrity.yaml`
-- Justification logging
-- Amendment proposal flow
+- `.claude/skills/inspiring-ephemerally/SKILL.md`
+- URL detection and triggers
+- Context fork implementation
+- Style extraction
+- /sanctify command
 
 ---
 
-## Sprint 8: Remaining Skills & Integration
+## Sprint 8: Forge Mode
 
-**Goal:** Complete Auditing Cohesion, Simulating Interaction, and integration
+**Goal:** Implement precedent-breaking exploration mode
 
 **Duration:** 1 week
 
 ### Tasks
 
-#### S8-T1: Auditing Cohesion Skill
-**Description:** Create visual cohesion checking skill.
+#### S8-T1: Forging Patterns SKILL.md
+**Description:** Create skill definition for forge mode.
 
 **Acceptance Criteria:**
-- [x] Skill YAML in `skills/auditing-cohesion.yaml`
-- [x] Compare visual properties against context
-- [x] Report variance with options
-- [x] Trigger on new component generation
+- [ ] SKILL.md in `.claude/skills/forging-patterns/`
+- [ ] Purpose: Explicit precedent-breaking mode
+- [ ] Trigger: `/craft --forge` or `/forge` command
+- [ ] Respects: Physics constraints only
+- [ ] Ignores: Survival patterns, rejected patterns
 
-**Dependencies:** Sprint 1 fidelity.yaml
-**Effort:** Medium
-
----
-
-#### S8-T2: Simulating Interaction Skill
-**Description:** Create timing verification skill.
-
-**Acceptance Criteria:**
-- [x] Skill YAML in `skills/simulating-interaction.yaml`
-- [x] Verify click_to_feedback < 100ms
-- [x] Verify keypress_to_action < 50ms
-- [x] Verify hover_to_tooltip < 200ms
-- [x] Report failures with suggestions
-
-**Dependencies:** Sprint 1 fidelity.yaml
-**Effort:** Medium
-
----
-
-#### S8-T3: /garden Command
-**Description:** Implement system health check command.
-
-**Acceptance Criteria:**
-- [x] `/garden` runs all audits
-- [x] `/garden --drift` focuses on visual drift
-- [x] Returns health summary
-- [x] Lists issues by severity
-
-**Dependencies:** S8-T1, S8-T2, Sprint 4-7
-**Effort:** Medium
-
----
-
-#### S8-T4: /amend Command
-**Description:** Implement constitution amendment command.
-
-**Acceptance Criteria:**
-- [x] `/amend <rule>` creates amendment proposal
-- [x] Prompts for justification
-- [x] Creates amendment YAML
-- [x] Returns proposal ID
-
-**Dependencies:** Sprint 7 (amendment flow)
+**Dependencies:** None
 **Effort:** Small
 
 ---
 
-#### S8-T5: CLAUDE.md Integration
-**Description:** Update CLAUDE.md with complete v5 protocol.
+#### S8-T2: Forge Flag Detection
+**Description:** Detect forge mode trigger.
 
 **Acceptance Criteria:**
-- [x] All commands documented
-- [x] All skills referenced
-- [x] Seven Laws stated
-- [x] Quick reference table
-- [x] Anti-patterns listed
+- [ ] Detect `--forge` flag in /craft
+- [ ] Detect standalone `/forge` command
+- [ ] Set forge mode in context
+- [ ] Log forge mode activation
 
-**Dependencies:** All previous sprints
+**Dependencies:** S8-T1
+**Effort:** Small
+
+---
+
+#### S8-T3: Survival Bypass
+**Description:** Skip survival checks in forge mode.
+
+**Acceptance Criteria:**
+- [ ] Don't load survival.json in forge mode
+- [ ] Don't warn about rejected patterns
+- [ ] Don't prefer canonical patterns
+- [ ] Treat all patterns as equal
+
+**Dependencies:** S8-T2
 **Effort:** Medium
 
 ---
 
-#### S8-T6: Migration Script
-**Description:** Create migration script from v4.x.
+#### S8-T4: Physics-Only Validation
+**Description:** Enforce only physics in forge mode.
 
 **Acceptance Criteria:**
-- [x] Delete sigil.map and cache
-- [x] Create v5 directory structure
-- [x] Initialize governance logs
-- [x] Print next steps
+- [ ] Zone constraints still enforced
+- [ ] Material constraints still enforced
+- [ ] API correctness still enforced
+- [ ] Pattern precedent NOT enforced
+- [ ] Style novelty NOT blocked
 
-**Dependencies:** All previous sprints
+**Dependencies:** S8-T2, Sprint 5
+**Effort:** Medium
+
+---
+
+#### S8-T5: User Decision on Output
+**Description:** Let user decide to keep or discard forge output.
+
+**Acceptance Criteria:**
+- [ ] After forge generation, prompt "Keep this exploration?"
+- [ ] If keep: Normal /craft flow applies
+- [ ] If discard: Generated code removed
+- [ ] Log decision
+
+**Dependencies:** S8-T3, S8-T4
 **Effort:** Small
+
+---
+
+#### S8-T6: Forge Mode Tests
+**Description:** Test forge mode behavior.
+
+**Acceptance Criteria:**
+- [ ] Test survival bypass
+- [ ] Test physics still enforced
+- [ ] Test keep/discard flow
+- [ ] Test integration with /craft
+
+**Dependencies:** S8-T1 through S8-T5
+**Effort:** Medium
 
 ---
 
 ### Sprint 8 Deliverables
-- All 6 skills complete
-- `/garden` and `/amend` commands working
-- CLAUDE.md v5 protocol
-- Migration script
-- **MVP COMPLETE**
+- `.claude/skills/forging-patterns/SKILL.md`
+- Forge flag detection
+- Survival bypass
+- Physics-only validation in forge mode
 
 ---
 
-## Post-MVP Sprints
+## Sprint 9: Era Management
 
-### Sprint 9: Component Context Population
-- shadcn component documentation
-- Radix primitive patterns
-- Framer Motion recipes
+**Goal:** Implement era versioning for design direction shifts
 
-### Sprint 10: Codebase Pattern Extraction
-- Automatic pattern detection
-- Hook usage analysis
-- Convention extraction
+**Duration:** 1 week
 
-### Sprint 11: Knowledge Base Curation
-- React gotchas
-- Next.js boundaries
-- Accessibility requirements
-- Performance patterns
+### Tasks
 
-### Sprint 12: Amendment Protocol UI
-- Amendment review workflow
-- Approval tracking
-- Merge automation
+#### S9-T1: Era Schema Definition
+**Description:** Define era tracking in survival.json.
+
+**Acceptance Criteria:**
+- [ ] `era` field in survival.json
+- [ ] `era_started` field with date
+- [ ] Era name is human-readable (e.g., "v1-Flat")
+- [ ] Default era: "v1"
+
+**Dependencies:** None
+**Effort:** Small
+
+---
+
+#### S9-T2: /new-era Command
+**Description:** Implement era transition command.
+
+**Acceptance Criteria:**
+- [ ] `/new-era "Tactile"` command
+- [ ] Archives current patterns as "Era: [old-name]"
+- [ ] Creates new era with provided name
+- [ ] Resets pattern counts (but keeps history)
+- [ ] Updates survival.json
+
+**Dependencies:** S9-T1
+**Effort:** Medium
+
+---
+
+#### S9-T3: Pattern Archiving
+**Description:** Archive patterns when era changes.
+
+**Acceptance Criteria:**
+- [ ] Create `.sigil/eras/[era-name].json`
+- [ ] Copy current survival patterns to archive
+- [ ] Add era_ended timestamp
+- [ ] Keep archive read-only
+
+**Dependencies:** S9-T2
+**Effort:** Medium
+
+---
+
+#### S9-T4: Fresh Precedent Tracking
+**Description:** Start fresh tracking in new era.
+
+**Acceptance Criteria:**
+- [ ] New era starts with empty patterns
+- [ ] Old patterns don't block exploration
+- [ ] Canonical status doesn't carry over
+- [ ] Each era has independent survival
+
+**Dependencies:** S9-T3
+**Effort:** Medium
+
+---
+
+#### S9-T5: Era in Craft Logs
+**Description:** Include era in craft log entries.
+
+**Acceptance Criteria:**
+- [ ] Craft log includes current era name
+- [ ] Era visible in log header
+- [ ] Can filter logs by era
+
+**Dependencies:** S9-T1
+**Effort:** Small
+
+---
+
+#### S9-T6: Rules.md Era Markers
+**Description:** Add era markers to rules.md.
+
+**Acceptance Criteria:**
+- [ ] Era section in rules.md
+- [ ] Current era highlighted
+- [ ] Historical eras listed
+- [ ] Auto-updated on era change
+
+**Dependencies:** S9-T2
+**Effort:** Small
+
+---
+
+#### S9-T7: Era Management Tests
+**Description:** Test era transition flow.
+
+**Acceptance Criteria:**
+- [ ] Test new era creation
+- [ ] Test pattern archiving
+- [ ] Test fresh tracking
+- [ ] Test rules.md update
+
+**Dependencies:** S9-T1 through S9-T6
+**Effort:** Medium
+
+---
+
+### Sprint 9 Deliverables
+- Era schema in survival.json
+- /new-era command
+- Pattern archiving
+- Era markers in rules.md
+
+---
+
+## Phase 4: Verification (Sprints 10-12)
+
+---
+
+## Sprint 10: Survival Observation
+
+**Goal:** Implement PostToolUse hook for pattern tracking
+
+**Duration:** 1 week
+
+### Tasks
+
+#### S10-T1: Observing Survival SKILL.md
+**Description:** Create skill definition for survival observation.
+
+**Acceptance Criteria:**
+- [ ] SKILL.md in `.claude/skills/observing-survival/`
+- [ ] Purpose: Silent pattern tracking via PostToolUse hook
+- [ ] Trigger: After Write|Edit tool
+- [ ] Output: Updated survival.json
+- [ ] Behavior: No interruption, no approval dialog
+
+**Dependencies:** None
+**Effort:** Small
+
+---
+
+#### S10-T2: PostToolUse Hook Configuration
+**Description:** Configure hook in settings.json.
+
+**Acceptance Criteria:**
+- [ ] Hook registered for Write|Edit tools
+- [ ] Calls observe_patterns function
+- [ ] Non-blocking (never blocks generation)
+- [ ] Runs silently in background
+
+**Dependencies:** S10-T1
+**Effort:** Medium
+
+---
+
+#### S10-T3: Pattern Detection
+**Description:** Detect new patterns in generated code.
+
+**Acceptance Criteria:**
+- [ ] Detect new animation patterns
+- [ ] Detect new component structures
+- [ ] Detect new hook usages
+- [ ] Return list of patterns with names
+
+**Dependencies:** S10-T2
+**Effort:** Medium
+
+---
+
+#### S10-T4: JSDoc Pattern Tagging
+**Description:** Add @sigil-pattern tags to new patterns.
+
+**Acceptance Criteria:**
+- [ ] Format: `// @sigil-pattern: patternName (2026-01-08)`
+- [ ] Tag added after relevant code block
+- [ ] Non-intrusive placement
+- [ ] Parseable for gardener
+
+**Dependencies:** S10-T3
+**Effort:** Medium
+
+---
+
+#### S10-T5: Survival Index Update
+**Description:** Incrementally update survival.json.
+
+**Acceptance Criteria:**
+- [ ] Add new patterns with first_seen date
+- [ ] Increment occurrences for existing patterns
+- [ ] Set initial status: experimental
+- [ ] Add file path to files array
+- [ ] Update last_scan timestamp
+
+**Dependencies:** S10-T4
+**Effort:** Medium
+
+---
+
+#### S10-T6: Gardener Script
+**Description:** Create weekly survival scan script.
+
+**Acceptance Criteria:**
+- [ ] Script at `.claude/skills/observing-survival/scripts/gardener.sh`
+- [ ] Scan for @sigil-pattern tags via ripgrep
+- [ ] Count occurrences per pattern
+- [ ] Apply promotion rules (3+ → canonical)
+- [ ] Detect deletions (0 occurrences → rejected)
+- [ ] Update survival.json
+
+**Dependencies:** S10-T5
+**Effort:** Medium
+
+---
+
+#### S10-T7: /garden Command
+**Description:** Implement manual garden command.
+
+**Acceptance Criteria:**
+- [ ] `/garden` runs gardener script
+- [ ] Reports pattern status changes
+- [ ] Shows canonical/rejected transitions
+- [ ] Returns summary
+
+**Dependencies:** S10-T6
+**Effort:** Small
+
+---
+
+#### S10-T8: Survival Observation Tests
+**Description:** Test pattern tracking flow.
+
+**Acceptance Criteria:**
+- [ ] Test pattern detection
+- [ ] Test JSDoc tagging
+- [ ] Test survival update
+- [ ] Test gardener promotion logic
+- [ ] Test rejection detection
+
+**Dependencies:** S10-T1 through S10-T7
+**Effort:** Medium
+
+---
+
+### Sprint 10 Deliverables
+- `.claude/skills/observing-survival/SKILL.md`
+- PostToolUse hook integration
+- Pattern detection and tagging
+- Gardener script
+- /garden command
+
+---
+
+## Sprint 11: Chronicling & Auditing
+
+**Goal:** Implement craft logs and cohesion auditing
+
+**Duration:** 1 week
+
+### Tasks
+
+#### S11-T1: Chronicling Rationale SKILL.md
+**Description:** Create skill definition for craft logs.
+
+**Acceptance Criteria:**
+- [ ] SKILL.md in `.claude/skills/chronicling-rationale/`
+- [ ] Purpose: Lightweight documentation via Stop hook
+- [ ] Trigger: End of /craft session
+- [ ] Output: .sigil/craft-log/{date}-{component}.md
+- [ ] Behavior: No blocking, no approval
+
+**Dependencies:** None
+**Effort:** Small
+
+---
+
+#### S11-T2: Stop Hook Configuration
+**Description:** Configure Stop hook for craft log generation.
+
+**Acceptance Criteria:**
+- [ ] Hook registered for Stop event
+- [ ] Calls ensure_craft_log function
+- [ ] Non-blocking
+- [ ] Runs at session end
+
+**Dependencies:** S11-T1
+**Effort:** Medium
+
+---
+
+#### S11-T3: Craft Log Template
+**Description:** Define craft log structure.
+
+**Acceptance Criteria:**
+- [ ] Header: component name, date, era
+- [ ] Request: original prompt
+- [ ] Decisions: zone, physics, component with reasoning
+- [ ] New Patterns: list with status
+- [ ] Physics Validated: checklist
+
+**Dependencies:** S11-T1
+**Effort:** Small
+
+---
+
+#### S11-T4: Craft Log Generation
+**Description:** Generate craft log at session end.
+
+**Acceptance Criteria:**
+- [ ] Collect decisions from session
+- [ ] Format using template
+- [ ] Write to .sigil/craft-log/
+- [ ] Filename: {date}-{component-name}.md
+- [ ] Performance: <100ms
+
+**Dependencies:** S11-T3
+**Effort:** Medium
+
+---
+
+#### S11-T5: Auditing Cohesion SKILL.md
+**Description:** Create skill definition for visual cohesion auditing.
+
+**Acceptance Criteria:**
+- [ ] SKILL.md in `.claude/skills/auditing-cohesion/`
+- [ ] Purpose: Visual consistency checks on demand
+- [ ] Trigger: /audit [component] command
+- [ ] Checks: shadows, borders, colors, spacing
+- [ ] Output: Variance report with percentages
+
+**Dependencies:** None
+**Effort:** Small
+
+---
+
+#### S11-T6: Property Comparison
+**Description:** Compare component properties against Sanctuary average.
+
+**Acceptance Criteria:**
+- [ ] Extract visual properties from target component
+- [ ] Calculate Sanctuary averages for same tier
+- [ ] Compare and compute variance
+- [ ] Flag variances exceeding thresholds
+
+**Dependencies:** S11-T5
+**Effort:** Medium
+
+---
+
+#### S11-T7: Variance Thresholds
+**Description:** Define acceptable variance by property type.
+
+**Acceptance Criteria:**
+- [ ] Shadow: 20% variance allowed
+- [ ] Border radius: 10% variance allowed
+- [ ] Spacing: 15% variance allowed
+- [ ] Colors: 10% variance allowed
+- [ ] Configurable in sigil.yaml
+
+**Dependencies:** S11-T6
+**Effort:** Small
+
+---
+
+#### S11-T8: Deviation Annotations
+**Description:** Support @sigil-deviation for justified variance.
+
+**Acceptance Criteria:**
+- [ ] Parse @sigil-deviation JSDoc tag
+- [ ] Include reason in tag
+- [ ] Skip flagging annotated deviations
+- [ ] Report deviation with reason
+
+**Dependencies:** S11-T6
+**Effort:** Small
+
+---
+
+#### S11-T9: /audit Command
+**Description:** Implement audit command.
+
+**Acceptance Criteria:**
+- [ ] `/audit ClaimButton` runs cohesion check
+- [ ] Returns variance report
+- [ ] Shows property, expected, actual, variance %
+- [ ] Lists justified deviations separately
+
+**Dependencies:** S11-T5 through S11-T8
+**Effort:** Medium
+
+---
+
+### Sprint 11 Deliverables
+- `.claude/skills/chronicling-rationale/SKILL.md`
+- `.claude/skills/auditing-cohesion/SKILL.md`
+- Stop hook integration
+- Craft log generation
+- /audit command
+
+---
+
+## Sprint 12: Agent Integration
+
+**Goal:** Create sigil-craft agent and orchestrate skills
+
+**Duration:** 1 week
+
+### Tasks
+
+#### S12-T1: Sigil-Craft Agent Definition
+**Description:** Create agent definition for /craft flow.
+
+**Acceptance Criteria:**
+- [ ] Agent YAML at `.claude/agents/sigil-craft.yaml`
+- [ ] Orchestrates all 10 skills
+- [ ] Defines skill execution order
+- [ ] Handles errors gracefully
+
+**Dependencies:** Sprints 3-11
+**Effort:** Medium
+
+---
+
+#### S12-T2: Skill Orchestration
+**Description:** Define skill execution flow for /craft.
+
+**Acceptance Criteria:**
+- [ ] Startup: Check workshop freshness
+- [ ] Discovery: Scan Sanctuary, query workshop
+- [ ] Validation: PreToolUse physics check
+- [ ] Generation: Code generation
+- [ ] Observation: PostToolUse pattern tracking
+- [ ] Chronicling: Stop hook craft log
+
+**Dependencies:** S12-T1
+**Effort:** Medium
+
+---
+
+#### S12-T3: Context Resolution
+**Description:** Resolve zone, physics, vocabulary from prompt.
+
+**Acceptance Criteria:**
+- [ ] Extract vocabulary terms from prompt
+- [ ] Map to zone via vocabulary.yaml
+- [ ] Resolve physics from zone
+- [ ] Log resolution chain
+
+**Dependencies:** S12-T2
+**Effort:** Medium
+
+---
+
+#### S12-T4: Pattern Selection
+**Description:** Select canonical patterns when available.
+
+**Acceptance Criteria:**
+- [ ] Query survival.json for canonical patterns
+- [ ] Prefer canonical over experimental
+- [ ] Prefer experimental over new
+- [ ] Log pattern selection
+
+**Dependencies:** Sprint 10
+**Effort:** Medium
+
+---
+
+#### S12-T5: End-to-End Craft Flow
+**Description:** Complete /craft flow implementation.
+
+**Acceptance Criteria:**
+- [ ] `/craft "trustworthy claim button"` works end-to-end
+- [ ] Zone resolved correctly (critical)
+- [ ] Physics applied correctly (deliberate)
+- [ ] Code generated with correct timing
+- [ ] Craft log created
+- [ ] Pattern observed
+
+**Dependencies:** S12-T1 through S12-T4
+**Effort:** Large
+
+---
+
+#### S12-T6: Performance Benchmarks
+**Description:** Verify performance targets.
+
+**Acceptance Criteria:**
+- [ ] Workshop query <5ms (benchmark)
+- [ ] Sanctuary scan <50ms (benchmark)
+- [ ] Full /craft flow <2s (benchmark)
+- [ ] Document benchmark results
+
+**Dependencies:** S12-T5
+**Effort:** Medium
+
+---
+
+#### S12-T7: Integration Tests
+**Description:** End-to-end integration tests.
+
+**Acceptance Criteria:**
+- [ ] Test /craft with empty Sanctuary (seed)
+- [ ] Test /craft with populated Sanctuary
+- [ ] Test /craft --forge mode
+- [ ] Test /inspire flow
+- [ ] Test /audit flow
+- [ ] All tests pass
+
+**Dependencies:** S12-T5
+**Effort:** Large
+
+---
+
+### Sprint 12 Deliverables
+- `.claude/agents/sigil-craft.yaml`
+- Skill orchestration
+- End-to-end /craft flow
+- Performance benchmarks
+- Integration tests
+
+---
+
+## Phase 5: Integration (Sprint 13)
+
+---
+
+## Sprint 13: Polish & Documentation
+
+**Goal:** Documentation, migration, and final polish
+
+**Duration:** 1 week
+
+### Tasks
+
+#### S13-T1: CLAUDE.md Update
+**Description:** Update CLAUDE.md with v6.0 protocol.
+
+**Acceptance Criteria:**
+- [ ] All commands documented
+- [ ] All 10 skills referenced
+- [ ] Three Laws stated
+- [ ] Seven Laws referenced
+- [ ] Quick reference table
+- [ ] Agent protocol section
+
+**Dependencies:** Sprints 1-12
+**Effort:** Medium
+
+---
+
+#### S13-T2: README.md Update
+**Description:** Update README with v6.0 features.
+
+**Acceptance Criteria:**
+- [ ] New features highlighted
+- [ ] Workshop index explained
+- [ ] Virtual Sanctuary explained
+- [ ] Commands reference
+- [ ] Quick start guide
+
+**Dependencies:** S13-T1
+**Effort:** Medium
+
+---
+
+#### S13-T3: MIGRATION.md
+**Description:** Create migration guide from v5.0.
+
+**Acceptance Criteria:**
+- [ ] Step-by-step migration
+- [ ] What's kept (kernel, runtime)
+- [ ] What's added (.sigil/)
+- [ ] What's removed (old cache)
+- [ ] Migration script reference
+
+**Dependencies:** Sprints 1-12
+**Effort:** Medium
+
+---
+
+#### S13-T4: Migration Script
+**Description:** Create v5→v6 migration script.
+
+**Acceptance Criteria:**
+- [ ] Script at `scripts/migrate-v6.sh`
+- [ ] Creates .sigil/ directory structure
+- [ ] Builds initial workshop
+- [ ] Initializes survival.json
+- [ ] Updates version files
+
+**Dependencies:** Sprints 1-12
+**Effort:** Medium
+
+---
+
+#### S13-T5: End-to-End Testing
+**Description:** Complete end-to-end test suite.
+
+**Acceptance Criteria:**
+- [ ] Test cold start with seed
+- [ ] Test warm start with workshop
+- [ ] Test /craft flow variations
+- [ ] Test /forge mode
+- [ ] Test /inspire + /sanctify
+- [ ] Test /garden
+- [ ] Test /audit
+- [ ] Test /new-era
+- [ ] All tests pass
+
+**Dependencies:** Sprints 1-12
+**Effort:** Large
+
+---
+
+#### S13-T6: Performance Validation
+**Description:** Validate all performance targets.
+
+**Acceptance Criteria:**
+- [ ] Workshop query <5ms ✓
+- [ ] Sanctuary scan <50ms ✓
+- [ ] Index rebuild <2s ✓
+- [ ] Pattern observation <10ms ✓
+- [ ] Craft log generation <100ms ✓
+- [ ] Document results
+
+**Dependencies:** S13-T5
+**Effort:** Medium
+
+---
+
+#### S13-T7: Version Bump
+**Description:** Update version files to 6.0.0.
+
+**Acceptance Criteria:**
+- [ ] VERSION file updated
+- [ ] .sigil-version.json updated
+- [ ] package.json version updated
+- [ ] CHANGELOG.md updated
+- [ ] Git tag created
+
+**Dependencies:** S13-T1 through S13-T6
+**Effort:** Small
+
+---
+
+### Sprint 13 Deliverables
+- Updated CLAUDE.md
+- Updated README.md
+- MIGRATION.md
+- Migration script
+- Complete test suite
+- Performance validation
+- **v6.0.0 RELEASE**
 
 ---
 
@@ -872,10 +1627,11 @@ Post-MVP:
 
 | Risk | Probability | Impact | Mitigation |
 |------|------------|--------|------------|
-| ripgrep performance on large codebases | Low | Medium | Add file limits, benchmark early |
-| Type extraction complexity | Medium | High | Start simple, iterate on edge cases |
-| Token limit with full context | Medium | Medium | Selective loading, compression |
-| JSDoc pragma adoption | Low | Low | Make optional, provide migration script |
+| Workshop index staleness | Low | Medium | Hash-based freshness check, incremental updates |
+| Context fork complexity | Medium | High | Clear boundaries, explicit cleanup |
+| Survival false positives | Low | Medium | 2-week waiting period, 3+ occurrence threshold |
+| Seed library maintenance | Low | Low | Version seeds, allow user customization |
+| Performance regression | Low | High | Continuous benchmarks, performance tests |
 
 ---
 
@@ -883,14 +1639,19 @@ Post-MVP:
 
 | Sprint | Key Metric |
 |--------|------------|
-| Sprint 1 | All kernel YAML valid and parseable |
-| Sprint 2 | Zone context propagates correctly in tests |
-| Sprint 3 | Simulation flow works end-to-end |
-| Sprint 4 | Component lookup < 50ms |
-| Sprint 5 | Data type → physics resolution accurate |
-| Sprint 6 | /polish produces valid diffs |
-| Sprint 7 | Justifications logged correctly |
-| Sprint 8 | All commands functional, CLAUDE.md complete |
+| Sprint 1 | Workshop index builds successfully |
+| Sprint 2 | Startup sentinel detects staleness correctly |
+| Sprint 3 | Discovery skills return results <50ms |
+| Sprint 4 | Workshop query <5ms verified |
+| Sprint 5 | Physics validation 100% accurate |
+| Sprint 6 | Seeds provide cold start taste |
+| Sprint 7 | Ephemeral content never persists |
+| Sprint 8 | Forge mode respects physics only |
+| Sprint 9 | Era transitions work cleanly |
+| Sprint 10 | Patterns tracked silently |
+| Sprint 11 | Craft logs generated, audit works |
+| Sprint 12 | Full /craft flow <2s |
+| Sprint 13 | All tests pass, docs complete |
 
 ---
 
@@ -898,26 +1659,43 @@ Post-MVP:
 
 ### External Dependencies
 - ripgrep installed on system
-- React 18+ for hooks
-- TypeScript for type extraction
+- Node.js 18+ for scripts
+- Claude Code 2.1+ for context forking
 
 ### Internal Dependencies
 ```
-Sprint 1 (Kernel) ──────┬──► Sprint 2 (Provider)
-                        │
-                        ├──► Sprint 3 (Hook) ──────► Sprint 5 (Data Risk)
-                        │
-                        ├──► Sprint 4 (Scanning)
-                        │
-                        ├──► Sprint 6 (Polish)
-                        │
-                        └──► Sprint 7 (Status/Negotiation)
-                                      │
-                                      ▼
-                                Sprint 8 (Integration)
+Phase 1: Foundation
+├── Sprint 1 (Workshop Schema) ──┬──► Sprint 2 (Startup Sentinel)
+│                                │
+│                                └──► Sprint 4 (Querying)
+│
+├── Sprint 3 (Discovery) ────────────► Sprint 6 (Seeds)
+│
+Phase 2: Intelligence
+├── Sprint 4 (Querying) ─────────────► Sprint 5 (Validation)
+│
+├── Sprint 5 (Validation) ───────────► Sprint 8 (Forge)
+│
+├── Sprint 6 (Seeds) ────────────────► Sprint 7 (Ephemeral)
+│
+Phase 3: Evolution
+├── Sprint 7 (Ephemeral) ────────────► Sprint 12 (Agent)
+│
+├── Sprint 8 (Forge) ────────────────► Sprint 9 (Era)
+│
+├── Sprint 9 (Era) ──────────────────► Sprint 10 (Survival)
+│
+Phase 4: Verification
+├── Sprint 10 (Survival) ────────────► Sprint 12 (Agent)
+│
+├── Sprint 11 (Chronicling) ─────────► Sprint 12 (Agent)
+│
+Phase 5: Integration
+└── Sprint 12 (Agent) ───────────────► Sprint 13 (Polish)
 ```
 
 ---
 
 *Sprint Plan Generated: 2026-01-08*
-*Based on: PRD v5.0, SDD v5.0*
+*Based on: PRD v6.0.0, SDD v6.0.0*
+*Next Step: `/implement sprint-1`*

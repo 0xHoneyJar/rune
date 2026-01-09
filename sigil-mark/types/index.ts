@@ -1,12 +1,15 @@
 /**
  * @sigil-tier gold
- * Sigil v5.0 — Shared Types
+ * Sigil v6.0 — Shared Types
  *
  * Core type definitions for the Sigil Design Context Framework.
- * Includes types for SigilProvider, hooks, and zone layouts.
+ * Includes types for SigilProvider, hooks, zone layouts, and workshop index.
  *
  * @module types
  */
+
+// Re-export workshop types
+export * from './workshop';
 
 // =============================================================================
 // TIME AUTHORITY

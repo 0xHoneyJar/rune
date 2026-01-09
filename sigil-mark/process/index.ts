@@ -631,3 +631,38 @@ export {
   type AmendOptions,
   type AmendResult,
 } from './amend-command';
+
+// =============================================================================
+// WORKSHOP BUILDER (v6.0 - Sprint 1)
+// =============================================================================
+
+export {
+  // Hash utilities
+  getFileHash,
+  getPackageHash,
+  getImportsHash,
+  // Staleness detection
+  checkWorkshopStaleness,
+  isWorkshopStale,
+  // Material extraction
+  readImportsList,
+  extractExportsFromDts,
+  extractSignaturesFromDts,
+  extractMaterial,
+  // Component extraction
+  parseJSDocPragmas,
+  extractImportsFromFile,
+  extractComponent,
+  scanSanctuary,
+  // Config parsing
+  parseSigilConfig,
+  // Builder
+  buildWorkshop,
+  // Loader
+  loadWorkshop,
+  // Query helpers
+  queryMaterial,
+  queryComponent,
+  queryPhysics,
+  queryZone,
+} from './workshop-builder';
