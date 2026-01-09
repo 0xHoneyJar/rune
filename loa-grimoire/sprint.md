@@ -1232,11 +1232,11 @@ The MVP delivers:
 **Description:** Create skill definition for craft logs.
 
 **Acceptance Criteria:**
-- [ ] SKILL.md in `.claude/skills/chronicling-rationale/`
-- [ ] Purpose: Lightweight documentation via Stop hook
-- [ ] Trigger: End of /craft session
-- [ ] Output: .sigil/craft-log/{date}-{component}.md
-- [ ] Behavior: No blocking, no approval
+- [x] SKILL.md in `.claude/skills/chronicling-rationale/`
+- [x] Purpose: Lightweight documentation via Stop hook
+- [x] Trigger: End of /craft session
+- [x] Output: .sigil/craft-log/{date}-{component}.md
+- [x] Behavior: No blocking, no approval
 
 **Dependencies:** None
 **Effort:** Small
@@ -1247,10 +1247,10 @@ The MVP delivers:
 **Description:** Configure Stop hook for craft log generation.
 
 **Acceptance Criteria:**
-- [ ] Hook registered for Stop event
-- [ ] Calls ensure_craft_log function
-- [ ] Non-blocking
-- [ ] Runs at session end
+- [x] Hook registered for Stop event
+- [x] Calls ensure_craft_log function
+- [x] Non-blocking
+- [x] Runs at session end
 
 **Dependencies:** S11-T1
 **Effort:** Medium
@@ -1261,11 +1261,11 @@ The MVP delivers:
 **Description:** Define craft log structure.
 
 **Acceptance Criteria:**
-- [ ] Header: component name, date, era
-- [ ] Request: original prompt
-- [ ] Decisions: zone, physics, component with reasoning
-- [ ] New Patterns: list with status
-- [ ] Physics Validated: checklist
+- [x] Header: component name, date, era
+- [x] Request: original prompt
+- [x] Decisions: zone, physics, component with reasoning
+- [x] New Patterns: list with status
+- [x] Physics Validated: checklist
 
 **Dependencies:** S11-T1
 **Effort:** Small
@@ -1276,11 +1276,11 @@ The MVP delivers:
 **Description:** Generate craft log at session end.
 
 **Acceptance Criteria:**
-- [ ] Collect decisions from session
-- [ ] Format using template
-- [ ] Write to .sigil/craft-log/
-- [ ] Filename: {date}-{component-name}.md
-- [ ] Performance: <100ms
+- [x] Collect decisions from session
+- [x] Format using template
+- [x] Write to .sigil/craft-log/
+- [x] Filename: {date}-{component-name}.md
+- [x] Performance: <100ms
 
 **Dependencies:** S11-T3
 **Effort:** Medium
@@ -1291,11 +1291,11 @@ The MVP delivers:
 **Description:** Create skill definition for visual cohesion auditing.
 
 **Acceptance Criteria:**
-- [ ] SKILL.md in `.claude/skills/auditing-cohesion/`
-- [ ] Purpose: Visual consistency checks on demand
-- [ ] Trigger: /audit [component] command
-- [ ] Checks: shadows, borders, colors, spacing
-- [ ] Output: Variance report with percentages
+- [x] SKILL.md in `.claude/skills/auditing-cohesion/`
+- [x] Purpose: Visual consistency checks on demand
+- [x] Trigger: /audit [component] command
+- [x] Checks: shadows, borders, colors, spacing
+- [x] Output: Variance report with percentages
 
 **Dependencies:** None
 **Effort:** Small
@@ -1306,10 +1306,10 @@ The MVP delivers:
 **Description:** Compare component properties against Sanctuary average.
 
 **Acceptance Criteria:**
-- [ ] Extract visual properties from target component
-- [ ] Calculate Sanctuary averages for same tier
-- [ ] Compare and compute variance
-- [ ] Flag variances exceeding thresholds
+- [x] Extract visual properties from target component
+- [x] Calculate Sanctuary averages for same tier
+- [x] Compare and compute variance
+- [x] Flag variances exceeding thresholds
 
 **Dependencies:** S11-T5
 **Effort:** Medium
@@ -1320,11 +1320,11 @@ The MVP delivers:
 **Description:** Define acceptable variance by property type.
 
 **Acceptance Criteria:**
-- [ ] Shadow: 20% variance allowed
-- [ ] Border radius: 10% variance allowed
-- [ ] Spacing: 15% variance allowed
-- [ ] Colors: 10% variance allowed
-- [ ] Configurable in sigil.yaml
+- [x] Shadow: 20% variance allowed
+- [x] Border radius: 10% variance allowed
+- [x] Spacing: 15% variance allowed
+- [x] Colors: 10% variance allowed
+- [x] Configurable in sigil.yaml
 
 **Dependencies:** S11-T6
 **Effort:** Small
@@ -1335,10 +1335,10 @@ The MVP delivers:
 **Description:** Support @sigil-deviation for justified variance.
 
 **Acceptance Criteria:**
-- [ ] Parse @sigil-deviation JSDoc tag
-- [ ] Include reason in tag
-- [ ] Skip flagging annotated deviations
-- [ ] Report deviation with reason
+- [x] Parse @sigil-deviation JSDoc tag
+- [x] Include reason in tag
+- [x] Skip flagging annotated deviations
+- [x] Report deviation with reason
 
 **Dependencies:** S11-T6
 **Effort:** Small
@@ -1349,10 +1349,10 @@ The MVP delivers:
 **Description:** Implement audit command.
 
 **Acceptance Criteria:**
-- [ ] `/audit ClaimButton` runs cohesion check
-- [ ] Returns variance report
-- [ ] Shows property, expected, actual, variance %
-- [ ] Lists justified deviations separately
+- [x] `/audit ClaimButton` runs cohesion check
+- [x] Returns variance report
+- [x] Shows property, expected, actual, variance %
+- [x] Lists justified deviations separately
 
 **Dependencies:** S11-T5 through S11-T8
 **Effort:** Medium

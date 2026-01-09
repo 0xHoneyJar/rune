@@ -982,3 +982,82 @@ export {
   type PatternTag,
   type ObservationResult,
 } from './survival-observer';
+
+// =============================================================================
+// CHRONICLING RATIONALE (v6.0 - Sprint 11)
+// =============================================================================
+
+export {
+  // Constants
+  CRAFT_LOG_DIR,
+  // Log generation
+  generateLogFilename,
+  formatDecisionsTable,
+  formatNewPatterns,
+  formatPhysicsChecks,
+  formatVocabulary,
+  generateCraftLog,
+  ensureLogDirectory,
+  writeCraftLog,
+  // Session collection
+  createSession,
+  addDecision,
+  addPattern,
+  addPhysicsCheck,
+  setContext,
+  // Log reading
+  listCraftLogs,
+  readCraftLog,
+  filterLogsByComponent,
+  // Formatting
+  formatLogResult,
+  formatLogList,
+  // Types
+  type CraftSession,
+  type CraftDecision,
+  type CraftContext,
+  type PatternUsage,
+  type PhysicsCheck,
+  type CraftLogResult,
+} from './chronicling-rationale';
+
+// =============================================================================
+// AUDITING COHESION (v6.0 - Sprint 11)
+// =============================================================================
+
+export {
+  // Constants
+  DEFAULT_THRESHOLDS,
+  PROPERTY_PATTERNS,
+  // Property extraction
+  parseNumericValue,
+  extractProperties,
+  extractDeviations,
+  extractTier,
+  extractZone,
+  extractComponentName,
+  parseComponent,
+  // Baseline calculation
+  calculateAverage,
+  buildTierBaseline,
+  // Variance calculation
+  calculateVariance,
+  checkThreshold,
+  compareToBaseline,
+  // Audit execution
+  auditComponent,
+  auditFromFile,
+  // Formatting
+  formatVarianceTable,
+  formatFlaggedItems,
+  formatJustifiedDeviations,
+  formatAuditReport,
+  formatQuickSummary,
+  // Types
+  type PropertyValue,
+  type ComponentMeta,
+  type DeviationAnnotation,
+  type VarianceResult,
+  type AuditResult,
+  type TierBaseline,
+} from './auditing-cohesion';
