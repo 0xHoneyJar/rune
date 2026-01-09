@@ -1,11 +1,17 @@
 /**
- * Sigil v4.1 - Physics Resolution Algorithm
+ * @sigil-tier gold
+ * Sigil v5.0 - Physics Resolution Algorithm
  *
  * Resolves physics configuration from zone + persona + remote soul context.
  * This is the core algorithm that determines motion timing, easing, and sync
  * behavior based on the current context.
  *
- * v4.1 Changes:
+ * v5.0 Changes:
+ * - Zone mapping: critical → server-tick, machinery → local-first, glass → local-first, standard → crdt
+ * - resolvePhysicsV5() returns full ResolvedPhysics with class, timing, requires, forbidden
+ * - Override warning if no reason provided
+ *
+ * v4.1 Legacy (preserved for backwards compat):
  * - Now uses physics-reader.ts for timing/easing values (kernel/physics.yaml)
  * - Fallback to hardcoded defaults if physics.yaml unavailable
  * - Export getMotionTiming/getMotionEasing for external use
@@ -415,4 +421,306 @@ export function createPhysicsStyle(physics: ResolvedPhysics): {
     '--sigil-duration': `${physics.timing}ms`,
     '--sigil-easing': physics.easing,
   };
+}
+
+// =============================================================================
+// V5 PHYSICS RESOLUTION
+// =============================================================================
+
+import type {
+  SigilZone,
+  SigilPersona,
+  PhysicsClass,
+  ResolvedPhysics as ResolvedPhysicsV5,
+  SigilVibes,
+} from '../types';
+import { DEFAULT_PHYSICS, MOTION_PROFILES } from '../types';
+
+/**
+ * Zone to physics class mapping.
+ * @internal
+ */
+const ZONE_TO_PHYSICS: Record<SigilZone, PhysicsClass> = {
+  critical: 'server-tick',
+  glass: 'local-first',
+  machinery: 'local-first',
+  standard: 'crdt',
+};
+
+/**
+ * Data type configuration for physics resolution.
+ */
+export interface DataTypeConfig {
+  /** Single data type hint */
+  dataType?: string;
+  /** Multiple data type hints (highest risk wins) */
+  dataTypes?: string[];
+}
+
+/**
+ * Look up physics class from data type via constitution.
+ *
+ * @internal
+ */
+function resolvePhysicsFromDataType(dataTypes: string[]): {
+  physicsClass: PhysicsClass | null;
+  warning?: string;
+} {
+  // Map of known types to physics classes (from constitution)
+  const DATA_TYPE_PHYSICS: Record<string, PhysicsClass> = {
+    // Financial → server-tick
+    Money: 'server-tick',
+    Balance: 'server-tick',
+    Transfer: 'server-tick',
+    Withdrawal: 'server-tick',
+    Deposit: 'server-tick',
+    Payment: 'server-tick',
+    Subscription: 'server-tick',
+    Invoice: 'server-tick',
+    Fee: 'server-tick',
+    Stake: 'server-tick',
+    Reward: 'server-tick',
+    Claim: 'server-tick',
+    // Health → server-tick
+    Health: 'server-tick',
+    HP: 'server-tick',
+    Hardcore: 'server-tick',
+    Permadeath: 'server-tick',
+    Lives: 'server-tick',
+    Damage: 'server-tick',
+    Healing: 'server-tick',
+    // Collaborative → crdt
+    Task: 'crdt',
+    Document: 'crdt',
+    Comment: 'crdt',
+    Thread: 'crdt',
+    Note: 'crdt',
+    Canvas: 'crdt',
+    Whiteboard: 'crdt',
+    Project: 'crdt',
+    Team: 'crdt',
+    // Local → local-first
+    Preference: 'local-first',
+    Draft: 'local-first',
+    Toggle: 'local-first',
+    UI_State: 'local-first',
+    Theme: 'local-first',
+    Layout: 'local-first',
+    Filter: 'local-first',
+    Sort: 'local-first',
+    Bookmark: 'local-first',
+    History: 'local-first',
+  };
+
+  // Risk hierarchy (lower = higher risk)
+  const RISK_LEVELS: Record<PhysicsClass, number> = {
+    'server-tick': 1,
+    'crdt': 2,
+    'local-first': 3,
+  };
+
+  let highestRiskPhysics: PhysicsClass | null = null;
+  let highestRiskLevel = Infinity;
+
+  for (const dataType of dataTypes) {
+    const physics = DATA_TYPE_PHYSICS[dataType];
+    if (physics) {
+      const riskLevel = RISK_LEVELS[physics];
+      if (riskLevel < highestRiskLevel) {
+        highestRiskLevel = riskLevel;
+        highestRiskPhysics = physics;
+      }
+    }
+  }
+
+  // Check for multiple types with warning
+  let warning: string | undefined;
+  if (dataTypes.length > 1 && highestRiskPhysics) {
+    warning = `Multiple data types: ${dataTypes.join(', ')}. Using ${highestRiskPhysics} (highest risk).`;
+  }
+
+  return { physicsClass: highestRiskPhysics, warning };
+}
+
+/**
+ * Resolve physics configuration for v5 zones.
+ *
+ * Resolution priority:
+ * 1. Data type (if provided) - overrides zone
+ * 2. Zone determines base physics class
+ * 3. Persona can adjust timing (power_user = faster, cautious = slower)
+ * 4. Vibes can apply timing_modifier
+ * 5. Overrides applied last with warning
+ *
+ * @param zone - Current zone
+ * @param persona - Current persona
+ * @param vibes - Runtime vibes (optional)
+ * @param override - Physics override (optional)
+ * @param overrideReason - Reason for override (required if override provided)
+ * @param dataTypeConfig - Data type configuration (optional)
+ * @returns Resolved physics configuration
+ *
+ * @example Basic usage
+ * ```ts
+ * const physics = resolvePhysicsV5('critical', 'power_user');
+ * // { class: 'server-tick', timing: { min_ms: 600, recommended_ms: 800 }, ... }
+ * ```
+ *
+ * @example With data type override
+ * ```ts
+ * const physics = resolvePhysicsV5('glass', 'default', undefined, undefined, undefined, {
+ *   dataType: 'Money',  // Overrides glass zone → server-tick
+ * });
+ * ```
+ *
+ * @example With override
+ * ```ts
+ * const physics = resolvePhysicsV5('glass', 'default', undefined, {
+ *   class: 'server-tick',
+ * }, 'Payment flow in marketing zone');
+ * ```
+ */
+export function resolvePhysicsV5(
+  zone: SigilZone,
+  persona: SigilPersona,
+  vibes?: SigilVibes,
+  override?: Partial<ResolvedPhysicsV5>,
+  overrideReason?: string,
+  dataTypeConfig?: DataTypeConfig
+): ResolvedPhysicsV5 {
+  // 1. Check for data type override first
+  let physicsClass: PhysicsClass;
+  let dataTypeWarning: string | undefined;
+
+  if (dataTypeConfig?.dataType || dataTypeConfig?.dataTypes?.length) {
+    const dataTypes = dataTypeConfig.dataTypes ?? (dataTypeConfig.dataType ? [dataTypeConfig.dataType] : []);
+    const dataTypeResult = resolvePhysicsFromDataType(dataTypes);
+
+    if (dataTypeResult.physicsClass) {
+      physicsClass = dataTypeResult.physicsClass;
+      dataTypeWarning = dataTypeResult.warning;
+
+      // Warn if data type conflicts with zone
+      const zonePhysics = ZONE_TO_PHYSICS[zone];
+      if (zonePhysics !== physicsClass) {
+        console.warn(
+          `[Sigil] Data type ${dataTypes.join(', ')} (${physicsClass}) overrides zone ${zone} (${zonePhysics}).`
+        );
+      }
+    } else {
+      // Data type not found, fall back to zone
+      physicsClass = ZONE_TO_PHYSICS[zone];
+    }
+  } else {
+    // No data type, use zone
+    physicsClass = ZONE_TO_PHYSICS[zone];
+  }
+
+  // 2. Get default physics for this class
+  const basePhysics = { ...DEFAULT_PHYSICS[physicsClass] };
+
+  // 3. Apply persona adjustments
+  if (persona === 'power_user' && physicsClass === 'server-tick') {
+    // Power users get slightly faster timing in critical zones
+    if (basePhysics.timing.recommended_ms) {
+      basePhysics.timing = {
+        ...basePhysics.timing,
+        recommended_ms: Math.round(basePhysics.timing.recommended_ms * 0.9),
+      };
+    }
+  } else if (persona === 'cautious') {
+    // Cautious users get slower timing
+    if (basePhysics.timing.recommended_ms) {
+      basePhysics.timing = {
+        ...basePhysics.timing,
+        recommended_ms: Math.round(basePhysics.timing.recommended_ms * 1.2),
+      };
+    }
+    if (basePhysics.timing.max_ms) {
+      basePhysics.timing = {
+        ...basePhysics.timing,
+        max_ms: Math.round(basePhysics.timing.max_ms * 1.2),
+      };
+    }
+  }
+
+  // 4. Apply vibes timing modifier
+  if (vibes?.timing_modifier && vibes.timing_modifier !== 1) {
+    const modifier = vibes.timing_modifier;
+    basePhysics.timing = {
+      min_ms: basePhysics.timing.min_ms
+        ? Math.round(basePhysics.timing.min_ms * modifier)
+        : undefined,
+      recommended_ms: basePhysics.timing.recommended_ms
+        ? Math.round(basePhysics.timing.recommended_ms * modifier)
+        : undefined,
+      max_ms: basePhysics.timing.max_ms
+        ? Math.round(basePhysics.timing.max_ms * modifier)
+        : undefined,
+      feedback_ms: basePhysics.timing.feedback_ms
+        ? Math.round(basePhysics.timing.feedback_ms * modifier)
+        : undefined,
+    };
+  }
+
+  // 5. Apply overrides with warning
+  if (override) {
+    if (!overrideReason) {
+      console.warn(
+        `[Sigil] Physics override in ${zone} zone without reason. ` +
+          `Provide unsafe_override_reason for audit trail.`
+      );
+    }
+
+    return {
+      ...basePhysics,
+      ...override,
+      override_reason: overrideReason,
+    };
+  }
+
+  return basePhysics;
+}
+
+/**
+ * Create CSS custom properties from v5 physics.
+ *
+ * @param physics - Resolved physics configuration
+ * @returns CSS custom properties object
+ */
+export function createPhysicsStyleV5(physics: ResolvedPhysicsV5): {
+  '--sigil-duration': string;
+  '--sigil-easing': string;
+} {
+  // Use recommended_ms, then max_ms, then feedback_ms, then default 300ms
+  const duration =
+    physics.timing.recommended_ms ??
+    physics.timing.max_ms ??
+    physics.timing.feedback_ms ??
+    300;
+
+  return {
+    '--sigil-duration': `${duration}ms`,
+    '--sigil-easing': physics.easing,
+  };
+}
+
+/**
+ * Get motion profile timing for v5.
+ *
+ * @param profileName - Motion profile name (e.g., 'deliberate', 'snappy')
+ * @returns Duration in milliseconds
+ */
+export function getMotionProfileTiming(profileName: string): number {
+  return MOTION_PROFILES[profileName]?.duration_ms ?? 300;
+}
+
+/**
+ * Get motion profile easing for v5.
+ *
+ * @param profileName - Motion profile name (e.g., 'deliberate', 'snappy')
+ * @returns CSS easing string
+ */
+export function getMotionProfileEasing(profileName: string): string {
+  return MOTION_PROFILES[profileName]?.easing ?? 'ease-in-out';
 }

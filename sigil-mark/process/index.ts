@@ -432,3 +432,202 @@ export {
   type FeaturedReference,
   type AntiPatternSeverity,
 } from './moodboard-reader';
+
+// =============================================================================
+// COMPONENT SCANNER (v5.0 - Live Grep Discovery)
+// =============================================================================
+
+export {
+  // Core search functions
+  findComponentsByTier,
+  findComponentsByZone,
+  findComponentsByDataType,
+  findComponentsByCriteria,
+  findAllSigilComponents,
+  // Pragma parsing
+  parsePragmas,
+  getComponentsWithPragmas,
+  // Types
+  type SigilTier,
+  type SigilZone,
+  type ParsedPragmas,
+  type ComponentMatch,
+  type SearchOptions,
+} from './component-scanner';
+
+// =============================================================================
+// DATA RISK ANALYZER (v5.0 - Constitution-Based Physics Resolution)
+// =============================================================================
+
+export {
+  // Type extraction
+  extractTypesFromSignature,
+  // Constitution lookup
+  lookupTypePhysics,
+  // Risk hierarchy resolution
+  resolveDataPhysics,
+  // High-level API
+  analyzeSignaturePhysics,
+  getPhysicsForDataType,
+  getPhysicsForDataTypes,
+  // Utilities
+  isKnownDataType,
+  getAllKnownDataTypes,
+  clearConstitutionCache,
+  // Types
+  type PhysicsClass,
+  type DataCategory,
+  type TypeLookupResult,
+  type ResolvedDataPhysics,
+  type ExtractedTypes,
+} from './data-risk-analyzer';
+
+// =============================================================================
+// VIOLATION SCANNER (v5.0 - JIT Polish)
+// =============================================================================
+
+export {
+  // Scanner
+  scanFile,
+  scanFiles,
+  scanStagedFiles,
+  // Formatters
+  formatViolations,
+  formatSummary,
+  // Utilities
+  clearFidelityCache,
+  // Types
+  type Violation,
+  type ViolationSeverity,
+  type ViolationType,
+  type ScanResult,
+} from './violation-scanner';
+
+// =============================================================================
+// DIFF GENERATOR (v5.0 - JIT Polish)
+// =============================================================================
+
+export {
+  // Generator
+  generateFileDiff,
+  generateDiffs,
+  // Formatters
+  formatFileDiff,
+  formatDiffs,
+  formatDiffsWithColor,
+  // Applier
+  applyDiffs,
+  // Types
+  type DiffHunk,
+  type FileDiff,
+  type DiffResult,
+} from './diff-generator';
+
+// =============================================================================
+// POLISH COMMAND (v5.0 - JIT Polish)
+// =============================================================================
+
+export {
+  // Command
+  polish,
+  polishCheck,
+  polishApply,
+  // CLI
+  runPolishCLI,
+  // Types
+  type PolishOptions,
+  type PolishResult,
+} from './polish-command';
+
+// =============================================================================
+// STATUS PROPAGATION (v5.0 - Sprint 7)
+// =============================================================================
+
+export {
+  // Import parsing
+  parseImports,
+  resolveImportPath,
+  getFileTier,
+  // Tier comparison
+  minTier,
+  compareTiers,
+  // Import analysis
+  analyzeImports,
+  calculateEffectiveTier,
+  analyzeComponentStatus,
+  scanStatusPropagation,
+  // Formatters
+  formatStatusAnalysis,
+  formatPropagationSummary,
+  // Types
+  type ImportInfo,
+  type TierDowngrade,
+  type StatusAnalysis,
+} from './status-propagation';
+
+// =============================================================================
+// GOVERNANCE LOGGER (v5.0 - Sprint 7)
+// =============================================================================
+
+export {
+  // Justification logging
+  logJustification,
+  readJustifications,
+  generateOverrideComment,
+  // Amendment proposals
+  generateAmendmentId,
+  createAmendment,
+  proposeAmendment,
+  readAmendments,
+  // Negotiation helpers
+  formatNegotiationOptions,
+  handleBypass,
+  handleAmend,
+  // Formatters
+  formatJustificationSummary,
+  formatAmendmentSummary,
+  // Types
+  type JustificationEntry,
+  type AmendmentProposal,
+  type NegotiationOptions,
+  type ViolationContext,
+} from './governance-logger';
+
+// =============================================================================
+// GARDEN COMMAND (v5.0 - Sprint 8)
+// =============================================================================
+
+export {
+  // Command
+  garden,
+  gardenDrift,
+  // CLI
+  runGardenCLI,
+  // Formatters
+  formatGardenResult,
+  formatGardenSummary,
+  // Types
+  type GardenOptions,
+  type GardenResult,
+  type GardenIssue,
+  type IssueSeverity,
+} from './garden-command';
+
+// =============================================================================
+// AMEND COMMAND (v5.0 - Sprint 8)
+// =============================================================================
+
+export {
+  // Command
+  amend,
+  listAmendments,
+  getPendingAmendments,
+  // CLI
+  runAmendCLI,
+  // Formatters
+  formatAmendResult,
+  formatPendingReminder,
+  // Types
+  type AmendOptions,
+  type AmendResult,
+} from './amend-command';

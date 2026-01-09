@@ -1,12 +1,19 @@
 /**
- * Sigil v4.1 - CriticalZone Layout
+ * @sigil-tier gold
+ * @sigil-zone critical
+ * Sigil v5.0 - CriticalZone Layout
  *
  * Layout primitive for high-stakes UI. Provides both zone context
  * AND structural physics in a single component.
  *
  * Layouts ARE Zones. Physics is DOM, not lint.
  *
- * v4.1 Changes:
+ * v5.0 Notes:
+ * - CriticalZone forces server-tick physics
+ * - All children inherit critical zone context
+ * - Renders data-sigil-zone="critical" attribute
+ *
+ * v4.1 Legacy:
  * - Sets zone context via SigilProvider on mount
  * - Clears zone context on unmount
  * - Adds data-sigil-zone attribute for debugging

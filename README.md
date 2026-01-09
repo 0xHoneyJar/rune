@@ -1,32 +1,39 @@
 # Sigil
 
-[![Version](https://img.shields.io/badge/version-4.1.0-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-5.0.0-blue.svg)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 > *"Physics, not opinions. Constraints, not debates."*
 
 Design Context Framework for AI-assisted development. Captures product soul, defines zone physics, and guides agents toward consistent design decisions—without blocking human creativity.
 
-## v4.1 "Living Guardrails"
+## v5.0 "The Lucid Flow"
 
-The enforcement layer that makes physics real:
+The constitutional framework that makes physics binding:
 
 ```
-CAPTURE              CREATE               ENFORCE
-───────              ──────               ───────
-/envision            /craft               useSigilMutation
-/codify              /refine              eslint-plugin-sigil
+CAPTURE              CREATE               GOVERN
+───────              ──────               ──────
+/envision            /craft               /garden
+/codify              /polish              /amend
 
-OBSERVE              DECIDE               TEND
-───────              ──────               ────
-/observe             /consult             /garden
+THE SEVEN LAWS
+──────────────
+1. Filesystem is Truth        — Live grep, no caches
+2. Type Dictates Physics      — Constitution binding
+3. Zone is Layout             — Feel, not business logic
+4. Status Propagates          — Tier(C) = min(Declared, Dependencies)
+5. One Good Reason            — Capture bypasses, don't block
+6. Never Refuse Outright      — COMPLY / BYPASS / AMEND
+7. Let Artists Stay in Flow   — Never auto-fix
 ```
 
-**What's new in v4.1:**
-- `useSigilMutation` — Zone+Persona-aware hook that auto-resolves physics
-- `eslint-plugin-sigil` — Lint rules that catch physics violations at dev time
-- `SigilProvider` — Runtime context for zones, personas, and remote config
-- Remote Soul — A/B test motion timing without touching code
+**What's new in v5.0:**
+- **Constitutional Kernel** — YAML-defined physics binding (constitution.yaml, fidelity.yaml)
+- **Live Grep Discovery** — No cache, filesystem is truth (scanning-sanctuary skill)
+- **JIT Polish Workflow** — `/polish` standardizes on demand, never auto-fixes
+- **Governance System** — `/amend` for constitution changes, justification logging
+- **6 Skills Complete** — scanning, analyzing, polishing, negotiating, auditing, simulating
 
 ---
 
@@ -50,36 +57,42 @@ claude
 your-repo/
 ├── .claude/skills/sigil/     # Agent skills (/envision, /craft, etc.)
 ├── sigil-mark/               # Runtime components & state
-│   ├── providers/            # SigilProvider, RemoteSoul
-│   ├── hooks/                # useSigilMutation
-│   ├── layouts/              # CriticalZone, GlassLayout
-│   ├── kernel/               # physics.yaml (motion profiles)
-│   └── vocabulary/           # vocabulary.yaml (term mappings)
+│   ├── kernel/               # Constitution, fidelity, vocabulary, workflow
+│   ├── skills/               # 6 skill YAMLs
+│   ├── providers/            # SigilProvider
+│   ├── hooks/                # useSigilMutation, physics-resolver
+│   ├── layouts/              # CriticalZone, GlassLayout, MachineryLayout
+│   ├── process/              # Agent-time utilities (scanner, polish, garden)
+│   ├── governance/           # Justifications log, amendments
+│   └── components/           # Scanned component inventory
 ├── .sigilrc.yaml             # Zone configuration
 └── .sigil-version.json       # Version tracking
 ```
 
-### Optional: ESLint Plugin
+---
 
-For compile-time enforcement, add the ESLint plugin to your project:
+## The Seven Laws
 
-```bash
-npm install eslint-plugin-sigil --save-dev
-```
+### 1. Filesystem is Truth
+No caches. No stale maps. Live grep discovers components every time.
 
-```js
-// eslint.config.js
-import sigil from 'eslint-plugin-sigil';
+### 2. Type Dictates Physics
+Data types determine behavior. `financial` data requires server-authoritative physics. Constitution binds type to physics.
 
-export default [
-  sigil.configs.recommended,
-];
-```
+### 3. Zone is Layout, Not Business Logic
+Zones define *feel*, not behavior. A critical zone feels deliberate. A glass zone feels smooth. Logic lives elsewhere.
 
-**Three rules enforced:**
-- `sigil/enforce-tokens` — No arbitrary values like `[13px]`
-- `sigil/zone-compliance` — Timing must match zone physics
-- `sigil/input-physics` — Admin zones need keyboard navigation
+### 4. Status Propagates
+Component tier = minimum of declared tier and dependency tiers. Gold component importing bronze code = bronze tier.
+
+### 5. One Good Reason > 15% Silent Mutiny
+When rules block work, capture the bypass with justification. Don't force workarounds that create shadow patterns.
+
+### 6. Never Refuse Outright
+Three paths always available: COMPLY, BYPASS (with reason), or AMEND (propose change).
+
+### 7. Let Artists Stay in Flow
+Never auto-fix. `/polish` suggests, human decides. Respect creative momentum.
 
 ---
 
@@ -88,8 +101,6 @@ export default [
 ### The Problem
 
 AI agents generate UI without understanding your product's soul. Every generation is a coin flip—sometimes it matches your vision, sometimes it doesn't. Design systems help, but they're too abstract for AI to reason about.
-
-Meanwhile, design debates consume hours. "Should this button be blue or green?" "Is this animation too slow?" These aren't physics problems—they're taste problems. Without a framework, every decision becomes a debate.
 
 ### The Insight: Physics vs Opinions
 
@@ -101,193 +112,73 @@ Sigil treats design decisions like physics, not opinions:
 | "Server data MUST show pending states" | "I think this should be faster" |
 | Ends the conversation | Starts bikeshedding |
 
-When you frame constraints as physics, AI agents follow them without question. Humans stop debating and start building.
-
 ### Core Principles
 
 **1. Feel Before Form**
-Design is about how things *feel*, not how they *look*. A checkout button and browse button might be visually identical—same color, same size. But they *behave* differently because they're in different physics zones. Checkout is heavy and deliberate. Browse is light and instant.
+Design is about how things *feel*, not how they *look*. A checkout button and browse button might be visually identical—same color, same size. But they *behave* differently because they're in different physics zones.
 
 **2. Context Over Components**
-The same component behaves differently based on where it lives. Zone is determined by *file path*, not component type. Put a file in `/checkout/` and it inherits critical zone physics automatically.
+The same component behaves differently based on where it lives. Zone is determined by context, not component type.
 
 **3. Constraints Enable Creativity**
-Unlimited options produce paralysis. Physics constraints free you to focus on what matters. When the agent knows checkout buttons MUST have pending states, it stops asking and starts building.
+Unlimited options produce paralysis. Physics constraints free you to focus on what matters.
 
 **4. Diagnose Before Prescribe**
-When something feels wrong, don't jump to solutions. "Make it faster" might break the system. "Why does it feel slow?" reveals the root cause. Often, the "problem" is physics working correctly—checkout *should* feel deliberate.
+When something feels wrong, don't jump to solutions. "Why does it feel slow?" reveals the root cause.
 
 **5. Entropy Is Inevitable**
-Products drift. What felt right at launch feels stale at scale. Sigil treats this as physics: entropy is real, gardens need tending. Plan for evolution, not perfection.
-
-### The Physics Hierarchy
-
-Not all constraints are equal:
-
-| Level | Behavior | Example |
-|-------|----------|---------|
-| **IMPOSSIBLE** | Physics violations. Cannot be generated. | Optimistic updates in server-authoritative zones |
-| **BLOCK** | Blocked by default. Taste Key holder can override. | Exceeding element count budget |
-| **WARN** | Suggestions only. Human decides. | Using a color outside the palette |
+Products drift. Sigil treats this as physics: entropy is real, gardens need tending.
 
 ---
 
-## Mental Models
+## Commands
 
-### Truth vs Experience
+| Command | Purpose | Output |
+|---------|---------|--------|
+| `/envision` | Capture product moodboard | `sigil-mark/moodboard.md` |
+| `/codify` | Define design rules | `sigil-mark/rules.md` |
+| `/craft` | Get design guidance | Context-aware suggestions |
+| `/polish` | JIT standardization | Diff proposals (never auto-fix) |
+| `/garden` | System health check | Health score, issues by severity |
+| `/amend` | Propose constitution change | Amendment YAML |
 
-Sigil separates **Truth** (what happens) from **Experience** (how it looks):
+### /garden
 
-```
-Truth:      Server says "pending" → UI MUST show pending state
-Experience: HOW that pending state looks (spinner, skeleton, progress bar)
-```
-
-- **Truth can't be argued with.** Server-authoritative data MUST show pending states.
-- **Experience is swappable.** Same physics, different rendering per persona.
-
-### Zone × Persona Matrix
-
-**Zone** (where) + **Persona** (who) = **Effective Physics**
-
-```yaml
-# .sigilrc.yaml
-zones:
-  critical:
-    default_physics: deliberate
-    persona_overrides:
-      power_user: warm      # Power users get faster timing
-      newcomer: reassuring  # Newcomers get extra feedback
-```
-
-Same interface, different experiences based on user type and context.
-
-### Vocabulary: The API Surface
-
-Vocabulary bridges human concepts and code:
-
-```yaml
-# sigil-mark/vocabulary/vocabulary.yaml
-terms:
-  - id: claim
-    engineering_name: ClaimAction
-    user_facing: ["Claim", "Harvest"]
-    mental_model: "Harvesting rewards from a position"
-    recommended:
-      motion: deliberate
-      easing: ease-out
-    zones: [critical]
-```
-
-Agent protocol: Look up term → Get zone-appropriate physics → Generate code.
-
----
-
-## Best Practices
-
-### 1. Start with Soul, Not Rules
-
-Run `/envision` before anything else. Rules without soul produce soulless output.
-
-| Bad | Good |
-|-----|------|
-| "Use blue buttons with 8px radius" | "Checkout should feel like confirming a bank transfer—heavy and deliberate" |
-| "Animation duration: 200ms" | "We want the confidence of Linear with the warmth of Notion" |
-
-### 2. Define Zones Early
-
-Zones are your biggest lever. Most products have 3-5:
-
-```yaml
-# .sigilrc.yaml
-zones:
-  critical:
-    paths: ["**/checkout/**", "**/claim/**"]
-    default_physics: deliberate
-    patterns:
-      prefer: [confirmation-flow, deliberate-entrance]
-      warn: [instant-transition, playful-bounce]
-
-  exploratory:
-    paths: ["**/browse/**", "**/discover/**"]
-    default_physics: playful
-```
-
-### 3. Use /craft Diagnostically
-
-When something "feels wrong," don't ask for a fix—ask for diagnosis:
-
-| Bad | Good |
-|-----|------|
-| `/craft "make the button faster"` | `/craft "the claim button feels slow, diagnose why"` |
-
-The agent identifies root causes:
-
-```
-/craft "checkout feels slow"
-
-DIAGNOSIS: Physics conflict detected.
-The claim button is in critical zone (server_authoritative).
-Physics requires pending state (800ms deliberate timing).
-
-This is NOT a design problem. The delay IS the trust.
-
-Options:
-1. Accept the physics (recommended for money)
-2. Add loading feedback within physics constraints
-3. Escalate: /consult "Should checkout be optimistic?"
-```
-
-### 4. One Taste Key Holder
-
-Design by committee produces mediocrity. Designate ONE person:
-
-| CAN Override | CANNOT Override |
-|--------------|-----------------|
-| Budgets (element count) | Physics (sync authority) |
-| Fidelity (gradient stops) | Security (auth, validation) |
-| Taste (colors, typography) | Accessibility (contrast, keyboard) |
-
-### 5. Garden Regularly
-
-Run `/garden` monthly to catch drift:
-- Components straying from essence
-- Stale decisions no longer relevant
-- Obsolete rulings from past contexts
-
-### 6. Trust the Enforcement Layer
-
-v4.1 adds real enforcement—use it:
+System health monitoring:
 
 ```bash
-# ESLint catches physics violations at dev time
-npm run lint
-
-# useSigilMutation auto-resolves physics at runtime
-const { cssVars } = useSigilMutation({ intent: 'claim' });
+/garden              # Full health check
+/garden --drift      # Visual drift only
 ```
 
----
+Returns:
+- Health score (100 - errors*10 - warnings*2)
+- Issues grouped by severity (error, warning, info)
+- Fidelity violations, status propagation issues, timing checks
 
-## The 7 Skills
+### /polish
 
-| Skill | Purpose | L1 (Default) | L2 (Targeted) | L3 (Full Control) |
-|-------|---------|--------------|---------------|-------------------|
-| `/envision` | Capture product moodboard | Full interview | `--quick` | `--from <file>` |
-| `/codify` | Define design rules | Guided interview | `--zone <name>` | `--from <design-system.json>` |
-| `/craft` | Get design guidance | Auto-context | `--zone`, `--persona` | `--no-gaps` |
-| `/observe` | Visual feedback loop | Capture screen | `--component` | `--screenshot`, `--rules` |
-| `/refine` | Incremental updates | Review feedback | `--persona`, `--zone` | `--evidence` |
-| `/consult` | Record decisions | 30d lock | `--scope`, `--lock` | `--protect`, `--evidence` |
-| `/garden` | Health monitoring | Summary | `--personas`, `--feedback` | `--validate` (CI) |
+JIT standardization (respects Law 7):
 
-### Progressive Disclosure
+```bash
+/polish              # Staged files
+/polish src/Button.tsx
+```
 
-All skills support three grip levels:
+Returns:
+- Pragma standardization suggestions
+- Never auto-applies changes
+- Human reviews and accepts
 
-- **L1**: Sensible defaults, minimal input required
-- **L2**: Targeted options for specific needs
-- **L3**: Full control for power users
+### /amend
+
+Constitution amendment workflow:
+
+```bash
+/amend constitution.financial.forbidden[0] --change "Allow useOptimistic for demo accounts" --reason "Demo accounts have no real funds"
+```
+
+Creates amendment proposal in `governance/amendments/AMEND-YYYY-NNN.yaml`.
 
 ---
 
@@ -298,16 +189,11 @@ All skills support three grip levels:
 Wrap your app to enable zone context:
 
 ```tsx
-import { SigilProvider, SigilProviderProps } from 'sigil-mark';
-
-const config: SigilProviderProps = {
-  remoteAdapter: launchDarklyAdapter,  // Optional: A/B test timing
-  defaultPersona: 'default',
-};
+import { SigilProvider } from 'sigil-mark';
 
 function App() {
   return (
-    <SigilProvider {...config}>
+    <SigilProvider>
       <YourApp />
     </SigilProvider>
   );
@@ -316,34 +202,39 @@ function App() {
 
 ### useSigilMutation
 
-The core hook that replaces manual physics wiring:
+The core hook with simulation flow:
 
 ```tsx
 import { useSigilMutation } from 'sigil-mark';
 
 function ClaimButton({ poolId }) {
-  const { execute, state, cssVars, physics } = useSigilMutation({
+  const {
+    execute,
+    simulate,
+    confirm,
+    state,
+    preview,
+    physics
+  } = useSigilMutation({
     mutation: () => api.claim(poolId),
-    intent: 'claim',  // From vocabulary.yaml
-    // Physics auto-resolved from: zone + persona + remote vibes
+    dataType: 'financial',  // From constitution.yaml
   });
 
+  // Simulation flow: simulate → preview → confirm → execute
+  const handleClick = async () => {
+    const preview = await simulate();
+    if (userConfirms(preview)) {
+      confirm();
+      await execute();
+    }
+  };
+
   return (
-    <button
-      onClick={execute}
-      disabled={state === 'pending'}
-      style={cssVars}
-    >
+    <button onClick={handleClick} disabled={state === 'pending'}>
       {state === 'pending' ? 'Claiming...' : 'Claim Rewards'}
     </button>
   );
 }
-```
-
-**What `cssVars` provides:**
-```css
---sigil-duration: 800ms;    /* From physics.yaml */
---sigil-easing: ease-out;   /* From physics.yaml */
 ```
 
 ### Zone Layouts
@@ -371,89 +262,48 @@ import { CriticalZone, GlassLayout, MachineryLayout } from 'sigil-mark';
 
 ---
 
-## ESLint Plugin
+## Kernel Structure
 
-### Rules
+The constitutional core of Sigil v5.0:
 
-**`sigil/enforce-tokens`** — No arbitrary Tailwind values
-
-```tsx
-// ❌ Error: Use design tokens instead of [13px]
-<div className="p-[13px]" />
-
-// ✅ Good: Token-based spacing
-<div className="p-3" />
+```
+sigil-mark/kernel/
+├── constitution.yaml    # Data type → physics binding
+├── fidelity.yaml        # Visual + ergonomic ceilings
+├── vocabulary.yaml      # Term → physics mapping
+└── workflow.yaml        # Team methodology rules
 ```
 
-**`sigil/zone-compliance`** — Timing matches zone physics
+### constitution.yaml
 
-```tsx
-// ❌ Error: Critical zone requires >= 600ms duration
-<motion.div animate={{ opacity: 1 }} transition={{ duration: 0.2 }} />
-
-// ✅ Good: Respects critical zone physics
-<motion.div animate={{ opacity: 1 }} transition={{ duration: 0.8 }} />
-```
-
-**`sigil/input-physics`** — Admin zones need keyboard support
-
-```tsx
-// ❌ Error: Admin zone requires keyboard navigation
-<div onClick={handleClick} />
-
-// ✅ Good: Accessible interaction
-<button onClick={handleClick} onKeyDown={handleKeyDown} />
-```
-
-### Configuration
-
-```js
-// eslint.config.js
-import sigil from 'eslint-plugin-sigil';
-
-export default [
-  sigil.configs.recommended,
-  {
-    rules: {
-      'sigil/enforce-tokens': 'warn',     // Downgrade to warning
-      'sigil/zone-compliance': 'error',   // Keep strict
-    },
-  },
-];
-```
-
----
-
-## Remote Soul (A/B Testing)
-
-Adjust motion timing without code changes:
+Defines what's IMPOSSIBLE, BLOCKED, or WARNED:
 
 ```yaml
-# sigil-mark/remote-soul.yaml
-remote_config:
-  vibes:
-    timing_modifier: 1.0    # 0.5 = faster, 2.0 = slower
-    rhythm_preference: relaxed
-
-kernel_locked:
-  - physics           # Engineers control physics kernel
-  - sync              # Sync strategies never remote
-  - protected_zones   # Critical zone rules locked
+# Financial data physics
+financial:
+  physics: server_authoritative
+  forbidden:
+    - useOptimistic     # IMPOSSIBLE
+    - staleWhileRevalidate
+  required:
+    - pendingState      # MUST show pending
+    - confirmationStep  # MUST confirm before execute
 ```
 
-### Adapter Integration
+### fidelity.yaml
 
-```tsx
-import { createLaunchDarklyAdapter } from 'sigil-mark/providers/remote-soul';
+Visual and ergonomic constraints:
 
-const adapter = createLaunchDarklyAdapter(ldClient, 'sigil-vibes');
-
-<SigilProvider remoteAdapter={adapter}>
-  <App />
-</SigilProvider>
+```yaml
+ceilings:
+  animation:
+    max_concurrent: 3
+    max_duration_ms: 2000
+  shadows:
+    max_layers: 2
+  typography:
+    max_weights_per_view: 3
 ```
-
-**Philosophy:** Marketing can tune *feel*, but never break *physics*.
 
 ---
 
@@ -463,104 +313,117 @@ const adapter = createLaunchDarklyAdapter(ldClient, 'sigil-vibes');
 
 ```
 sigil-mark/
-├── moodboard.md              # Product feel
-├── rules.md                  # Design rules
-├── vocabulary/               # Term → physics mapping
-│   └── vocabulary.yaml
-├── kernel/                   # Physics definitions (v4.1)
-│   └── physics.yaml          # 7 motion profiles
-├── providers/                # Runtime contexts (v4.1)
-│   ├── sigil-provider.tsx
-│   └── remote-soul.ts
-├── hooks/                    # React hooks (v4.1)
+├── kernel/                   # Constitutional core
+│   ├── constitution.yaml     # Type → physics binding
+│   ├── fidelity.yaml         # Visual ceilings
+│   ├── vocabulary.yaml       # Term mapping
+│   └── workflow.yaml         # Team rules
+├── skills/                   # 6 skill YAMLs
+│   ├── scanning-sanctuary.yaml
+│   ├── analyzing-data-risk.yaml
+│   ├── polishing-code.yaml
+│   ├── negotiating-integrity.yaml
+│   ├── auditing-cohesion.yaml
+│   └── simulating-interaction.yaml
+├── process/                  # Agent-time utilities
+│   ├── component-scanner.ts  # Live grep discovery
+│   ├── polish-command.ts     # JIT standardization
+│   ├── garden-command.ts     # Health monitoring
+│   ├── amend-command.ts      # Amendment proposals
+│   └── governance-logger.ts  # Justification logging
+├── governance/               # Audit trail
+│   ├── justifications.log    # Append-only bypass log
+│   └── amendments/           # Amendment proposals
+├── providers/                # Runtime context
+│   └── sigil-provider.tsx
+├── hooks/                    # React hooks
 │   ├── use-sigil-mutation.ts
 │   └── physics-resolver.ts
-├── layouts/                  # Zone layout components
-│   ├── critical-zone.tsx
-│   ├── glass-layout.tsx
-│   └── machinery-layout.tsx
-├── personas/                 # User archetypes
-│   └── personas.yaml
-└── consultation-chamber/     # Locked decisions
-    └── decisions/
+└── layouts/                  # Zone layouts
+    ├── critical-zone.tsx
+    ├── glass-layout.tsx
+    └── machinery-layout.tsx
 ```
 
-### Physics Resolution Algorithm
+### The 6 Skills
 
-```
-1. Determine zone from file path
-2. Get zone's default_physics
-3. Check persona_overrides[current_persona]
-4. Apply remote soul timing_modifier (if any)
-5. Return final { duration, easing, constraints }
+| Skill | Purpose | Trigger |
+|-------|---------|---------|
+| scanning-sanctuary | Live grep discovery | Component lookup |
+| analyzing-data-risk | Type → physics resolution | Data type detection |
+| polishing-code | JIT standardization | /polish, pre-commit |
+| negotiating-integrity | Constitution violations | Rule conflicts |
+| auditing-cohesion | Visual consistency | /garden, generation |
+| simulating-interaction | Timing verification | /garden, /craft --simulate |
+
+---
+
+## Migration from v4.1
+
+```bash
+# Run migration script
+./sigil-mark/scripts/migrate-v5.sh --dry-run  # Preview
+./sigil-mark/scripts/migrate-v5.sh            # Apply
+
+# What it does:
+# 1. Deletes sigil.map and .sigil-cache (Law 1: Filesystem is truth)
+# 2. Creates v5 directory structure
+# 3. Initializes governance/justifications.log
+# 4. Updates .sigil-version.json
 ```
 
-### Config File
+### Key Changes
+
+| v4.1 | v5.0 |
+|------|------|
+| Cache-based discovery | Live grep (scanning-sanctuary) |
+| Auto-fix patterns | JIT polish (never auto-fix) |
+| Silent workarounds | Justification logging |
+| Fixed rules | Constitutional amendments |
+
+---
+
+## Best Practices
+
+### 1. Start with Soul, Not Rules
+
+Run `/envision` before anything else. Rules without soul produce soulless output.
+
+### 2. Define Zones Early
+
+Zones are your biggest lever. Most products have 3-5:
 
 ```yaml
 # .sigilrc.yaml
-version: "1.0"
-strictness: guiding  # discovery | guiding | enforcing | strict
-
 zones:
   critical:
-    paths: ["src/features/checkout/**", "src/features/claim/**"]
-    default_physics: deliberate
-    persona_overrides:
-      power_user: warm
-      newcomer: reassuring
-    patterns:
-      prefer: [confirmation-flow]
-      warn: [instant-transition]
-
+    paths: ["**/checkout/**", "**/claim/**"]
+    physics: deliberate
   exploratory:
-    paths: ["src/features/browse/**"]
-    default_physics: playful
+    paths: ["**/browse/**"]
+    physics: playful
 ```
 
----
+### 3. Use /garden Regularly
 
-## Motion Profiles
+Run `/garden` to catch drift:
+- Fidelity violations (animation budget exceeded)
+- Status propagation issues (gold importing bronze)
+- Timing threshold violations
 
-Defined in `sigil-mark/kernel/physics.yaml`:
+### 4. Capture Bypasses
 
-| Motion | Duration | Easing | Use Case |
-|--------|----------|--------|----------|
-| `instant` | 0ms | linear | Admin actions, toggles |
-| `snappy` | 150ms | ease-out | Quick feedback, hovers |
-| `warm` | 300ms | ease-in-out | Standard transitions |
-| `deliberate` | 800ms | ease-out | Critical actions, confirmations |
-| `reassuring` | 600ms | ease-in-out | Onboarding, first-time flows |
-| `celebratory` | 1200ms | spring | Success moments, rewards |
-| `reduced` | 0ms | linear | Accessibility (prefers-reduced-motion) |
+When you need to break a rule, use BYPASS with justification:
+- Logged to `governance/justifications.log`
+- Creates audit trail
+- Better than silent workarounds
 
----
+### 5. Propose Amendments
 
-## Migration
-
-See **[MIGRATION-v4.1.md](MIGRATION-v4.1.md)** for v4.0 → v4.1 migration.
-
-### Quick Reference
-
-| v4.0 | v4.1 |
-|------|------|
-| `useCriticalAction` | `useSigilMutation` |
-| Manual physics wiring | Auto-resolved from context |
-| No ESLint | `eslint-plugin-sigil` |
-| No remote config | Remote Soul adapters |
-
----
-
-## Coexistence with Loa
-
-Sigil and Loa operate independently:
-
-| Aspect | Sigil | Loa |
-|--------|-------|-----|
-| State Zone | `sigil-mark/` | `loa-grimoire/` |
-| Config | `.sigilrc.yaml` | `.loa.config.yaml` |
-| Focus | Design context | Product lifecycle |
-| Handoff | Design issues | Architecture decisions |
+When a rule is consistently wrong, use `/amend`:
+- Creates formal proposal
+- Requires justification
+- Reviewed and merged (or rejected)
 
 ---
 
@@ -573,9 +436,8 @@ A sigil is a symbolic representation of intent—a mark that carries meaning bey
 ## Documentation
 
 - **[CLAUDE.md](CLAUDE.md)** — Agent protocol and quick reference
-- **[MIGRATION-v4.1.md](MIGRATION-v4.1.md)** — v4.0 → v4.1 migration guide
+- **[ARCHITECTURE-V5.md](ARCHITECTURE-V5.md)** — v5.0 architecture details
 - **[CHANGELOG.md](CHANGELOG.md)** — Version history
-- **[docs/MARKETING-VIBES.md](docs/MARKETING-VIBES.md)** — Remote soul for marketing
 
 ---
 

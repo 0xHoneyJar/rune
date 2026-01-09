@@ -1,0 +1,15 @@
+COMPLETED
+Sprint: v3.0-sprint-1
+Theme: Critical Fixes (P0)
+Date: 2026-01-06
+
+Implementation: APPROVED
+Review: APPROVED (All good)
+Security Audit: APPROVED - LET'S FUCKING GO
+
+Tasks:
+- [x] S1-T1: Remove ProcessContextProvider from exports
+- [x] S1-T2: Update Process layer documentation
+- [x] S1-T3: Rewrite consulting-decisions skill
+- [x] S1-T4: Rewrite crafting-guidance skill
+- [x] S1-T5: Audit all skills for philosophy alignment

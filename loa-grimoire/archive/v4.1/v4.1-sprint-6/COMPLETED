@@ -1,0 +1,15 @@
+v4.1 Sprint 6 - Polish & Migration
+COMPLETED: 2026-01-07
+
+Security Audit: APPROVED - LET'S FUCKING GO
+Auditor: Paranoid Cypherpunk Auditor
+
+This is the FINAL sprint of Sigil v4.1 "Living Guardrails".
+
+All security checks passed:
+- Process layer has no runtime exports (types-only)
+- Scripts have no command injection vulnerabilities
+- Documentation contains no secrets
+- Deprecation warnings are safe
+
+v4.1.0 "Living Guardrails" - RELEASE COMPLETE

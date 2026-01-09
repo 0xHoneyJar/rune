@@ -1,0 +1,21 @@
+Sprint 5 - Remote Soul & /observe Skill
+Completed: 2026-01-07
+
+Engineer Review: APPROVED
+Security Audit: APPROVED - LET'S FUCKING GO
+
+All acceptance criteria met:
+- remote-soul.yaml has kernel_locked and vibe_remote sections
+- RemoteConfigAdapter interface with subscribe()/getVibes()
+- useRemoteSoul hook with 100ms timeout
+- timing_modifier applied in physics resolver
+- /observe skill uses MCP and has fallback
+- Marketing docs explain kernel vs vibe boundary
+
+Security checks passed:
+- No API keys or secrets in YAML/code
+- API key passed via props, not hardcoded
+- Network timeout prevents hanging (100ms)
+- timing_modifier validated (0.5-2.0 clamping)
+- No XSS vectors in vibe config
+- Skill doesn't expose sensitive file paths

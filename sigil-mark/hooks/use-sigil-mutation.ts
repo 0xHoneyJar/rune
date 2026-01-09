@@ -1,17 +1,19 @@
 /**
- * Sigil v4.1 - useSigilMutation Hook
+ * @sigil-tier gold
+ * Sigil v5.0 - useSigilMutation Hook
  *
- * Zone+Persona-aware mutation hook that auto-resolves physics from context.
- * This is the recommended hook for all mutations in Sigil v4.1+.
+ * Zone+Persona-aware mutation hook with full simulation flow.
+ * This is the core hook for all mutations in Sigil v5.
  *
- * Replaces useCriticalAction with a simpler API that automatically resolves
- * physics based on:
- * 1. Zone context (from layout wrappers)
- * 2. Persona context (from SigilProvider)
- * 3. Remote soul vibes (from LaunchDarkly/Statsig)
+ * v5.0 Changes:
+ * - Full simulation flow: idle → simulating → confirming → committing → done
+ * - SimulationPreview interface for previewing mutations
+ * - simulate(variables) → confirm() two-step flow for server-tick physics
+ * - execute(variables) direct path for local-first/crdt physics
+ * - Zone-based physics resolution from context
  *
- * v4.1 Changes:
- * - Full remote soul integration with timing_modifier support
+ * v4.1 Legacy:
+ * - Remote soul integration with timing_modifier support
  * - Vibes exposed in physics for component use
  * - Base timing preserved for debugging
  *
@@ -24,261 +26,173 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import {
   useSigilZoneContext,
   useSigilPersonaContext,
-  useSigilRemoteSoulContext,
-  type ZoneId,
-  type PersonaId,
+  useSigilVibes,
 } from '../providers/sigil-provider';
-import {
-  resolvePhysics,
-  createPhysicsStyle,
-  type ResolvedPhysics,
-  type SyncStrategy,
-} from './physics-resolver';
-
-// =============================================================================
-// TYPES
-// =============================================================================
-
-/**
- * Mutation status.
- */
-export type MutationStatus = 'idle' | 'pending' | 'confirmed' | 'failed';
-
-/**
- * Configuration for useSigilMutation hook.
- *
- * @template TData - Type of data returned by mutation
- * @template TVariables - Type of variables passed to mutation
- */
-export interface SigilMutationConfig<TData = unknown, TVariables = void> {
-  /**
-   * The async mutation function.
-   * @param variables - Variables to pass to the mutation
-   * @returns Promise resolving to the mutation result
-   */
-  mutation: (variables: TVariables) => Promise<TData>;
-
-  /**
-   * Optional zone override.
-   * If not provided, auto-detected from ZoneContext (layout wrapper).
-   * @default auto-detected from context
-   */
-  zone?: ZoneId;
-
-  /**
-   * Optional persona override.
-   * If not provided, auto-detected from PersonaContext.
-   * @default auto-detected from context
-   */
-  persona?: PersonaId;
-
-  /**
-   * Explicit physics override.
-   * Requires unsafe_ prefix to indicate intentional override.
-   * Will log a console warning when used.
-   */
-  unsafe_override_physics?: Partial<ResolvedPhysics>;
-
-  /**
-   * Reason for physics override.
-   * Required when using unsafe_override_physics.
-   * Logged to console for friction tracking.
-   */
-  unsafe_override_reason?: string;
-
-  /**
-   * Callback invoked on successful mutation.
-   * @param data - The mutation result
-   */
-  onSuccess?: (data: TData) => void;
-
-  /**
-   * Callback invoked on mutation error.
-   * @param error - The error that occurred
-   */
-  onError?: (error: Error) => void;
-}
-
-/**
- * CSS custom properties for styling.
- */
-export interface SigilMutationStyle {
-  '--sigil-duration': string;
-  '--sigil-easing': string;
-}
-
-/**
- * Result returned by useSigilMutation hook.
- *
- * @template TData - Type of data returned by mutation
- * @template TVariables - Type of variables passed to mutation
- */
-export interface SigilMutationResult<TData = unknown, TVariables = void> {
-  // State
-  /** Current mutation status */
-  status: MutationStatus;
-  /** Mutation result data (when confirmed) */
-  data: TData | null;
-  /** Error (when failed) */
-  error: Error | null;
-
-  // Resolved physics
-  /** Resolved physics configuration */
-  physics: ResolvedPhysics;
-
-  // Computed UI state
-  /** Whether the trigger should be disabled (pessimistic sync + pending) */
-  disabled: boolean;
-  /** Whether mutation is pending */
-  isPending: boolean;
-
-  // CSS variables
-  /** CSS custom properties for styling */
-  style: SigilMutationStyle;
-
-  // Actions
-  /** Execute the mutation */
-  execute: (variables: TVariables) => Promise<void>;
-  /** Reset to idle state */
-  reset: () => void;
-}
+import type {
+  SigilZone,
+  SigilPersona,
+  SigilState,
+  ResolvedPhysics,
+  SimulationPreview,
+  UseSigilMutationOptions,
+  UseSigilMutationResult,
+  SigilVibes,
+} from '../types';
+import { resolvePhysicsV5, createPhysicsStyleV5, type DataTypeConfig } from './physics-resolver';
 
 // =============================================================================
 // HOOK IMPLEMENTATION
 // =============================================================================
 
 /**
- * useSigilMutation - Zone+Persona-aware mutation hook.
+ * useSigilMutation - Zone+Persona-aware mutation hook with simulation flow.
  *
  * Auto-resolves physics based on:
  * 1. Zone context (from layout wrappers or explicit override)
  * 2. Persona context (from SigilProvider or explicit override)
- * 3. Remote soul vibes (from LaunchDarkly/Statsig)
+ * 3. Vibes (from remote config or feature flags)
  *
  * @template TData - Type of data returned by mutation
  * @template TVariables - Type of variables passed to mutation
  *
- * @param config - Mutation configuration
+ * @param options - Mutation configuration
  * @returns Mutation result with state, physics, and actions
  *
- * @example Basic usage (physics auto-resolved)
+ * @example Basic usage with execute (crdt/local-first physics)
  * ```tsx
- * function PaymentButton() {
- *   const { execute, isPending, disabled, style, physics } = useSigilMutation({
- *     mutation: (amount) => api.pay(amount),
- *     onSuccess: () => toast.success('Payment complete!'),
+ * function SaveButton() {
+ *   const { execute, isPending, disabled, cssVars } = useSigilMutation({
+ *     mutation: (data) => api.save(data),
+ *     onSuccess: () => toast.success('Saved!'),
  *   });
  *
  *   return (
  *     <button
- *       onClick={() => execute(100)}
+ *       onClick={() => execute({ name: 'test' })}
  *       disabled={disabled}
- *       style={style}
+ *       style={cssVars}
  *     >
- *       {isPending ? 'Processing...' : 'Pay $100'}
+ *       {isPending ? 'Saving...' : 'Save'}
  *     </button>
  *   );
  * }
  * ```
  *
- * @example With zone+persona in CriticalZone
+ * @example Simulation flow (server-tick physics in CriticalZone)
  * ```tsx
- * // Parent component
+ * function PaymentButton() {
+ *   const { simulate, confirm, cancel, preview, isSimulating, isConfirming, cssVars } = useSigilMutation({
+ *     mutation: (amount) => api.pay(amount),
+ *     simulate: async (amount) => ({
+ *       predictedResult: { success: true },
+ *       fees: { estimated: '0.001', currency: 'ETH' },
+ *       warnings: amount > 100 ? ['Large transaction'] : [],
+ *     }),
+ *     onSuccess: () => toast.success('Payment complete!'),
+ *   });
+ *
+ *   if (isConfirming && preview) {
+ *     return (
+ *       <div>
+ *         <p>Fee: {preview.fees?.estimated} {preview.fees?.currency}</p>
+ *         {preview.warnings?.map(w => <p key={w}>{w}</p>)}
+ *         <button onClick={confirm}>Confirm</button>
+ *         <button onClick={cancel}>Cancel</button>
+ *       </div>
+ *     );
+ *   }
+ *
+ *   return (
+ *     <button onClick={() => simulate(100)} disabled={isSimulating} style={cssVars}>
+ *       {isSimulating ? 'Simulating...' : 'Pay $100'}
+ *     </button>
+ *   );
+ * }
+ * ```
+ *
+ * @example Zone context from layout
+ * ```tsx
+ * // Parent layout
  * <CriticalZone>
  *   <PaymentForm />
  * </CriticalZone>
  *
- * // Inside PaymentForm, physics auto-resolves to:
- * // - sync: 'pessimistic' (server owns clock)
- * // - timing: 800ms (deliberate)
- * // - disabled_while_pending: true
- * ```
- *
- * @example With explicit overrides
- * ```tsx
- * const mutation = useSigilMutation({
- *   mutation: (data) => api.save(data),
- *   zone: 'critical',  // Override zone
- *   persona: 'newcomer', // Override persona
- *   unsafe_override_physics: { timing: 1500 },
- *   unsafe_override_reason: 'Extended timing for complex animation',
- * });
- * ```
- *
- * @example Using remote vibes for styling
- * ```tsx
- * function HeroAction() {
- *   const { physics, execute, isPending, style } = useSigilMutation({
- *     mutation: () => api.subscribe(),
- *   });
- *
- *   // Access vibes for conditional styling
- *   const { vibes } = physics;
- *
- *   return (
- *     <button
- *       onClick={() => execute()}
- *       disabled={isPending}
- *       style={style}
- *       data-energy={vibes?.hero_energy}
- *       data-theme={vibes?.seasonal_theme}
- *     >
- *       {isPending ? 'Subscribing...' : 'Subscribe'}
- *     </button>
- *   );
- * }
+ * // Inside PaymentForm, physics auto-resolves to server-tick:
+ * // - class: 'server-tick'
+ * // - timing: { min_ms: 600, recommended_ms: 800, max_ms: 1200 }
+ * // - requires: ['simulation', 'confirmation', 'explicit-pending']
  * ```
  */
 export function useSigilMutation<TData = unknown, TVariables = void>(
-  config: SigilMutationConfig<TData, TVariables>
-): SigilMutationResult<TData, TVariables> {
+  options: UseSigilMutationOptions<TData, TVariables>
+): UseSigilMutationResult<TData, TVariables> {
   const {
     mutation,
+    simulate: simulateFn,
     zone: explicitZone,
     persona: explicitPersona,
+    dataType,
+    dataTypes,
     unsafe_override_physics,
     unsafe_override_reason,
     onSuccess,
     onError,
-  } = config;
+    onSimulationComplete,
+  } = options;
 
   // Get context values
   const zoneContext = useSigilZoneContext();
   const personaContext = useSigilPersonaContext();
-  const remoteSoulContext = useSigilRemoteSoulContext();
+  const vibes = useSigilVibes();
 
   // Resolve zone (explicit > layout-detected > default)
-  const zone: ZoneId = explicitZone ?? zoneContext.current ?? 'default';
+  const zone: SigilZone = (explicitZone ?? zoneContext.current ?? 'standard') as SigilZone;
 
   // Resolve persona (explicit > context > default)
-  const persona: PersonaId = explicitPersona ?? personaContext.current ?? 'power_user';
+  const persona: SigilPersona = (explicitPersona ?? personaContext.current ?? 'default') as SigilPersona;
 
-  // Resolve physics from zone + persona matrix
-  const basePhysics = resolvePhysics(zone, persona, remoteSoulContext);
+  // Build data type config if provided
+  const dataTypeConfig: DataTypeConfig | undefined =
+    dataType || dataTypes?.length
+      ? { dataType, dataTypes }
+      : undefined;
 
-  // Apply unsafe overrides if present
-  const physics: ResolvedPhysics = unsafe_override_physics
-    ? { ...basePhysics, ...unsafe_override_physics }
-    : basePhysics;
+  // Resolve physics from zone + persona + data type
+  // Priority: dataType > zone > defaults
+  const physics = resolvePhysicsV5(
+    zone,
+    persona,
+    vibes,
+    unsafe_override_physics,
+    unsafe_override_reason,
+    dataTypeConfig
+  );
 
-  // State
-  const [status, setStatus] = useState<MutationStatus>('idle');
+  // ==========================================================================
+  // STATE MACHINE (S3-T3)
+  // ==========================================================================
+
+  const [state, setState] = useState<SigilState>('idle');
   const [data, setData] = useState<TData | null>(null);
   const [error, setError] = useState<Error | null>(null);
+  const [preview, setPreview] = useState<SimulationPreview<TData> | null>(null);
 
-  // Track if override warning has been logged (once per hook instance)
+  // Store pending variables for confirm step
+  const pendingVariablesRef = useRef<TVariables | null>(null);
+
+  // Track if override warning has been logged
   const overrideWarningLoggedRef = useRef(false);
 
-  // Log override warning (once per hook instance)
+  // Log override warning once
   useEffect(() => {
     if (
       unsafe_override_physics &&
-      unsafe_override_reason &&
+      !unsafe_override_reason &&
       !overrideWarningLoggedRef.current
     ) {
       console.warn(
-        `[Sigil] Physics override in ${zone} zone:`,
-        unsafe_override_reason,
+        `[Sigil] useSigilMutation: Physics override in ${zone} zone without reason.`,
+        '\nProvide unsafe_override_reason for audit trail.',
         '\nOverrides:',
         unsafe_override_physics
       );
@@ -286,51 +200,171 @@ export function useSigilMutation<TData = unknown, TVariables = void>(
     }
   }, [unsafe_override_physics, unsafe_override_reason, zone]);
 
-  // Compute disabled state
-  const isPending = status === 'pending';
-  const disabled = physics.disabled_while_pending && isPending;
+  // ==========================================================================
+  // COMPUTED UI STATE (S3-T7)
+  // ==========================================================================
+
+  const isSimulating = state === 'simulating';
+  const isConfirming = state === 'confirming';
+  const isPending = state === 'committing';
+
+  // Disabled when not in idle or confirming state
+  const disabled = state !== 'idle' && state !== 'confirming';
 
   // Create CSS custom properties
-  const style = createPhysicsStyle(physics);
+  const cssVars = createPhysicsStyleV5(physics);
 
-  // Execute mutation
-  const execute = useCallback(
+  // ==========================================================================
+  // SIMULATE FUNCTION (S3-T4)
+  // ==========================================================================
+
+  const simulate = useCallback(
     async (variables: TVariables): Promise<void> => {
-      // Prevent double execution
-      if (status === 'pending') {
+      // Only simulate from idle state
+      if (state !== 'idle') {
+        console.warn('[Sigil] simulate() called when not in idle state');
         return;
       }
 
-      setStatus('pending');
+      // Store variables for confirm step
+      pendingVariablesRef.current = variables;
+
+      setState('simulating');
+      setError(null);
+
+      try {
+        let simulationPreview: SimulationPreview<TData>;
+
+        if (simulateFn) {
+          // Use provided simulate function
+          simulationPreview = await simulateFn(variables);
+        } else {
+          // Create default preview (no actual simulation)
+          simulationPreview = {
+            predictedResult: null as unknown as TData,
+            estimatedDuration: physics.timing.recommended_ms ?? physics.timing.max_ms ?? 800,
+          };
+        }
+
+        setPreview(simulationPreview);
+        setState('confirming');
+        onSimulationComplete?.(simulationPreview);
+      } catch (err) {
+        const simulationError = err instanceof Error ? err : new Error(String(err));
+        setError(simulationError);
+        setState('error');
+        onError?.(simulationError);
+      }
+    },
+    [state, simulateFn, physics.timing.recommended_ms, physics.timing.max_ms, onSimulationComplete, onError]
+  );
+
+  // ==========================================================================
+  // CONFIRM FUNCTION (S3-T5)
+  // ==========================================================================
+
+  const confirm = useCallback(async (): Promise<void> => {
+    // Only confirm from confirming state
+    if (state !== 'confirming') {
+      console.warn('[Sigil] confirm() called when not in confirming state');
+      return;
+    }
+
+    const variables = pendingVariablesRef.current;
+    if (variables === null) {
+      console.error('[Sigil] confirm() called but no pending variables');
+      setState('error');
+      setError(new Error('No pending variables for confirmation'));
+      return;
+    }
+
+    setState('committing');
+
+    try {
+      const result = await mutation(variables);
+      setData(result);
+      setState('done');
+      onSuccess?.(result);
+    } catch (err) {
+      const mutationError = err instanceof Error ? err : new Error(String(err));
+      setError(mutationError);
+      setState('error');
+      onError?.(mutationError);
+    }
+  }, [state, mutation, onSuccess, onError]);
+
+  // ==========================================================================
+  // CANCEL FUNCTION
+  // ==========================================================================
+
+  const cancel = useCallback((): void => {
+    if (state === 'confirming') {
+      pendingVariablesRef.current = null;
+      setPreview(null);
+      setState('idle');
+    }
+  }, [state]);
+
+  // ==========================================================================
+  // EXECUTE FUNCTION (S3-T6)
+  // ==========================================================================
+
+  const execute = useCallback(
+    async (variables: TVariables): Promise<void> => {
+      // Only execute from idle state
+      if (state !== 'idle') {
+        console.warn('[Sigil] execute() called when not in idle state');
+        return;
+      }
+
+      // Warn if using execute on server-tick physics
+      if (physics.class === 'server-tick') {
+        console.warn(
+          '[Sigil] execute() called on server-tick physics. ' +
+            'Consider using simulate() → confirm() flow for better UX.'
+        );
+      }
+
+      setState('committing');
       setError(null);
 
       try {
         const result = await mutation(variables);
         setData(result);
-        setStatus('confirmed');
+        setState('done');
         onSuccess?.(result);
       } catch (err) {
         const mutationError = err instanceof Error ? err : new Error(String(err));
         setError(mutationError);
-        setStatus('failed');
+        setState('error');
         onError?.(mutationError);
       }
     },
-    [status, mutation, onSuccess, onError]
+    [state, physics.class, mutation, onSuccess, onError]
   );
 
-  // Reset to idle
-  const reset = useCallback(() => {
-    setStatus('idle');
+  // ==========================================================================
+  // RESET FUNCTION
+  // ==========================================================================
+
+  const reset = useCallback((): void => {
+    setState('idle');
     setData(null);
     setError(null);
+    setPreview(null);
+    pendingVariablesRef.current = null;
   }, []);
+
+  // ==========================================================================
+  // RETURN RESULT (S3-T8)
+  // ==========================================================================
 
   return {
     // State
-    status,
+    state,
     data,
     error,
+    preview,
 
     // Resolved physics
     physics,
@@ -338,11 +372,16 @@ export function useSigilMutation<TData = unknown, TVariables = void>(
     // Computed UI state
     disabled,
     isPending,
+    isSimulating,
+    isConfirming,
 
     // CSS variables
-    style,
+    cssVars,
 
     // Actions
+    simulate,
+    confirm,
+    cancel,
     execute,
     reset,
   };
@@ -352,4 +391,12 @@ export function useSigilMutation<TData = unknown, TVariables = void>(
 // EXPORTS
 // =============================================================================
 
-export { type ResolvedPhysics, type SyncStrategy } from './physics-resolver';
+export type {
+  SigilState,
+  SimulationPreview,
+  UseSigilMutationOptions,
+  UseSigilMutationResult,
+  ResolvedPhysics,
+} from '../types';
+
+export { resolvePhysicsV5, createPhysicsStyleV5, type DataTypeConfig } from './physics-resolver';

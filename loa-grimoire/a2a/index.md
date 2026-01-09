@@ -455,5 +455,135 @@ This document tracks all sprint artifacts and their approval status.
 
 ---
 
-*Last Updated: 2026-01-07*
-*Current Version: Sigil v4.1.0 "Living Guardrails" — ALL SPRINTS COMPLETED*
+---
+
+## Sigil v5.0 (The Lucid Flow — Infrastructure + Knowledge)
+
+| Sprint | Theme | Status | Reviewer | Auditor |
+|--------|-------|--------|----------|---------|
+| 1 | Foundation & Kernel Setup | COMPLETED | ✅ Approved | ✅ Approved |
+| 2 | Runtime Provider & Context | COMPLETED | ✅ Approved | ✅ Approved |
+| 3 | useSigilMutation Core | COMPLETED | ✅ Approved | ✅ Approved |
+| 4 | Live Grep Discovery | COMPLETED | ✅ Approved | ✅ Approved |
+| 5 | Analyzing Data Risk Skill | COMPLETED | ✅ Approved | ✅ Approved |
+| 6 | JIT Polish Workflow | COMPLETED | ✅ Approved | ✅ Approved |
+| 7 | Status Propagation & Negotiation | COMPLETED | ✅ Approved | ✅ Approved |
+| 8 | Remaining Skills & Integration | COMPLETED | ✅ Approved | ✅ Approved |
+
+---
+
+## v5.0 Sprint 1: Foundation & Kernel Setup
+
+**Duration:** 1 sprint
+**Theme:** Directory structure and kernel YAML files
+**Status:** COMPLETED
+
+### Artifacts
+- [reviewer.md](./sprint-1/reviewer.md) - Implementation report
+- [engineer-feedback.md](./sprint-1/engineer-feedback.md) - Tech lead review (✅ Approved)
+- [auditor-sprint-feedback.md](./sprint-1/auditor-sprint-feedback.md) - Security audit (✅ Approved)
+- [COMPLETED](./sprint-1/COMPLETED) - Completion marker
+
+### Key Deliverables
+- v5 directory structure (kernel/, skills/, components/, codebase/, knowledge/, governance/)
+- `sigil-mark/kernel/constitution.yaml` — Data type → physics binding
+- `sigil-mark/kernel/fidelity.yaml` — Visual + ergonomic constraints
+- `sigil-mark/kernel/vocabulary.yaml` — Term → physics mapping
+- `sigil-mark/kernel/workflow.yaml` — Team methodology rules
+- All 6 skill YAMLs (scanning, analyzing, auditing, negotiating, simulating, polishing)
+
+### Tasks
+- [x] S1-T1: Create directory structure
+- [x] S1-T2: Create constitution.yaml
+- [x] S1-T3: Create fidelity.yaml
+- [x] S1-T4: Create vocabulary.yaml
+- [x] S1-T5: Create workflow.yaml
+
+---
+
+## v5.0 Sprint 2: Runtime Provider & Context
+
+**Duration:** 1 sprint
+**Theme:** SigilProvider and zone context system
+**Status:** COMPLETED
+
+### Artifacts
+- [reviewer.md](./sprint-2/reviewer.md) - Implementation report
+- [engineer-feedback.md](./sprint-2/engineer-feedback.md) - Tech lead review (✅ Approved)
+- [auditor-sprint-feedback.md](./sprint-2/auditor-sprint-feedback.md) - Security audit (✅ Approved)
+- [COMPLETED](./sprint-2/COMPLETED) - Completion marker
+
+### Key Deliverables
+- Updated `sigil-mark/types/index.ts` with v5 types
+- Updated `sigil-mark/providers/sigil-provider.tsx` with v5 exports
+- Updated `sigil-mark/layouts/critical-zone.tsx` with v5 pragmas
+- Updated `sigil-mark/layouts/glass-layout.tsx` with 'glass' zone
+- Updated `sigil-mark/layouts/machinery-layout.tsx` with 'machinery' zone
+
+### Tasks
+- [x] S2-T1: SigilProvider Implementation
+- [x] S2-T2: Zone Context Hooks
+- [x] S2-T3: CriticalZone Layout
+- [x] S2-T4: GlassLayout Component
+- [x] S2-T5: MachineryLayout Component
+- [x] S2-T6: Provider Tests
+
+---
+
+## v5.0 Sprint 3: useSigilMutation Core
+
+**Duration:** 1 sprint
+**Theme:** Type-driven physics hook with simulation flow
+**Status:** COMPLETED
+
+### Artifacts
+- [reviewer.md](./sprint-3/reviewer.md) - Implementation report
+- [engineer-feedback.md](./sprint-3/engineer-feedback.md) - Tech lead review (✅ Approved)
+- [auditor-sprint-feedback.md](./sprint-3/auditor-sprint-feedback.md) - Security audit (✅ Approved)
+- [COMPLETED](./sprint-3/COMPLETED) - Completion marker
+
+### Key Deliverables
+- `sigil-mark/types/index.ts` — SimulationPreview, UseSigilMutationOptions, UseSigilMutationResult
+- `sigil-mark/hooks/physics-resolver.ts` — resolvePhysicsV5, zone-to-physics mapping
+- `sigil-mark/hooks/use-sigil-mutation.ts` — Full simulation flow hook
+
+### Tasks
+- [x] S3-T1: Physics Types & Interfaces
+- [x] S3-T2: Physics Resolution Function
+- [x] S3-T3: State Machine Implementation
+- [x] S3-T4: Simulate Function
+- [x] S3-T5: Confirm Function
+- [x] S3-T6: Execute Function
+- [x] S3-T7: Computed UI State
+- [x] S3-T8: Hook Assembly & Export
+
+---
+
+## v5.0 Sprint 4: Live Grep Discovery
+
+**Duration:** 1 sprint
+**Theme:** Scanning Sanctuary with ripgrep
+**Status:** COMPLETED
+
+### Artifacts
+- [reviewer.md](./sprint-4/reviewer.md) - Implementation report
+- [engineer-feedback.md](./sprint-4/engineer-feedback.md) - Tech lead review (✅ Approved)
+- [auditor-sprint-feedback.md](./sprint-4/auditor-sprint-feedback.md) - Security audit (✅ Approved)
+- [COMPLETED](./sprint-4/COMPLETED) - Completion marker
+
+### Key Deliverables
+- `sigil-mark/skills/scanning-sanctuary.yaml` — Full pragma spec, ripgrep patterns
+- `sigil-mark/process/component-scanner.ts` — Live grep component discovery
+- `CLAUDE.md` v5.0 scanning documentation
+
+### Tasks
+- [x] S4-T1: JSDoc Pragma Specification
+- [x] S4-T2: Scanning Sanctuary Skill Definition
+- [x] S4-T3: Component Lookup Utility
+- [x] S4-T4: Remove sigil.map Cache
+- [x] S4-T5: Agent Integration Documentation
+
+---
+
+*Last Updated: 2026-01-08*
+*Current Version: Sigil v5.0.0 "The Lucid Flow" — MVP COMPLETE*

@@ -1,74 +1,155 @@
-# Sprint 3 Engineer Feedback
+# Sprint 3 Engineer Review
 
-**Sprint ID:** sprint-3
-**Reviewer:** Senior Technical Lead (Agent)
-**Date:** 2026-01-06
-**Verdict:** ✅ All good
+**Sprint:** Sprint 3 - useSigilMutation Core
+**Reviewer:** Senior Technical Lead
+**Date:** 2026-01-08
+**Status:** APPROVED
 
 ---
 
 ## Review Summary
 
-The Lens Array Foundation implementation meets all acceptance criteria with production-quality code. The stacking validation and conflict resolution systems are well-designed.
+All good.
 
 ---
 
-## Code Quality Assessment
+## Verification Checklist
+
+### S3-T1: Physics Types & Interfaces
+
+| Criteria | Status |
+|----------|--------|
+| `SigilState` type with 6 states | PASS |
+| `PhysicsClass` type with 3 classes | PASS |
+| `SimulationPreview<T>` with predictedResult, fees, warnings | PASS |
+| `ResolvedPhysics` with class, timing, requires, forbidden | PASS |
+| `UseSigilMutationOptions<TData, TVariables>` complete | PASS |
+| `UseSigilMutationResult<TData, TVariables>` complete | PASS |
+
+**Notes:** Types are well-documented with JSDoc. Generic parameters correctly propagate through interfaces.
+
+### S3-T2: Physics Resolution Function
+
+| Criteria | Status |
+|----------|--------|
+| `resolvePhysicsV5()` function exists | PASS |
+| critical → server-tick mapping | PASS |
+| glass → local-first mapping | PASS |
+| machinery → local-first mapping | PASS |
+| standard → crdt mapping | PASS |
+| Override warning without reason | PASS |
+| Returns complete ResolvedPhysics | PASS |
+
+**Notes:** Zone-to-physics mapping is clean. Persona adjustments (power_user 0.9x, cautious 1.2x) are reasonable. Vibes timing_modifier correctly applied.
+
+### S3-T3: State Machine Implementation
+
+| Criteria | Status |
+|----------|--------|
+| State transitions: idle→simulating→confirming→committing→done | PASS |
+| Error state reachable from simulating | PASS |
+| Error state reachable from committing | PASS |
+| Reset returns to idle | PASS |
+| State is reactive (useState) | PASS |
+
+**Notes:** State machine is correct. All transitions properly guarded with state checks.
+
+### S3-T4: Simulate Function
+
+| Criteria | Status |
+|----------|--------|
+| `simulate(variables)` transitions to simulating | PASS |
+| Calls user-provided simulate if available | PASS |
+| Creates default preview if no simulate function | PASS |
+| Transitions to confirming on success | PASS |
+| Transitions to error on failure | PASS |
+| Stores pending variables for confirm | PASS |
+
+**Notes:** Default preview correctly uses physics timing. Variables stored in ref for confirm step.
+
+### S3-T5: Confirm Function
+
+| Criteria | Status |
+|----------|--------|
+| `confirm()` only works in confirming state | PASS |
+| Transitions to committing | PASS |
+| Executes mutation with stored variables | PASS |
+| Transitions to done on success | PASS |
+| Transitions to error on failure | PASS |
+| Calls onSuccess/onError callbacks | PASS |
+
+**Notes:** Proper error handling for missing pending variables.
+
+### S3-T6: Execute Function
+
+| Criteria | Status |
+|----------|--------|
+| `execute(variables)` for direct execution | PASS |
+| Logs warning on server-tick physics | PASS |
+| Transitions through committing→done/error | PASS |
+| Calls mutation directly | PASS |
+
+**Notes:** Warning for server-tick usage is helpful for debugging.
+
+### S3-T7: Computed UI State
+
+| Criteria | Status |
+|----------|--------|
+| `disabled` = not idle and not confirming | PASS |
+| `isPending` = committing | PASS |
+| `isSimulating` = simulating | PASS |
+| `isConfirming` = confirming | PASS |
+| `cssVars` with --sigil-duration, --sigil-easing | PASS |
+
+**Notes:** Computed state is correct. CSS vars use physics timing correctly.
+
+### S3-T8: Hook Assembly & Export
+
+| Criteria | Status |
+|----------|--------|
+| Hook uses SigilContext for zone/persona | PASS |
+| Returns complete result object | PASS |
+| Exported from sigil-mark/hooks/ | PASS |
+| JSDoc documented with @sigil-tier gold | PASS |
+
+**Notes:** Comprehensive JSDoc with 3 usage examples. Export statement correctly re-exports types and physics functions.
+
+---
+
+## Quality Assessment
 
 ### Strengths
 
-1. **Comprehensive Type System** — Full TypeScript type definitions for InputMethod, ReadingLevel, SessionDuration, ErrorTolerance, CognitiveLoad, and all persona-related structures.
+1. **Type Safety:** Full TypeScript generics through the entire API
+2. **State Machine:** Clean transitions with proper guards
+3. **Error Handling:** All error paths covered with callbacks
+4. **Documentation:** Excellent JSDoc with practical examples
+5. **Backwards Compat:** v4.1 resolvePhysics preserved
+6. **Developer Experience:** Clear warnings for wrong usage patterns
 
-2. **Dual Priority System** — Smart design using both `priority_order` array and individual `persona.priority` for flexible conflict resolution.
+### Architecture Alignment
 
-3. **Immutable Properties** — Correct handling of accessibility properties as "constitutional" - they cannot be overridden when stacking.
+- Zone-to-physics mapping matches SDD Section 4.2
+- Simulation flow matches SDD Section 4.2.1
+- Physics resolution priority matches SDD Section 4.2.2
 
-4. **Stacking Validation** — Thorough validation with clear error messages for:
-   - Empty stacks
-   - Unknown personas
-   - Max depth exceeded
-   - Forbidden combinations
-   - Combinations not in allowed list
+### No Issues Found
 
-5. **Multiple Resolution Strategies** — Four strategies (priority, merge, first, last) cover all use cases.
-
-6. **Graceful Degradation** — Consistent with other readers - never throws, always returns valid defaults.
-
-7. **Test Coverage** — 35 tests covering edge cases including invalid YAML and partial valid content.
-
-### Minor Notes (Non-blocking)
-
-1. **Nested Property Access** — The `getNestedProperty`/`setNestedProperty` utilities are simple but effective. Consider extracting to a shared utility module in future sprints if reused.
-
-2. **Merge Strategy** — The `findStrictestPersona` logic for strings like '48px' assumes larger is stricter (safer), which is correct for tap targets but may need documentation for future maintainers.
-
----
-
-## Acceptance Criteria Verification
-
-| Task | Criteria | Status |
-|------|----------|--------|
-| S3-T1 | Directory structure exists | ✅ Verified |
-| S3-T2 | JSON Schema validates sample YAML | ✅ Verified |
-| S3-T3 | YAML contains all 4 personas | ✅ Verified |
-| S3-T4 | Reader parses YAML correctly | ✅ Verified |
-| S3-T5 | Invalid stacks rejected with clear error | ✅ Verified |
-| S3-T6 | Conflicts resolved per priority order | ✅ Verified |
-| S3-T7 | All tests pass | ✅ 35/35 pass |
-
----
-
-## Files Reviewed
-
-| File | Lines | Assessment |
-|------|-------|------------|
-| `lens-array/lenses.yaml` | 115 | Excellent - well documented |
-| `lens-array/schemas/lens-array.schema.json` | 172 | Comprehensive schema |
-| `process/lens-array-reader.ts` | 520 | Production quality |
-| `__tests__/process/lens-array-reader.test.ts` | 330 | Thorough coverage |
+No code quality issues, security vulnerabilities, or architecture misalignments detected.
 
 ---
 
 ## Recommendation
 
-**APPROVED** — Proceed to security audit.
+**APPROVED** - Sprint 3 is ready for security audit.
+
+---
+
+## Next Steps
+
+1. Run `/audit-sprint sprint-3` for security review
+2. Upon approval, proceed to Sprint 4: Live Grep Discovery
+
+---
+
+*Review Completed: 2026-01-08*

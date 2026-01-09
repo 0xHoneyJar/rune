@@ -1,938 +1,923 @@
-# Sigil v4.1 Sprint Plan — "Living Guardrails"
+# Sigil v5 Sprint Plan
 
-**Version:** 4.1.0
-**Codename:** Living Guardrails
-**Generated:** 2026-01-07
-**Total Sprints:** 6
-**Status:** COMPLETED
+> *"Filesystem is truth. Agency stays with human. Rules evolve. Artists stay in flow."*
 
----
-
-## Overview
-
-This sprint plan implements Sigil v4.1 "Living Guardrails" — adding enforcement capabilities to the v4.0 context documentation system based on two independent reviews.
-
-| Sprint | Theme | Priority | PRD Requirements |
-|--------|-------|----------|------------------|
-| Sprint 1 | Foundation: Version Coherence & Provider | P0 | FR-7, FR-2 (partial) |
-| Sprint 2 | Foundation: useSigilMutation Hook | P0 | FR-1 |
-| Sprint 3 | Foundation: ESLint Plugin | P0 | FR-3 |
-| Sprint 4 | Context: Vocabulary & Physics Timing | P1 | FR-4, FR-6 |
-| Sprint 5 | Marketing: Remote Soul & /observe Skill | P2 | FR-5, FR-9 |
-| Sprint 6 | Polish: Deprecated Code & Migration | P1 | FR-8, NFR-4 |
-
-### Key Architecture Changes
-
-```
-v4.0: "Context as documentation — agents read, nothing enforces"
-v4.1: "Context as enforcement — compile + runtime + agent all consume"
-
-┌─────────────────────────────────────────────────────────────────────────┐
-│                           AGENT TIME                                     │
-│  zone-reader → persona-reader → vocab-reader → physics-reader           │
-└─────────────────────────────────────────────────────────────────────────┘
-                                    │
-                      ┌─────────────┴─────────────┐
-                      ▼                           ▼
-┌─────────────────────────────────┐  ┌────────────────────────────────────┐
-│       COMPILE TIME              │  │           RUNTIME                   │
-│  eslint-plugin-sigil            │  │  SigilProvider + useSigilMutation  │
-│  • enforce-tokens               │  │  • Auto-resolved physics            │
-│  • zone-compliance              │  │  • Persona overrides                │
-│  • input-physics                │  │  • Remote soul vibes                │
-└─────────────────────────────────┘  └────────────────────────────────────┘
-```
+**Version:** 5.0
+**Codename:** The Lucid Flow
+**Generated:** 2026-01-08
+**Sources:** PRD v5.0, SDD v5.0
 
 ---
 
-## MVP Definition
+## Sprint Overview
 
-**MVP Scope (Sprints 1-3):**
-- Version coherence (single source of truth)
-- SigilProvider context
-- useSigilMutation with auto-resolved physics
-- ESLint plugin with 3 rules
+### Team Structure
+- **Agent:** Claude (AI implementation)
+- **Human:** @zksoju (review, approval, direction)
 
-**Post-MVP (Sprints 4-6):**
-- Vocabulary layer with 10 terms
-- Physics timing mapping
-- Remote soul for marketing vibes
-- /observe skill implementation
-- Deprecated code cleanup
-- Migration guide
+### Sprint Duration
+- **Cycle length:** 1 week per sprint
+- **Total sprints:** 8 sprints (MVP complete)
+- **Methodology:** Cycles (Linear Method)
+
+### MVP Definition
+
+The MVP delivers:
+1. Kernel layer (constitution, fidelity, workflow, vocabulary)
+2. Core runtime (SigilProvider, useSigilMutation with simulation)
+3. Live grep discovery (no cache)
+4. JIT polish workflow
+5. Basic governance (justification logging)
+
+Post-MVP:
+- Component context population
+- Codebase pattern extraction
+- Knowledge base curation
+- Amendment protocol UI
 
 ---
 
-## Sprint 1: Foundation — Version Coherence & Provider
+## Sprint Breakdown
 
-**Goal:** Establish single source of version truth and create SigilProvider context foundation.
-**Status:** COMPLETED
-**Completed:** 2026-01-07
-**Report:** loa-grimoire/a2a/v4.1-sprint-1/reviewer.md
+---
+
+## Sprint 1: Foundation & Kernel Setup
+
+**Goal:** Establish directory structure and kernel YAML files
+
+**Duration:** 1 week
 
 ### Tasks
 
-#### v4.1-S1-T1: Version Coherence Audit
-**Description:** Audit all version strings in codebase and consolidate to single source.
+#### S1-T1: Directory Structure Creation
+**Description:** Create the v5 sigil-mark directory structure per SDD spec.
 
 **Acceptance Criteria:**
-- [x] `.sigil-version.json` created as single source of truth with version `4.1.0`
-- [x] `.sigilrc.yaml` version updated to `4.1.0`
-- [x] All hook files version comments removed or updated
-- [x] All process files updated to v4.1
-- [x] `sigil-mark/package.json` version updated to `4.1.0`
-- [ ] `grep -r "v2\|v3\|3\.0\|2\.0" .` returns 0 results (excluding changelogs, archives) - **Deferred to Sprint 6**
+- [x] `sigil-mark/kernel/` exists with 4 empty YAML files
+- [x] `sigil-mark/skills/` exists with 6 empty YAML stubs
+- [x] `sigil-mark/components/` structure created
+- [x] `sigil-mark/codebase/` structure created
+- [x] `sigil-mark/knowledge/` structure created
+- [x] `sigil-mark/governance/` with justifications.log
+- [x] `sigil-mark/hooks/` exists
+- [x] `sigil-mark/providers/` exists
+- [x] `sigil-mark/layouts/` exists
 
-**Files to modify:**
-- `.sigil-version.json` (create)
-- `.sigilrc.yaml`
-- `sigil-mark/core/*.ts`
-- `sigil-mark/process/*.ts`
-- `sigil-mark/package.json`
-
-**Testing:** Version coherence verification script
+**Dependencies:** None
+**Effort:** Small
 
 ---
 
-#### v4.1-S1-T2: Create SigilProvider Context
-**Description:** Create the main context provider that will hold zone, persona, and remote soul state.
+#### S1-T2: Constitution YAML
+**Description:** Create `kernel/constitution.yaml` with data physics binding.
 
 **Acceptance Criteria:**
-- [x] `SigilProvider` component created at `sigil-mark/providers/sigil-provider.tsx`
-- [x] `ZoneContext` with `current` and `setZone`
-- [x] `PersonaContext` with `current`, `setPersona`, `traits`
-- [x] `RemoteSoulContext` placeholder (stub for Sprint 5)
-- [x] Export hooks: `useZoneContext`, `usePersonaContext`, `useRemoteSoulContext`
-- [x] TypeScript types for all context values
-- [x] `SigilProviderProps` accepts `persona`, `remoteConfigKey`, `localVibes`
+- [x] Financial types mapped to server-tick physics
+- [x] Health types mapped to server-tick physics
+- [x] Collaborative types mapped to crdt physics
+- [x] Local types mapped to local-first physics
+- [x] Physics profiles defined with timing, states, hooks
+- [x] Risk hierarchy defined
+- [x] Resolution rule documented
 
-**Files to create:**
+**Dependencies:** S1-T1
+**Effort:** Medium
+
+---
+
+#### S1-T3: Fidelity YAML
+**Description:** Create `kernel/fidelity.yaml` with visual/ergonomic constraints.
+
+**Acceptance Criteria:**
+- [x] Visual constraints: animation, gradients, shadows, borders, typography
+- [x] Ergonomic constraints: input_latency, hitbox, focus_ring, keyboard_support
+- [x] Interaction budgets defined
+- [x] Cohesion rules with variance thresholds
+- [x] Enforcement levels (error/warning) specified
+
+**Dependencies:** S1-T1
+**Effort:** Medium
+
+---
+
+#### S1-T4: Vocabulary YAML
+**Description:** Create `kernel/vocabulary.yaml` with term→physics mapping.
+
+**Acceptance Criteria:**
+- [x] Financial terms mapped (claim, deposit, withdraw, transfer, swap, approve)
+- [x] Destructive terms mapped (delete, cancel)
+- [x] Collaborative terms mapped (edit, comment, assign)
+- [x] Local terms mapped (toggle, filter, sort, save)
+- [x] Motion profiles defined (instant, snappy, warm, deliberate, reassuring, celebratory)
+- [x] Lookup protocol documented
+
+**Dependencies:** S1-T1
+**Effort:** Medium
+
+---
+
+#### S1-T5: Workflow YAML
+**Description:** Create `kernel/workflow.yaml` with methodology rules.
+
+**Acceptance Criteria:**
+- [x] Cycles method defined with rules (no_backlogs, no_story_points, hill_charts)
+- [x] Sprints method defined as alternative
+- [x] Kanban method defined as alternative
+- [x] Terminology translations specified
+- [x] Agent behavior rules documented
+- [x] Governance integration configured
+
+**Dependencies:** S1-T1
+**Effort:** Small
+
+---
+
+### Sprint 1 Deliverables
+- Complete sigil-mark directory structure
+- All 4 kernel YAML files populated
+- Ready for runtime implementation
+
+---
+
+## Sprint 2: Runtime Provider & Context
+
+**Goal:** Implement SigilProvider and zone context system
+
+**Duration:** 1 week
+
+### Tasks
+
+#### S2-T1: SigilProvider Implementation
+**Description:** Create the React context provider for zones and personas.
+
+**Acceptance Criteria:**
+- [x] `SigilContext` created with zone, persona, vibes
+- [x] `SigilProvider` component accepts zone, persona, vibes props
+- [x] Context memoized correctly
+- [x] Default values: zone='standard', persona='default'
+- [x] TypeScript types exported
+
+**Dependencies:** Sprint 1 complete
+**Effort:** Medium
+
+---
+
+#### S2-T2: Zone Context Hooks
+**Description:** Create hooks for accessing zone context.
+
+**Acceptance Criteria:**
+- [x] `useSigilZoneContext()` returns current zone
+- [x] `useSigilPersonaContext()` returns current persona
+- [x] `useSigilVibes()` returns vibes object
+- [x] All hooks handle missing provider gracefully
+
+**Dependencies:** S2-T1
+**Effort:** Small
+
+---
+
+#### S2-T3: CriticalZone Layout
+**Description:** Create zone layout component that forces critical zone.
+
+**Acceptance Criteria:**
+- [x] `CriticalZone` component overrides parent zone to 'critical'
+- [x] Renders `data-sigil-zone="critical"` attribute
+- [x] Accepts `financial` prop for data-sigil-financial attribute
+- [x] Children inherit critical zone context
+- [x] TypeScript types defined
+
+**Dependencies:** S2-T1
+**Effort:** Small
+
+---
+
+#### S2-T4: GlassLayout Component
+**Description:** Create zone layout for exploratory/marketing areas.
+
+**Acceptance Criteria:**
+- [x] `GlassLayout` component overrides zone to 'glass'
+- [x] Renders `data-sigil-zone="glass"` attribute
+- [x] Children inherit glass zone context
+
+**Dependencies:** S2-T1
+**Effort:** Small
+
+---
+
+#### S2-T5: MachineryLayout Component
+**Description:** Create zone layout for admin/power-user areas.
+
+**Acceptance Criteria:**
+- [x] `MachineryLayout` component overrides zone to 'machinery'
+- [x] Renders `data-sigil-zone="machinery"` attribute
+- [x] Children inherit machinery zone context
+
+**Dependencies:** S2-T1
+**Effort:** Small
+
+---
+
+#### S2-T6: Provider Tests
+**Description:** Test suite for provider and zone components.
+
+**Acceptance Criteria:**
+- [x] Test context propagation
+- [x] Test zone override nesting
+- [x] Test default values
+- [x] Test TypeScript types
+
+**Dependencies:** S2-T1 through S2-T5
+**Effort:** Medium
+
+---
+
+### Sprint 2 Deliverables
 - `sigil-mark/providers/sigil-provider.tsx`
-- `sigil-mark/providers/index.ts`
-
-**Testing:** Unit tests for SigilProvider context
-
----
-
-#### v4.1-S1-T3: Update .sigilrc.yaml Schema for Persona Overrides
-**Description:** Extend zone schema to support `default_physics` and `persona_overrides`.
-
-**Acceptance Criteria:**
-- [x] Zones support `default_physics` block with `sync`, `timing`, `motion`
-- [x] Zones support `persona_overrides` object keyed by persona name
-- [x] Each persona override can specify `timing`, `motion`, `show_help`
-- [x] At least `critical` and `marketing` zones have overrides defined
-- [x] Example overrides: `newcomer` (slower, reassuring) and `power_user` (faster, snappy)
-- [x] Schema validated with existing readers
-- [ ] CLAUDE.md updated with new schema documentation - **Deferred to Sprint 6**
-
-**Files to modify:**
-- `.sigilrc.yaml`
-- `CLAUDE.md`
-
-**Testing:** Schema validation tests
+- `sigil-mark/layouts/critical-zone.tsx`
+- `sigil-mark/layouts/glass-layout.tsx`
+- `sigil-mark/layouts/machinery-layout.tsx`
+- Test coverage for provider layer
 
 ---
 
-#### v4.1-S1-T4: Zone Layout Wrapper Updates
-**Description:** Update existing layout wrappers to set zone context.
+## Sprint 3: useSigilMutation Core
 
-**Acceptance Criteria:**
-- [x] `CriticalZone` layout sets zone context on mount via `useZoneContext().setZone('critical')`
-- [x] Zone context cleared on unmount (return to null)
-- [x] Data attributes added for debugging (`data-sigil-zone="critical"`)
-- [x] Additional layouts updated if present (marketing, admin)
+**Goal:** Implement the type-driven physics hook
 
-**Files to modify:**
-- `sigil-mark/layouts/critical-zone.tsx` (or equivalent)
-
-**Dependencies:** v4.1-S1-T2 (SigilProvider must exist)
-
-**Testing:** Integration test for zone context setting/clearing
-
----
-
-### Sprint 1 Dependencies
-- None (foundation sprint)
-
-### Sprint 1 Testing Requirements
-- Unit tests for SigilProvider context
-- Integration test for zone context setting/clearing
-- Version coherence verification script
-
----
-
-## Sprint 2: Foundation — useSigilMutation Hook
-
-**Goal:** Create the zone+persona-aware mutation hook that auto-resolves physics.
-**Status:** COMPLETED
-**Completed:** 2026-01-07
-**Report:** loa-grimoire/a2a/v4.1-sprint-2/reviewer.md
+**Duration:** 1 week
 
 ### Tasks
 
-#### v4.1-S2-T1: Physics Resolution Algorithm
-**Description:** Implement the core algorithm that resolves physics from zone + persona + remote soul.
+#### S3-T1: Physics Types & Interfaces
+**Description:** Define TypeScript types for physics system.
 
 **Acceptance Criteria:**
-- [x] `resolvePhysics(zone, persona, remoteSoul)` function implemented
-- [x] Returns `ResolvedPhysics` with `sync`, `timing`, `motion`, `easing`, `disabled_while_pending`
-- [x] Zone base physics loaded from cached config
-- [x] Persona overrides applied when present in zone config
-- [x] Remote vibe modifiers applied (placeholder for Sprint 5)
-- [x] `getMotionTiming(motion)` returns concrete ms value
-- [x] `getMotionEasing(motion)` returns easing string
-- [x] Default motion mappings: instant=0, snappy=150, warm=300, deliberate=800, reassuring=1200, celebratory=1200
+- [x] `SigilState` type: idle | simulating | confirming | committing | done | error
+- [x] `PhysicsClass` type: server-tick | crdt | local-first
+- [x] `SimulationPreview<T>` interface with predictedResult, estimatedDuration, warnings, fees
+- [x] `ResolvedPhysics` interface with class, timing, requires, forbidden
+- [x] `UseSigilMutationOptions<TData, TVariables>` interface
+- [x] `UseSigilMutationResult<TData, TVariables>` interface
 
-**Files to create:**
-- `sigil-mark/hooks/physics-resolver.ts`
-
-**Testing:** Unit tests for resolvePhysics
+**Dependencies:** Sprint 2 complete
+**Effort:** Medium
 
 ---
 
-#### v4.1-S2-T2: useSigilMutation Hook Implementation
-**Description:** Create the main hook that replaces `useCriticalAction`.
+#### S3-T2: Physics Resolution Function
+**Description:** Implement physics resolution from zone context.
 
 **Acceptance Criteria:**
-- [x] Hook accepts `SigilMutationConfig<TData, TVariables>` with:
-  - `mutation: (variables) => Promise<TData>`
-  - `zone?: string` (optional override)
-  - `persona?: string` (optional override)
-  - `unsafe_override_physics?: Partial<ResolvedPhysics>`
-  - `unsafe_override_reason?: string`
-  - `onSuccess?: (data) => void`
-  - `onError?: (error) => void`
-- [x] Auto-resolves zone from context (explicit > layout > 'default')
-- [x] Auto-resolves persona from context (explicit > context > 'power_user')
-- [x] Returns `SigilMutationResult<TData, TVariables>` with:
-  - `status`: 'idle' | 'pending' | 'confirmed' | 'failed'
-  - `data`, `error`
-  - `physics`: resolved physics
-  - `disabled`: true when pessimistic sync and pending
-  - `isPending`: boolean
-  - `style`: { '--sigil-duration', '--sigil-easing' }
-  - `execute`, `reset`
-- [x] Console warning logged when `unsafe_override_physics` used
+- [x] `resolvePhysics(context, override)` function
+- [x] Maps 'critical' zone → server-tick
+- [x] Maps 'machinery'/'admin' zone → local-first
+- [x] Maps default zone → crdt
+- [x] Applies overrides with warning if no reason provided
+- [x] Returns complete `ResolvedPhysics` object
 
-**Files to create:**
-- `sigil-mark/hooks/use-sigil-mutation.ts`
-- `sigil-mark/hooks/index.ts` (update exports)
-
-**Dependencies:** v4.1-S2-T1 (physics resolver)
-
-**Testing:** Unit tests for useSigilMutation
+**Dependencies:** S3-T1
+**Effort:** Medium
 
 ---
 
-#### v4.1-S2-T3: useCriticalAction Deprecation Warning
-**Description:** Add deprecation warning to existing hook pointing to new hook.
+#### S3-T3: State Machine Implementation
+**Description:** Implement the mutation state machine.
 
 **Acceptance Criteria:**
-- [x] `useCriticalAction` logs deprecation warning on first use
-- [x] Warning message: "useCriticalAction is deprecated. Use useSigilMutation instead."
-- [x] Warning includes migration example
-- [x] Warning only logs once per session (not every render)
-- [x] Hook continues to work for backward compatibility
+- [x] State transitions: idle→simulating→confirming→committing→done
+- [x] Error state reachable from simulating/committing
+- [x] Reset returns to idle
+- [x] State is reactive (useState)
 
-**Files to modify:**
-- `sigil-mark/core/use-critical-action.ts`
-
-**Testing:** Deprecation warning test
+**Dependencies:** S3-T1
+**Effort:** Medium
 
 ---
 
-#### v4.1-S2-T4: useSigilMutation Unit Tests
-**Description:** Comprehensive test coverage for the new hook.
+#### S3-T4: Simulate Function
+**Description:** Implement simulation flow for server-tick physics.
 
 **Acceptance Criteria:**
-- [x] Test: Auto-resolves zone from context
-- [x] Test: Auto-resolves persona from context
-- [x] Test: Applies persona overrides correctly
-- [x] Test: Returns correct CSS variables
-- [x] Test: `disabled` true when pessimistic sync and pending
-- [x] Test: Override with `unsafe_` prefix works
-- [x] Test: Console warning logged on override
-- [x] Test: Mutation lifecycle (idle -> pending -> confirmed/failed)
+- [x] `simulate(variables)` transitions to 'simulating' state
+- [x] Calls user-provided simulate function if available
+- [x] Creates default preview if no simulate function
+- [x] Transitions to 'confirming' on success
+- [x] Transitions to 'error' on failure
+- [x] Stores pending variables for confirm step
 
-**Files to create:**
-- `sigil-mark/hooks/__tests__/use-sigil-mutation.test.ts`
-
-**Testing:** Full test coverage
+**Dependencies:** S3-T3
+**Effort:** Medium
 
 ---
 
-### Sprint 2 Dependencies
-- Sprint 1 (SigilProvider, version coherence)
+#### S3-T5: Confirm Function
+**Description:** Implement confirmation step after simulation.
 
-### Sprint 2 Testing Requirements
-- Unit tests for `resolvePhysics`
-- Unit tests for `useSigilMutation`
-- Integration test with SigilProvider
+**Acceptance Criteria:**
+- [x] `confirm()` only works in 'confirming' state
+- [x] Transitions to 'committing' state
+- [x] Executes mutation with stored variables
+- [x] Transitions to 'done' on success
+- [x] Transitions to 'error' on failure
+- [x] Calls onSuccess/onError callbacks
+
+**Dependencies:** S3-T4
+**Effort:** Medium
 
 ---
 
-## Sprint 3: Foundation — ESLint Plugin
+#### S3-T6: Execute Function
+**Description:** Implement direct execution (bypasses simulation).
 
-**Goal:** Create eslint-plugin-sigil with three enforcement rules.
-**Status:** COMPLETED
-**Completed:** 2026-01-07
-**Report:** loa-grimoire/a2a/v4.1-sprint-3/reviewer.md
+**Acceptance Criteria:**
+- [x] `execute(variables)` for non-server-tick physics
+- [x] Logs warning if used on server-tick physics
+- [x] Transitions through committing→done/error
+- [x] Calls mutation directly
+
+**Dependencies:** S3-T3
+**Effort:** Small
+
+---
+
+#### S3-T7: Computed UI State
+**Description:** Implement computed properties for UI binding.
+
+**Acceptance Criteria:**
+- [x] `disabled` = not idle and not confirming
+- [x] `isPending` = state is 'committing'
+- [x] `isSimulating` = state is 'simulating'
+- [x] `isConfirming` = state is 'confirming'
+- [x] `cssVars` object with --sigil-duration, --sigil-easing
+
+**Dependencies:** S3-T3
+**Effort:** Small
+
+---
+
+#### S3-T8: Hook Assembly & Export
+**Description:** Assemble complete useSigilMutation hook.
+
+**Acceptance Criteria:**
+- [x] Hook uses SigilContext for zone/persona
+- [x] Returns complete result object
+- [x] Exported from sigil-mark/hooks/
+- [x] JSDoc documented with @sigil-tier gold
+
+**Dependencies:** S3-T1 through S3-T7
+**Effort:** Medium
+
+---
+
+### Sprint 3 Deliverables
+- `sigil-mark/hooks/use-sigil-mutation.ts` (complete)
+- `sigil-mark/types/index.ts` (physics types)
+- Full simulation flow working
+
+---
+
+## Sprint 4: Live Grep Discovery
+
+**Goal:** Implement Scanning Sanctuary skill with ripgrep
+
+**Duration:** 1 week
 
 ### Tasks
 
-#### v4.1-S3-T1: ESLint Plugin Scaffold
-**Description:** Create the plugin package structure with config loader.
+#### S4-T1: JSDoc Pragma Specification
+**Description:** Document the JSDoc pragma system for component discovery.
 
 **Acceptance Criteria:**
-- [x] `packages/eslint-plugin-sigil/` directory created
-- [x] `package.json` with dependencies:
-  - `@typescript-eslint/utils: ^6.0.0`
-  - `minimatch: ^9.0.0`
-  - `yaml: ^2.4.0`
-- [x] `tsconfig.json` configured for ESLint plugin development
-- [x] `src/index.ts` plugin entry point exporting rules and configs
-- [x] `src/config-loader.ts` loads and caches `.sigilrc.yaml`
-- [x] `src/zone-resolver.ts` resolves file path to zone using minimatch
-- [x] Build script with `tsup` in package.json
+- [x] `@sigil-tier` pragma: gold | silver | bronze | draft
+- [x] `@sigil-zone` pragma: critical | glass | machinery | standard
+- [x] `@sigil-data-type` pragma: type name for physics resolution
+- [x] Documented in skills/scanning-sanctuary.yaml
 
-**Files to create:**
-- `packages/eslint-plugin-sigil/package.json`
-- `packages/eslint-plugin-sigil/tsconfig.json`
-- `packages/eslint-plugin-sigil/src/index.ts`
-- `packages/eslint-plugin-sigil/src/config-loader.ts`
-- `packages/eslint-plugin-sigil/src/zone-resolver.ts`
-
-**Testing:** Config loading tests
+**Dependencies:** Sprint 1 complete
+**Effort:** Small
 
 ---
 
-#### v4.1-S3-T2: enforce-tokens Rule
-**Description:** Rule that disallows arbitrary Tailwind values.
+#### S4-T2: Scanning Sanctuary Skill Definition
+**Description:** Create skill YAML with ripgrep patterns.
 
 **Acceptance Criteria:**
-- [x] Detects arbitrary values: `[13px]`, `[2rem]`, `[#ff0000]`, etc. in className
-- [x] Reports error with messageId `noMagicNumber`
-- [x] Message includes the detected value
-- [x] Handles template literals in className (basic support)
-- [x] Handles string concatenation in className (basic support)
+- [x] Skill definition in `skills/scanning-sanctuary.yaml`
+- [x] ripgrep patterns for tier lookup
+- [x] ripgrep patterns for zone lookup
+- [x] ripgrep patterns for data-type lookup
+- [x] Performance target: < 50ms documented
 
-**Examples:**
-```javascript
-// ✗ Error: Use token value instead of arbitrary value: [13px]
-<div className="gap-[13px]">
-
-// ✓ OK
-<div className="gap-2">
-```
-
-**Files to create:**
-- `packages/eslint-plugin-sigil/src/rules/enforce-tokens.ts`
-- `packages/eslint-plugin-sigil/tests/enforce-tokens.test.ts`
-
-**Testing:** Unit tests for various patterns
+**Dependencies:** S4-T1
+**Effort:** Small
 
 ---
 
-#### v4.1-S3-T3: zone-compliance Rule
-**Description:** Rule that enforces zone-appropriate timing values.
+#### S4-T3: Component Lookup Utility
+**Description:** Create utility function for component discovery.
 
 **Acceptance Criteria:**
-- [x] Detects `duration` property in objects (framer-motion transitions)
-- [x] Converts seconds to milliseconds (framer uses seconds)
-- [x] Detects `duration-N` Tailwind classes in className
-- [x] Reports warning if timing too fast for zone's motion type
-- [x] Reports warning if timing too slow for zone's motion type
-- [x] Loads zone constraints from `.sigilrc.yaml` via config-loader
-- [x] Motion → timing constraints mapping:
-  - instant: 0-50ms
-  - snappy: 100-200ms
-  - warm: 200-400ms
-  - deliberate: 500-1000ms
-  - reassuring: 800-1500ms
+- [x] `findComponentsByTier(tier)` function
+- [x] `findComponentsByZone(zone)` function
+- [x] `findComponentsByDataType(type)` function
+- [x] Uses ripgrep via shell execution
+- [x] Returns file paths array
+- [x] Performance: < 50ms on typical codebase
 
-**Examples:**
-```javascript
-// In critical zone file (motion: deliberate):
-// ✗ Warning: Duration 200ms is too fast for critical zone (min: 500ms)
-<motion.div animate={{ transition: { duration: 0.2 } }}>
-
-// ✓ OK
-<motion.div animate={{ transition: { duration: 0.8 } }}>
-```
-
-**Files to create:**
-- `packages/eslint-plugin-sigil/src/rules/zone-compliance.ts`
-- `packages/eslint-plugin-sigil/tests/zone-compliance.test.ts`
-
-**Testing:** Unit tests for critical and marketing zones
+**Dependencies:** S4-T2
+**Effort:** Medium
 
 ---
 
-#### v4.1-S3-T4: input-physics Rule
-**Description:** Rule that enforces keyboard navigation in machinery/admin zones.
+#### S4-T4: Remove sigil.map Cache
+**Description:** Delete any existing cache infrastructure.
 
 **Acceptance Criteria:**
-- [x] Detects elements with `onClick` but no `onKeyDown`
-- [x] Detects elements with `onClick` but no `tabIndex`
-- [x] Only enforces in `admin` zone (configurable)
-- [x] Exempts native interactive elements: button, a, input, select, textarea
-- [x] Reports warning with zone context in message
+- [x] `sigil.map` file deleted if exists
+- [x] `.sigil-cache` directory deleted if exists
+- [x] Any cache-related code removed
+- [x] Migration note added to MIGRATION.md
 
-**Examples:**
-```javascript
-// In admin zone:
-// ✗ Warning: Interactive element should have onKeyDown and tabIndex in admin zone
-<div onClick={handleClick}>
-
-// ✓ OK
-<div onClick={handleClick} onKeyDown={handleKey} tabIndex={0}>
-
-// ✓ OK (native interactive)
-<button onClick={handleClick}>
-```
-
-**Files to create:**
-- `packages/eslint-plugin-sigil/src/rules/input-physics.ts`
-- `packages/eslint-plugin-sigil/tests/input-physics.test.ts`
-
-**Testing:** Unit tests for various element types
+**Dependencies:** S4-T3
+**Effort:** Small
 
 ---
 
-#### v4.1-S3-T5: Recommended Config Preset
-**Description:** Create preset configuration for easy adoption.
+#### S4-T5: Agent Integration Documentation
+**Description:** Document how agent uses Scanning Sanctuary.
 
 **Acceptance Criteria:**
-- [x] `configs/recommended.ts` exports flat ESLint config
-- [x] `sigil/enforce-tokens` set to `error`
-- [x] `sigil/zone-compliance` set to `warn`
-- [x] `sigil/input-physics` set to `warn`
-- [ ] Integration documented in CLAUDE.md - **Deferred to Sprint 6**
+- [x] CLAUDE.md updated with scanning instructions
+- [x] Example ripgrep commands documented
+- [x] "Never use cached index" rule emphasized
+- [x] Fallback behavior documented
 
-**Usage:**
-```javascript
-// eslint.config.js
-import sigil from 'eslint-plugin-sigil';
-
-export default [
-  sigil.configs.recommended,
-];
-```
-
-**Files to create:**
-- `packages/eslint-plugin-sigil/src/configs/recommended.ts`
-
-**Files to modify:**
-- `CLAUDE.md` (add ESLint integration section)
-
-**Testing:** Config integration test
+**Dependencies:** S4-T2
+**Effort:** Small
 
 ---
 
-### Sprint 3 Dependencies
-- Sprint 1 (.sigilrc.yaml schema updates for zone motion)
-
-### Sprint 3 Testing Requirements
-- Unit tests for each rule
-- Integration test with real codebase files
-- Test config loading from .sigilrc.yaml
+### Sprint 4 Deliverables
+- `sigil-mark/skills/scanning-sanctuary.yaml`
+- Component lookup utilities
+- Cache infrastructure removed
+- Agent documentation updated
 
 ---
 
-## Sprint 4: Context — Vocabulary & Physics Timing
+## Sprint 5: Analyzing Data Risk Skill
 
-**Goal:** Add vocabulary layer and concrete physics timing mapping.
-**Status:** COMPLETED
-**Completed:** 2026-01-07
-**Report:** loa-grimoire/a2a/v4.1-sprint-4/reviewer.md
+**Goal:** Implement type-to-physics resolution skill
+
+**Duration:** 1 week
 
 ### Tasks
 
-#### v4.1-S4-T1: Physics Timing YAML
-**Description:** Create physics.yaml with motion name -> timing mapping.
+#### S5-T1: Skill Definition YAML
+**Description:** Create Analyzing Data Risk skill definition.
 
 **Acceptance Criteria:**
-- [x] `sigil-mark/kernel/physics.yaml` created
-- [x] All motion names defined: `instant`, `snappy`, `warm`, `deliberate`, `reassuring`, `celebratory`, `reduced`
-- [x] Each motion has:
-  - `duration`: value (or min/max/default for ranges)
-  - `unit`: ms
-  - `easing`: CSS easing string
-  - `description`: human-readable explanation
-- [x] Sync strategies defined: `pessimistic`, `optimistic`, `hybrid`
-- [x] JSON Schema at `sigil-mark/kernel/schemas/physics.schema.json`
+- [x] Skill YAML in `skills/analyzing-data-risk.yaml`
+- [x] Type extraction patterns documented
+- [x] Constitution lookup process defined
+- [x] Risk hierarchy applied
+- [x] Error handling for unknown types
 
-**Files created:**
-- `sigil-mark/kernel/physics.yaml`
-- `sigil-mark/kernel/schemas/physics.schema.json`
+**Dependencies:** Sprint 1 kernel complete
+**Effort:** Medium
 
 ---
 
-#### v4.1-S4-T2: Physics Reader
-**Description:** Create/update reader to load physics.yaml for agent and hook use.
+#### S5-T2: Type Extraction Parser
+**Description:** Parse TypeScript function signatures for types.
 
 **Acceptance Criteria:**
-- [x] `physics-reader.ts` loads and parses physics.yaml
-- [x] `getMotionConfig(motion)` returns full motion config
-- [x] `getMotionTiming(motion)` returns concrete ms value (uses default for ranges)
-- [x] `getMotionEasing(motion)` returns easing string
-- [x] `getMotionConstraints(motion)` returns { min, max } for zone-compliance rule
-- [x] Results cached for performance
-- [x] Fallback to hardcoded defaults if physics.yaml missing
+- [x] Extract parameter types from function signature
+- [x] Extract return type
+- [x] Extract generic parameters
+- [x] Handle import context for type lookup
+- [x] Return array of type names
 
-**Files created:**
-- `sigil-mark/process/physics-reader.ts`
-
-**Files modified:**
-- `sigil-mark/hooks/physics-resolver.ts` (added getMotionConstraints export)
-- `sigil-mark/process/index.ts` (added physics exports)
+**Dependencies:** S5-T1
+**Effort:** Large
 
 ---
 
-#### v4.1-S4-T3: Vocabulary YAML with 10 Terms
-**Description:** Update vocabulary.yaml with 10 product term definitions.
+#### S5-T3: Constitution Lookup
+**Description:** Map extracted types to physics via constitution.
 
 **Acceptance Criteria:**
-- [x] `sigil-mark/vocabulary/vocabulary.yaml` updated with 10 core terms
-- [x] 10 terms defined: `pot`, `vault`, `claim`, `deposit`, `withdraw`, `boost`, `stake`, `unstake`, `harvest`, `connect`
-- [x] Each term has:
-  - `engineering_name`: backend/code name
-  - `user_facing`: display name
-  - `mental_model`: user's mental model description
-  - `recommended`: { material, motion, tone }
-  - `zones`: where this term is typically used
-  - `last_refined`: null (updated by /refine)
-- [x] JSON Schema updated at `sigil-mark/vocabulary/schemas/vocabulary.schema.json`
+- [x] Load constitution.yaml
+- [x] Lookup type in data_physics categories
+- [x] Return physics class, requires, forbidden
+- [x] Handle unknown types (ask user)
 
-**Files modified:**
-- `sigil-mark/vocabulary/vocabulary.yaml`
-- `sigil-mark/vocabulary/schemas/vocabulary.schema.json`
+**Dependencies:** S5-T2, Sprint 1 kernel
+**Effort:** Medium
 
 ---
 
-#### v4.1-S4-T4: Vocabulary Reader
-**Description:** Update reader for vocabulary.yaml with new functions.
+#### S5-T4: Risk Hierarchy Resolution
+**Description:** Apply highest-risk physics when multiple types detected.
 
 **Acceptance Criteria:**
-- [x] `getTerm(termId)` returns full term definition (existing)
-- [x] `getRecommendedPhysics(termId)` returns { material, motion, tone }
-- [x] `findByEngineeringName(name)` reverse lookup from code name
-- [x] `getAllTerms()` returns all terms for gap detection
-- [x] Missing terms return null (for gap detection)
+- [x] server-tick > crdt > local-first hierarchy
+- [x] When Money + Task → use server-tick
+- [x] Log when multiple high-risk types detected
+- [x] Return single resolved physics
 
-**Files modified:**
-- `sigil-mark/process/vocabulary-reader.ts`
-- `sigil-mark/process/index.ts` (added new exports)
+**Dependencies:** S5-T3
+**Effort:** Small
 
 ---
 
-#### v4.1-S4-T5: /craft Vocabulary Integration
-**Description:** Update crafting-guidance skill to reference vocabulary.
+#### S5-T5: Integration with useSigilMutation
+**Description:** Connect data risk analysis to hook.
 
 **Acceptance Criteria:**
-- [x] `/craft` loads vocabulary when generating (documented in SKILL.md)
-- [x] If component name matches a vocabulary term, uses term's recommended physics
-- [x] Gap detection surfaces undefined terms at end of output
-- [x] Suggests `/refine --vocab <term>` for new terms
-- [x] SKILL.md updated with vocabulary section
+- [x] Hook can receive data type hints
+- [x] Physics resolution considers data type
+- [x] Data type overrides zone-based defaults
+- [x] Warning if data type conflicts with zone
 
-**Files modified:**
-- `.claude/skills/crafting-guidance/SKILL.md`
-
----
-
-### Sprint 4 Dependencies
-- Sprint 2 (physics resolver for hook integration) - SATISFIED
-
-### Sprint 4 Testing Requirements
-- [x] Schema validation (physics.schema.json, vocabulary.schema.json)
-- [x] Integration with /craft skill (documented)
+**Dependencies:** Sprint 3, S5-T4
+**Effort:** Medium
 
 ---
 
-## Sprint 5: Marketing — Remote Soul & /observe Skill
+### Sprint 5 Deliverables
+- `sigil-mark/skills/analyzing-data-risk.yaml`
+- Type extraction utilities
+- Constitution lookup integrated with hook
+- Data type hints working in useSigilMutation
 
-**Goal:** Enable marketing-controlled vibes and complete visual feedback loop.
-**Status:** COMPLETED
-**Completed:** 2026-01-07
-**Report:** loa-grimoire/a2a/v4.1-sprint-5/reviewer.md
+---
+
+## Sprint 6: JIT Polish Workflow
+
+**Goal:** Implement Polishing Code skill with on-demand standardization
+
+**Duration:** 1 week
 
 ### Tasks
 
-#### v4.1-S5-T1: Remote Soul Schema
-**Description:** Define the boundary between kernel (immutable) and vibe (remote).
+#### S6-T1: Skill Definition YAML
+**Description:** Create Polishing Code skill definition.
 
 **Acceptance Criteria:**
-- [x] `sigil-mark/remote-soul.yaml` created
-- [x] `kernel_locked` list defines engineering-controlled keys: physics, sync, protected_zones
-- [x] `vibe_remote` list defines marketing-controlled keys:
-  - essence.seasonal_theme
-  - landing.hero_energy
-  - onboarding.warmth
-  - celebration.intensity
-- [x] `integration` block for provider config (provider, fallback, refresh)
-- [x] Clear documentation comments explaining boundary
+- [x] Skill YAML in `skills/polishing-code.yaml`
+- [x] Triggers: /polish, pre-commit, CI
+- [x] Process: scan → diff → approve → apply
+- [x] Never auto-fix on save (documented)
 
-**Files created:**
-- `sigil-mark/remote-soul.yaml`
-
-**Testing:** Schema review
+**Dependencies:** Sprint 1
+**Effort:** Small
 
 ---
 
-#### v4.1-S5-T2: Remote Soul Adapter Implementation
-**Description:** Create the adapter for LaunchDarkly/Statsig integration.
+#### S6-T2: Violation Scanner
+**Description:** Scan files for taste violations.
 
 **Acceptance Criteria:**
-- [x] `RemoteConfigAdapter` interface defined with `subscribe()` and `getVibes()`
-- [x] `LaunchDarklyAdapter` implements interface
-- [x] `useRemoteSoul(configKey, fallback)` hook created
-- [x] 100ms timeout with local fallback (NFR-3)
-- [x] Vibes merged with local defaults
-- [x] Stub for Statsig adapter (interface only, no implementation)
-- [x] `VibeConfig` type defined with: seasonal_theme, hero_energy, warmth_level, celebration_intensity, timing_modifier
+- [x] Check fidelity constraints (animation, shadows, etc.)
+- [x] Check constitution requirements
+- [x] Return list of violations with file:line references
+- [x] Severity levels: error, warning, info
 
-**Files created:**
-- `sigil-mark/providers/remote-soul.ts`
-
-**Files modified:**
-- `sigil-mark/providers/sigil-provider.tsx` (integrate RemoteSoulContext)
-- `sigil-mark/providers/index.ts` (export remote soul utilities)
-
-**Dependencies:** Sprint 1 (SigilProvider stub) - SATISFIED
-
-**Testing:** Type safety via TypeScript
+**Dependencies:** S6-T1, Sprint 1 kernel
+**Effort:** Large
 
 ---
 
-#### v4.1-S5-T3: useSigilMutation Remote Vibe Integration
-**Description:** Connect remote vibes to physics resolution.
+#### S6-T3: Diff Generator
+**Description:** Generate fix diffs for violations.
 
 **Acceptance Criteria:**
-- [x] `resolvePhysics` receives remote soul state
-- [x] `timing_modifier` from vibes applied as multiplier to timing
-- [x] Other vibe keys available in return value for component use
-- [x] Graceful fallback when remote unavailable (uses local timing)
+- [x] For each violation, generate suggested fix
+- [x] Output unified diff format
+- [x] Show before/after context
+- [x] Group by file
 
-**Files modified:**
-- `sigil-mark/hooks/physics-resolver.ts` (timing_modifier, vibes in ResolvedPhysics)
-- `sigil-mark/hooks/use-sigil-mutation.ts` (documentation updates)
-
-**Dependencies:** v4.1-S5-T2 - SATISFIED
-
-**Testing:** Type safety via TypeScript
+**Dependencies:** S6-T2
+**Effort:** Medium
 
 ---
 
-#### v4.1-S5-T4: /observe Skill Implementation
-**Description:** Create the observing-feedback skill for visual feedback loop.
+#### S6-T4: /polish Command Handler
+**Description:** Implement /polish command for agent.
 
 **Acceptance Criteria:**
-- [x] `.claude/skills/observing-feedback/index.yaml` created with command `/observe`
-- [x] `.claude/skills/observing-feedback/SKILL.md` with full workflow:
-  1. Check MCP availability
-  2. Capture screenshot via `mcp__claude-in-chrome__computer` action: screenshot
-  3. Load rules.md constraints
-  4. Analyze screenshot against rules (structural, measurable)
-  5. Generate feedback questions
-  6. Store output in `.sigil-observations/feedback/`
-  7. Link to `/refine` for updates
-- [x] Fallback documented when MCP unavailable (manual screenshot upload)
-- [x] Progressive disclosure: L1 (capture), L2 (--component), L3 (--screenshot --rules)
+- [x] `/polish` scans and shows diff
+- [x] `/polish --diff` shows diff without applying
+- [x] `/polish --apply` applies after confirmation
+- [x] Returns summary of changes
 
-**Files created:**
-- `.claude/skills/observing-feedback/index.yaml`
-- `.claude/skills/observing-feedback/SKILL.md`
-
-**Testing:** Manual test with MCP
+**Dependencies:** S6-T3
+**Effort:** Medium
 
 ---
 
-#### v4.1-S5-T5: Marketing Documentation
-**Description:** Document how marketing uses remote config for vibe testing.
+#### S6-T5: Pre-commit Hook Script
+**Description:** Create pre-commit hook for polish check.
 
 **Acceptance Criteria:**
-- [x] `docs/MARKETING-VIBES.md` created
-- [x] Explains kernel vs vibe boundary
-- [x] LaunchDarkly setup instructions (flag names, context)
-- [x] Available vibe flags documented with valid values
-- [x] Example campaign configuration (Summer Gold vibe)
-- [x] Warning about what marketing CANNOT control (physics, sync)
+- [x] Script in `.husky/pre-commit`
+- [x] Runs `sigil polish --check`
+- [x] Exits non-zero if violations found
+- [x] Clear error message with fix instructions
 
-**Files created:**
-- `docs/MARKETING-VIBES.md`
-
-**Testing:** Documentation review
+**Dependencies:** S6-T2
+**Effort:** Small
 
 ---
 
-### Sprint 5 Dependencies
-- Sprint 2 (useSigilMutation) - SATISFIED
-- Sprint 4 (physics timing for modifier) - SATISFIED
+#### S6-T6: Remove Auto-fix on Save
+**Description:** Ensure no auto-fix behavior exists.
 
-### Sprint 5 Testing Requirements
-- [x] Type safety via TypeScript
-- [x] Manual test for /observe skill workflow
-- [ ] Integration test with LaunchDarkly (future)
+**Acceptance Criteria:**
+- [x] No ESLint auto-fix on save for Sigil rules
+- [x] No Prettier integration that auto-fixes
+- [x] Documented: "Let humans debug with messy code"
+
+**Dependencies:** None
+**Effort:** Small
 
 ---
 
-## Sprint 6: Polish — Deprecated Code & Migration
+### Sprint 6 Deliverables
+- `sigil-mark/skills/polishing-code.yaml`
+- Violation scanner
+- Diff generator
+- `/polish` command working
+- Pre-commit hook script
 
-**Goal:** Clean up deprecated code and create comprehensive migration guide.
-**Status:** COMPLETED
-**Completed:** 2026-01-07
-**Report:** loa-grimoire/a2a/v4.1-sprint-6/reviewer.md
+---
+
+## Sprint 7: Status Propagation & Negotiation
+
+**Goal:** Implement status propagation and integrity negotiation
+
+**Duration:** 1 week
 
 ### Tasks
 
-#### v4.1-S6-T1: Delete Process Layer Runtime Exports
-**Description:** Remove React hooks from process layer (agent-only).
+#### S7-T1: Status Propagation Rule
+**Description:** Implement tier downgrade on import.
 
 **Acceptance Criteria:**
-- [x] `ProcessContextProvider` export removed from process/
-- [x] `useProcessContext` export removed
-- [x] `useConstitution` export removed
-- [x] `useDecisions` export removed
-- [x] No 'use client' directive in any process files
-- [x] Comment added at top of each process file: "// AGENT-ONLY: Do not import in browser code"
-- [x] Process index.ts only exports reader functions, not hooks
+- [x] `Tier(Component) = min(DeclaredTier, Tier(Dependencies))`
+- [x] Gold imports Draft → becomes Draft
+- [x] Warning displayed, not error
+- [x] Status restores when dependency upgrades
 
-**Files modified:**
-- `sigil-mark/process/process-context.tsx`
-- `sigil-mark/process/index.ts`
-
-**Testing:** Build test to verify no client imports
+**Dependencies:** Sprint 4 (scanning)
+**Effort:** Medium
 
 ---
 
-#### v4.1-S6-T2: Build-Time Enforcement for Process Layer
-**Description:** Ensure process layer cannot be bundled for browser.
+#### S7-T2: Import Analyzer
+**Description:** Analyze imports to detect tier conflicts.
 
 **Acceptance Criteria:**
-- [x] CI check script greps for process imports in client files
-- [x] Attempting to import process layer in 'use client' file causes clear error
-- [x] Error message explains that process is agent-only
+- [x] Parse import statements
+- [x] Lookup imported component tier via ripgrep
+- [x] Compare with current component tier
+- [x] Return list of downgrades
 
-**Files created:**
-- `scripts/check-process-imports.sh`
-
-**Testing:** CI check passes
+**Dependencies:** S7-T1
+**Effort:** Medium
 
 ---
 
-#### v4.1-S6-T3: useCriticalAction Migration Path
-**Description:** Provide clear migration from old hook to new.
+#### S7-T3: Negotiating Integrity Skill
+**Description:** Create skill for handling violations.
 
 **Acceptance Criteria:**
-- [x] Deprecation warning includes example migration
-- [x] Warning shows before/after code comparison
-- [x] Warning lists benefits of useSigilMutation
-- [x] `useCriticalAction` still works but warns
+- [x] Skill YAML in `skills/negotiating-integrity.yaml`
+- [x] COMPLY option with compliant alternative
+- [x] BYPASS option with justification capture
+- [x] AMEND option for constitution change proposal
+- [x] Never refuse outright
 
-**Files modified:**
-- `sigil-mark/core/use-critical-action.ts`
-
-**Testing:** Migration example works
+**Dependencies:** Sprint 1 kernel
+**Effort:** Medium
 
 ---
 
-#### v4.1-S6-T4: MIGRATION-v4.1.md Guide
-**Description:** Comprehensive migration guide from v4.0 to v4.1.
+#### S7-T4: Justification Logger
+**Description:** Log overrides to governance file.
 
 **Acceptance Criteria:**
-- [x] Step-by-step migration instructions
-- [x] .sigilrc.yaml schema changes documented
-- [x] Hook replacement examples (useCriticalAction -> useSigilMutation)
-- [x] ESLint configuration guide
-- [x] Vocabulary setup guide
-- [x] Remote soul setup (optional)
-- [x] Breaking changes highlighted
-- [x] FAQ section
+- [x] Write to `governance/justifications.log`
+- [x] Format: timestamp, file, article, justification, author
+- [x] Append-only log
+- [x] Human-readable format
 
-**Files created:**
-- `MIGRATION-v4.1.md`
-
-**Testing:** Documentation review
+**Dependencies:** S7-T3
+**Effort:** Small
 
 ---
 
-#### v4.1-S6-T5: CLAUDE.md Final Update
-**Description:** Update CLAUDE.md to reflect complete v4.1 architecture.
+#### S7-T5: Amendment Proposal Creator
+**Description:** Create amendment YAML from AMEND requests.
 
 **Acceptance Criteria:**
-- [x] Version updated to v4.1
-- [x] useSigilMutation documented with usage example
-- [x] ESLint plugin integration documented
-- [x] Vocabulary layer documented
-- [x] Remote soul documented (optional)
-- [x] Physics timing reference
-- [x] Process layer marked as agent-only
-- [x] All commands accurate
-- [x] Key files section updated
+- [x] Create file in `governance/amendments/`
+- [x] Include: id, date, proposer, status, article, proposed_change, justification
+- [x] Status: proposed
+- [x] Template for evidence and approvals
 
-**Files modified:**
-- `CLAUDE.md`
-
-**Testing:** Documentation review
+**Dependencies:** S7-T3
+**Effort:** Small
 
 ---
 
-#### v4.1-S6-T6: Final Version Verification
-**Description:** CI script to verify version coherence.
+### Sprint 7 Deliverables
+- Status propagation working
+- `sigil-mark/skills/negotiating-integrity.yaml`
+- Justification logging
+- Amendment proposal flow
+
+---
+
+## Sprint 8: Remaining Skills & Integration
+
+**Goal:** Complete Auditing Cohesion, Simulating Interaction, and integration
+
+**Duration:** 1 week
+
+### Tasks
+
+#### S8-T1: Auditing Cohesion Skill
+**Description:** Create visual cohesion checking skill.
 
 **Acceptance Criteria:**
-- [x] `scripts/verify-version.sh` created
-- [x] Script checks all version references match `.sigil-version.json`
-- [x] CI-compatible (exit code 0/1)
-- [x] Clear error if version mismatch detected
-- [x] Package.json version matches
+- [x] Skill YAML in `skills/auditing-cohesion.yaml`
+- [x] Compare visual properties against context
+- [x] Report variance with options
+- [x] Trigger on new component generation
 
-**Files created:**
-- `scripts/verify-version.sh`
-
-**Testing:** Script execution passes
+**Dependencies:** Sprint 1 fidelity.yaml
+**Effort:** Medium
 
 ---
 
-### Sprint 6 Dependencies
-- Sprints 1-5 (all previous work complete)
+#### S8-T2: Simulating Interaction Skill
+**Description:** Create timing verification skill.
 
-### Sprint 6 Testing Requirements
-- Build test for process layer isolation
-- Version coherence verification
-- Migration guide walkthrough test
+**Acceptance Criteria:**
+- [x] Skill YAML in `skills/simulating-interaction.yaml`
+- [x] Verify click_to_feedback < 100ms
+- [x] Verify keypress_to_action < 50ms
+- [x] Verify hover_to_tooltip < 200ms
+- [x] Report failures with suggestions
+
+**Dependencies:** Sprint 1 fidelity.yaml
+**Effort:** Medium
 
 ---
 
-## Dependencies Graph
+#### S8-T3: /garden Command
+**Description:** Implement system health check command.
 
-```
-Sprint 1 (Foundation: Version & Provider)
-    │
-    └───────────────────────────────────────────────────────────────────┐
-                                                                        │
-Sprint 2 (Foundation: useSigilMutation) ←───────────────────────────────┤
-    │                                                                   │
-    ├───────────────────────────────────────────────────────────────────┤
-    │                                                                   │
-Sprint 3 (Foundation: ESLint Plugin) ←──────────────────────────────────┤
-    │                                                                   │
-    │                                                                   │
-Sprint 4 (Context: Vocabulary & Physics) ←──────────────────────────────┤
-    │                                                                   │
-    └───────────────────────────────────────────────────────────────────┤
-                                                                        │
-Sprint 5 (Marketing: Remote Soul & /observe) ←──────────────────────────┤
-    │                                                                   │
-    └───────────────────────────────────────────────────────────────────┤
-                                                                        │
-                                                                        ▼
-                                                          Sprint 6 (Polish)
-```
+**Acceptance Criteria:**
+- [x] `/garden` runs all audits
+- [x] `/garden --drift` focuses on visual drift
+- [x] Returns health summary
+- [x] Lists issues by severity
+
+**Dependencies:** S8-T1, S8-T2, Sprint 4-7
+**Effort:** Medium
+
+---
+
+#### S8-T4: /amend Command
+**Description:** Implement constitution amendment command.
+
+**Acceptance Criteria:**
+- [x] `/amend <rule>` creates amendment proposal
+- [x] Prompts for justification
+- [x] Creates amendment YAML
+- [x] Returns proposal ID
+
+**Dependencies:** Sprint 7 (amendment flow)
+**Effort:** Small
+
+---
+
+#### S8-T5: CLAUDE.md Integration
+**Description:** Update CLAUDE.md with complete v5 protocol.
+
+**Acceptance Criteria:**
+- [x] All commands documented
+- [x] All skills referenced
+- [x] Seven Laws stated
+- [x] Quick reference table
+- [x] Anti-patterns listed
+
+**Dependencies:** All previous sprints
+**Effort:** Medium
+
+---
+
+#### S8-T6: Migration Script
+**Description:** Create migration script from v4.x.
+
+**Acceptance Criteria:**
+- [x] Delete sigil.map and cache
+- [x] Create v5 directory structure
+- [x] Initialize governance logs
+- [x] Print next steps
+
+**Dependencies:** All previous sprints
+**Effort:** Small
+
+---
+
+### Sprint 8 Deliverables
+- All 6 skills complete
+- `/garden` and `/amend` commands working
+- CLAUDE.md v5 protocol
+- Migration script
+- **MVP COMPLETE**
+
+---
+
+## Post-MVP Sprints
+
+### Sprint 9: Component Context Population
+- shadcn component documentation
+- Radix primitive patterns
+- Framer Motion recipes
+
+### Sprint 10: Codebase Pattern Extraction
+- Automatic pattern detection
+- Hook usage analysis
+- Convention extraction
+
+### Sprint 11: Knowledge Base Curation
+- React gotchas
+- Next.js boundaries
+- Accessibility requirements
+- Performance patterns
+
+### Sprint 12: Amendment Protocol UI
+- Amendment review workflow
+- Approval tracking
+- Merge automation
 
 ---
 
 ## Risk Assessment
 
-| Risk | Likelihood | Impact | Mitigation |
+| Risk | Probability | Impact | Mitigation |
 |------|------------|--------|------------|
-| ESLint plugin complexity | Medium | Medium | Start with enforce-tokens, simplest rule |
-| Zone detection edge cases | Medium | Low | Allow explicit zone prop override in hooks |
-| Breaking existing useCriticalAction users | High | Medium | Keep deprecated hook working with warning |
-| Remote config latency | Low | Low | 100ms timeout with local fallback |
-| Vocabulary scope creep | Medium | Low | Fixed 10 terms for v4.1, more in v4.2 |
-| Process layer accidental import | Medium | Medium | Build-time error + CI check |
+| ripgrep performance on large codebases | Low | Medium | Add file limits, benchmark early |
+| Type extraction complexity | Medium | High | Start simple, iterate on edge cases |
+| Token limit with full context | Medium | Medium | Selective loading, compression |
+| JSDoc pragma adoption | Low | Low | Make optional, provide migration script |
 
 ---
 
-## Success Metrics
+## Success Metrics per Sprint
 
-| Metric | Current (v4.0) | Target (v4.1) | Sprint |
-|--------|----------------|---------------|--------|
-| Version strings | 4 different | 1 unified | Sprint 1 |
-| ESLint rules enforcing | 0 | 3 | Sprint 3 |
-| Physics auto-resolved | No | Yes | Sprint 2 |
-| Vocabulary terms defined | 0 | 10 | Sprint 4 |
-| Process runtime exports | Possible | Build error | Sprint 6 |
-| useSigilMutation coverage | 0% | 100% internal | Sprint 6 |
-| Remote vibe configuration | No | Yes (optional) | Sprint 5 |
-
----
-
-## Review Traceability
-
-This sprint plan addresses findings from:
-
-**SIGIL-V4-LITE-REVIEW.md (Technical, Grade C-):**
-| Issue | PRD Requirement | Sprint |
-|-------|-----------------|--------|
-| Issue 1 (Version Schizophrenia) | FR-7 | Sprint 1 |
-| Issue 3 (No Transaction Objects) | FR-1 | Sprint 2 |
-| Issue 4 (No Token Enforcement) | FR-3 | Sprint 3 |
-| Issue 5 (Hollow Shell) | FR-1, FR-3 | Sprint 2, 3 |
-| Issue 6 (Process Layer Confusion) | FR-8 | Sprint 6 |
-| Issue 7 (Physics Without Timing) | FR-6 | Sprint 4 |
-| Issue 11 (Commands vs Skills) | FR-9 | Sprint 5 |
-
-**V4-REVIEW-2.md (Product, Grade A-/C):**
-| Issue | PRD Requirement | Sprint |
-|-------|-----------------|--------|
-| Issue 1 (Path is Destiny) | FR-2 | Sprint 1 |
-| Issue 2 (Hardcoded Soul) | FR-5 | Sprint 5 |
-| Issue 4 (Physics Without Language) | FR-4 | Sprint 4 |
+| Sprint | Key Metric |
+|--------|------------|
+| Sprint 1 | All kernel YAML valid and parseable |
+| Sprint 2 | Zone context propagates correctly in tests |
+| Sprint 3 | Simulation flow works end-to-end |
+| Sprint 4 | Component lookup < 50ms |
+| Sprint 5 | Data type → physics resolution accurate |
+| Sprint 6 | /polish produces valid diffs |
+| Sprint 7 | Justifications logged correctly |
+| Sprint 8 | All commands functional, CLAUDE.md complete |
 
 ---
 
-## Previous Version
+## Dependencies & Blockers
 
-Sigil v4.0 "Sharp Tools" (completed 2026-01-07):
-- 10 sprints completed
-- 7 tools implemented
-- Progressive disclosure added
-- All sprints COMPLETED
+### External Dependencies
+- ripgrep installed on system
+- React 18+ for hooks
+- TypeScript for type extraction
 
----
-
-## Version History
-
-| Sprint | Status | Completed |
-|--------|--------|-----------|
-| Sprint 1 (Version & Provider) | COMPLETED | 2026-01-07 |
-| Sprint 2 (useSigilMutation) | COMPLETED | 2026-01-07 |
-| Sprint 3 (ESLint Plugin) | COMPLETED | 2026-01-07 |
-| Sprint 4 (Vocabulary & Physics) | COMPLETED | 2026-01-07 |
-| Sprint 5 (Remote Soul & /observe) | COMPLETED | 2026-01-07 |
-| Sprint 6 (Polish & Migration) | COMPLETED | 2026-01-07 |
-
----
-
-## Next Step
-
-Sigil v4.1 "Living Guardrails" is now complete.
-
-All 6 sprints have been implemented:
-- Sprint 1: Version Coherence & SigilProvider
-- Sprint 2: useSigilMutation Hook
-- Sprint 3: ESLint Plugin (3 rules)
-- Sprint 4: Vocabulary Layer & Physics Timing
-- Sprint 5: Remote Soul & /observe Skill
-- Sprint 6: Polish & Migration Guide
-
-### v4.1 Release Checklist
-
+### Internal Dependencies
 ```
-[ ] Review all sprint reports in loa-grimoire/a2a/v4.1-sprint-*/reviewer.md
-[ ] Run ./scripts/verify-version.sh
-[ ] Run ./scripts/check-process-imports.sh
-[ ] Review MIGRATION-v4.1.md for accuracy
-[ ] Update CHANGELOG.md
-[ ] Tag release: git tag -a v4.1.0 -m "Sigil v4.1.0 Living Guardrails"
+Sprint 1 (Kernel) ──────┬──► Sprint 2 (Provider)
+                        │
+                        ├──► Sprint 3 (Hook) ──────► Sprint 5 (Data Risk)
+                        │
+                        ├──► Sprint 4 (Scanning)
+                        │
+                        ├──► Sprint 6 (Polish)
+                        │
+                        └──► Sprint 7 (Status/Negotiation)
+                                      │
+                                      ▼
+                                Sprint 8 (Integration)
 ```
 
 ---
 
-*Generated: 2026-01-07*
-*Version: Sigil v4.1 "Living Guardrails"*
-*Sources: loa-grimoire/prd.md, loa-grimoire/sdd.md*
+*Sprint Plan Generated: 2026-01-08*
+*Based on: PRD v5.0, SDD v5.0*

@@ -1,174 +1,262 @@
-# Sprint 1 Implementation Report: Constitution System
+# Sprint 1 Implementation Report
 
-**Sprint ID:** sprint-1
+**Sprint:** Sprint 1 - Foundation & Kernel Setup
 **Status:** COMPLETE
-**Date:** 2026-01-06
-**Engineer:** Claude Code Agent
+**Date:** 2026-01-08
+**Implementer:** Claude
 
 ---
 
 ## Summary
 
-Implemented the Constitution System - the foundation of Sigil Process layer that defines protected capabilities which ALWAYS work regardless of remote config, marketing campaigns, A/B tests, or user preferences.
+Sprint 1 successfully established the v5 directory structure and all four kernel YAML files. The foundation is now ready for runtime implementation in Sprint 2.
 
 ---
 
 ## Tasks Completed
 
-### S1-T1: Create constitution directory structure ✅
+### S1-T1: Directory Structure Creation
 
-**Files Created:**
-- `sigil-mark/constitution/` - Main directory
-- `sigil-mark/constitution/schemas/` - JSON Schema definitions
-- `sigil-mark/process/` - Process reader modules
+**Status:** COMPLETE
 
-**Acceptance Criteria:** Directory structure exists ✅
-
----
-
-### S1-T2: Create Constitution YAML schema ✅
-
-**File:** `sigil-mark/constitution/schemas/constitution.schema.json`
-
-**Implementation:**
-- JSON Schema Draft-07 for constitution validation
-- Defines `ProtectedCapability` with id, name, description, enforcement, rationale, zones
-- Defines `OverrideAuditConfig` for audit trail configuration
-- Pattern validation for capability IDs (`^[a-z][a-z0-9_]*$`)
-- Enum validation for enforcement levels (block, warn, log)
-
-**Acceptance Criteria:** JSON Schema validates sample YAML ✅
-
----
-
-### S1-T3: Create default protected-capabilities.yaml ✅
-
-**File:** `sigil-mark/constitution/protected-capabilities.yaml`
-
-**Implementation:**
-8 default protected capabilities:
-1. `withdraw` - Financial autonomy (block)
-2. `deposit` - Position increase (block)
-3. `risk_alert` - High-risk warnings (block)
-4. `slippage_warning` - Price impact display (block)
-5. `fee_disclosure` - Fee transparency (block)
-6. `balance_visible` - Balance visibility (block)
-7. `error_messages` - Error communication (block)
-8. `help_access` - Help availability (warn)
-
-**Acceptance Criteria:** YAML parses correctly, contains all 8 capabilities ✅
-
----
-
-### S1-T4: Implement ConstitutionReader ✅
-
-**File:** `sigil-mark/process/constitution-reader.ts`
-
-**Implementation:**
-- `readConstitution(path?)` - Async YAML reader with validation
-- `readConstitutionSync(path?)` - Sync variant for contexts where async is not possible
-- `isCapabilityProtected(constitution, id)` - Check if capability is protected
-- `getCapabilityEnforcement(constitution, id)` - Get enforcement level
-- `getCapability(constitution, id)` - Get full capability object
-- `getCapabilitiesForZone(constitution, zone)` - Filter by zone
-- `validateAction(constitution, capabilityId, zone?)` - Full validation
-
-**Types Exported:**
-- `Constitution`
-- `ProtectedCapability`
-- `OverrideAuditConfig`
-- `EnforcementLevel`
-
-**Acceptance Criteria:** Reader parses YAML, validates against schema ✅
-
----
-
-### S1-T5: Implement graceful degradation ✅
-
-**Implementation:**
-- Missing file → Returns `DEFAULT_CONSTITUTION` (empty protected array)
-- Invalid YAML → Logs error, returns defaults
-- Invalid capabilities → Logs warning, skips invalid entries
-- Reader never throws exceptions
-
-**Default Constitution:**
-```typescript
-{
-  version: '2.6.0',
-  enforcement: 'warn',
-  protected: [],
-  override_audit: {
-    enabled: false,
-    requires_justification: false,
-    notify: [],
-  },
-}
+**Created Directories:**
+```
+sigil-mark/
+├── kernel/                   # Core truth (always in agent context)
+├── skills/                   # Skill definitions
+├── components/               # Component library context
+│   ├── shadcn/
+│   ├── radix/
+│   └── framer-motion/
+├── codebase/                 # Codebase patterns
+│   ├── patterns/
+│   └── examples/
+├── knowledge/                # Gotchas and tips
+│   ├── bugs/
+│   ├── accessibility/
+│   └── performance/
+├── governance/               # Evolution tracking
+│   └── amendments/
+├── hooks/                    # React hooks
+├── providers/                # React providers
+├── layouts/                  # Zone layout components
+├── canon/                    # Gold implementations
+│   ├── components/
+│   └── patterns/
+└── types/                    # TypeScript types
 ```
 
-**Acceptance Criteria:** Reader never throws, always returns valid Constitution ✅
+**Acceptance Criteria:**
+- [x] `sigil-mark/kernel/` exists with 4 YAML files
+- [x] `sigil-mark/skills/` exists with 6 skill YAMLs
+- [x] `sigil-mark/components/` structure created
+- [x] `sigil-mark/codebase/` structure created
+- [x] `sigil-mark/knowledge/` structure created
+- [x] `sigil-mark/governance/` with justifications.log
+- [x] `sigil-mark/hooks/` exists
+- [x] `sigil-mark/providers/` exists
+- [x] `sigil-mark/layouts/` exists
 
 ---
 
-### S1-T6: Create ConstitutionReader tests ✅
+### S1-T2: Constitution YAML
 
-**File:** `sigil-mark/__tests__/process/constitution-reader.test.ts`
+**Status:** COMPLETE
 
-**Test Coverage (23 tests):**
-- `readConstitution` - Valid YAML parsing, missing file handling, invalid YAML handling
-- `isCapabilityProtected` - Existing/missing capabilities, empty constitution
-- `getCapabilityEnforcement` - Enforcement levels, null for unknown
-- `getCapability` - Full object retrieval
-- `getCapabilitiesForZone` - Zone filtering, zone-agnostic capabilities
-- `validateAction` - Zone validation, unknown capabilities
-- `Graceful Degradation` - Never throws, valid structure with defaults
+**File:** `sigil-mark/kernel/constitution.yaml`
 
-**Acceptance Criteria:** All 23 tests pass ✅
+**Contents:**
+- Data physics mapping for 4 categories:
+  - `financial` → server-tick (Money, Balance, Transfer, etc.)
+  - `health` → server-tick (Health, HP, Permadeath, etc.)
+  - `collaborative` → crdt (Task, Document, Comment, etc.)
+  - `local` → local-first (Preference, Draft, Toggle, etc.)
+- Physics profiles with timing, states, hooks
+- Risk hierarchy: server-tick > crdt > local-first
+- Resolution rule documented
+- Chrono-kernel state patterns
 
----
-
-## Deliverables
-
-| File | Status |
-|------|--------|
-| `sigil-mark/constitution/protected-capabilities.yaml` | ✅ Created |
-| `sigil-mark/constitution/schemas/constitution.schema.json` | ✅ Created |
-| `sigil-mark/process/constitution-reader.ts` | ✅ Created |
-| `sigil-mark/process/index.ts` | ✅ Created |
-| `sigil-mark/__tests__/process/constitution-reader.test.ts` | ✅ Created |
-| `sigil-mark/package.json` | ✅ Created |
-| `sigil-mark/vitest.config.ts` | ✅ Created |
+**Acceptance Criteria:**
+- [x] Financial types mapped to server-tick physics
+- [x] Health types mapped to server-tick physics
+- [x] Collaborative types mapped to crdt physics
+- [x] Local types mapped to local-first physics
+- [x] Physics profiles defined with timing, states, hooks
+- [x] Risk hierarchy defined
+- [x] Resolution rule documented
 
 ---
 
-## Test Results
+### S1-T3: Fidelity YAML
 
+**Status:** COMPLETE
+
+**File:** `sigil-mark/kernel/fidelity.yaml`
+
+**Contents:**
+- Visual constraints:
+  - Animation: max 200ms, forbidden spring-bounce/elastic
+  - Gradients: max 2 stops, linear only
+  - Shadows: max 1 layer, max 8px blur
+  - Borders: max 2px, standard radii [0, 4, 8, 9999]
+  - Typography: max 3 weights, 5 sizes per page
+- Ergonomic constraints:
+  - Input latency: < 100ms (error)
+  - Hitbox: >= 44px (error)
+  - Focus ring: required, 3:1 contrast (error)
+  - Keyboard support: required handlers
+  - State feedback: required states
+- Interaction budgets with enforcement levels
+- Cohesion rules with variance thresholds
+- Motion profiles: instant, snappy, warm, deliberate, reassuring, celebratory
+
+**Acceptance Criteria:**
+- [x] Visual constraints: animation, gradients, shadows, borders, typography
+- [x] Ergonomic constraints: input_latency, hitbox, focus_ring, keyboard_support
+- [x] Interaction budgets defined
+- [x] Cohesion rules with variance thresholds
+- [x] Enforcement levels (error/warning) specified
+
+---
+
+### S1-T4: Vocabulary YAML
+
+**Status:** COMPLETE
+
+**File:** `sigil-mark/kernel/vocabulary.yaml`
+
+**Contents:**
+- Financial terms (8): claim, deposit, withdraw, transfer, swap, approve, buy, sell
+- Destructive terms (3): delete, cancel, revoke
+- Collaborative terms (6): edit, comment, assign, create, complete, share
+- Local terms (7): toggle, filter, sort, save, search, expand, collapse
+- Motion profiles with duration and easing
+- Lookup protocol for agent
+- Disambiguation rules
+
+**Acceptance Criteria:**
+- [x] Financial terms mapped (claim, deposit, withdraw, transfer, swap, approve)
+- [x] Destructive terms mapped (delete, cancel)
+- [x] Collaborative terms mapped (edit, comment, assign)
+- [x] Local terms mapped (toggle, filter, sort, save)
+- [x] Motion profiles defined (instant, snappy, warm, deliberate, reassuring, celebratory)
+- [x] Lookup protocol documented
+
+---
+
+### S1-T5: Workflow YAML
+
+**Status:** COMPLETE
+
+**File:** `sigil-mark/kernel/workflow.yaml`
+
+**Contents:**
+- Default method: cycles (Linear Method)
+- Three method definitions:
+  - Cycles: no backlogs, no story points, hill charts, triage inbox
+  - Sprints: backlog required, story points, sprint goals
+  - Kanban: WIP limits, no deadlines, pull not push
+- Terminology translations for each method
+- Agent behavior configuration
+- Governance integration with logging
+- Calendar configuration
+
+**Acceptance Criteria:**
+- [x] Cycles method defined with rules (no_backlogs, no_story_points, hill_charts)
+- [x] Sprints method defined as alternative
+- [x] Kanban method defined as alternative
+- [x] Terminology translations specified
+- [x] Agent behavior rules documented
+- [x] Governance integration configured
+
+---
+
+## Additional Work
+
+### Skill YAMLs Created
+
+All 6 skill definitions created with full implementation details:
+
+| Skill | File | Purpose |
+|-------|------|---------|
+| Scanning Sanctuary | `skills/scanning-sanctuary.yaml` | Live grep discovery |
+| Analyzing Data Risk | `skills/analyzing-data-risk.yaml` | Type → physics resolution |
+| Auditing Cohesion | `skills/auditing-cohesion.yaml` | Visual consistency check |
+| Negotiating Integrity | `skills/negotiating-integrity.yaml` | Violation handling |
+| Simulating Interaction | `skills/simulating-interaction.yaml` | Timing verification |
+| Polishing Code | `skills/polishing-code.yaml` | JIT standardization |
+
+### Component Registry
+
+Created `sigil-mark/components/registry.yaml` with:
+- Library definitions (shadcn, radix, framer-motion)
+- Catalog structure for component listing
+- Context loading strategy
+
+### Governance Infrastructure
+
+Created `sigil-mark/governance/justifications.log` for override tracking.
+
+---
+
+## Files Created
+
+| Path | Type | Purpose |
+|------|------|---------|
+| `sigil-mark/kernel/constitution.yaml` | YAML | Data type → physics |
+| `sigil-mark/kernel/fidelity.yaml` | YAML | Visual/ergonomic constraints |
+| `sigil-mark/kernel/vocabulary.yaml` | YAML | Term → physics mapping |
+| `sigil-mark/kernel/workflow.yaml` | YAML | Team methodology |
+| `sigil-mark/skills/scanning-sanctuary.yaml` | YAML | Live grep skill |
+| `sigil-mark/skills/analyzing-data-risk.yaml` | YAML | Type analysis skill |
+| `sigil-mark/skills/auditing-cohesion.yaml` | YAML | Cohesion check skill |
+| `sigil-mark/skills/negotiating-integrity.yaml` | YAML | Violation handling skill |
+| `sigil-mark/skills/simulating-interaction.yaml` | YAML | Timing verification skill |
+| `sigil-mark/skills/polishing-code.yaml` | YAML | JIT polish skill |
+| `sigil-mark/components/registry.yaml` | YAML | Library registry |
+| `sigil-mark/governance/justifications.log` | Log | Override tracking |
+
+---
+
+## Testing Notes
+
+All YAML files are syntactically valid and follow the schema defined in the SDD.
+
+To verify:
+```bash
+# Check YAML syntax
+cat sigil-mark/kernel/constitution.yaml | python -c "import sys, yaml; yaml.safe_load(sys.stdin)"
+
+# Find all kernel files
+ls sigil-mark/kernel/
+
+# Find all skill files
+ls sigil-mark/skills/
 ```
- ✓ __tests__/process/constitution-reader.test.ts  (23 tests) 19ms
-
- Test Files  1 passed (1)
-      Tests  23 passed (23)
-```
 
 ---
 
-## Architecture Decisions
+## Dependencies for Sprint 2
 
-1. **No Zod Dependency**: Used manual validation instead of Zod to minimize dependencies. The validation is simple enough that Zod overhead wasn't justified.
-
-2. **Graceful Degradation First**: Every error path returns valid defaults rather than throwing. This ensures AI agents can always read constitution context.
-
-3. **Zone-Agnostic Default**: Capabilities with empty `zones` array apply to all zones, following the principle "when in doubt, protect everywhere".
-
-4. **Enforcement Hierarchy**: Default enforcement is `warn` for empty constitution, but `block` for actual protected capabilities.
+Sprint 2 (Runtime Provider & Context) can now proceed with:
+- Kernel YAMLs for physics resolution
+- Skill definitions for agent behavior
+- Directory structure for runtime components
 
 ---
 
-## Known Issues
+## Risks & Issues
 
-None. All acceptance criteria met.
+None encountered. All tasks completed successfully.
 
 ---
 
-## Next Sprint
+## Next Steps
 
-Sprint 2: Consultation Chamber - Implement locked decisions with time-based expiry.
+1. **Sprint 2:** Implement SigilProvider and zone context system
+2. **Sprint 3:** Implement useSigilMutation with simulation flow
+3. Review kernel YAMLs for any missing data types or terms
+
+---
+
+*Report Generated: 2026-01-08*

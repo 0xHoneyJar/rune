@@ -1,12 +1,19 @@
 /**
- * Sigil v4.1 - SigilProvider Context
+ * @sigil-tier gold
+ * Sigil v5.0 - SigilProvider Context
  *
- * Main context provider that holds zone, persona, and remote soul state.
+ * Main context provider that holds zone, persona, and vibes state.
  * This enables runtime enforcement of design rules by providing context
  * that hooks like useSigilMutation can consume.
  *
- * v4.1 Changes:
- * - Full RemoteSoulContext integration with useRemoteSoul hook
+ * v5.0 Changes:
+ * - Unified SigilZone type ('critical' | 'glass' | 'machinery' | 'standard')
+ * - SigilPersona type ('default' | 'power_user' | 'cautious')
+ * - SigilVibes for runtime configuration
+ * - Physics resolution based on zone context
+ *
+ * v4.1 Legacy:
+ * - RemoteSoulContext integration with useRemoteSoul hook
  * - Support for LaunchDarkly/Statsig adapters
  * - 100ms timeout with local fallback (NFR-3)
  *
@@ -455,3 +462,40 @@ export type {
   CelebrationIntensity,
   ColorTemp,
 } from './remote-soul';
+
+// =============================================================================
+// V5 EXPORTS & ALIASES
+// =============================================================================
+
+// Import v5 types from types module
+import type {
+  SigilZone,
+  SigilPersona,
+  SigilVibes,
+  SigilContextValue,
+  SigilProviderProps as V5SigilProviderProps,
+  PhysicsClass,
+  ResolvedPhysics,
+} from '../types';
+
+// Re-export v5 types for convenience
+export type {
+  SigilZone,
+  SigilPersona,
+  SigilVibes,
+  SigilContextValue,
+  PhysicsClass,
+  ResolvedPhysics,
+};
+
+// Export DEFAULT_PHYSICS for physics resolution
+export { DEFAULT_PHYSICS, MOTION_PROFILES } from '../types';
+
+/**
+ * Get current vibes from context (v5 alias).
+ * Returns the vibes object for runtime configuration.
+ */
+export function useSigilVibes(): SigilVibes | undefined {
+  const { vibes } = useSigilRemoteSoulContext();
+  return vibes as unknown as SigilVibes;
+}

@@ -5,6 +5,130 @@ All notable changes to Sigil will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.0.0] - 2026-01-08 — "The Lucid Flow"
+
+### Summary
+
+v5.0 introduces the **Constitutional Framework** with Seven Laws that govern all design decisions. Live grep discovery replaces caching, JIT polish workflow respects creative flow, and a full governance system enables amendments and justification tracking.
+
+### The Seven Laws
+
+1. **Filesystem is Truth** — No caches. Live grep discovers components every time.
+2. **Type Dictates Physics** — Data types determine behavior. Constitution binds type to physics.
+3. **Zone is Layout, Not Business Logic** — Zones define *feel*, not behavior.
+4. **Status Propagates** — Component tier = min(declared, dependencies).
+5. **One Good Reason > 15% Silent Mutiny** — Capture bypasses, don't force workarounds.
+6. **Never Refuse Outright** — Three paths: COMPLY, BYPASS, or AMEND.
+7. **Let Artists Stay in Flow** — Never auto-fix. `/polish` suggests, human decides.
+
+### Added
+
+- **Constitutional Kernel** — YAML-defined physics binding
+
+  ```
+  sigil-mark/kernel/
+  ├── constitution.yaml    # Data type → physics binding
+  ├── fidelity.yaml        # Visual + ergonomic ceilings
+  ├── vocabulary.yaml      # Term → physics mapping
+  └── workflow.yaml        # Team methodology rules
+  ```
+
+- **6 Complete Skills**
+
+  | Skill | Purpose |
+  |-------|---------|
+  | `scanning-sanctuary` | Live grep component discovery |
+  | `analyzing-data-risk` | Type → physics resolution |
+  | `polishing-code` | JIT standardization |
+  | `negotiating-integrity` | Constitution violation handling |
+  | `auditing-cohesion` | Visual consistency checks |
+  | `simulating-interaction` | Timing threshold verification |
+
+- **`/garden` Command** — System health monitoring
+
+  ```bash
+  /garden              # Full health check
+  /garden --drift      # Visual drift only
+  ```
+
+  Returns health score, issues by severity, fidelity/propagation/timing checks.
+
+- **`/polish` Command** — JIT standardization (respects Law 7)
+
+  ```bash
+  /polish              # Staged files
+  /polish src/Button.tsx
+  ```
+
+  Suggests pragma standardization. Never auto-applies changes.
+
+- **`/amend` Command** — Constitution amendment proposals
+
+  ```bash
+  /amend constitution.financial.forbidden[0] \
+    --change "Allow useOptimistic for demo accounts" \
+    --reason "Demo accounts have no real funds"
+  ```
+
+  Creates amendment YAML in `governance/amendments/`.
+
+- **Governance System**
+  - `governance/justifications.log` — Append-only bypass audit trail
+  - `governance/amendments/` — Amendment proposal YAMLs
+  - All bypasses logged with justification
+
+- **Simulation Flow** — `useSigilMutation` with preview/confirm cycle
+
+  ```tsx
+  const { simulate, confirm, execute, preview } = useSigilMutation({
+    mutation: () => api.claim(poolId),
+    dataType: 'financial',
+  });
+
+  const handleClick = async () => {
+    const preview = await simulate();
+    if (userConfirms(preview)) {
+      confirm();
+      await execute();
+    }
+  };
+  ```
+
+- **Status Propagation** — Automatic tier calculation based on dependencies
+- **Violation Scanner** — Detects constitution and fidelity violations
+- **Component Scanner** — Live grep discovery with JSDoc pragma parsing
+- **Migration Script** — `migrate-v5.sh` for v4.x → v5.0 transition
+
+### Changed
+
+- **Discovery is live** — No more `sigil.map` cache. Filesystem is truth.
+- **Polish is JIT** — No auto-fix. Human reviews and accepts changes.
+- **Governance is explicit** — Bypasses require justification, not silence.
+- **Commands consolidated** — `/garden`, `/polish`, `/amend` replace scattered functionality
+
+### Deprecated
+
+- **`sigil.map`** — Use live grep discovery instead
+- **`.sigil-cache/`** — Removed. Filesystem is truth.
+- **Auto-fix patterns** — Use `/polish` for human-reviewed suggestions
+
+### Migration
+
+```bash
+# Run migration script
+./sigil-mark/scripts/migrate-v5.sh --dry-run  # Preview
+./sigil-mark/scripts/migrate-v5.sh            # Apply
+```
+
+| v4.1 | v5.0 |
+|------|------|
+| Cache-based discovery | Live grep (scanning-sanctuary) |
+| Auto-fix patterns | JIT polish (never auto-fix) |
+| Silent workarounds | Justification logging |
+| Fixed rules | Constitutional amendments |
+
+---
+
 ## [4.1.0] - 2026-01-07 — "Living Guardrails"
 
 ### Summary
@@ -551,6 +675,7 @@ Sigil 0.2 can coexist with Loa on the same repository:
 - Design context capture commands
 - Basic moodboard and rules structure
 
+[5.0.0]: https://github.com/0xHoneyJar/sigil/releases/tag/v5.0.0
 [4.1.0]: https://github.com/0xHoneyJar/sigil/releases/tag/v4.1.0
 [4.0.0]: https://github.com/0xHoneyJar/sigil/releases/tag/v4.0.0
 [3.0.0]: https://github.com/0xHoneyJar/sigil/releases/tag/v3.0.0

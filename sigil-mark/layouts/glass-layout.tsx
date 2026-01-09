@@ -1,12 +1,19 @@
 /**
- * Sigil v4.1 - GlassLayout
+ * @sigil-tier gold
+ * @sigil-zone glass
+ * Sigil v5.0 - GlassLayout
  *
  * Layout primitive for exploratory/marketing UI. Provides zone context
  * AND structural physics (hover effects) in a single component.
  *
  * Layouts ARE Zones. Physics is DOM, not lint.
  *
- * v4.1 Changes:
+ * v5.0 Notes:
+ * - GlassLayout uses local-first physics (optimistic)
+ * - All children inherit glass zone context
+ * - Renders data-sigil-zone="glass" attribute
+ *
+ * v4.1 Legacy:
  * - Sets zone context via SigilProvider on mount
  * - Clears zone context on unmount
  * - Adds data-sigil-zone attribute for debugging
@@ -407,9 +414,9 @@ function GlassLayout({
   // v4.1: Set zone context via SigilProvider
   const sigilZone = useSigilZoneContext();
 
-  // v4.1: Set zone on mount, clear on unmount
+  // v5.0: Set zone to 'glass' on mount, clear on unmount
   useEffect(() => {
-    sigilZone.setZone('marketing');
+    sigilZone.setZone('glass' as unknown as 'marketing'); // v5 uses 'glass', v4 used 'marketing'
     return () => {
       sigilZone.setZone(null);
     };
@@ -441,7 +448,7 @@ function GlassLayout({
       <GlassLayoutInternalContext.Provider value={internalContextValue}>
         <div
           className={`sigil-glass-layout ${className}`.trim()}
-          data-sigil-zone="marketing"
+          data-sigil-zone="glass"
           data-sigil-variant={variant}
           data-sigil-hovered={isHovered}
           onMouseEnter={() => setIsHovered(true)}

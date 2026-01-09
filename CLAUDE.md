@@ -13,6 +13,18 @@ Sigil is a design context framework that helps AI agents make consistent design 
 
 ---
 
+## The Seven Laws
+
+1. **Filesystem is Truth** - Never use cached indexes. Always live grep.
+2. **Type Dictates Physics** - Money → server-tick, Task → crdt, Toggle → local-first.
+3. **Zone is Layout, Not Business Logic** - Zone determines feel, not behavior.
+4. **Status Propagates** - Your tier is only as good as your weakest dependency.
+5. **One Good Reason > 15% Silent Mutiny** - Capture bypasses, don't block them.
+6. **Never Refuse Outright** - Always offer COMPLY / BYPASS / AMEND.
+7. **Let Artists Stay in Flow** - Never auto-fix on save. Polish is deliberate.
+
+---
+
 ## v4.1 "Living Guardrails" - Enforcement Layer
 
 v4.1 adds enforcement capabilities to the v4.0 context documentation system:
@@ -46,17 +58,27 @@ v4.1 adds enforcement capabilities to the v4.0 context documentation system:
 
 ## Quick Reference
 
-### Commands (v4.0)
+### Commands (v5.0)
 
-| Command | Purpose | L1 | L2 | L3 |
-|---------|---------|----|----|-----|
-| `/envision` | Capture product moodboard | Full interview | `--quick` | `--from <file>` |
-| `/codify` | Define design rules | Guided interview | `--zone <name>` | `--from <design-system.json>` |
-| `/craft` | Get design guidance | Auto-context | `--zone`, `--persona` | `--no-gaps` |
-| `/observe` | Visual feedback loop | Capture screen | `--component` | `--screenshot`, `--rules` |
-| `/refine` | Incremental updates | Review feedback | `--persona`, `--zone` | `--evidence` |
-| `/consult` | Record decisions | 30d lock | `--scope`, `--lock` | `--protect`, `--evidence` |
-| `/garden` | Health monitoring | Summary | `--personas`, `--feedback` | `--validate` (CI) |
+| Command | Purpose | Description |
+|---------|---------|-------------|
+| `/envision` | Capture product moodboard | Interview to capture feel, references, anti-patterns |
+| `/codify` | Define design rules | Define zone constraints and motion patterns |
+| `/craft` | Get design guidance | Auto-context aware generation |
+| `/observe` | Visual feedback loop | Capture screen for drift detection |
+| `/refine` | Incremental updates | Update personas, zones, vocabulary |
+| `/consult` | Record decisions | Lock decisions with expiry |
+| `/garden` | Health monitoring | Run all audits (cohesion + timing + propagation) |
+| `/polish` | JIT standardization | Scan violations, generate diffs, apply on approval |
+| `/amend` | Constitution change | Propose changes to constitution rules |
+
+### v5.0 Command Details
+
+| Command | Basic | Options |
+|---------|-------|---------|
+| `/garden` | Run all audits | `--drift` (visual only) |
+| `/polish` | Show violations | `--check`, `--apply`, `--staged` |
+| `/amend <rule>` | Create proposal | `--change`, `--reason`, `--author` |
 
 ### Key Files
 
@@ -357,6 +379,353 @@ See `MIGRATION-v4.1.md` for migration guide.
 
 ---
 
+## v5.0 Component Discovery (Scanning Sanctuary)
+
+### Law: "Filesystem is Truth"
+
+**NEVER use cached component indexes.** Always use live ripgrep.
+
+Why:
+- Branch switches don't update caches
+- Uncommitted changes are invisible to cached indexes
+- Deleted files still appear in stale caches
+- ripgrep < 50ms is faster than cache lookup + validation
+
+### JSDoc Pragmas
+
+Add these pragmas to components for discovery:
+
+```typescript
+/**
+ * @sigil-tier gold
+ * @sigil-zone critical
+ * @sigil-data-type Money
+ * ClaimButton - Handles claim transactions
+ */
+```
+
+| Pragma | Values | Purpose |
+|--------|--------|---------|
+| `@sigil-tier` | gold, silver, bronze, draft | Component quality tier |
+| `@sigil-zone` | critical, glass, machinery, standard | Physics zone |
+| `@sigil-data-type` | Money, Health, Task, etc. | Data type for physics |
+
+### Ripgrep Commands
+
+Find components by tier:
+```bash
+rg "@sigil-tier gold" -l --type ts
+```
+
+Find components by zone:
+```bash
+rg "@sigil-zone critical" -l --type ts
+```
+
+Find components by data type:
+```bash
+rg "@sigil-data-type Money" -l --type ts
+```
+
+Combined search (Gold tier in critical zone):
+```bash
+rg "@sigil-tier gold" -l --type ts | xargs rg "@sigil-zone critical" -l
+```
+
+### Anti-Patterns
+
+| DO NOT | Why |
+|--------|-----|
+| Use `sigil.map` | Becomes stale on branch switch |
+| Use `.sigil-cache` | Can hallucinate deleted components |
+| Use component registries | Need manual sync with filesystem |
+| Trust prebuilt indexes | Git history doesn't update them |
+
+### Performance
+
+- Target: < 50ms for 10k files
+- Use `-l` for file paths only (faster)
+- Use `--type ts` to limit to TypeScript
+- Use `-g 'src/**'` to limit search scope
+
+---
+
+## v5.0 JIT Polish Workflow
+
+### Law: "Never Auto-fix on Save"
+
+**NEVER configure auto-formatting that fixes Sigil violations on save.**
+
+Why:
+- Messy code IS debugging context
+- `border: 1px solid red;` is a valid debugging technique
+- Auto-fix removes debugging state before developer can use it
+- Breaking flow destroys productivity and trust
+
+### /polish Command
+
+```bash
+# Show violations with suggested fixes
+npx sigil polish
+
+# Check mode (CI/pre-commit) - exits non-zero if errors
+npx sigil polish --check
+
+# Check staged files only
+npx sigil polish --check --staged
+
+# Apply fixes after review
+npx sigil polish --apply
+
+# Target specific files
+npx sigil polish --files 'src/components/**/*.tsx'
+```
+
+### Workflow
+
+1. **Scan** - Find taste violations against fidelity/constitution
+2. **Generate** - Create fix diff for each violation
+3. **Present** - Show before/after diff
+4. **Apply** - ONLY on explicit user approval
+
+### Violation Types
+
+| Type | Severity | Examples |
+|------|----------|----------|
+| ergonomic | error | hitbox < 44px, missing focus ring |
+| constitution | error | wrong physics for data type |
+| fidelity | warning | animation duration exceeded |
+| cohesion | warning | shadow mismatch with neighbors |
+
+### Pre-commit Hook
+
+```bash
+# Install hook
+./sigil-mark/scripts/install-hooks.sh
+
+# Or manually:
+npx husky add .husky/pre-commit "npx sigil polish --check --staged"
+```
+
+### Anti-Patterns
+
+| DO NOT | Why |
+|--------|-----|
+| Configure ESLint auto-fix for Sigil rules | Breaks debugging flow |
+| Configure Prettier to fix on save | Removes debugging context |
+| Block commits without showing fixes | Developer loses state |
+| Auto-apply fixes silently | Surprise changes cause distrust |
+
+---
+
+## v5.0 Status Propagation & Negotiation
+
+### Status Propagation Rule
+
+**Law: Your status is only as good as your weakest dependency.**
+
+```
+Tier(Component) = min(DeclaredTier, Tier(Dependencies))
+```
+
+If a `@sigil-tier gold` component imports a `@sigil-tier draft` component, its effective tier becomes `draft`.
+
+```typescript
+import { analyzeComponentStatus } from 'sigil-mark/process';
+
+const status = analyzeComponentStatus('src/components/ClaimButton.tsx');
+if (status.downgrade) {
+  console.log('Downgrade:', status.warnings);
+  // ⚠️ Tier downgrade: gold → draft due to import of ./DraftHelper (tier: draft)
+}
+```
+
+### Tier Hierarchy
+
+| Tier | Priority | Description |
+|------|----------|-------------|
+| gold | 4 (highest) | Production-ready, fully tested |
+| silver | 3 | Reviewed, minor gaps |
+| bronze | 2 | Functional, needs polish |
+| draft | 1 (lowest) | Work in progress |
+
+### Scanning for Downgrades
+
+```bash
+# Find all components with tier downgrades
+import { scanStatusPropagation } from 'sigil-mark/process';
+
+const issues = scanStatusPropagation();
+for (const issue of issues) {
+  console.log(`${issue.file}: ${issue.declaredTier} → ${issue.effectiveTier}`);
+}
+```
+
+### Negotiating Integrity
+
+When a request conflicts with the Constitution, **never refuse outright**. Present options:
+
+```
+This request conflicts with the Constitution.
+
+VIOLATION: Using useOptimistic with Money type
+ARTICLE: constitution.financial.forbidden[0]
+RISK: critical
+
+OPTIONS:
+1. COMPLY - Use useSigilMutation with simulation flow
+2. BYPASS - Override with justification (will be logged)
+3. AMEND - Propose constitution change
+
+Which do you prefer?
+```
+
+### BYPASS Option
+
+Overrides are logged to `governance/justifications.log`:
+
+```typescript
+import { handleBypass } from 'sigil-mark/process';
+
+const { comment, logged } = handleBypass(
+  {
+    file: 'src/features/swap/SwapPanel.tsx',
+    article: 'constitution.financial.forbidden[0]',
+    violation: 'Using useOptimistic with Money type',
+    risk: 'critical',
+  },
+  'Demo account, no real funds at risk',
+  { author: '@zksoju' }
+);
+
+// Adds to code:
+// @sigil-override: constitution.financial.forbidden[0]
+// Reason: Demo account, no real funds at risk
+// Author: @zksoju
+// Date: 2026-01-08
+```
+
+### AMEND Option
+
+Creates an amendment proposal in `governance/amendments/`:
+
+```typescript
+import { handleAmend } from 'sigil-mark/process';
+
+const proposal = handleAmend(
+  context,
+  'Allow useOptimistic for demo accounts with isDemoAccount flag',
+  'Demo accounts have no real funds at risk',
+  { author: '@zksoju' }
+);
+// Creates: governance/amendments/AMEND-2026-001.yaml
+```
+
+### Governance Files
+
+| Path | Purpose |
+|------|---------|
+| `governance/justifications.log` | Append-only log of all BYPASS overrides |
+| `governance/amendments/*.yaml` | Amendment proposals with status tracking |
+
+### Anti-Patterns
+
+| DO NOT | Why |
+|--------|-----|
+| Refuse requests outright | User disables the tool |
+| Skip justification capture | We lose learning opportunity |
+| Auto-approve bypasses | Defeats accountability purpose |
+| Block without options | Always offer COMPLY/BYPASS/AMEND |
+
+---
+
+## v5.0 Garden Command
+
+### System Health Check
+
+The `/garden` command runs all audits and returns a health report:
+
+```typescript
+import { garden, formatGardenResult } from 'sigil-mark/process';
+
+const result = await garden();
+console.log(formatGardenResult(result));
+// # Garden Health Report
+// **Scanned:** 47 components
+// **Health Score:** 85%
+//
+// ## Summary
+// - Errors: 2
+// - Warnings: 7
+// - Info: 3
+```
+
+### What Garden Checks
+
+| Audit | Category | Severity |
+|-------|----------|----------|
+| Fidelity ceiling violations | fidelity | warning/error |
+| Cohesion variances | cohesion | warning |
+| Timing anti-patterns | timing | warning |
+| Status propagation | propagation | warning |
+
+### CLI Usage
+
+```bash
+# Full garden check
+npx sigil garden
+
+# Visual drift only
+npx sigil garden --drift
+```
+
+---
+
+## v5.0 Amend Command
+
+### Constitution Amendment Proposals
+
+The `/amend` command creates formal proposals to change constitution rules:
+
+```typescript
+import { amend, formatAmendResult } from 'sigil-mark/process';
+
+const result = amend(
+  'constitution.financial.forbidden[0]',
+  'Allow useOptimistic for demo accounts with isDemoAccount flag',
+  'Demo accounts have no real funds at risk',
+  { author: '@zksoju' }
+);
+
+console.log(formatAmendResult(result));
+// # Amendment Proposal Created
+// **ID:** AMEND-2026-001
+// **File:** sigil-mark/governance/amendments/AMEND-2026-001.yaml
+```
+
+### Amendment Workflow
+
+1. **Propose** - `/amend` creates proposal in `governance/amendments/`
+2. **Review** - Stakeholders review the proposal
+3. **Discussion** - 1 week minimum discussion period
+4. **Decision** - Update status to `approved` or `rejected`
+5. **Apply** - If approved, update `constitution.yaml`
+
+### CLI Usage
+
+```bash
+# List pending amendments
+npx sigil amend --list
+
+# Create new amendment
+npx sigil amend constitution.financial.forbidden[0] \
+  --change "Allow useOptimistic for demo accounts" \
+  --reason "Demo accounts have no real funds" \
+  --author "@zksoju"
+```
+
+---
+
 ## Philosophy
 
 > "Sweat the art. We handle the mechanics. Return to flow."
@@ -407,5 +776,5 @@ No automatic cross-loading - developer decides when to reference design context.
 
 ---
 
-*Sigil v4.1.0 "Living Guardrails"*
-*Last Updated: 2026-01-07*
+*Sigil v5.0.0 "The Lucid Flow"*
+*Last Updated: 2026-01-08*

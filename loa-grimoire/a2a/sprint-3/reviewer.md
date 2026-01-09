@@ -1,183 +1,290 @@
-# Sprint 3 Implementation Report: Lens Array Foundation
+# Sprint 3 Implementation Report
 
-**Sprint ID:** sprint-3
+**Sprint:** Sprint 3 - useSigilMutation Core
+**Implementer:** Claude (AI Agent)
+**Date:** 2026-01-08
+**Status:** READY FOR REVIEW
+
+---
+
+## Implementation Summary
+
+Sprint 3 implements the core `useSigilMutation` hook with full simulation flow for Sigil v5. This is the primary hook for all mutations in Sigil, providing zone-aware physics resolution and a two-step simulation/confirmation flow for server-tick physics.
+
+---
+
+## Task Completion
+
+### S3-T1: Physics Types & Interfaces
+
 **Status:** COMPLETE
-**Date:** 2026-01-06
-**Engineer:** Claude Code Agent
+
+**Files Modified:**
+- `sigil-mark/types/index.ts`
+
+**Implementation Details:**
+- Added `SimulationPreview<T>` interface with:
+  - `predictedResult: T`
+  - `estimatedDuration?: number`
+  - `warnings?: string[]`
+  - `fees?: { estimated: string; currency: string }`
+  - `metadata?: Record<string, unknown>`
+- Added `UseSigilMutationOptions<TData, TVariables>` interface with mutation, simulate, zone, persona, callbacks
+- Added `UseSigilMutationResult<TData, TVariables>` interface with state, data, error, preview, physics, computed props, actions
+- Existing types verified: `SigilState`, `PhysicsClass`, `ResolvedPhysics`
+
+**Acceptance Criteria Met:**
+- [x] `SigilState` type: idle | simulating | confirming | committing | done | error
+- [x] `PhysicsClass` type: server-tick | crdt | local-first
+- [x] `SimulationPreview<T>` interface with predictedResult, estimatedDuration, warnings, fees
+- [x] `ResolvedPhysics` interface with class, timing, requires, forbidden
+- [x] `UseSigilMutationOptions<TData, TVariables>` interface
+- [x] `UseSigilMutationResult<TData, TVariables>` interface
 
 ---
 
-## Summary
+### S3-T2: Physics Resolution Function
 
-Implemented the Lens Array Foundation - user personas with physics and constraints. Philosophy: "Same feature, different truth. Not simplified - just appropriate."
+**Status:** COMPLETE
 
----
+**Files Modified:**
+- `sigil-mark/hooks/physics-resolver.ts`
 
-## Tasks Completed
+**Implementation Details:**
+- Added `resolvePhysicsV5(zone, persona, vibes, override, overrideReason)` function
+- Implemented zone-to-physics mapping:
+  - `critical` → `server-tick`
+  - `glass` → `local-first`
+  - `machinery` → `local-first`
+  - `standard` → `crdt`
+- Persona adjustments:
+  - `power_user`: 10% faster timing in server-tick zones
+  - `cautious`: 20% slower timing
+- Vibes timing_modifier applied as multiplier
+- Override warning logged if no reason provided
+- Added `createPhysicsStyleV5()` for CSS custom properties
+- Added `getMotionProfileTiming()` and `getMotionProfileEasing()` helpers
 
-### S3-T1: Create lens-array directory structure ✅
-
-**Files Created:**
-- `sigil-mark/lens-array/` - Main directory
-- `sigil-mark/lens-array/schemas/` - JSON Schema definitions
-
-**Acceptance Criteria:** Directory structure exists ✅
-
----
-
-### S3-T2: Create LensArray YAML schema ✅
-
-**File:** `sigil-mark/lens-array/schemas/lens-array.schema.json`
-
-**Implementation:**
-- JSON Schema Draft-07 for lens array validation
-- Defines Persona with id, name, alias, physics, constraints, priority
-- Defines PersonaPhysics with input_method, tap_targets, shortcuts, motion, feedback
-- Defines PersonaConstraints with max_actions_per_screen, reading_level, session_duration, etc.
-- Defines StackingConfig with allowed_combinations, forbidden_combinations, conflict_resolution
-
-**Acceptance Criteria:** JSON Schema validates sample YAML ✅
-
----
-
-### S3-T3: Create default lenses.yaml ✅
-
-**File:** `sigil-mark/lens-array/lenses.yaml`
-
-**Implementation:**
-- 4 default personas:
-  - `power_user` (Chef): Keyboard-driven, efficiency-focused, priority 10
-  - `newcomer` (Henlocker): Guided, forgiving, priority 5
-  - `mobile` (Thumbzone): Touch-optimized, gesture-aware, priority 8
-  - `accessibility` (A11y): Screen-reader first, highest priority 100
-
-**Physics Configuration:**
-- `power_user`: keyboard input, 32px targets, shortcuts expected
-- `newcomer`: mouse input, 44px targets, no shortcuts
-- `mobile`: touch input, 48px targets, haptic feedback
-- `accessibility`: mixed input, 48px targets, audio feedback, reduced motion
-
-**Constraints Configuration:**
-- Different max_actions_per_screen (3-10)
-- Different reading_level (basic/standard/advanced)
-- Different error_tolerance (low/medium/high)
-- Different cognitive_load (minimal/moderate/high)
-
-**Acceptance Criteria:** YAML contains all 4 personas with complete definitions ✅
+**Acceptance Criteria Met:**
+- [x] `resolvePhysics(context, override)` function (as `resolvePhysicsV5`)
+- [x] Maps 'critical' zone → server-tick
+- [x] Maps 'machinery'/'admin' zone → local-first
+- [x] Maps default zone → crdt
+- [x] Applies overrides with warning if no reason provided
+- [x] Returns complete `ResolvedPhysics` object
 
 ---
 
-### S3-T4: Implement LensArrayReader - read operations ✅
+### S3-T3: State Machine Implementation
 
-**File:** `sigil-mark/process/lens-array-reader.ts`
+**Status:** COMPLETE
 
-**Implementation:**
-- `readLensArray(filePath?)` - Reads and parses YAML file
-- `readLensArraySync(filePath?)` - Synchronous version
-- `getPersona(lensArray, personaId)` - Gets persona by ID
-- `getAllPersonas(lensArray)` - Returns all personas as array
-- `getPhysicsForPersona(lensArray, personaId)` - Gets persona physics
-- `getConstraintsForPersona(lensArray, personaId)` - Gets persona constraints
+**Files Modified:**
+- `sigil-mark/hooks/use-sigil-mutation.ts`
 
-**Acceptance Criteria:** Reader parses YAML correctly ✅
+**Implementation Details:**
+- State machine using `useState<SigilState>('idle')`
+- State transitions:
+  - `idle` → `simulating` (via simulate())
+  - `simulating` → `confirming` (on simulation success)
+  - `simulating` → `error` (on simulation failure)
+  - `confirming` → `committing` (via confirm())
+  - `confirming` → `idle` (via cancel())
+  - `committing` → `done` (on mutation success)
+  - `committing` → `error` (on mutation failure)
+- Reset returns to `idle` state
 
----
-
-### S3-T5: Implement LensArrayReader - stacking validation ✅
-
-**Implementation:**
-- `validateLensStack(lensArray, stack)` - Validates a lens stack
-- Checks for empty stack
-- Validates all personas exist
-- Checks max_stack_depth
-- Checks forbidden_combinations
-- Checks allowed_combinations (if specified)
-- Returns `{ valid: boolean, error?: string, stack?: Persona[] }`
-
-**Acceptance Criteria:** Invalid stacks rejected with clear error ✅
+**Acceptance Criteria Met:**
+- [x] State transitions: idle→simulating→confirming→committing→done
+- [x] Error state reachable from simulating/committing
+- [x] Reset returns to idle
+- [x] State is reactive (useState)
 
 ---
 
-### S3-T6: Implement LensArrayReader - conflict resolution ✅
+### S3-T4: Simulate Function
 
-**Implementation:**
-- `resolveStackConflict(lensArray, stack, property)` - Resolves conflicts
-- Supports multiple strategies: priority, merge, first, last
-- `priority`: Uses priority_order array, then persona.priority
-- `merge`: Finds strictest constraint
-- `first/last`: Stack order determines winner
-- Handles immutable_properties (accessibility always wins)
-- `mergeStack(lensArray, stack)` - Merges entire stack into single persona
+**Status:** COMPLETE
 
-**Acceptance Criteria:** Conflicts resolved per priority order ✅
+**Files Modified:**
+- `sigil-mark/hooks/use-sigil-mutation.ts`
 
----
+**Implementation Details:**
+- `simulate(variables)` transitions to 'simulating' state
+- Calls user-provided simulate function if available
+- Creates default preview if no simulate function provided
+- Stores pending variables in ref for confirm step
+- Transitions to 'confirming' on success
+- Transitions to 'error' on failure
+- Calls `onSimulationComplete` callback
 
-### S3-T7: Create LensArrayReader tests ✅
-
-**File:** `sigil-mark/__tests__/process/lens-array-reader.test.ts`
-
-**Test Coverage (35 tests):**
-- `Constants` - DEFAULT_LENS_ARRAY, DEFAULT_LENS_ARRAY_PATH
-- `readLensArray` - Parse personas, aliases, physics, constraints, stacking
-- `getPersona` - Return by ID, undefined for unknown
-- `getAllPersonas` - Return all as array
-- `getPhysicsForPersona` - Return physics, undefined for unknown
-- `getConstraintsForPersona` - Return constraints
-- `validateLensStack` - Empty, single, unknown, allowed, forbidden, max depth
-- `resolveStackConflict` - Priority order, single persona, losers identification
-- `mergeStack` - Invalid stack, valid merge, priority constraints
-- `Display helpers` - formatPersonaSummary, formatLensArraySummary
-- `Graceful Degradation` - File not found, invalid YAML, skip invalid personas
-- `Priority Calculations` - priority_order, accessibility highest
-
-**Acceptance Criteria:** All 35 tests pass ✅
+**Acceptance Criteria Met:**
+- [x] `simulate(variables)` transitions to 'simulating' state
+- [x] Calls user-provided simulate function if available
+- [x] Creates default preview if no simulate function
+- [x] Transitions to 'confirming' on success
+- [x] Transitions to 'error' on failure
+- [x] Stores pending variables for confirm step
 
 ---
 
-## Deliverables
+### S3-T5: Confirm Function
 
-| File | Status |
-|------|--------|
-| `sigil-mark/lens-array/lenses.yaml` | ✅ Created |
-| `sigil-mark/lens-array/schemas/lens-array.schema.json` | ✅ Created |
-| `sigil-mark/process/lens-array-reader.ts` | ✅ Created |
-| `sigil-mark/process/index.ts` | ✅ Updated |
-| `sigil-mark/__tests__/process/lens-array-reader.test.ts` | ✅ Created |
+**Status:** COMPLETE
+
+**Files Modified:**
+- `sigil-mark/hooks/use-sigil-mutation.ts`
+
+**Implementation Details:**
+- `confirm()` only works in 'confirming' state (warns otherwise)
+- Transitions to 'committing' state
+- Executes mutation with stored variables from ref
+- Transitions to 'done' on success
+- Transitions to 'error' on failure
+- Calls onSuccess/onError callbacks appropriately
+
+**Acceptance Criteria Met:**
+- [x] `confirm()` only works in 'confirming' state
+- [x] Transitions to 'committing' state
+- [x] Executes mutation with stored variables
+- [x] Transitions to 'done' on success
+- [x] Transitions to 'error' on failure
+- [x] Calls onSuccess/onError callbacks
 
 ---
 
-## Test Results
+### S3-T6: Execute Function
 
+**Status:** COMPLETE
+
+**Files Modified:**
+- `sigil-mark/hooks/use-sigil-mutation.ts`
+
+**Implementation Details:**
+- `execute(variables)` for non-server-tick physics
+- Logs warning if used on server-tick physics (suggests simulate→confirm flow)
+- Only works from idle state
+- Transitions through committing→done/error
+- Calls mutation directly
+
+**Acceptance Criteria Met:**
+- [x] `execute(variables)` for non-server-tick physics
+- [x] Logs warning if used on server-tick physics
+- [x] Transitions through committing→done/error
+- [x] Calls mutation directly
+
+---
+
+### S3-T7: Computed UI State
+
+**Status:** COMPLETE
+
+**Files Modified:**
+- `sigil-mark/hooks/use-sigil-mutation.ts`
+
+**Implementation Details:**
+- `disabled` = state !== 'idle' && state !== 'confirming'
+- `isPending` = state === 'committing'
+- `isSimulating` = state === 'simulating'
+- `isConfirming` = state === 'confirming'
+- `cssVars` object with `--sigil-duration`, `--sigil-easing`
+
+**Acceptance Criteria Met:**
+- [x] `disabled` = not idle and not confirming
+- [x] `isPending` = state is 'committing'
+- [x] `isSimulating` = state is 'simulating'
+- [x] `isConfirming` = state is 'confirming'
+- [x] `cssVars` object with --sigil-duration, --sigil-easing
+
+---
+
+### S3-T8: Hook Assembly & Export
+
+**Status:** COMPLETE
+
+**Files Modified:**
+- `sigil-mark/hooks/use-sigil-mutation.ts`
+
+**Implementation Details:**
+- Hook uses `useSigilZoneContext()` and `useSigilPersonaContext()` from SigilProvider
+- Returns complete result object with all properties and actions
+- Exported from `sigil-mark/hooks/`
+- JSDoc documented with `@sigil-tier gold`
+- Comprehensive examples in JSDoc
+
+**Acceptance Criteria Met:**
+- [x] Hook uses SigilContext for zone/persona
+- [x] Returns complete result object
+- [x] Exported from sigil-mark/hooks/
+- [x] JSDoc documented with @sigil-tier gold
+
+---
+
+## Files Modified
+
+| File | Changes |
+|------|---------|
+| `sigil-mark/types/index.ts` | Added SimulationPreview, UseSigilMutationOptions, UseSigilMutationResult interfaces |
+| `sigil-mark/hooks/physics-resolver.ts` | Added resolvePhysicsV5, createPhysicsStyleV5, zone mapping, v5 header |
+| `sigil-mark/hooks/use-sigil-mutation.ts` | Complete rewrite with v5 simulation flow |
+
+---
+
+## Architecture Alignment
+
+### Zone-to-Physics Mapping
+
+Per SDD Section 4.2:
+- `critical` zone → `server-tick` physics (financial, health flows)
+- `glass` zone → `local-first` physics (marketing, exploration)
+- `machinery` zone → `local-first` physics (admin, power-user)
+- `standard` zone → `crdt` physics (default collaborative)
+
+### Simulation Flow
+
+Per SDD Section 4.2.1:
 ```
- ✓ __tests__/process/lens-array-reader.test.ts  (35 tests) 57ms
-
- Test Files  1 passed (1)
-      Tests  35 passed (35)
+idle → simulating → confirming → committing → done
+              ↓           ↓            ↓
+            error       idle        error
 ```
 
----
+### Physics Resolution Priority
 
-## Architecture Decisions
-
-1. **Record-based Lenses**: Personas stored as `Record<string, Persona>` for O(1) lookup by ID.
-
-2. **Priority System**: Dual priority - priority_order array for explicit ordering, persona.priority for fallback.
-
-3. **Immutable Properties**: Accessibility properties (screen_reader, high_contrast, reduced_motion) cannot be overridden when stacking - accessibility always wins.
-
-4. **Conflict Resolution Strategies**: Four strategies (priority, merge, first, last) to handle different use cases.
-
-5. **Stacking Validation**: Explicit allowed_combinations and forbidden_combinations lists for tight control.
+Per SDD Section 4.2.2:
+1. Zone determines base physics class
+2. Persona adjusts timing
+3. Vibes apply timing_modifier
+4. Overrides applied last with warning
 
 ---
 
-## Known Issues
+## Code Quality Notes
 
-None. All acceptance criteria met.
+1. **Type Safety:** Full TypeScript types for all interfaces
+2. **Backwards Compat:** v4.1 resolvePhysics preserved alongside v5
+3. **JSDoc:** Comprehensive documentation with examples
+4. **Error Handling:** Proper error transitions and callbacks
+5. **Warnings:** Console warnings for:
+   - Physics override without reason
+   - execute() on server-tick physics
+   - simulate/confirm called in wrong state
 
 ---
 
-## Next Sprint
+## Testing Notes
 
-Sprint 4: Zone-Persona Integration - Connect zones to personas for contextual guidance.
+Manual testing recommended for:
+1. Zone context propagation through CriticalZone
+2. Simulation flow (simulate → confirm → done)
+3. Execute flow (execute → done)
+4. Error handling (simulate error, mutation error)
+5. Cancel flow (simulate → cancel → idle)
+6. Physics resolution with different personas
+7. Override warning logging
+
+---
+
+## Ready for Review
+
+All 8 Sprint 3 tasks completed. Implementation follows SDD architecture. Ready for `/review-sprint sprint-3`.

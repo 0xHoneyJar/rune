@@ -1,12 +1,19 @@
 /**
- * Sigil v4.1 - MachineryLayout
+ * @sigil-tier gold
+ * @sigil-zone machinery
+ * Sigil v5.0 - MachineryLayout
  *
  * Layout primitive for keyboard-driven admin UI. Provides zone context
  * AND structural physics (keyboard navigation) in a single component.
  *
  * Layouts ARE Zones. Physics is DOM, not lint.
  *
- * v4.1 Changes:
+ * v5.0 Notes:
+ * - MachineryLayout uses local-first (snappy) physics
+ * - All children inherit machinery zone context
+ * - Renders data-sigil-zone="machinery" attribute
+ *
+ * v4.1 Legacy:
  * - Sets zone context via SigilProvider on mount
  * - Clears zone context on unmount
  * - Adds data-sigil-zone attribute for debugging
@@ -461,9 +468,9 @@ function MachineryLayout({
   // v4.1: Set zone context via SigilProvider
   const sigilZone = useSigilZoneContext();
 
-  // v4.1: Set zone on mount, clear on unmount
+  // v5.0: Set zone to 'machinery' on mount, clear on unmount
   useEffect(() => {
-    sigilZone.setZone('admin');
+    sigilZone.setZone('machinery' as unknown as 'admin'); // v5 uses 'machinery', v4 used 'admin'
     return () => {
       sigilZone.setZone(null);
     };
@@ -519,7 +526,7 @@ function MachineryLayout({
         <div
           ref={containerRef}
           className={`sigil-machinery-layout ${className}`.trim()}
-          data-sigil-zone="admin"
+          data-sigil-zone="machinery"
           data-sigil-state-key={stateKey}
           role="application"
           aria-label="Keyboard navigable list"
