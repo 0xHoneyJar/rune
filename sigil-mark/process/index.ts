@@ -689,3 +689,27 @@ export {
   type QuickRebuildOptions,
   type QuickRebuildResult,
 } from './startup-sentinel';
+
+// =============================================================================
+// SANCTUARY SCANNER (v6.0 - Sprint 3)
+// =============================================================================
+
+export {
+  // Tier lookup
+  findByTier,
+  // Zone lookup
+  findByZone,
+  // Physics lookup
+  findByPhysics,
+  // Vocabulary lookup
+  findByVocabulary,
+  // Combined search
+  findComponents,
+  // Component details
+  getComponentDetails,
+  listAllComponents,
+  getComponentStats,
+  // Types
+  type ScanResult,
+  type ScanOptions,
+} from './sanctuary-scanner';

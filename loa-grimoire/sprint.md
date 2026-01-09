@@ -276,11 +276,11 @@ The MVP delivers:
 **Description:** Create skill definition for component discovery.
 
 **Acceptance Criteria:**
-- [ ] SKILL.md in `.claude/skills/scanning-sanctuary/`
-- [ ] Purpose: Find components using ripgrep
-- [ ] Trigger: Search queries during /craft
-- [ ] ripgrep patterns documented
-- [ ] Performance target: <50ms
+- [x] SKILL.md in `.claude/skills/scanning-sanctuary/`
+- [x] Purpose: Find components using ripgrep
+- [x] Trigger: Search queries during /craft
+- [x] ripgrep patterns documented
+- [x] Performance target: <50ms
 
 **Dependencies:** None
 **Effort:** Small
@@ -291,10 +291,10 @@ The MVP delivers:
 **Description:** Find components by tier using ripgrep.
 
 **Acceptance Criteria:**
-- [ ] `findByTier(tier)` function
-- [ ] Uses ripgrep: `rg "@sigil-tier gold" src/sanctuary/ -l`
-- [ ] Returns file paths array
-- [ ] Performance: <50ms
+- [x] `findByTier(tier)` function
+- [x] Uses ripgrep: `rg "@sigil-tier gold" src/sanctuary/ -l`
+- [x] Returns file paths array
+- [x] Performance: <50ms
 
 **Dependencies:** S3-T1
 **Effort:** Small
@@ -305,10 +305,10 @@ The MVP delivers:
 **Description:** Find components by zone using ripgrep.
 
 **Acceptance Criteria:**
-- [ ] `findByZone(zone)` function
-- [ ] Uses ripgrep: `rg "@sigil-zone critical" src/ -l`
-- [ ] Returns file paths array
-- [ ] Performance: <50ms
+- [x] `findByZone(zone)` function
+- [x] Uses ripgrep: `rg "@sigil-zone critical" src/ -l`
+- [x] Returns file paths array
+- [x] Performance: <50ms
 
 **Dependencies:** S3-T1
 **Effort:** Small
@@ -319,10 +319,10 @@ The MVP delivers:
 **Description:** Find components by vocabulary term.
 
 **Acceptance Criteria:**
-- [ ] `findByVocabulary(term)` function
-- [ ] Uses ripgrep: `rg "@sigil-vocabulary claim" src/ -l`
-- [ ] Returns file paths array
-- [ ] Performance: <50ms
+- [x] `findByVocabulary(term)` function
+- [x] Uses ripgrep: `rg "@sigil-vocabulary claim" src/ -l`
+- [x] Returns file paths array
+- [x] Performance: <50ms
 
 **Dependencies:** S3-T1
 **Effort:** Small
@@ -333,11 +333,11 @@ The MVP delivers:
 **Description:** Create skill definition for dependency scanning.
 
 **Acceptance Criteria:**
-- [ ] SKILL.md in `.claude/skills/graphing-imports/`
-- [ ] Purpose: Scan src/ for actual dependencies
-- [ ] Trigger: Startup, after package install
-- [ ] Output: .sigil/imports.yaml
-- [ ] Performance target: <1s
+- [x] SKILL.md in `.claude/skills/graphing-imports/`
+- [x] Purpose: Scan src/ for actual dependencies
+- [x] Trigger: Startup, after package install
+- [x] Output: .sigil/imports.yaml
+- [x] Performance target: <1s
 
 **Dependencies:** None
 **Effort:** Small
@@ -348,11 +348,11 @@ The MVP delivers:
 **Description:** Create bash script for import scanning.
 
 **Acceptance Criteria:**
-- [ ] Script at `.claude/skills/graphing-imports/scripts/scan-imports.sh`
-- [ ] Uses ripgrep to find ES imports
-- [ ] Extracts unique package names
-- [ ] Writes to .sigil/imports.yaml
-- [ ] Performance: <1s on typical codebase
+- [x] Script at `.claude/skills/graphing-imports/scripts/scan-imports.sh`
+- [x] Uses ripgrep to find ES imports
+- [x] Extracts unique package names
+- [x] Writes to .sigil/imports.yaml
+- [x] Performance: <1s on typical codebase
 
 **Dependencies:** S3-T5
 **Effort:** Medium
@@ -363,11 +363,11 @@ The MVP delivers:
 **Description:** Unit tests for discovery functions.
 
 **Acceptance Criteria:**
-- [ ] Test tier lookup with mock Sanctuary
-- [ ] Test zone lookup accuracy
-- [ ] Test vocabulary matching
-- [ ] Test imports scanning
-- [ ] All tests pass
+- [x] Test tier lookup with mock Sanctuary
+- [x] Test zone lookup accuracy
+- [x] Test vocabulary matching
+- [x] Test imports scanning
+- [x] All tests pass
 
 **Dependencies:** S3-T1 through S3-T6
 **Effort:** Medium
