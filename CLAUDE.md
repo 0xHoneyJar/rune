@@ -12,6 +12,8 @@ Sigil is a design context framework that helps AI agents make consistent design 
 4. **Survival-Based Precedent** — Patterns earn status through usage, not approval dialogs
 5. **Context Forking** — Ephemeral inspiration without polluting taste
 6. **10 Claude Code Skills** — Complete lifecycle with hooks
+7. **v6.1: Optimistic Divergence** — Taste violations tagged, not blocked
+8. **v6.1: Merge-Driven Gardening** — <5 min pattern promotion latency
 
 ---
 
@@ -20,6 +22,15 @@ Sigil is a design context framework that helps AI agents make consistent design 
 1. **Code is Precedent** — Patterns that survive become canonical. No governance dialogs.
 2. **Survival is the Vote** — Usage frequency determines pattern status, not approvals.
 3. **Never Interrupt Flow** — No blocking, no dialogs, observe silently.
+
+---
+
+## v6.1 Quality Gates
+
+1. **Vocabulary Integration** — No hardcoded terms, all from vocabulary.yaml
+2. **Taste-Key Curation** — canonical-candidate status requires explicit approval
+3. **Hard Eviction** — Virtual Sanctuary evicts when real components exist
+4. **Optimistic Divergence** — Taste violations tagged, not blocked
 
 ---
 
@@ -37,17 +48,18 @@ Sigil is a design context framework that helps AI agents make consistent design 
 
 ## Quick Reference
 
-### Commands (v6.0)
+### Commands (v6.1)
 
 | Command | Purpose | Description |
 |---------|---------|-------------|
 | `/craft` | Design guidance | Zone-aware generation with workshop |
-| `/forge` | Precedent-breaking | Physics-only validation, skip survival |
 | `/inspire` | Ephemeral reference | One-time fetch, forked context |
 | `/sanctify` | Promote pattern | Save ephemeral inspiration to rules |
-| `/garden` | Pattern gardening | Scan for promotions/rejections |
+| `/garden` | Pattern gardening | Merge-driven survival scanning |
 | `/audit` | Cohesion check | Visual consistency variance report |
 | `/new-era` | Era transition | Archive patterns, fresh tracking |
+| `/approve` | v6.1: Approve pattern | Promote canonical-candidate to canonical |
+| `/reset-seed` | v6.1: Reset seed | Restore Virtual Sanctuary after eviction |
 
 ### Skill Commands
 
@@ -56,10 +68,9 @@ Sigil is a design context framework that helps AI agents make consistent design 
 | scanning-sanctuary | Component lookup | Live ripgrep discovery |
 | graphing-imports | Startup | Scan src/ for dependencies |
 | querying-workshop | /craft | Fast workshop index queries |
-| validating-physics | PreToolUse | Block physics violations |
+| validating-physics | PreToolUse | Block physics + tag taste violations |
 | seeding-sanctuary | Cold start | Virtual taste from seeds |
 | inspiring-ephemerally | "like [url]" | Forked context fetch |
-| forging-patterns | /forge | Bypass survival checks |
 | managing-eras | /new-era | Era transitions |
 | observing-survival | PostToolUse | Silent pattern tracking |
 | chronicling-rationale | Stop | Craft log generation |
@@ -71,11 +82,13 @@ Sigil is a design context framework that helps AI agents make consistent design 
 |------|---------|
 | `.sigil/workshop.json` | Pre-computed index (materials, components, physics) |
 | `.sigil/survival.json` | Pattern tracking (status, occurrences, files) |
+| `.sigil/taste-key.yaml` | v6.1: Curated pattern approvals |
 | `.sigil/seed.yaml` | Virtual Sanctuary taste (cold starts) |
 | `.sigil/craft-log/*.md` | Session craft logs |
 | `.sigil/eras/*.json` | Archived era patterns |
 | `sigil-mark/moodboard.md` | Product feel, references |
 | `sigil-mark/rules.md` | Design rules by category |
+| `sigil-mark/vocabulary/vocabulary.yaml` | v6.1: Term definitions |
 | `.sigilrc.yaml` | Zone definitions, physics |
 
 ---
@@ -264,27 +277,32 @@ Pattern tracking at `.sigil/survival.json`:
 }
 ```
 
-### Pattern Promotion
+### Pattern Promotion (v6.1)
 
 | Status | Occurrences | Behavior |
 |--------|-------------|----------|
 | experimental | 1-2 | Tracked, not preferred |
 | surviving | 3-4 | Preferred over new |
-| canonical | 5+ | Standard pattern |
+| canonical-candidate | 5+ | Awaiting approval |
+| canonical | 5+ approved | Standard pattern |
 
-### Gardener Script
+v6.1: Patterns at 5+ occurrences become `canonical-candidate` and require `/approve` for promotion to canonical.
 
-Weekly scan for promotions/rejections:
+### Merge-Driven Gardening (v6.1)
 
-```bash
-# Scan for @sigil-pattern tags
-rg "@sigil-pattern" src/ -l
+GitHub Actions workflow runs on every merge to main:
 
-# Count occurrences per pattern
-# Apply promotion rules:
-# - 3+ occurrences → canonical
-# - 0 occurrences → rejected
+```yaml
+# .github/workflows/sigil-gardener.yaml
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**/*.tsx'
+      - 'src/**/*.ts'
 ```
+
+Latency: <5 min (replaces weekly cron)
 
 ---
 
@@ -310,15 +328,18 @@ if (src/sanctuary/ is empty) {
 }
 ```
 
-### Fade Behavior
+### Hard Eviction (v6.1)
 
-Virtual components "fade" when real ones exist:
+When ANY real component exists, ALL virtual components are evicted:
 ```
 Virtual Button exists in seed
 Real Button created in Sanctuary
-→ Virtual Button marked as "faded"
-→ Queries return real Button
+→ ALL virtual components deleted
+→ Eviction status persisted to seed.yaml
+→ Use /reset-seed to restore if needed
 ```
+
+v6.1: Hard eviction replaces soft "fade" behavior to prevent ghost components.
 
 ---
 
@@ -349,31 +370,39 @@ Promote ephemeral pattern to permanent:
 
 ---
 
-## Forge Mode
+## Optimistic Divergence (v6.1)
 
-Explicit precedent-breaking for exploration:
+Taste violations are tagged, not blocked:
 
-```bash
-/craft --forge "experimental loading animation"
-# or
-/forge "experimental loading animation"
+```typescript
+// Physics violations → BLOCK
+checkZoneConstraints()      // critical + playful → BLOCK
+checkMaterialConstraints()  // clay + 0ms → BLOCK
+checkApiCorrectness()       // motion.animate → BLOCK
+
+// Taste violations → TAG
+checkFidelityCeiling()      // 3D in standard → TAG with @sigil-status divergent
 ```
 
-### Forge Behavior
+### Divergent Pattern Tagging
 
-| Check | Normal Mode | Forge Mode |
-|-------|-------------|------------|
-| Survival patterns | Preferred | Ignored |
-| Rejected patterns | Warned | Ignored |
-| Physics constraints | Enforced | Enforced |
-| API correctness | Enforced | Enforced |
+```typescript
+/** @sigil-status divergent - 2 taste deviation(s) */
+export function AnimatedCard() {
+  // Code with taste violations (allowed but tracked)
+}
+```
 
-After forge generation:
-```
-Prompt: "Keep this exploration?"
-→ Keep: Normal flow applies
-→ Discard: Code removed
-```
+### Classification
+
+| Violation Type | Action | Rationale |
+|---------------|--------|-----------|
+| Zone-physics mismatch | BLOCK | Safety |
+| Material-timing mismatch | BLOCK | Safety |
+| API errors | BLOCK | Safety |
+| Fidelity preferences | TAG | Taste |
+| Style deviations | TAG | Taste |
+| Non-canonical patterns | TAG | Taste |
 
 ---
 
@@ -607,5 +636,5 @@ Key changes:
 
 ---
 
-*Sigil v6.0.0 "Native Muse"*
+*Sigil v6.1.0 "Agile Muse"*
 *Last Updated: 2026-01-08*

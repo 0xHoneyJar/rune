@@ -358,6 +358,182 @@ export function ensureSeedContext(
   return { useSeed: false, seed: null, reason: 'No seed selected' };
 }
 
+// =============================================================================
+// HARD EVICTION (v6.1)
+// =============================================================================
+
+/**
+ * Evicted seed state.
+ */
+export interface EvictedSeed extends Seed {
+  /** Eviction status */
+  status: 'evicted';
+  /** When eviction occurred */
+  evicted_at: string;
+  /** Original component count before eviction */
+  original_component_count: number;
+}
+
+/**
+ * Load seed with hard eviction.
+ * v6.1: If ANY real component exists, ALL virtual components are deleted.
+ *
+ * @param projectRoot - Project root directory
+ * @returns Seed (possibly evicted) or null
+ */
+export function loadSeedWithEviction(
+  projectRoot: string = process.cwd()
+): Seed | EvictedSeed | null {
+  const seed = loadSeed(projectRoot);
+  if (!seed) {
+    return null;
+  }
+
+  // Check if Sanctuary has real components
+  const hasRealComponents = !isSanctuaryEmpty(projectRoot);
+
+  if (hasRealComponents) {
+    // v6.1: Hard eviction - delete ALL virtual components
+    const originalCount = Object.keys(seed.virtual_components).length;
+
+    const evictedSeed: EvictedSeed = {
+      ...seed,
+      virtual_components: {}, // Hard delete all virtual
+      status: 'evicted',
+      evicted_at: new Date().toISOString(),
+      original_component_count: originalCount,
+    };
+
+    console.log(
+      `[Sigil] Virtual Sanctuary evicted: ${originalCount} virtual components removed (real components exist)`
+    );
+
+    // Persist evicted state
+    saveSeed(evictedSeed, projectRoot);
+
+    return evictedSeed;
+  }
+
+  return seed;
+}
+
+/**
+ * Check if seed has been evicted.
+ */
+export function isSeedEvicted(seed: Seed | EvictedSeed): seed is EvictedSeed {
+  return 'status' in seed && seed.status === 'evicted';
+}
+
+/**
+ * Query virtual component with eviction check.
+ * v6.1: Returns null if seed is evicted (no ghost components).
+ */
+export function queryVirtualComponentWithEviction(
+  projectRoot: string = process.cwd(),
+  componentName: string
+): VirtualComponentQueryResult {
+  const seed = loadSeedWithEviction(projectRoot);
+
+  if (!seed) {
+    return {
+      found: false,
+      data: null,
+      source: 'seed',
+      faded: false,
+    };
+  }
+
+  // If evicted, no virtual components available
+  if (isSeedEvicted(seed)) {
+    return {
+      found: false,
+      data: null,
+      source: 'seed',
+      faded: true, // Mark as faded to indicate eviction
+    };
+  }
+
+  return queryVirtualComponent(seed, componentName);
+}
+
+/**
+ * Reset seed from template.
+ * Restores virtual components from seed library.
+ *
+ * @param seedId - Seed ID to reset to
+ * @param projectRoot - Project root directory
+ * @param force - Force reset even if real components exist
+ * @returns Whether reset succeeded
+ */
+export function resetSeed(
+  seedId: SeedId,
+  projectRoot: string = process.cwd(),
+  force: boolean = false
+): { success: boolean; warning?: string } {
+  // Check for real components
+  if (!force && !isSanctuaryEmpty(projectRoot)) {
+    return {
+      success: false,
+      warning: 'Real components exist. Use --force to reset anyway.',
+    };
+  }
+
+  // Load seed from library
+  const seed = loadSeedFromLibrary(seedId, projectRoot);
+  if (!seed) {
+    return {
+      success: false,
+      warning: `Seed '${seedId}' not found in library.`,
+    };
+  }
+
+  // Clear eviction state if present
+  if ('status' in seed) {
+    delete (seed as Record<string, unknown>).status;
+    delete (seed as Record<string, unknown>).evicted_at;
+    delete (seed as Record<string, unknown>).original_component_count;
+  }
+
+  // Save seed
+  const saved = saveSeed(seed, projectRoot);
+  if (!saved) {
+    return {
+      success: false,
+      warning: 'Failed to save seed.',
+    };
+  }
+
+  // Clear faded cache
+  clearFadedCache();
+
+  console.log(`[Sigil] Seed reset to '${seedId}' with ${Object.keys(seed.virtual_components).length} virtual components`);
+
+  return { success: true };
+}
+
+/**
+ * Get eviction status for reporting.
+ */
+export function getEvictionStatus(
+  projectRoot: string = process.cwd()
+): { evicted: boolean; originalCount?: number; evictedAt?: string } {
+  const seed = loadSeed(projectRoot);
+  if (!seed) {
+    return { evicted: false };
+  }
+
+  if (isSeedEvicted(seed as Seed | EvictedSeed)) {
+    const evictedSeed = seed as EvictedSeed;
+    return {
+      evicted: true,
+      originalCount: evictedSeed.original_component_count,
+      evictedAt: evictedSeed.evicted_at,
+    };
+  }
+
+  return { evicted: false };
+}
+
 /**
  * Get available seed options for selection UI.
  */

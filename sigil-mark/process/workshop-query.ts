@@ -8,6 +8,7 @@
  * @module process/workshop-query
  */
 
+import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
 import {
@@ -19,7 +20,7 @@ import {
   WorkshopSource,
   WorkshopQueryResult,
 } from '../types/workshop';
-import { loadWorkshop, extractExportsFromDts, extractSignaturesFromDts } from './workshop-builder';
+import { loadWorkshop, extractExportsFromDts, extractSignaturesFromDts, extractComponent } from './workshop-builder';
 
 // =============================================================================
 // TYPES
@@ -191,6 +192,164 @@ export function queryComponentWithSource(
     data: null,
     source: 'workshop',
   };
+}
+
+// =============================================================================
+// VERIFY-ON-READ COMPONENT QUERY (v6.1)
+// =============================================================================
+
+/**
+ * Result from a verified component query.
+ */
+export interface VerifiedComponentResult {
+  /** Query result */
+  result: WorkshopQueryResult<ComponentEntry>;
+  /** Whether verification passed */
+  verified: boolean;
+  /** Whether component was reindexed */
+  reindexed: boolean;
+  /** Whether component was removed (file deleted) */
+  removed: boolean;
+  /** Verification latency in ms */
+  verifyMs: number;
+}
+
+/**
+ * Query component with filesystem verification.
+ * Checks that cached component matches actual file state.
+ * Performance: <6ms (5ms lookup + 1ms stat/hash)
+ *
+ * @param workshop - Workshop instance (mutable for updates)
+ * @param name - Component name to query
+ * @param projectRoot - Project root for file resolution
+ * @returns VerifiedComponentResult with verification status
+ */
+export function queryComponentVerified(
+  workshop: Workshop,
+  name: string,
+  projectRoot: string = process.cwd()
+): VerifiedComponentResult {
+  const startTime = performance.now();
+  const component = workshop.components[name];
+
+  // Component not in workshop
+  if (!component) {
+    return {
+      result: { found: false, data: null, source: 'workshop' },
+      verified: true,
+      reindexed: false,
+      removed: false,
+      verifyMs: performance.now() - startTime,
+    };
+  }
+
+  // Resolve full path
+  const fullPath = path.join(projectRoot, component.path);
+
+  // Check if file exists
+  if (!fs.existsSync(fullPath)) {
+    // File was deleted - remove from workshop
+    delete workshop.components[name];
+    return {
+      result: { found: false, data: null, source: 'workshop' },
+      verified: true,
+      reindexed: false,
+      removed: true,
+      verifyMs: performance.now() - startTime,
+    };
+  }
+
+  // Fast path: check mtime if hash is available
+  if (component.hash && component.indexed_at) {
+    try {
+      const stats = fs.statSync(fullPath);
+      const indexedAt = new Date(component.indexed_at).getTime();
+      const modifiedAt = stats.mtime.getTime();
+
+      // File hasn't been modified since indexing
+      if (modifiedAt <= indexedAt) {
+        return {
+          result: { found: true, data: component, source: 'workshop' },
+          verified: true,
+          reindexed: false,
+          removed: false,
+          verifyMs: performance.now() - startTime,
+        };
+      }
+
+      // File was modified - verify hash
+      const content = fs.readFileSync(fullPath, 'utf-8');
+      const currentHash = crypto.createHash('md5').update(content).digest('hex');
+
+      if (currentHash === component.hash) {
+        // Hash still matches despite mtime - update indexed_at
+        component.indexed_at = new Date().toISOString();
+        return {
+          result: { found: true, data: component, source: 'workshop' },
+          verified: true,
+          reindexed: false,
+          removed: false,
+          verifyMs: performance.now() - startTime,
+        };
+      }
+
+      // Hash mismatch - reindex component
+      const reindexed = extractComponent(fullPath, projectRoot);
+      if (reindexed) {
+        workshop.components[name] = reindexed;
+        return {
+          result: { found: true, data: reindexed, source: 'workshop' },
+          verified: true,
+          reindexed: true,
+          removed: false,
+          verifyMs: performance.now() - startTime,
+        };
+      } else {
+        // Component no longer has @sigil-tier pragma - remove
+        delete workshop.components[name];
+        return {
+          result: { found: false, data: null, source: 'workshop' },
+          verified: true,
+          reindexed: false,
+          removed: true,
+          verifyMs: performance.now() - startTime,
+        };
+      }
+    } catch {
+      // Verification failed - return cached (best effort)
+      return {
+        result: { found: true, data: component, source: 'workshop' },
+        verified: false,
+        reindexed: false,
+        removed: false,
+        verifyMs: performance.now() - startTime,
+      };
+    }
+  }
+
+  // No hash available (legacy entry) - return cached
+  return {
+    result: { found: true, data: component, source: 'workshop' },
+    verified: false,
+    reindexed: false,
+    removed: false,
+    verifyMs: performance.now() - startTime,
+  };
+}
+
+/**
+ * Query multiple components with verification.
+ */
+export function queryComponentsVerified(
+  workshop: Workshop,
+  names: string[],
+  projectRoot: string = process.cwd()
+): Map<string, VerifiedComponentResult> {
+  const results = new Map<string, VerifiedComponentResult>();
+  for (const name of names) {
+    results.set(name, queryComponentVerified(workshop, name, projectRoot));
+  }
+  return results;
 }
 
 // =============================================================================

@@ -1,77 +1,82 @@
-# Product Requirements Document: Sigil v6.0.0 "Native Muse"
+# Product Requirements Document: Sigil v6.1 "Agile Muse"
 
-> *"Code is precedent. Survival is approval. Creativity needs no permission."*
+> *"Code is precedent. Survival is curated. Flow is sacred."*
 
-**Version:** 6.0.0
-**Codename:** Native Muse
+**Version:** 6.1.0
+**Codename:** Agile Muse
 **Status:** PRD Complete
-**Date:** 2026-01-08
-**Sources:** sigil-v3.1.zip context
+**Date:** 2026-01-09
+**Supersedes:** Sigil v6.0.0 "Native Muse" PRD
+**Sources:** SIGIL_V6_COMPREHENSIVE_REVIEW.md (Technical, Principal Engineer, Staff Design Reviews)
 
 ---
 
 ## 1. Executive Summary
 
-Sigil v6.0.0 "Native Muse" evolves the v5.0 constitutional framework into a survival-based design context system. Artists describe feel, agents handle implementation, and flow is never interrupted.
+Sigil v6.1 "Agile Muse" addresses critical implementation gaps identified in v6.0 "Native Muse" while preserving the architectural pivot from governance to ecological survival.
 
-**Key Evolution from v5.0:**
-- Pre-computed workshop index (5ms lookups vs JIT grep)
-- Survival-based approval (code existence = precedent)
-- Virtual Sanctuary for cold starts
-- Context forking for ephemeral exploration
-- No approval dialogs — silent observation
+**The Problem with v6.0:**
+- Core hook scripts don't exist (lifecycle is non-functional)
+- Workshop cache can drift from filesystem reality
+- Survival system has no curation layer ("Mob Rule" risk)
+- `/forge` command breaks flow state
+- Weekly gardener creates 6-day feedback gap
 
-**The Three Laws (extending Seven Laws):**
-1. **Code is precedent** — Existence is approval, deletion is rejection
-2. **Survival is the vote** — Patterns that persist become canonical
-3. **Never interrupt flow** — No approval dialogs, silent observation
+**The v6.1 Solution:**
+- **Verify-on-Read**: Use workshop for discovery (<5ms), verify filesystem for truth
+- **Curated Promotion**: Survival generates candidates, Taste Owner approves canon
+- **Optimistic Divergence**: Let users break rules, classify post-hoc (delete `/forge`)
+- **Merge-Driven Gardening**: Update survival on PR merge, not weekly cron
 
-> Source: sigil-v3.1/ARCHITECTURE.md:1-20
+**Ratings from Review:**
+
+| Dimension | v6.0 Score | v6.1 Target |
+|-----------|-----------|-------------|
+| Architecture | 9.5/10 | 9.5/10 (unchanged) |
+| Implementation | 7/10 | 9/10 |
+| Philosophy | A | A |
+| Production Readiness | B+ | A |
+
+> Source: SIGIL_V6_COMPREHENSIVE_REVIEW.md:12-23
 
 ---
 
 ## 2. Problem Statement
 
-### 2.1 Core Problem
+### 2.1 v6.0 Implementation Gaps
 
-Artists context-switch between "feel-thinking" and "implementation-thinking" dozens of times per session. Every switch breaks creative flow.
+The v6.0 architecture is sound. The v6.0 implementation has critical gaps:
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    FEEL MODE                            │
-│  "This should feel deliberate and trustworthy"          │
-│  "Loading should reduce anxiety, not create it"         │
-└──────────────────────────┬──────────────────────────────┘
-                           │
-            Context switch (flow broken)
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────┐
-│                IMPLEMENTATION MODE                      │
-│  "How does shadcn Button handle loading?"               │
-│  "What's the Radix pattern for dialogs?"                │
-│  "How did I do this in the other component?"            │
-└─────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                    v6.0 PROMISED                            │
+│  PreToolUse → Physics Validation                            │
+│  PostToolUse → Survival Observation                         │
+│  Stop → Craft Log Generation                                │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+          Scripts don't exist (hooks never fire)
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    v6.0 REALITY                             │
+│  Lifecycle is disconnected                                  │
+│  Agent generates code with no validation                    │
+│  Patterns never observed, logs never written                │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-**Current Pain Points (even in v5.0):**
-- JIT grep operations add latency (200ms thinking spinners)
-- Approval dialogs interrupt creative momentum
-- Cold starts have no taste reference (empty room problem)
-- New patterns flagged as concerning when innovation is the job
+### 2.2 Why v6.1 Now
 
-### 2.2 Why v6.0 Now
+| Gap | Impact | Evidence |
+|-----|--------|----------|
+| Missing hook scripts | Core lifecycle broken | sigil-craft.yaml references non-existent files |
+| Cache trust issues | Stale data served | loadWorkshop() has no verification |
+| No taste-key curation | Bad patterns canonized | determineStatus() is pure democracy |
+| /forge breaks flow | Innovation taxed | Explicit mode switch required |
+| Weekly gardener | 6-day feedback gap | Team fights agent for 6 days |
 
-v5.0 established the Seven Laws and governance system. v6.0 optimizes for:
-
-| Aspect | v5.0 Approach | v6.0 Solution |
-|--------|---------------|---------------|
-| Discovery | JIT grep (200ms) | Pre-computed workshop (5ms) |
-| Approval | Governance dialogs | Survival observation |
-| Cold start | Empty room | Virtual Sanctuary |
-| Novelty | Constitutional blocking | Physics-only validation |
-
-> Source: sigil-v3.1/ARCHITECTURE.md:18-40
+> Source: SIGIL_V6_COMPREHENSIVE_REVIEW.md:49-112
 
 ---
 
@@ -80,614 +85,709 @@ v5.0 established the Seven Laws and governance system. v6.0 optimizes for:
 ### 3.1 Vision
 
 ```
-Artists think in feel. Agents handle implementation. Flow is preserved.
+From "Native Muse" (Cached/Passive) to "Agile Muse" (Verified/Active)
 ```
 
-### 3.2 Goals
+### 3.2 The Corrected Mental Model
 
-| Goal | Success Metric |
-|------|----------------|
-| Eliminate thinking spinners | Workshop query <5ms |
-| Zero flow interruptions | 0 approval dialogs during /craft |
-| Cold start taste | Virtual Sanctuary provides context in <1s |
-| Pattern survival tracking | Canonical patterns identified within 2 weeks |
-| Physics validation | Block violations, not novelty |
+**Before (v6.0):**
+```
+User Prompt
+    ↓
+[Cached Workshop] → [Pattern Selection] → [Generate] → [Observe]
+    ↓                     ↓
+ May be stale      Pure democracy (5 = canonical)
+```
 
-### 3.3 Non-Goals
+**After (v6.1):**
+```
+User Prompt
+    ↓
+[Vocabulary Reader] → [Zone/Physics Resolution]
+    ↓
+[Cached Workshop] → [VERIFY ON READ] → [Pattern Selection]
+    ↓                     ↓
+ Self-healing       Curated promotion
+    ↓                     ↓
+[Generate (optimistic)] → [Tag divergent if needed]
+    ↓
+[Observe] → [Merge-driven Gardener] → [Taste Key Approval]
+```
 
-- Replacing React runtime components (SigilProvider, useSigilMutation)
-- Changing the Seven Laws kernel files
-- Automated code refactoring
-- Real-time collaboration features
+> Source: SIGIL_V6_COMPREHENSIVE_REVIEW.md:806-830
+
+### 3.3 Success Metrics
+
+| Metric | v6.0 Actual | v6.1 Target |
+|--------|-------------|-------------|
+| Hook execution rate | 0% (missing scripts) | 100% |
+| Workshop verification | None | On every component query |
+| Canonical promotion | Pure democracy | Taste-key curated |
+| Gardener latency | 7 days | Per-merge |
+| Flow interruptions | 1 (/forge prompt) | 0 |
 
 ---
 
-## 4. User Personas
+## 4. Requirements by Priority
 
-### 4.1 Primary: The Artist
+### 4.1 P0 — Critical (Blocks Core Functionality)
 
-**Profile:** Designer or developer who thinks in feel, not implementation details.
+#### P0-1: Create Hook Integration Scripts
 
-**Needs:**
-- Describe "trustworthy claim button" and get correct physics
-- Never leave feel-thinking to worry about timing values
-- Explore external inspiration without polluting codebase
-- Break from precedent when innovation is needed
+**Problem:** sigil-craft.yaml references scripts that don't exist.
 
-**Journey:**
+**Current State:**
+```yaml
+# sigil-craft.yaml references:
+PreToolUse:
+  script: ".claude/skills/validating-physics/scripts/validate.sh"  # MISSING
+PostToolUse:
+  script: ".claude/skills/observing-survival/scripts/observe.sh"   # MISSING
+Stop:
+  script: ".claude/skills/chronicling-rationale/scripts/ensure-log.sh"  # MISSING
 ```
-/craft "trustworthy claim button"
-  → Agent resolves: claim → critical zone → deliberate physics
-  → Generates with correct timing, no questions asked
-  → Artist iterates on feel, not implementation
-```
-
-### 4.2 Secondary: The Maintainer
-
-**Profile:** Team lead or senior developer who curates the design system.
-
-**Needs:**
-- See which patterns are surviving
-- Understand why decisions were made (craft logs)
-- Start new design eras when direction shifts
-- Sanctify ephemeral patterns into permanent rules
-
----
-
-## 5. Features & Requirements
-
-### 5.1 Feature 1: Pre-Computed Workshop Index
-
-**Problem:** JIT grep on node_modules takes 200ms. Creates thinking spinner.
-
-**Solution:** Background-maintained index queried in 5ms.
 
 **Requirements:**
-- F1.1: Generate `.sigil/workshop.json` with framework exports
-- F1.2: Hash-based staleness detection (package.json hash)
-- F1.3: Incremental updates via PostToolUse hooks
-- F1.4: Query API for framework exports, types, versions
-- F1.5: Component signatures from Sanctuary
+- P0-1.1: Create `validate.sh` that invokes `physics-validator.ts`
+- P0-1.2: Create `observe.sh` that invokes `survival-observer.ts`
+- P0-1.3: Create `ensure-log.sh` that invokes `chronicling-rationale.ts`
+- P0-1.4: Scripts must handle argument passing (CODE, ZONE, FILE_PATH)
+- P0-1.5: Scripts must return JSON for Claude Code hook integration
+
+**Acceptance Criteria:**
+- [ ] PreToolUse hook fires and validates physics
+- [ ] PostToolUse hook fires and observes patterns
+- [ ] Stop hook fires and generates craft log
+- [ ] All scripts are executable and tested
+
+> Source: SIGIL_V6_COMPREHENSIVE_REVIEW.md:51-111
+
+---
+
+#### P0-2: Fix queryMaterial Parameter Order
+
+**Problem:** `queryMaterial` called with wrong argument order.
+
+**Current State:**
+```typescript
+// agent-orchestration.ts line 484
+queryMaterial('framer-motion', workshop);  // WRONG
+
+// workshop-builder.ts line 637 — actual signature
+export function queryMaterial(workshop: Workshop, name: string): MaterialEntry | null
+```
+
+**Requirements:**
+- P0-2.1: Swap argument order in all `queryMaterial` calls
+- P0-2.2: Add TypeScript strict checking to prevent future issues
+- P0-2.3: Add unit test for parameter order
+
+**Acceptance Criteria:**
+- [ ] `queryMaterial(workshop, name)` is the only call pattern
+- [ ] TypeScript compilation catches future ordering errors
+- [ ] Unit test validates correct behavior
+
+> Source: SIGIL_V6_COMPREHENSIVE_REVIEW.md:179-196
+
+---
+
+#### P0-3: Implement Verify-on-Read for Workshop Cache
+
+**Problem:** Workshop index can drift from filesystem reality.
+
+**Scenarios:**
+1. Git pull in another terminal changes files
+2. External editor modifies file while Claude runs
+3. Component deleted but workshop still lists it
+
+**Current State:**
+```typescript
+// workshop-builder.ts — TRUSTS CACHE
+export function loadWorkshop(workshopPath: string): Workshop {
+  const content = fs.readFileSync(workshopPath, 'utf-8');
+  return JSON.parse(content);  // No verification
+}
+```
+
+**Requirements:**
+- P0-3.1: Add `hash` field to ComponentEntry interface
+- P0-3.2: Implement `queryComponentVerified()` that checks file existence
+- P0-3.3: Detect file modification via mtime or hash comparison
+- P0-3.4: Auto-reindex if file changed, remove if file deleted
+- P0-3.5: Log cache misses for observability
+
+**Schema Change:**
+```typescript
+export interface ComponentEntry {
+  path: string;
+  tier: ComponentTier;
+  zone?: string;
+  physics?: string;
+  vocabulary?: string[];
+  imports: string[];
+  hash?: string;      // NEW: Content hash for verification
+  indexed_at?: string; // NEW: Timestamp for mtime comparison
+}
+```
+
+**Acceptance Criteria:**
+- [ ] Deleted files return null (not stale data)
+- [ ] Modified files trigger re-index
+- [ ] Cache verification adds <5ms overhead
+- [ ] Log warns on cache misses
+
+> Source: SIGIL_V6_COMPREHENSIVE_REVIEW.md:317-387
+
+---
+
+#### P0-4: Implement Workshop Rebuild in Startup Sentinel
+
+**Problem:** `runSentinel` checks staleness but doesn't rebuild.
+
+**Current State:**
+```typescript
+// startup-sentinel.ts — INCOMPLETE
+export async function runSentinel(options: SentinelOptions): Promise<SentinelResult> {
+  const staleness = checkWorkshopStaleness(projectRoot);
+  if (staleness.stale) {
+    return { stale: true, reason: staleness.reason };  // No rebuild!
+  }
+}
+```
+
+**CLAUDE.md Promise:**
+```
+if (package_hash changed || imports_hash changed) {
+  quickRebuild()  // <2s incremental
+}
+```
+
+**Requirements:**
+- P0-4.1: Call `buildWorkshop()` when staleness detected
+- P0-4.2: Return rebuild metrics (duration, material count, component count)
+- P0-4.3: Handle rebuild failures gracefully
+- P0-4.4: Log rebuild activity
+
+**Acceptance Criteria:**
+- [ ] Stale workshop triggers automatic rebuild
+- [ ] Rebuild completes in <2s for typical projects
+- [ ] Rebuild failures don't crash the agent
+- [ ] Metrics available for observability
+
+> Source: SIGIL_V6_COMPREHENSIVE_REVIEW.md:198-243
+
+---
+
+### 4.2 P1 — High (Significant Quality/Safety Issues)
+
+#### P1-1: Integrate Vocabulary Reader into Agent Orchestration
+
+**Problem:** `agent-orchestration.ts` has hardcoded vocabulary instead of using `vocabulary-reader.ts`.
+
+**Current State:**
+```typescript
+// agent-orchestration.ts — HARDCODED
+const VOCABULARY_TERMS = [
+  'claim', 'confirm', 'cancel', 'send', 'submit', 'delete',
+  'trustworthy', 'critical', 'urgent', 'marketing', 'admin', 'dashboard',
+];
+
+// vocabulary-reader.ts — EXISTS but UNUSED
+// 671 lines of sophisticated term-to-feel mapping
+```
+
+**Requirements:**
+- P1-1.1: Import and use `loadVocabulary()` from vocabulary-reader
+- P1-1.2: Replace hardcoded terms with `getAllTerms()` call
+- P1-1.3: Use `getTermFeel()` for zone resolution
+- P1-1.4: Use `getRecommendedPhysics()` for physics selection
+- P1-1.5: Cache vocabulary to avoid repeated file reads
+
+**Acceptance Criteria:**
+- [ ] Vocabulary loaded from `sigil-mark/vocabulary.yaml`
+- [ ] Zone resolution uses semantic term mapping
+- [ ] Physics selection respects vocabulary feel
+- [ ] No hardcoded term lists in agent-orchestration.ts
+
+> Source: SIGIL_V6_COMPREHENSIVE_REVIEW.md:114-175
+
+---
+
+#### P1-2: Implement Taste-Key Curation Layer
+
+**Problem:** Survival measures virality, not quality. "Mob Rule" risk.
+
+**Scenario:**
+1. Junior engineer copies bad pattern
+2. 4 others copy that pattern
+3. v6.0 promotes to "Canonical" (5 occurrences)
+4. Bad code enshrined as "Gold Standard"
+
+**Current State:**
+```typescript
+// survival-observer.ts — PURE DEMOCRACY
+export function determineStatus(occurrences: number): PatternStatus {
+  if (occurrences >= 5) return 'canonical';
+  if (occurrences >= 3) return 'surviving';
+  return 'experimental';
+}
+```
+
+**Requirements:**
+- P1-2.1: Add `canonical-candidate` status for patterns at 5+ occurrences
+- P1-2.2: Create `.sigil/taste-key.yaml` for approval workflow
+- P1-2.3: Require taste-key approval for `canonical` promotion
+- P1-2.4: Add `/approve [pattern]` command for taste-key holder
+- P1-2.5: Log pending promotions for visibility
 
 **Schema:**
-```json
-{
-  "indexed_at": "2026-01-08T14:30:00Z",
-  "package_hash": "a1b2c3...",
-  "materials": {
-    "framer-motion": {
-      "version": "11.0.0",
-      "exports": ["motion", "AnimatePresence", "useAnimation"],
-      "types_available": true
-    }
-  },
-  "components": {
-    "ClaimButton": {
-      "path": "src/sanctuary/gold/ClaimButton.tsx",
-      "tier": "gold",
-      "zone": "critical"
-    }
-  }
+```yaml
+# .sigil/taste-key.yaml
+holder: "design-lead@company.com"
+pending_promotions:
+  - pattern: "spinner-loading"
+    occurrences: 7
+    first_seen: "2026-01-05"
+    status: "canonical-candidate"
+    files: ["Button.tsx", "Card.tsx", "Modal.tsx"]
+```
+
+**Acceptance Criteria:**
+- [ ] 5+ occurrences → `canonical-candidate` (not auto-canonical)
+- [ ] Taste-key holder can approve/reject candidates
+- [ ] Approved patterns become `canonical`
+- [ ] Rejected patterns stay `surviving`
+
+> Source: SIGIL_V6_COMPREHENSIVE_REVIEW.md:443-504
+
+---
+
+#### P1-3: Implement Hard Eviction for Virtual Sanctuary
+
+**Problem:** Virtual Sanctuary "fading" creates ghost components.
+
+**Scenario:**
+1. User asks for Button
+2. Agent sees Virtual Button AND Real Button
+3. Which wins? Ambiguous.
+
+**Current State:**
+```typescript
+// seed-manager.ts — FADING CREATES GHOSTS
+if (realComponentExists) {
+  virtualComponent.status = 'faded';  // Still in memory!
 }
 ```
 
-**Acceptance Criteria:**
-- [ ] Workshop query returns in <5ms
-- [ ] Index rebuilds in <2s on package.json change
-- [ ] All imported packages indexed (from src/ imports only)
-
-> Source: sigil-v3.1/ARCHITECTURE.md:185-250
-
-### 5.2 Feature 2: Virtual Sanctuary (Seeding)
-
-**Problem:** New project, empty src/. Agent has no taste reference.
-
-**Solution:** Virtual components until real ones exist.
-
 **Requirements:**
-- F2.1: Seed selection UI (Linear-like, Vercel-like, Stripe-like, Blank)
-- F2.2: Virtual component definitions in `.sigil/seed.yaml`
-- F2.3: Fade behavior when real component created
-- F2.4: Seed libraries with physics, materials, components
+- P1-3.1: Hard delete virtual component when real exists (not fade)
+- P1-3.2: Disable Virtual Sanctuary if `src/sanctuary/` is non-empty
+- P1-3.3: Add `/reset-seed` command to restore virtual components
+- P1-3.4: Log eviction events for debugging
 
-**Seed Structure:**
-```yaml
-seed: linear-like
-version: 2026.01
-virtual_components:
-  Button:
-    tier: gold
-    physics: snappy
-    timing: 150ms
-    zones: [standard, critical]
-  Card:
-    tier: gold
-    physics: smooth
-    timing: 300ms
-    zones: [standard]
-```
+**Rule:** If `src/sanctuary/` is non-empty, disable Virtual Sanctuary entirely for that subdirectory.
 
 **Acceptance Criteria:**
-- [ ] New project has taste from minute zero
-- [ ] Virtual components match real component schema
-- [ ] Seed fades when real component exists at same path
+- [ ] Virtual components deleted (not faded) when real exists
+- [ ] Non-empty sanctuary disables virtual components
+- [ ] `/reset-seed` restores from template
+- [ ] No ghost components in memory
 
-> Source: sigil-v3.1/ARCHITECTURE.md:120-175
+> Source: SIGIL_V6_COMPREHENSIVE_REVIEW.md:392-437
 
-### 5.3 Feature 3: Physics Validation (Not Novelty)
+---
 
-**Problem:** Previous versions flagged new patterns as concerning. Innovation is the job.
+#### P1-4: Add Integration Tests
 
-**Solution:** Block physics violations only. New patterns are expected.
-
-**What Gets Validated:**
-| Check | Example | Action |
-|-------|---------|--------|
-| API correctness | `motion.div` exists? | Block if invalid |
-| Zone constraints | Critical + playful? | Block |
-| Material constraints | Clay + 0ms? | Block |
-| Fidelity ceiling | 3D in standard? | Block |
-
-**What Does NOT Get Validated:**
-| Non-Check | Why |
-|-----------|-----|
-| Pattern existence | New patterns are the job |
-| Style novelty | Experimentation encouraged |
-| Component precedent | Survival decides |
+**Problem:** No E2E tests for full craft flow.
 
 **Requirements:**
-- F3.1: PreToolUse hook for validation
-- F3.2: Zone constraint checking
-- F3.3: Material constraint checking
-- F3.4: API correctness verification (from workshop)
-- F3.5: Never block for pattern novelty
+- P1-4.1: Full craft flow test (startup → discovery → context → validation → observation → chronicling)
+- P1-4.2: Cache coherence tests (deletion detection, modification detection)
+- P1-4.3: Hook execution tests (validate.sh, observe.sh, ensure-log.sh)
+- P1-4.4: Survival promotion tests (experimental → surviving → canonical-candidate)
+
+**Test Structure:**
+```
+sigil-mark/__tests__/
+├── e2e/
+│   └── full-craft-flow.test.ts
+├── process/
+│   ├── cache-coherence.test.ts
+│   └── hook-execution.test.ts
+└── survival/
+    └── promotion.test.ts
+```
+
+**Coverage Targets:**
+
+| Area | Current | Target |
+|------|---------|--------|
+| Hook Integration | 0% | 70% |
+| Cache Coherence | 0% | 90% |
+| Agent Orchestration | ~40% | 80% |
 
 **Acceptance Criteria:**
-- [ ] Critical zone with bounce → BLOCK
-- [ ] New pattern in critical zone with deliberate physics → ALLOW
-- [ ] Invalid API call (motion.animate) → BLOCK with suggestion
+- [ ] E2E test passes with real filesystem
+- [ ] Cache coherence tests cover deletion and modification
+- [ ] Hook tests verify script execution
+- [ ] CI runs tests on every PR
 
-> Source: sigil-v3.1/ARCHITECTURE.md:244-295
+> Source: SIGIL_V6_COMPREHENSIVE_REVIEW.md:616-687
 
-### 5.4 Feature 4: Survival-Based Precedent
+---
 
-**Problem:** YAML precedent files rot and drift from code.
+### 4.3 P2 — Medium (Technical Debt)
 
-**Solution:** Code existence IS precedent. grep count = approval level.
+#### P2-1: Convert /forge to Optimistic Divergence
 
-**The Rule:**
-```
-Approved    = exists in src/
-Rejected    = doesn't exist in src/
-Canonical   = exists 3+ times
-Experimental = exists 1 time, < 2 weeks old
-```
+**Problem:** Explicit `/forge` command taxes innovation. Creativity is rarely premeditated.
 
-**Requirements:**
-- F4.1: Pattern tagging via JSDoc comments (`@sigil-pattern`)
-- F4.2: Gardener script for survival scanning
-- F4.3: Survival index at `.sigil/survival.json`
-- F4.4: Promotion rules (1 occurrence → experimental, 3+ → canonical)
-- F4.5: Rejection detection (was >0, now 0)
-
-**Survival Index:**
-```json
-{
-  "patterns": {
-    "useClaimAnimation": {
-      "first_seen": "2026-01-08",
-      "occurrences": 3,
-      "status": "canonical"
-    },
-    "bouncySpring": {
-      "first_seen": "2026-01-05",
-      "occurrences": 0,
-      "status": "rejected",
-      "deleted_at": "2026-01-07"
-    }
+**Current State:**
+```typescript
+// forge-mode.ts — EXPLICIT MODE SWITCH
+export function detectForgeTrigger(prompt: string): ForgeTrigger | null {
+  if (prompt.includes('/forge') || prompt.includes('--forge')) {
+    return { active: true };
   }
+  return null;
 }
 ```
 
-**Acceptance Criteria:**
-- [ ] New patterns tagged with `@sigil-pattern` and date
-- [ ] Gardener detects canonical patterns (3+ occurrences)
-- [ ] Deleted patterns marked as rejected
-- [ ] Agent prefers canonical over experimental
-
-> Source: sigil-v3.1/ARCHITECTURE.md:420-485
-
-### 5.5 Feature 5: Ephemeral Inspiration
-
-**Problem:** Designers want to reference external sites without polluting codebase.
-
-**Solution:** One-time fetch in forked context. Use it, discard it.
-
-**Flow:**
-```
-/craft "make it feel like stripe.com"
-  ↓
-Fork context (Claude Code 2.1)
-  ↓
-[Forked] Fetch stripe.com
-  ↓
-[Forked] Extract: gradients, spacing, typography
-  ↓
-[Forked] Apply to generation
-  ↓
-Return to main context with generated code only
-  ↓
-Fetched content discarded (never enters Sanctuary)
-```
-
 **Requirements:**
-- F5.1: Trigger on "like [url]", "inspired by [url]"
-- F5.2: Context fork for isolation
-- F5.3: Style extraction (gradients, spacing, typography)
-- F5.4: Code generation in main context
-- F5.5: Fetched content discarded after use
+- P2-1.1: Remove `/forge` command entirely
+- P2-1.2: Implement optimistic divergence in physics-validator
+- P2-1.3: Tag divergent code with `@sigil-status divergent`
+- P2-1.4: Gardener classifies divergence as `mistake` or `innovation`
+- P2-1.5: Update documentation to remove /forge references
 
-**Acceptance Criteria:**
-- [ ] `/craft "like stripe.com"` fetches and extracts
-- [ ] Fetched content never persists
-- [ ] Generated code returns to main context
-- [ ] `/sanctify` can promote ephemeral to permanent
+**Optimistic Divergence Logic:**
+```typescript
+export function validatePhysicsOptimistic(code: string): ValidationResult {
+  const physicsResult = validatePhysics(code);
+  const tasteResult = validateTaste(code);
 
-> Source: sigil-v3.1/ARCHITECTURE.md:296-360
+  if (!physicsResult.valid) {
+    // Physics violations are BLOCKING (safety)
+    return { allow: false, reason: physicsResult.reason };
+  }
 
-### 5.6 Feature 6: Forge Mode
+  if (!tasteResult.valid) {
+    // Taste violations are TAGGING (observation)
+    return {
+      allow: true,
+      divergent: true,
+      tag: `/** @sigil-status divergent: ${tasteResult.reason} */`,
+    };
+  }
 
-**Problem:** Precedent creates echo chambers. Sometimes you need to break the pattern.
-
-**Solution:** Explicit mode that ignores survival history.
-
-**Requirements:**
-- F6.1: Trigger on `/craft --forge` or `/forge`
-- F6.2: Context fork for isolation
-- F6.3: Ignore survival patterns, learned constraints
-- F6.4: Respect physics only (API correctness, zone rules)
-- F6.5: Era versioning for design direction shifts
-
-**Era Transition:**
-```
-/new-era "Tactile"
-  ↓
-Archives current patterns as "Era: v1-Flat"
-  ↓
-Starts fresh precedent tracking
-  ↓
-Old patterns don't block new exploration
+  return { allow: true };
+}
 ```
 
-**Acceptance Criteria:**
-- [ ] Forge mode ignores rejected patterns
-- [ ] Forge mode still validates physics
-- [ ] `/new-era` archives old patterns
-- [ ] User decides keep or discard
-
-> Source: sigil-v3.1/ARCHITECTURE.md:360-420
-
-### 5.7 Feature 7: Streamlined Craft Logs
-
-**Problem:** Approval gates disguised as logs.
-
-**Solution:** Lightweight documentation, no blocking.
-
-**Log Structure:**
-```markdown
-# Craft: claim-button (2026-01-08)
-
-## Request
-"trustworthy claim button"
-
-## Decisions
-- Zone: critical (vocabulary "claim")
-- Physics: deliberate (critical zone)
-- Component: ClaimButton (Gold)
-
-## New Patterns
-None (all canonical)
-
-## Physics Validated
-- ✓ Zone constraint
-- ✓ Material constraint
-- ✓ API correctness
-```
-
-**Requirements:**
-- F7.1: Stop hook for log generation
-- F7.2: Minimal structure: request, decisions, patterns, validation
-- F7.3: No approval checklists
-- F7.4: Storage in `.sigil/craft-log/`
-- F7.5: 30-day retention by default
+**Divergence Classification:**
+- Survives 2+ weeks with 3+ occurrences → Innovation
+- 0 occurrences after existing → Mistake
 
 **Acceptance Criteria:**
-- [ ] Log generated at end of /craft
-- [ ] No blocking prompts during generation
-- [ ] Logs available for Loa integration
+- [ ] `/forge` command removed
+- [ ] Divergent code allowed but tagged
+- [ ] Gardener classifies divergence
+- [ ] Documentation updated
 
-> Source: sigil-v3.1/ARCHITECTURE.md:486-525
-
-### 5.8 Feature 8: Cohesion Auditing
-
-**Problem:** Generated components may drift from design system.
-
-**Solution:** Visual consistency checks on demand.
-
-**Requirements:**
-- F8.1: Property comparison (shadows, borders, colors, spacing)
-- F8.2: Variance thresholds by property type
-- F8.3: Justifiable deviation annotations (`@sigil-deviation`)
-- F8.4: On-demand via `/audit [component]`
-- F8.5: Optional auto-audit after /craft
-
-**Acceptance Criteria:**
-- [ ] Audit compares against Sanctuary average
-- [ ] Report shows variance with percentages
-- [ ] Deviations with `@sigil-deviation` not flagged
-
-> Source: sigil-v3.1/skills/auditing-cohesion/SKILL.md
+> Source: SIGIL_V6_COMPREHENSIVE_REVIEW.md:507-566
 
 ---
 
-## 6. Technical Requirements
+#### P2-2: Implement Merge-Driven Gardening
 
-### 6.1 Skills Architecture
+**Problem:** Weekly gardener creates 6-day feedback gap.
 
-10 skills with lifecycle hooks:
+**Scenario:**
+1. Engineer builds new pattern on Monday
+2. Team adopts it on Tuesday
+3. Agent thinks it's anomaly until Sunday
+4. For 6 days, agent fights team's new direction
 
-| Skill | Purpose | Trigger |
-|-------|---------|---------|
-| scanning-sanctuary | Find components | ripgrep search |
-| seeding-sanctuary | Cold start taste | Empty Sanctuary |
-| graphing-imports | Map src/ deps | Startup |
-| querying-workshop | Fast API lookup | /craft |
-| validating-physics | Constraint check | PreToolUse |
-| inspiring-ephemerally | External fetch | "like [url]" |
-| forging-patterns | Break precedent | --forge flag |
-| observing-survival | Pattern tracking | PostToolUse |
-| chronicling-rationale | Craft logs | Stop |
-| auditing-cohesion | Visual check | /audit |
+**Requirements:**
+- P2-2.1: Create GitHub Actions workflow for gardening
+- P2-2.2: Trigger on push to main and merged PRs
+- P2-2.3: Auto-commit survival.json updates
+- P2-2.4: Skip CI on gardener commits to prevent loops
 
-### 6.2 File Structure
-
-```
-.sigil/
-├── workshop.json         # Pre-computed index
-├── seed.yaml             # Virtual Sanctuary (fades)
-├── survival.json         # Pattern tracking
-├── imports.yaml          # Scanned dependencies
-├── knowledge/            # Cached docs (fallback)
-└── craft-log/            # Rationale artifacts
-
-sigil.yaml                # Configuration
-rules.md                  # Design constitution
-```
-
-### 6.3 Hook Integration
-
+**GitHub Actions Workflow:**
 ```yaml
-hooks:
-  PreToolUse:
-    - validate_physics
-    - check_workshop_index
-  PostToolUse:
-    - observe_patterns
-    - update_workshop
-  Stop:
-    - ensure_craft_log
-    - mark_survival
+# .github/workflows/sigil-gardener.yaml
+name: Sigil Gardener
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  garden:
+    if: github.event.pull_request.merged == true || github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Gardener
+        run: npx tsx sigil-mark/process/garden-command.ts
+      - name: Commit Survival Index
+        run: |
+          git add .sigil/survival.json
+          git commit -m "chore(sigil): update survival index [skip ci]" || true
+          git push
 ```
 
-### 6.4 Performance Targets
+**Acceptance Criteria:**
+- [ ] Gardener runs on every merge to main
+- [ ] Survival index updated within minutes of merge
+- [ ] No CI loops from gardener commits
+- [ ] Weekly cron removed (optional fallback)
 
-| Operation | Target |
-|-----------|--------|
-| Workshop query | <5ms |
-| Sanctuary scan | <50ms |
-| Index rebuild | <2s |
-| Pattern observation | <10ms |
-| Craft log generation | <100ms |
-
-### 6.5 Evolution from v5.0
-
-**Kept from v5.0:**
-- Seven Laws kernel (constitution.yaml, fidelity.yaml, vocabulary.yaml, workflow.yaml)
-- SigilProvider runtime context
-- useSigilMutation hook
-- Zone layouts (CriticalZone, GlassLayout, MachineryLayout)
-- Governance structure (justifications.log for bypass audit)
-
-**Added in v6.0:**
-- Workshop index (.sigil/workshop.json)
-- Survival tracking (.sigil/survival.json)
-- Virtual Sanctuary (.sigil/seed.yaml)
-- 10 Claude Code skills
-- Context forking for isolation
-- Lifecycle hooks (Pre/PostToolUse, Stop)
-
-**Changed in v6.0:**
-- Discovery: JIT grep → Pre-computed workshop
-- Approval: Governance dialogs → Survival observation
-- Validation: Constitutional blocking → Physics-only validation
-- Cold start: Empty room → Virtual Sanctuary
+> Source: SIGIL_V6_COMPREHENSIVE_REVIEW.md:568-613, 926-966
 
 ---
 
-## 7. Testing Strategy
+#### P2-3: Standardize Version Numbers
 
-### 7.1 Test Layers
+**Problem:** Version inconsistencies across files.
 
-| Layer | What's Tested | Method |
-|-------|---------------|--------|
-| Mechanics | Scanning, graphing, querying, validation | Unit tests |
-| Craft Flow | Context resolution, pattern selection | Integration tests |
-| Taste | Does the pattern work? | Survival (codebase as test) |
+**Current State:**
 
-> The codebase is the final test suite. Deletion is a failing test.
+| File | Version | Should Be |
+|------|---------|-----------|
+| sigil-mark/package.json | 4.1.0 | 6.1.0 |
+| CLAUDE.md | v6.0.0 | v6.1.0 |
+| vocabulary-reader.ts header | v4.1 | v6.1.0 |
+| CHANGELOG.md | 6.0.0 | 6.1.0 |
 
-### 7.2 Coverage Targets
+**Requirements:**
+- P2-3.1: Update sigil-mark/package.json to 6.1.0
+- P2-3.2: Update CLAUDE.md version reference
+- P2-3.3: Update vocabulary-reader.ts header comment
+- P2-3.4: Add CHANGELOG.md entry for v6.1.0
 
-| Area | Target |
-|------|--------|
-| Validation | 100% |
-| Vocabulary resolution | 100% |
-| Workshop queries | 90% |
-| Scanning | 80% |
-| Craft flow | 70% |
-| Survival | 60% |
+**Acceptance Criteria:**
+- [ ] All version references show 6.1.0
+- [ ] CHANGELOG documents v6.1.0 changes
 
-### 7.3 Test Structure
-
-```
-tests/
-├── unit/
-│   ├── scanning.test.ts
-│   ├── graphing.test.ts
-│   ├── querying.test.ts
-│   ├── validation.test.ts
-│   └── vocabulary.test.ts
-├── integration/
-│   └── craft-flow.test.ts
-├── survival/
-│   └── promotion.test.ts
-└── fixtures/
-    ├── workshop.json
-    ├── survival.json
-    └── sigil.yaml
-```
-
-> Source: sigil-v3.1/tests/README.md
+> Source: SIGIL_V6_COMPREHENSIVE_REVIEW.md:247-258
 
 ---
 
-## 8. Success Metrics
+#### P2-4: Replace YAML Regex with Parser
 
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| Workshop query latency | <5ms | Benchmark test |
-| Flow interruptions | 0 per /craft | Count of approval dialogs |
-| Cold start time | <1s to taste | Time from init to first /craft |
-| Pattern survival rate | >60% at 2 weeks | Gardener metrics |
-| Physics violation catch rate | 100% | Validation tests |
+**Problem:** `workshop-builder.ts` uses fragile regex for YAML parsing.
+
+**Current State:**
+```typescript
+// workshop-builder.ts — FRAGILE
+const physicsMatch = content.match(/physics:\s*\n((?:\s+\w+:[\s\S]*?(?=\n\w|\n$|$))+)/);
+```
+
+**Breaks on:** Comments, multi-line values, anchors/aliases, non-standard indentation.
+
+**Requirements:**
+- P2-4.1: Replace regex with `yaml` package (already a dependency)
+- P2-4.2: Add error handling for malformed YAML
+- P2-4.3: Add unit tests for edge cases
+
+**Acceptance Criteria:**
+- [ ] YAML parsed with official parser
+- [ ] Comments and multi-line values handled
+- [ ] Malformed YAML fails gracefully
+
+> Source: SIGIL_V6_COMPREHENSIVE_REVIEW.md:260-292
 
 ---
 
-## 9. Risks & Mitigations
+#### P2-5: Align craft.md with Implementation
+
+**Problem:** `/craft` command describes v2.6 features that don't exist.
+
+**craft.md describes:**
+- Constitution checking
+- Locked decisions surfacing
+- Persona physics application
+- 7-step workflow with Process Context
+
+**agent-orchestration.ts implements:**
+- Different 7-phase flow without Constitution/Decisions
+
+**Requirements:**
+- P2-5.1: Update craft.md to match current implementation
+- P2-5.2: Remove references to unimplemented features
+- P2-5.3: Document actual 7-phase flow
+
+**Acceptance Criteria:**
+- [ ] craft.md describes actual behavior
+- [ ] No references to Constitution/Decisions (unless implemented)
+- [ ] Phase descriptions match agent-orchestration.ts
+
+> Source: SIGIL_V6_COMPREHENSIVE_REVIEW.md:294-315
+
+---
+
+## 5. Files to Create
+
+| File | Purpose |
+|------|---------|
+| `.claude/skills/validating-physics/scripts/validate.sh` | PreToolUse hook bridge |
+| `.claude/skills/observing-survival/scripts/observe.sh` | PostToolUse hook bridge |
+| `.claude/skills/chronicling-rationale/scripts/ensure-log.sh` | Stop hook bridge |
+| `.github/workflows/sigil-gardener.yaml` | Merge-driven gardening |
+| `.sigil/taste-key.yaml` | Taste-key approval config |
+| `sigil-mark/__tests__/e2e/full-craft-flow.test.ts` | E2E integration test |
+| `sigil-mark/__tests__/process/cache-coherence.test.ts` | Cache verification tests |
+
+## 6. Files to Modify
+
+| File | Changes |
+|------|---------|
+| `sigil-mark/process/agent-orchestration.ts` | Vocabulary integration, queryMaterial fix |
+| `sigil-mark/process/startup-sentinel.ts` | Add rebuild logic |
+| `sigil-mark/process/workshop-builder.ts` | YAML parsing, hash generation |
+| `sigil-mark/process/workshop-query.ts` | Verify-on-read |
+| `sigil-mark/process/survival-observer.ts` | Taste-key curation |
+| `sigil-mark/process/seed-manager.ts` | Hard eviction |
+| `sigil-mark/process/forge-mode.ts` | Optimistic divergence (or delete) |
+| `sigil-mark/process/physics-validator.ts` | Optimistic divergence |
+| `sigil-mark/package.json` | Version bump |
+| `CLAUDE.md` | Version bump, /forge removal |
+| `.claude/commands/craft.md` | Align with implementation |
+
+---
+
+## 7. Implementation Phases
+
+### Phase 1: Make It Work (P0 fixes)
+**Sprint 1**
+
+1. Create hook scripts (validate.sh, observe.sh, ensure-log.sh)
+2. Fix queryMaterial parameter order
+3. Implement workshop rebuild in startup-sentinel.ts
+4. Add verify-on-read to workshop queries
+
+**Exit Criteria:** Core lifecycle functional, hooks fire, cache verified.
+
+### Phase 2: Make It Safe (P1 fixes)
+**Sprint 2**
+
+5. Integrate vocabulary-reader into agent-orchestration
+6. Add taste-key curation layer to survival
+7. Implement hard eviction for Virtual Sanctuary
+8. Add E2E integration tests
+
+**Exit Criteria:** Quality patterns promoted, bad patterns blocked, no ghosts.
+
+### Phase 3: Make It Fast (P2 fixes)
+**Sprint 3**
+
+9. Convert /forge to optimistic divergence
+10. Set up merge-driven gardening CI
+11. Standardize versions to 6.1.0
+12. Replace YAML regex with yaml package
+13. Align craft.md with implementation
+
+**Exit Criteria:** Zero flow interruptions, immediate feedback, clean docs.
+
+---
+
+## 8. Test Coverage Targets
+
+| Area | v6.0 Actual | v6.1 Target |
+|------|-------------|-------------|
+| Physics Validator | ~95% | 100% |
+| Survival Observer | ~80% | 90% |
+| Workshop Builder | ~70% | 85% |
+| Agent Orchestration | ~40% | 80% |
+| Hook Integration | 0% | 70% |
+| Cache Coherence | 0% | 90% |
+
+---
+
+## 9. Success Metrics
+
+| Metric | v6.0 Actual | v6.1 Target | Measurement |
+|--------|-------------|-------------|-------------|
+| Hook execution | 0% | 100% | CI hook tests |
+| Cache verification | None | Every query | Log analysis |
+| Pattern curation | 0 taste-key | 100% canonical | survival.json audit |
+| Gardener latency | 7 days | <1 hour | PR merge to index update |
+| Flow interruptions | 1 | 0 | No /forge, no prompts |
+| Version consistency | 4 mismatches | 0 | grep scan |
+
+---
+
+## 10. Risks & Mitigations
 
 | Risk | Impact | Mitigation |
 |------|--------|------------|
-| Workshop index staleness | Stale API info | Hash-based freshness check, incremental updates |
-| Survival false positives | Wrong pattern promoted | 2-week waiting period, 3+ occurrence threshold |
-| Context fork complexity | Memory/state issues | Clear fork boundaries, explicit cleanup |
-| Seed library maintenance | Outdated virtual components | Version seeds, allow user customization |
+| Hook scripts fail silently | Lifecycle broken | Add health checks, error logging |
+| Verify-on-read adds latency | Slow queries | Profile, optimize stat() calls |
+| Taste-key bottleneck | Promotion backlog | Allow bulk approval, fallback timeout |
+| Optimistic divergence spam | Too many tags | Rate limit divergence detection |
+| Merge-driven gardening conflicts | Git conflicts | Rebase strategy, skip-ci commits |
 
 ---
 
-## 10. Out of Scope
+## 11. Out of Scope (P3 Items for Future)
 
-- Real-time collaboration
-- Git integration beyond pattern tagging
-- Automated refactoring
+- Skill count documentation fix (10 → 11)
+- Architecture diagrams
+- Error recovery documentation
 - IDE plugins
-- CI/CD integration (future phase)
+- CI/CD integration beyond gardening
 
 ---
 
-## 11. Sprint Plan (High Level)
+## 12. The Linear Standard
 
-### Phase 1: Foundation (Sprints 1-3)
-- Workshop index schema and builder
-- Startup Sentinel (hash check)
-- Graphing Imports skill
-- Scanning Sanctuary skill
+> "Linear prioritizes the daily experience of the 'Maker' over the reporting needs of the 'Buyer.'"
 
-### Phase 2: Intelligence (Sprints 4-6)
-- Querying Workshop skill
-- Validating Physics skill
-- Seeding Sanctuary skill
-- Seed libraries (Linear, Vercel, Stripe)
-
-### Phase 3: Evolution (Sprints 7-9)
-- Inspiring Ephemerally skill (context fork)
-- Forging Patterns skill
-- Era versioning
-
-### Phase 4: Verification (Sprints 10-12)
-- Observing Survival skill + Gardener
-- Chronicling Rationale skill
-- Auditing Cohesion skill
-- sigil-craft agent
-
-### Phase 5: Integration (Sprint 13)
-- End-to-end testing
-- Documentation update
-- Migration guide from v5.0
-
----
-
-## 12. Commands Reference
-
-| Command | Purpose |
-|---------|---------|
-| `/craft "description"` | Generate from feel description |
-| `/craft --forge "desc"` | Break precedent, explore |
-| `/inspire [url]` | One-time fetch, ephemeral |
-| `/sanctify "pattern"` | Promote ephemeral to rule |
-| `/garden` | Run survival scan |
-| `/audit [component]` | Check visual cohesion |
-| `/new-era "name"` | Start fresh precedent epoch |
+**Application to Sigil v6.1:**
+- The "Maker" is the developer in flow state
+- The "Buyer" is the governance system requesting compliance
+- Sigil must prioritize the Maker
+- Therefore: Delete /forge, use optimistic divergence, merge-driven gardening
 
 ---
 
 ## 13. Appendix
 
-### A. Source Documents
+### A. The Three Laws (Evolved for v6.1)
 
-| Document | Path |
-|----------|------|
-| Architecture | sigil-v3.1.zip/ARCHITECTURE.md |
-| README | sigil-v3.1.zip/README.md |
-| CLAUDE.md | sigil-v3.1.zip/CLAUDE.md |
-| Skills | sigil-v3.1.zip/skills/*/SKILL.md |
-| Tests | sigil-v3.1.zip/tests/README.md |
-| Agent | sigil-v3.1.zip/agents/sigil-craft.md |
+1. **Code is Precedent** — Existence is approval, deletion is rejection
+2. **Survival is Curated** — Patterns that persist become candidates; Taste Owner makes canon
+3. **Never Interrupt Flow** — No blocking dialogs, optimistic divergence, immediate feedback
 
-### B. Seed Library Preview
+### B. Review Sources
 
-**Linear-like:**
-- Physics: snappy (150ms)
-- Material: minimal, monochrome
-- Components: Button, Card, Input, Dialog
+| Source | Focus | Key Contribution |
+|--------|-------|------------------|
+| Technical Implementation Review | Code quality | Missing hooks, wrong params, YAML fragility |
+| Principal Engineer (Systems) | Cache coherence | Verify-on-read, merge-driven gardening |
+| Staff Design Engineer | Architecture | Taste-key curation, optimistic divergence |
 
-**Vercel-like:**
-- Physics: sharp (100ms)
-- Material: bold, high-contrast
-- Components: Button, Card, Badge, Modal
+### C. Command Reference (v6.1)
 
-**Stripe-like:**
-- Physics: smooth (300ms)
-- Material: soft gradients, generous spacing
-- Components: Button, Card, Input, Toast
-
-### C. The Three Laws + Seven Laws
-
-**The Three Laws (v6.0):**
-1. Code is precedent — Existence is approval
-2. Survival is the vote — Patterns that persist are canonical
-3. Never interrupt flow — No approval dialogs
-
-**The Seven Laws (v5.0, still valid):**
-1. Filesystem is Truth
-2. Type Dictates Physics
-3. Zone is Layout, Not Business Logic
-4. Status Propagates
-5. One Good Reason > 15% Silent Mutiny
-6. Never Refuse Outright
-7. Let Artists Stay in Flow
+| Command | Purpose | Status |
+|---------|---------|--------|
+| `/craft "description"` | Generate from feel | Unchanged |
+| `/inspire [url]` | One-time fetch | Unchanged |
+| `/sanctify "pattern"` | Promote ephemeral | Unchanged |
+| `/garden` | Run survival scan | Unchanged |
+| `/audit [component]` | Check cohesion | Unchanged |
+| `/new-era "name"` | Start fresh epoch | Unchanged |
+| `/approve [pattern]` | Taste-key approval | **NEW** |
+| `/reset-seed` | Restore virtual | **NEW** |
+| `/forge` | Break precedent | **REMOVED** |
 
 ---
 
-*PRD Generated: 2026-01-08*
-*Sources: sigil-v3.1.zip context*
+*PRD Generated: 2026-01-09*
+*Sources: SIGIL_V6_COMPREHENSIVE_REVIEW.md*
 *Next Step: `/architect` for Software Design Document*

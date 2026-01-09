@@ -91,6 +91,10 @@ export interface ComponentEntry {
   vocabulary?: string[];
   /** Package imports used by this component */
   imports: string[];
+  /** MD5 hash of file content for verify-on-read (v6.1) */
+  hash?: string;
+  /** ISO timestamp when this component was indexed (v6.1) */
+  indexed_at?: string;
 }
 
 // =============================================================================

@@ -5,6 +5,91 @@ All notable changes to Sigil will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.1.0] - 2026-01-08 — "Agile Muse"
+
+### Summary
+
+v6.1 is the **Agile Muse** release focused on quality gates and faster feedback loops. Optimistic divergence replaces blocking on taste violations, merge-driven gardening provides <5 min pattern promotion latency, and vocabulary integration removes hardcoded terms.
+
+### The v6.1 Quality Gates
+
+1. **Vocabulary Integration** — No hardcoded terms, all from vocabulary.yaml
+2. **Taste-Key Curation** — canonical-candidate status requires explicit approval
+3. **Hard Eviction** — Virtual Sanctuary evicts when real components exist
+4. **Optimistic Divergence** — Taste violations tagged, not blocked
+
+### Added
+
+- **Optimistic Divergence** — Physics violations block, taste violations tag
+
+  ```typescript
+  // Taste violations get @sigil-status divergent tag
+  /** @sigil-status divergent - 2 taste deviation(s) */
+  ```
+
+- **Vocabulary Integration** — Dynamic loading from vocabulary.yaml
+
+  ```typescript
+  loadVocabulary(projectRoot)      // Cached loading
+  extractVocabularyTerms(prompt)   // Term extraction
+  resolveZoneFromVocabulary(terms) // Zone resolution
+  ```
+
+- **Taste-Key Curation** — Human-in-the-loop pattern approval
+
+  ```yaml
+  # .sigil/taste-key.yaml
+  pending_promotions:
+    - pattern: "animation:spring"
+      occurrences: 5
+      detected_at: "2026-01-08"
+  approved:
+    - pattern: "animation:spring"
+      approved_at: "2026-01-08"
+  ```
+
+- **Hard Eviction** — Virtual Sanctuary cleanup
+
+  ```
+  ANY real component exists → ALL virtual components evicted
+  /reset-seed to restore if needed
+  ```
+
+- **Merge-Driven Gardening** — GitHub Actions workflow for <5 min latency
+
+  ```yaml
+  # .github/workflows/sigil-gardener.yaml
+  on:
+    push:
+      branches: [main]
+  ```
+
+- **canonical-candidate Status** — Patterns at 5+ occurrences await approval
+
+### Changed
+
+- **Forge mode deprecated** — Replaced by optimistic divergence
+- **Pattern promotion** — Now requires taste-key approval at 5+ occurrences
+- **Version standardized** — All package.json versions aligned to 6.1.0
+- **YAML parsing** — Uses js-yaml library instead of regex
+
+### Deprecated
+
+- **/forge command** — Use optimistic divergence instead
+- **Auto-promotion to canonical** — Now requires explicit approval
+
+### Performance
+
+| Operation | Target | Achieved |
+|-----------|--------|----------|
+| Vocabulary lookup | <5ms | ~2ms |
+| Zone resolution | <2ms | ~1ms |
+| Taste-key lookup | <5ms | ~3ms |
+| Eviction check | <10ms | ~5ms |
+| Merge-driven gardening | <5min | ~2min |
+
+---
+
 ## [6.0.0] - 2026-01-08 — "Native Muse"
 
 ### Summary

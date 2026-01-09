@@ -16,10 +16,20 @@ import { isWorkshopStale, loadWorkshop, queryMaterial } from './workshop-builder
 import { runSentinel } from './startup-sentinel';
 import { findByZone, findByTier, findByVocabulary } from './sanctuary-scanner';
 import { isSanctuaryEmpty, loadSeed, getSeedOptions } from './seed-manager';
-import { getTerm, getTermFeel, getRecommendedPhysics } from './vocabulary-reader';
+import {
+  readVocabularySync,
+  getAllTerms,
+  getTerm,
+  getTermFeel,
+  getRecommendedPhysics,
+  matchComponentToTerm,
+  type Vocabulary,
+  type VocabularyTerm,
+} from './vocabulary-reader';
 import { validatePhysics, type ValidationResult } from './physics-validator';
 import { detectInspirationTrigger, createForkedContext } from './ephemeral-inspiration';
-import { detectForgeTrigger, createForgeContext, isForgeMode } from './forge-mode';
+// v6.1: Forge mode is deprecated, replaced by optimistic divergence
+// import { detectForgeTrigger, createForgeContext, isForgeMode } from './forge-mode';
 import { loadSurvivalIndex, determineStatus } from './survival-observer';
 import { createSession, writeCraftLog, type CraftSession } from './chronicling-rationale';
 
@@ -97,67 +107,81 @@ export interface OrchestrationOptions {
 }
 
 // =============================================================================
-// VOCABULARY RESOLUTION
+// VOCABULARY RESOLUTION (v6.1 - Uses vocabulary-reader.ts)
 // =============================================================================
 
 /**
- * Known vocabulary terms for extraction
+ * Cached vocabulary instance.
  */
-const VOCABULARY_TERMS = [
-  'claim',
-  'confirm',
-  'cancel',
-  'send',
-  'submit',
-  'delete',
-  'trustworthy',
-  'critical',
-  'urgent',
-  'marketing',
-  'admin',
-  'dashboard',
-];
+let vocabularyCache: Vocabulary | null = null;
+let vocabularyCachePath: string | null = null;
 
 /**
- * Extract vocabulary terms from prompt
+ * Load vocabulary with caching.
+ * @param projectRoot - Project root directory
  */
-export function extractVocabularyTerms(prompt: string): string[] {
-  const lower = prompt.toLowerCase();
-  const terms: string[] = [];
+export function loadVocabulary(projectRoot: string = process.cwd()): Vocabulary {
+  const vocabPath = `${projectRoot}/sigil-mark/vocabulary/vocabulary.yaml`;
 
-  for (const term of VOCABULARY_TERMS) {
-    if (lower.includes(term)) {
-      terms.push(term);
-    }
+  // Return cached if same path
+  if (vocabularyCache && vocabularyCachePath === vocabPath) {
+    return vocabularyCache;
   }
 
-  return terms;
+  vocabularyCache = readVocabularySync(vocabPath);
+  vocabularyCachePath = vocabPath;
+  return vocabularyCache;
 }
 
 /**
- * Resolve zone from vocabulary terms
+ * Clear vocabulary cache (for testing).
  */
-export function resolveZoneFromVocabulary(terms: string[]): string {
-  // Priority: critical > marketing > admin > standard
-  const criticalTerms = ['claim', 'confirm', 'send', 'submit', 'trustworthy', 'critical'];
-  const marketingTerms = ['marketing'];
-  const adminTerms = ['admin', 'dashboard'];
+export function clearVocabularyCache(): void {
+  vocabularyCache = null;
+  vocabularyCachePath = null;
+}
 
-  for (const term of terms) {
-    if (criticalTerms.includes(term)) {
-      return 'critical';
+/**
+ * Extract vocabulary terms from prompt using vocabulary.yaml.
+ * v6.1: No longer uses hardcoded VOCABULARY_TERMS array.
+ */
+export function extractVocabularyTerms(prompt: string, projectRoot: string = process.cwd()): string[] {
+  const lower = prompt.toLowerCase();
+  const vocabulary = loadVocabulary(projectRoot);
+  const allTerms = getAllTerms(vocabulary);
+  const matchedTerms: string[] = [];
+
+  for (const term of allTerms) {
+    // Check term ID
+    if (lower.includes(term.id)) {
+      matchedTerms.push(term.id);
+      continue;
+    }
+    // Check user_facing (case-insensitive)
+    if (lower.includes(term.user_facing.toLowerCase())) {
+      matchedTerms.push(term.id);
     }
   }
 
-  for (const term of terms) {
-    if (marketingTerms.includes(term)) {
-      return 'marketing';
-    }
-  }
+  return matchedTerms;
+}
 
-  for (const term of terms) {
-    if (adminTerms.includes(term)) {
-      return 'admin';
+/**
+ * Resolve zone from vocabulary terms using vocabulary.yaml.
+ * v6.1: Uses term zones from vocabulary file instead of hardcoded mapping.
+ */
+export function resolveZoneFromVocabulary(terms: string[], projectRoot: string = process.cwd()): string {
+  const vocabulary = loadVocabulary(projectRoot);
+
+  // Priority order for zones
+  const zonePriority = ['critical', 'marketing', 'admin', 'standard'];
+
+  for (const zone of zonePriority) {
+    for (const termId of terms) {
+      const term = getTerm(vocabulary, termId);
+      if (term && term.zones.includes(zone)) {
+        return zone;
+      }
     }
   }
 
@@ -165,7 +189,25 @@ export function resolveZoneFromVocabulary(terms: string[]): string {
 }
 
 /**
- * Resolve physics from zone
+ * Resolve physics from vocabulary terms.
+ * v6.1: Uses getRecommendedPhysics from vocabulary-reader.
+ */
+export function resolvePhysicsFromVocabulary(terms: string[], projectRoot: string = process.cwd()): string {
+  const vocabulary = loadVocabulary(projectRoot);
+
+  // Use first matched term's physics
+  for (const termId of terms) {
+    const physics = getRecommendedPhysics(vocabulary, termId);
+    if (physics) {
+      return physics.motion;
+    }
+  }
+
+  return 'default';
+}
+
+/**
+ * Resolve physics from zone (fallback when no terms matched).
  */
 export function resolvePhysicsFromZone(zone: string): string {
   const zonePhysics: Record<string, string> = {
@@ -179,23 +221,44 @@ export function resolvePhysicsFromZone(zone: string): string {
 }
 
 /**
- * Full context resolution from prompt
+ * Full context resolution from prompt.
+ * v6.1: Uses vocabulary.yaml for term extraction and physics resolution.
  */
 export function resolveContext(
   prompt: string,
-  componentName: string
+  componentName: string,
+  projectRoot: string = process.cwd()
 ): ResolvedContext {
-  const vocabularyTerms = extractVocabularyTerms(prompt);
-  const zone = resolveZoneFromVocabulary(vocabularyTerms);
-  const physics = resolvePhysicsFromZone(zone);
+  // v6.1: Extract terms from vocabulary.yaml
+  const vocabularyTerms = extractVocabularyTerms(prompt, projectRoot);
+  const zone = resolveZoneFromVocabulary(vocabularyTerms, projectRoot);
+
+  // v6.1: Try vocabulary physics first, fall back to zone physics
+  let physics: string;
+  if (vocabularyTerms.length > 0) {
+    physics = resolvePhysicsFromVocabulary(vocabularyTerms, projectRoot);
+  } else {
+    physics = resolvePhysicsFromZone(zone);
+  }
+
+  // Also check component name against vocabulary
+  const vocabulary = loadVocabulary(projectRoot);
+  const componentTerm = matchComponentToTerm(vocabulary, componentName);
+  if (componentTerm && !vocabularyTerms.includes(componentTerm.id)) {
+    vocabularyTerms.push(componentTerm.id);
+    // Use component's physics if we didn't find terms in prompt
+    if (physics === 'default') {
+      physics = componentTerm.recommended.motion;
+    }
+  }
 
   // Detect inspiration trigger
   const inspirationTrigger = detectInspirationTrigger(prompt);
   const inspirationUrl = inspirationTrigger?.url;
 
-  // Detect forge mode
-  const forgeTrigger = detectForgeTrigger(prompt);
-  const forgeMode = forgeTrigger !== null;
+  // v6.1: Forge mode is deprecated, replaced by optimistic divergence
+  // Taste violations are now tagged (not blocked), making explicit forge mode unnecessary.
+  const forgeMode = false;
 
   return {
     vocabularyTerms,
@@ -396,13 +459,9 @@ export async function runCraftFlow(
     skills.push(inspirationResult);
   }
 
-  // Handle forge mode if active
-  if (context.forgeMode) {
-    const forgeResult = await executeSkill('forging-patterns', 'generation', () =>
-      createForgeContext()
-    );
-    skills.push(forgeResult);
-  }
+  // v6.1: Forge mode is deprecated, replaced by optimistic divergence
+  // Taste violations are now tagged via @sigil-status divergent, not blocked
+  // No explicit forge mode handling needed
 
   // Phase 6: Observation (tracked but not executed here - happens via hook)
   if (!options.skipObservation) {
@@ -481,7 +540,7 @@ export async function runBenchmarks(
   try {
     const workshop = loadWorkshop(projectRoot);
     if (workshop) {
-      queryMaterial('framer-motion', workshop);
+      queryMaterial(workshop, 'framer-motion');
     }
   } catch {
     // Ignore errors for benchmark

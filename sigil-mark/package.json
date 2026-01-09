@@ -1,6 +1,6 @@
 {
   "name": "sigil-mark",
-  "version": "4.1.0",
+  "version": "6.1.0",
   "description": "Sigil Design Context Framework - Living Guardrails",
   "type": "module",
   "main": "./index.ts",

@@ -1,10 +1,14 @@
 /**
- * @sigil-tier gold
- * Sigil v6.0 — Forge Mode
+ * @sigil-tier bronze
+ * Sigil v6.1 — Forge Mode (DEPRECATED)
  *
- * Precedent-breaking exploration mode.
- * Bypasses survival patterns while respecting physics constraints.
+ * @deprecated v6.1: Forge mode is replaced by optimistic divergence.
+ * Taste violations are now tagged (not blocked), making explicit forge mode unnecessary.
+ * Use validatePhysicsOptimistic() from physics-validator.ts instead.
  *
+ * This file is kept for backwards compatibility but functions are no-ops.
+ *
+ * @see physics-validator.ts#validatePhysicsOptimistic
  * @module process/forge-mode
  */
 

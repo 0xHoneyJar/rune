@@ -392,3 +392,145 @@ export function formatLogList(logs: string[]): string {
 
   return lines.join('\n');
 }
+
+// =============================================================================
+// HOOK BRIDGE EXPORTS
+// =============================================================================
+
+/**
+ * Path to pending session file.
+ */
+export const PENDING_SESSION_PATH = '.sigil/.pending-session.json';
+
+/**
+ * Hook result type for bash script bridge.
+ */
+export interface SessionLogResult {
+  /** Path to the log file (if written) */
+  logPath: string | null;
+  /** Whether a log was written */
+  written: boolean;
+  /** Reason if not written */
+  reason?: string;
+}
+
+/**
+ * Load pending session from file.
+ */
+export function loadPendingSession(
+  projectRoot: string = process.cwd()
+): CraftSession | null {
+  const sessionPath = path.join(projectRoot, PENDING_SESSION_PATH);
+
+  try {
+    if (fs.existsSync(sessionPath)) {
+      const content = fs.readFileSync(sessionPath, 'utf-8');
+      return JSON.parse(content) as CraftSession;
+    }
+  } catch {
+    // Ignore errors
+  }
+
+  return null;
+}
+
+/**
+ * Save pending session to file.
+ */
+export function savePendingSession(
+  session: CraftSession,
+  projectRoot: string = process.cwd()
+): boolean {
+  const sessionPath = path.join(projectRoot, PENDING_SESSION_PATH);
+
+  try {
+    const dir = path.dirname(sessionPath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Clear pending session file.
+ */
+export function clearPendingSession(
+  projectRoot: string = process.cwd()
+): void {
+  const sessionPath = path.join(projectRoot, PENDING_SESSION_PATH);
+
+  try {
+    if (fs.existsSync(sessionPath)) {
+      fs.unlinkSync(sessionPath);
+    }
+  } catch {
+    // Ignore errors
+  }
+}
+
+/**
+ * Ensure session log function for bash hook bridge.
+ * Called by ensure-log.sh via npx tsx.
+ *
+ * @param projectRoot - Project root for log directory
+ * @returns SessionLogResult
+ */
+export function ensureSessionLog(
+  projectRoot: string = process.cwd()
+): SessionLogResult {
+  try {
+    // Load pending session
+    const session = loadPendingSession(projectRoot);
+
+    if (!session) {
+      return {
+        logPath: null,
+        written: false,
+        reason: 'no_pending_session',
+      };
+    }
+
+    // Check if session has any meaningful content
+    if (
+      session.decisions.length === 0 &&
+      session.patterns.length === 0 &&
+      session.physicsChecks.length === 0
+    ) {
+      // Empty session, clear it without writing
+      clearPendingSession(projectRoot);
+      return {
+        logPath: null,
+        written: false,
+        reason: 'empty_session',
+      };
+    }
+
+    // Write the craft log
+    const result = writeCraftLog(session, projectRoot);
+
+    if (result.success) {
+      // Clear pending session after successful write
+      clearPendingSession(projectRoot);
+      return {
+        logPath: result.path || null,
+        written: true,
+      };
+    }
+
+    return {
+      logPath: null,
+      written: false,
+      reason: result.error || 'write_failed',
+    };
+  } catch (error) {
+    return {
+      logPath: null,
+      written: false,
+      reason: error instanceof Error ? error.message : 'unknown_error',
+    };
+  }
+}

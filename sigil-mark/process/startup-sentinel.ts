@@ -44,6 +44,12 @@ export interface SentinelResult {
   durationMs: number;
   /** Any warnings during the process */
   warnings: string[];
+  /** Rebuild metrics (v6.1) */
+  rebuildMetrics?: {
+    materialCount: number;
+    componentCount: number;
+    rebuildDurationMs: number;
+  };
 }
 
 /**
@@ -385,6 +391,11 @@ export async function runSentinel(options: SentinelOptions): Promise<SentinelRes
         reason: `Rebuilt due to ${staleness.reason}`,
         durationMs: Date.now() - startTime,
         warnings: rebuildResult.warnings,
+        rebuildMetrics: {
+          materialCount: rebuildResult.materialCount,
+          componentCount: rebuildResult.componentCount,
+          rebuildDurationMs: rebuildResult.durationMs,
+        },
       };
     } else {
       // Rebuild failed - fallback to JIT

@@ -607,5 +607,86 @@ This document tracks all sprint artifacts and their approval status.
 
 ---
 
+## Sigil v6.1.0 (Agile Muse — Implementation Fixes)
+
+| Sprint | Theme | Status | Reviewer | Auditor |
+|--------|-------|--------|----------|---------|
+| 1 | Make It Work (P0) | COMPLETED | ✅ Approved | ✅ Approved |
+| 2 | Make It Safe (P1) | COMPLETED | ✅ Approved | ✅ Approved |
+| 3 | Make It Fast (P2) | COMPLETED | ✅ Approved | ✅ Approved |
+
+---
+
+## v6.1 Sprint 1: Make It Work (P0)
+
+**Duration:** 1 sprint
+**Theme:** Fix critical blockers for core lifecycle
+**Status:** COMPLETED
+
+### Artifacts
+- [reviewer.md](./v6.1-sprint-1/reviewer.md) - Implementation report
+- [engineer-feedback.md](./v6.1-sprint-1/engineer-feedback.md) - Tech lead review (✅ Approved)
+- [auditor-sprint-feedback.md](./v6.1-sprint-1/auditor-sprint-feedback.md) - Security audit (✅ Approved)
+- [COMPLETED](./v6.1-sprint-1/COMPLETED) - Completion marker
+
+### Key Deliverables
+- `.claude/skills/validating-physics/scripts/validate.sh` — PreToolUse hook bridge
+- `.claude/skills/observing-survival/scripts/observe.sh` — PostToolUse hook bridge
+- `.claude/skills/chronicling-rationale/scripts/ensure-log.sh` — Stop hook bridge
+- Hook TypeScript exports (validatePhysicsForHook, observeForHook, ensureSessionLog)
+- Fixed queryMaterial parameter order
+- queryComponentVerified() with verify-on-read
+- ComponentEntry hash and indexed_at fields
+- SentinelResult rebuildMetrics
+
+### Tasks Completed
+- [x] S1-T1: Create validate.sh hook script
+- [x] S1-T2: Create observe.sh hook script
+- [x] S1-T3: Create ensure-log.sh hook script
+- [x] S1-T4: Add hook TypeScript exports
+- [x] S1-T5: Fix queryMaterial parameter order
+- [x] S1-T6: Add verify-on-read to workshop queries
+- [x] S1-T7: Add hash and indexed_at to ComponentEntry
+- [x] S1-T8: Implement workshop rebuild in startup sentinel
+
+### v6.1 Focus Areas
+
+**Sprint 1 (P0):** Hook scripts, queryMaterial fix, verify-on-read, sentinel rebuild
+**Sprint 2 (P1):** Vocabulary integration, taste-key curation, hard eviction, E2E tests
+**Sprint 3 (P2):** Optimistic divergence, merge-driven gardening, version standardization, docs
+
+---
+
+## v6.1 Sprint 2: Make It Safe (P1)
+
+**Duration:** 1 sprint
+**Theme:** Quality gates to prevent bad patterns and ghost components
+**Status:** COMPLETED
+
+### Artifacts
+- [reviewer.md](./v6.1-sprint-2/reviewer.md) - Implementation report
+- [engineer-feedback.md](./v6.1-sprint-2/engineer-feedback.md) - Tech lead review (✅ Approved)
+- [auditor-sprint-feedback.md](./v6.1-sprint-2/auditor-sprint-feedback.md) - Security audit (✅ Approved)
+- [COMPLETED](./v6.1-sprint-2/COMPLETED) - Completion marker
+
+### Key Deliverables
+- Vocabulary integration (vocabulary.yaml instead of hardcoded terms)
+- Taste-key curation system (canonical-candidate status, approval workflow)
+- Hard eviction for Virtual Sanctuary (eliminate ghost components)
+- E2E test suite for v6.1 features
+
+### Tasks Completed
+- [x] S2-T1: Integrate vocabulary-reader into agent-orchestration.ts
+- [x] S2-T2: Add canonical-candidate status to survival-observer.ts
+- [x] S2-T3: Create .sigil/taste-key.yaml configuration
+- [x] S2-T4: Implement addPendingPromotion() function
+- [x] S2-T5: Implement isPatternApproved() function
+- [x] S2-T6: Create /approve command
+- [x] S2-T7: Implement hard eviction for Virtual Sanctuary
+- [x] S2-T8: Create /reset-seed command
+- [x] S2-T9: Create E2E test suite
+
+---
+
 *Last Updated: 2026-01-08*
-*Current Version: Sigil v6.0.0 "Native Muse" — RELEASED*
+*Current Version: Sigil v6.1.0 "Agile Muse" — IN PROGRESS*

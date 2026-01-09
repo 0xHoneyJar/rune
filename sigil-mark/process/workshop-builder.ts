@@ -1,9 +1,11 @@
 /**
  * @sigil-tier gold
- * Sigil v6.0 — Workshop Builder
+ * Sigil v6.1 — Workshop Builder
  *
  * Pre-computes the workshop index for 5ms lookups.
  * Extracts materials from node_modules and components from Sanctuary.
+ *
+ * v6.1: Uses js-yaml library instead of regex for parsing sigil.yaml.
  *
  * @module process/workshop-builder
  */
@@ -11,6 +13,7 @@
 import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as yaml from 'yaml';
 import {
   Workshop,
   WorkshopBuilderOptions,
@@ -401,6 +404,15 @@ export function extractComponent(
   const relativePath = path.relative(projectRoot, filePath);
   const imports = extractImportsFromFile(filePath);
 
+  // Calculate file hash for verify-on-read (v6.1)
+  let hash: string | undefined;
+  try {
+    const content = fs.readFileSync(filePath, 'utf-8');
+    hash = crypto.createHash('md5').update(content).digest('hex');
+  } catch {
+    // Ignore hash errors
+  }
+
   return {
     path: relativePath,
     tier: pragmas.tier,
@@ -408,6 +420,8 @@ export function extractComponent(
     physics: pragmas.physics,
     vocabulary: pragmas.vocabulary,
     imports,
+    hash,
+    indexed_at: new Date().toISOString(),
   };
 }
 
@@ -452,7 +466,24 @@ export function scanSanctuary(
 // =============================================================================
 
 /**
+ * Raw sigil.yaml structure for parsing.
+ */
+interface SigilConfigRaw {
+  physics?: Record<string, {
+    timing?: string;
+    easing?: string;
+    description?: string;
+  }>;
+  zones?: Record<string, {
+    physics?: string;
+    timing?: string;
+    description?: string;
+  }>;
+}
+
+/**
  * Parse sigil.yaml for physics and zone definitions.
+ * v6.1: Uses yaml library instead of regex for safer parsing.
  */
 export function parseSigilConfig(configPath: string): {
   physics: Record<string, PhysicsDefinition>;
@@ -460,37 +491,29 @@ export function parseSigilConfig(configPath: string): {
 } {
   try {
     const content = fs.readFileSync(configPath, 'utf-8');
+    const parsed = yaml.parse(content) as SigilConfigRaw;
 
-    // Simple YAML parsing for physics and zones
     const physics: Record<string, PhysicsDefinition> = {};
     const zones: Record<string, ZoneDefinition> = {};
 
     // Parse physics section
-    const physicsMatch = content.match(/physics:\s*\n((?:\s+\w+:[\s\S]*?(?=\n\w|\n$|$))+)/);
-    if (physicsMatch) {
-      const physicsSection = physicsMatch[1];
-      const physicsRegex = /(\w+):\s*\n\s+timing:\s*["']?([^"'\n]+)["']?\s*\n\s+easing:\s*["']?([^"'\n]+)["']?(?:\s*\n\s+description:\s*["']?([^"'\n]+)["']?)?/g;
-      let match;
-      while ((match = physicsRegex.exec(physicsSection)) !== null) {
-        physics[match[1]] = {
-          timing: match[2].trim(),
-          easing: match[3].trim(),
-          description: match[4]?.trim() || '',
+    if (parsed.physics) {
+      for (const [name, def] of Object.entries(parsed.physics)) {
+        physics[name] = {
+          timing: def.timing || '',
+          easing: def.easing || '',
+          description: def.description || '',
         };
       }
     }
 
     // Parse zones section
-    const zonesMatch = content.match(/zones:\s*\n((?:\s+\w+:[\s\S]*?(?=\n\w|\n$|$))+)/);
-    if (zonesMatch) {
-      const zonesSection = zonesMatch[1];
-      const zonesRegex = /(\w+):\s*\n\s+physics:\s*["']?(\w+)["']?\s*\n\s+timing:\s*["']?([^"'\n]+)["']?(?:\s*\n\s+description:\s*["']?([^"'\n]+)["']?)?/g;
-      let match;
-      while ((match = zonesRegex.exec(zonesSection)) !== null) {
-        zones[match[1]] = {
-          physics: match[2].trim(),
-          timing: match[3].trim(),
-          description: match[4]?.trim() || '',
+    if (parsed.zones) {
+      for (const [name, def] of Object.entries(parsed.zones)) {
+        zones[name] = {
+          physics: def.physics || '',
+          timing: def.timing || '',
+          description: def.description || '',
         };
       }
     }

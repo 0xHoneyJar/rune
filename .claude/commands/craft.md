@@ -1,6 +1,6 @@
 ---
 name: craft
-version: "2.6.0"
+version: "6.1.0"
 description: Get design guidance with full Process context (Constitution + Decisions + Persona)
 agent: crafting-guidance
 agent_path: .claude/skills/crafting-guidance/SKILL.md
@@ -23,17 +23,19 @@ Get design guidance with full Process context. Restores Constitution, locked dec
 /craft --zone [name]                         # Override zone detection
 ```
 
-## Workflow (v2.6)
+## Workflow (v6.1)
 
 ```
-1. LOAD PROCESS CONTEXT (NEW IN v2.6)
+1. LOAD PROCESS CONTEXT
    - Read Constitution (protected capabilities)
    - Read locked decisions for current zone
    - Determine persona from zone mapping
    - Load persona physics and constraints
+   - v6.1: Load vocabulary.yaml for term extraction
 
 2. DETERMINE ZONE
-   - Get file path (from --file or description)
+   - v6.1: Extract vocabulary terms from prompt
+   - v6.1: Resolve zone from vocabulary terms
    - Match to zone in .sigilrc.yaml
    - Get persona for zone (critical → power_user, marketing → newcomer)
 
@@ -47,24 +49,31 @@ Get design guidance with full Process context. Restores Constitution, locked dec
    - Show locked decisions with expiry date
    - Warn if implementation contradicts locked decision
 
-5. SELECT LAYOUT + LENS
+5. VALIDATE PHYSICS (v6.1: Optimistic Divergence)
+   - Zone constraints → BLOCK on violation
+   - Material constraints → BLOCK on violation
+   - API correctness → BLOCK on violation
+   - Taste violations → TAG with @sigil-status divergent (not block)
+
+6. SELECT LAYOUT + LENS
    - CriticalZone → StrictLens (forced for financial)
    - MachineryLayout → User preference
    - GlassLayout → User preference
 
-6. APPLY PERSONA PHYSICS
+7. APPLY PERSONA PHYSICS
    - Load physics from persona (tap_targets, input_method, shortcuts)
    - Load constraints (max_actions_per_screen, reading_level)
    - Apply to recommendations
 
-7. OUTPUT GUIDANCE
+8. OUTPUT GUIDANCE
    - Show recommended pattern with persona context
    - Show code example
    - Note protected capabilities
    - Note locked decisions
+   - v6.1: Note any divergent patterns (tagged, not blocked)
 ```
 
-## Output Format (v2.6)
+## Output Format (v6.1)
 
 ```
 ═══════════════════════════════════════════════════════════
@@ -140,7 +149,7 @@ PERSONA PHYSICS:
 | StrictLens | 48px | High | No |
 | A11yLens | 56px | WCAG AAA | No |
 
-## Persona → Zone Mapping (v2.6)
+## Persona → Zone Mapping (v6.1)
 
 | Zone | Default Persona | Input Method | Key Constraint |
 |------|-----------------|--------------|----------------|
@@ -152,7 +161,7 @@ PERSONA PHYSICS:
 | mobile | mobile (Thumbzone) | touch | tap_targets: 48px min |
 | a11y | accessibility (A11y) | mixed | high_contrast: required |
 
-## Examples (v2.6)
+## Examples (v6.1)
 
 ```
 /craft "Create a confirm button for checkout"
@@ -197,7 +206,7 @@ PERSONA PHYSICS:
 → Implementation must preserve withdraw capability at all times
 ```
 
-## Diagnostic Mode (v2.6)
+## Diagnostic Mode (v6.1)
 
 When given a file path, diagnose current implementation with full Process context:
 

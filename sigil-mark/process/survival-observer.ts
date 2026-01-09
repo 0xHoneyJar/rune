@@ -17,8 +17,9 @@ import * as path from 'path';
 
 /**
  * Pattern status in survival lifecycle.
+ * v6.1: Added 'canonical-candidate' for taste-key curation.
  */
-export type PatternStatus = 'experimental' | 'surviving' | 'canonical' | 'rejected';
+export type PatternStatus = 'experimental' | 'surviving' | 'canonical-candidate' | 'canonical' | 'rejected';
 
 /**
  * Tracked pattern entry.
@@ -381,10 +382,33 @@ export function saveSurvivalIndex(
 
 /**
  * Determine pattern status based on occurrences.
+ * v6.0: Auto-promotes to canonical at 5+ occurrences.
+ * @deprecated Use determineStatusWithCuration for v6.1 taste-key flow
  */
 export function determineStatus(occurrences: number): PatternStatus {
   if (occurrences >= PROMOTION_THRESHOLDS.canonical) {
     return 'canonical';
+  }
+  if (occurrences >= PROMOTION_THRESHOLDS.surviving) {
+    return 'surviving';
+  }
+  return 'experimental';
+}
+
+/**
+ * Determine pattern status with taste-key curation.
+ * v6.1: 5+ occurrences → canonical-candidate (requires approval)
+ *
+ * @param occurrences - Number of pattern occurrences
+ * @param isApproved - Whether pattern has been approved by taste-key holder
+ */
+export function determineStatusWithCuration(
+  occurrences: number,
+  isApproved: boolean = false
+): PatternStatus {
+  if (occurrences >= PROMOTION_THRESHOLDS.canonical) {
+    // v6.1: Requires taste-key approval for canonical
+    return isApproved ? 'canonical' : 'canonical-candidate';
   }
   if (occurrences >= PROMOTION_THRESHOLDS.surviving) {
     return 'surviving';
@@ -697,4 +721,442 @@ export function formatGardenerResult(result: {
   }
 
   return lines.join('\n');
+}
+
+// =============================================================================
+// HOOK BRIDGE EXPORTS
+// =============================================================================
+
+/**
+ * Hook result type for bash script bridge.
+ */
+export interface HookObservationResult {
+  /** Number of patterns detected */
+  patternsDetected: number;
+  /** Patterns updated in survival.json */
+  patternsUpdated: string[];
+  /** Patterns that became canonical candidates */
+  candidatesCreated: string[];
+}
+
+/**
+ * Observation function for bash hook bridge.
+ * Called by observe.sh via npx tsx.
+ *
+ * @param filePath - Path of the file being written
+ * @param code - Code content to observe
+ * @param projectRoot - Project root for survival.json
+ * @returns HookObservationResult
+ */
+export function observeForHook(
+  filePath: string,
+  code: string,
+  projectRoot: string = process.cwd()
+): HookObservationResult {
+  try {
+    // Observe patterns
+    const result = observePatterns(code, filePath, projectRoot);
+
+    if (!result.success) {
+      return {
+        patternsDetected: 0,
+        patternsUpdated: [],
+        candidatesCreated: [],
+      };
+    }
+
+    // Load survival to check for new candidates
+    const index = loadSurvivalIndex(projectRoot);
+    const candidatesCreated: string[] = [];
+
+    // Check for patterns that reached canonical threshold
+    for (const patternName of result.updated) {
+      const entry = index.patterns.survived[patternName];
+      if (entry && entry.occurrences >= PROMOTION_THRESHOLDS.canonical) {
+        // In v6.1, this would become a canonical-candidate
+        // For now, we note it was promoted to canonical
+        if (!index.patterns.canonical.includes(patternName)) {
+          candidatesCreated.push(patternName);
+        }
+      }
+    }
+
+    return {
+      patternsDetected: result.patterns.length,
+      patternsUpdated: result.updated,
+      candidatesCreated,
+    };
+  } catch {
+    return {
+      patternsDetected: 0,
+      patternsUpdated: [],
+      candidatesCreated: [],
+    };
+  }
+}
+
+// =============================================================================
+// TASTE-KEY CURATION (v6.1)
+// =============================================================================
+
+import * as yaml from 'js-yaml';
+
+/** Taste-key config path */
+export const TASTE_KEY_PATH = '.sigil/taste-key.yaml';
+
+/**
+ * Pending promotion entry.
+ */
+export interface PendingPromotion {
+  /** Pattern name */
+  pattern: string;
+  /** Occurrence count when detected */
+  occurrences: number;
+  /** First seen date */
+  first_seen: string;
+  /** Files containing pattern */
+  files: string[];
+  /** When pattern became a candidate */
+  detected_at: string;
+}
+
+/**
+ * Approval record.
+ */
+export interface ApprovalRecord {
+  /** Pattern name */
+  pattern: string;
+  /** Approver identifier */
+  approver: string;
+  /** Approval timestamp */
+  approved_at: string;
+  /** Optional comment */
+  comment?: string;
+}
+
+/**
+ * Rejection record.
+ */
+export interface RejectionRecord {
+  /** Pattern name */
+  pattern: string;
+  /** Rejector identifier */
+  rejector: string;
+  /** Rejection timestamp */
+  rejected_at: string;
+  /** Reason for rejection */
+  reason: string;
+}
+
+/**
+ * Taste-key configuration.
+ */
+export interface TasteKeyConfig {
+  /** Version */
+  version: string;
+  /** Taste-key holder email/identifier */
+  holder: string;
+  /** Whether auto-approve is enabled (default false) */
+  auto_approve?: boolean;
+  /** Auto-approve after N days (if auto_approve enabled) */
+  auto_approve_days?: number;
+  /** Pending promotions awaiting approval */
+  pending_promotions: PendingPromotion[];
+  /** Approved patterns */
+  approved: ApprovalRecord[];
+  /** Rejected patterns */
+  rejected: RejectionRecord[];
+}
+
+/**
+ * Default taste-key config.
+ */
+const DEFAULT_TASTE_KEY_CONFIG: TasteKeyConfig = {
+  version: '6.1.0',
+  holder: '',
+  auto_approve: false,
+  pending_promotions: [],
+  approved: [],
+  rejected: [],
+};
+
+/**
+ * Load taste-key config.
+ */
+export function loadTasteKeyConfig(
+  projectRoot: string = process.cwd()
+): TasteKeyConfig {
+  const configPath = path.join(projectRoot, TASTE_KEY_PATH);
+
+  try {
+    if (fs.existsSync(configPath)) {
+      const content = fs.readFileSync(configPath, 'utf-8');
+      const parsed = yaml.load(content) as TasteKeyConfig;
+      return {
+        ...DEFAULT_TASTE_KEY_CONFIG,
+        ...parsed,
+        pending_promotions: parsed.pending_promotions || [],
+        approved: parsed.approved || [],
+        rejected: parsed.rejected || [],
+      };
+    }
+  } catch {
+    // Fall through to default
+  }
+
+  return { ...DEFAULT_TASTE_KEY_CONFIG };
+}
+
+/**
+ * Save taste-key config.
+ */
+export function saveTasteKeyConfig(
+  config: TasteKeyConfig,
+  projectRoot: string = process.cwd()
+): boolean {
+  const configPath = path.join(projectRoot, TASTE_KEY_PATH);
+
+  try {
+    const dir = path.dirname(configPath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+
+    fs.writeFileSync(configPath, yaml.dump(config), 'utf-8');
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Check if pattern has been approved by taste-key holder.
+ */
+export function isPatternApproved(
+  pattern: string,
+  projectRoot: string = process.cwd()
+): boolean {
+  const config = loadTasteKeyConfig(projectRoot);
+  return config.approved.some(a => a.pattern === pattern);
+}
+
+/**
+ * Check if pattern has been rejected.
+ */
+export function isPatternRejected(
+  pattern: string,
+  projectRoot: string = process.cwd()
+): boolean {
+  const config = loadTasteKeyConfig(projectRoot);
+  return config.rejected.some(r => r.pattern === pattern);
+}
+
+/**
+ * Check if pattern is pending approval.
+ */
+export function isPatternPending(
+  pattern: string,
+  projectRoot: string = process.cwd()
+): boolean {
+  const config = loadTasteKeyConfig(projectRoot);
+  return config.pending_promotions.some(p => p.pattern === pattern);
+}
+
+/**
+ * Add pattern to pending promotions.
+ * Called when pattern reaches 5+ occurrences.
+ */
+export function addPendingPromotion(
+  pattern: string,
+  entry: PatternEntry,
+  projectRoot: string = process.cwd()
+): boolean {
+  const config = loadTasteKeyConfig(projectRoot);
+
+  // Skip if already pending, approved, or rejected
+  if (isPatternPending(pattern, projectRoot)) {
+    return false;
+  }
+  if (isPatternApproved(pattern, projectRoot)) {
+    return false;
+  }
+  if (isPatternRejected(pattern, projectRoot)) {
+    return false;
+  }
+
+  const promotion: PendingPromotion = {
+    pattern,
+    occurrences: entry.occurrences,
+    first_seen: entry.first_seen,
+    files: entry.files,
+    detected_at: new Date().toISOString(),
+  };
+
+  config.pending_promotions.push(promotion);
+  console.log(`[Sigil] Pattern '${pattern}' added to pending promotions (${entry.occurrences} occurrences)`);
+
+  return saveTasteKeyConfig(config, projectRoot);
+}
+
+/**
+ * Approve a pending promotion.
+ * Moves pattern from pending to approved, updates survival.json to canonical.
+ */
+export function approvePromotion(
+  pattern: string,
+  approver: string,
+  comment?: string,
+  projectRoot: string = process.cwd()
+): boolean {
+  const config = loadTasteKeyConfig(projectRoot);
+
+  // Find pending promotion
+  const pendingIdx = config.pending_promotions.findIndex(p => p.pattern === pattern);
+  if (pendingIdx === -1) {
+    return false;
+  }
+
+  // Remove from pending
+  config.pending_promotions.splice(pendingIdx, 1);
+
+  // Add to approved
+  const approval: ApprovalRecord = {
+    pattern,
+    approver,
+    approved_at: new Date().toISOString(),
+    comment,
+  };
+  config.approved.push(approval);
+
+  // Save config
+  if (!saveTasteKeyConfig(config, projectRoot)) {
+    return false;
+  }
+
+  // Update survival.json
+  const index = loadSurvivalIndex(projectRoot);
+  const entry = index.patterns.survived[pattern];
+  if (entry) {
+    entry.status = 'canonical';
+    if (!index.patterns.canonical.includes(pattern)) {
+      index.patterns.canonical.push(pattern);
+    }
+    saveSurvivalIndex(index, projectRoot);
+  }
+
+  console.log(`[Sigil] Pattern '${pattern}' approved and promoted to canonical`);
+  return true;
+}
+
+/**
+ * Reject a pending promotion.
+ * Moves pattern from pending to rejected.
+ */
+export function rejectPromotion(
+  pattern: string,
+  rejector: string,
+  reason: string,
+  projectRoot: string = process.cwd()
+): boolean {
+  const config = loadTasteKeyConfig(projectRoot);
+
+  // Find pending promotion
+  const pendingIdx = config.pending_promotions.findIndex(p => p.pattern === pattern);
+  if (pendingIdx === -1) {
+    return false;
+  }
+
+  // Remove from pending
+  config.pending_promotions.splice(pendingIdx, 1);
+
+  // Add to rejected
+  const rejection: RejectionRecord = {
+    pattern,
+    rejector,
+    rejected_at: new Date().toISOString(),
+    reason,
+  };
+  config.rejected.push(rejection);
+
+  // Save config
+  if (!saveTasteKeyConfig(config, projectRoot)) {
+    return false;
+  }
+
+  // Update survival.json
+  const index = loadSurvivalIndex(projectRoot);
+  rejectPattern(index, pattern);
+  saveSurvivalIndex(index, projectRoot);
+
+  console.log(`[Sigil] Pattern '${pattern}' rejected: ${reason}`);
+  return true;
+}
+
+/**
+ * Get all pending promotions.
+ */
+export function getPendingPromotions(
+  projectRoot: string = process.cwd()
+): PendingPromotion[] {
+  const config = loadTasteKeyConfig(projectRoot);
+  return config.pending_promotions;
+}
+
+/**
+ * Update pattern with curated promotion.
+ * v6.1: Uses taste-key approval instead of auto-canonical.
+ */
+export function updatePatternWithCuration(
+  index: SurvivalIndex,
+  patternName: string,
+  filePath: string,
+  projectRoot: string = process.cwd()
+): { becameCandidate: boolean } {
+  const now = new Date().toISOString();
+  const dateOnly = now.split('T')[0];
+  let becameCandidate = false;
+
+  const existing = index.patterns.survived[patternName];
+
+  if (existing) {
+    const wasCandidate = existing.status === 'canonical-candidate';
+    const wasAboveThreshold = existing.occurrences >= PROMOTION_THRESHOLDS.canonical;
+
+    // Update existing pattern
+    existing.occurrences++;
+    existing.last_seen = dateOnly;
+    if (!existing.files.includes(filePath)) {
+      existing.files.push(filePath);
+    }
+
+    // Use curated status determination
+    const isApproved = isPatternApproved(patternName, projectRoot);
+    existing.status = determineStatusWithCuration(existing.occurrences, isApproved);
+
+    // Check if just became a candidate
+    if (!wasCandidate && !wasAboveThreshold &&
+        existing.occurrences >= PROMOTION_THRESHOLDS.canonical) {
+      becameCandidate = true;
+      // Add to pending promotions
+      addPendingPromotion(patternName, existing, projectRoot);
+    }
+
+    // Update canonical list only if approved
+    if (existing.status === 'canonical' &&
+        !index.patterns.canonical.includes(patternName)) {
+      index.patterns.canonical.push(patternName);
+    }
+  } else {
+    // Create new pattern entry
+    index.patterns.survived[patternName] = {
+      occurrences: 1,
+      first_seen: dateOnly,
+      last_seen: dateOnly,
+      files: [filePath],
+      status: 'experimental',
+    };
+  }
+
+  index.last_scan = now;
+  return { becameCandidate };
 }

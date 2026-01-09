@@ -1,9 +1,12 @@
 /**
  * @sigil-tier gold
- * Sigil v6.0 — Physics Validator
+ * Sigil v6.1 — Physics Validator
  *
- * Physics-only validation that blocks physics violations, not novelty.
+ * Physics-only validation with optimistic divergence.
+ * Blocks physics violations, tags taste violations (doesn't block).
  * Used by PreToolUse hook to validate code before writing.
+ *
+ * v6.1: Added optimistic divergence - taste violations are tagged, not blocked.
  *
  * Performance target: <10ms
  *
@@ -51,6 +54,22 @@ export interface FidelityConstraint {
 export interface ValidationResult {
   valid: boolean;
   violations: ValidationViolation[];
+  /** v6.1: Divergent patterns (allowed but tagged) */
+  divergent?: DivergentPattern[];
+}
+
+/**
+ * v6.1: Divergent pattern - taste violation that is allowed but tagged.
+ */
+export interface DivergentPattern {
+  /** Pattern identifier */
+  pattern: string;
+  /** Reason for divergence */
+  reason: string;
+  /** Tag to add to code */
+  tag: string;
+  /** First detected timestamp */
+  detectedAt: string;
 }
 
 /**
@@ -667,4 +686,199 @@ export function validateForHook(
   });
 
   return formatValidationResponse(result);
+}
+
+// =============================================================================
+// OPTIMISTIC DIVERGENCE (v6.1)
+// =============================================================================
+
+/**
+ * Violation classification for optimistic divergence.
+ */
+export type ViolationClass = 'physics' | 'taste';
+
+/**
+ * Classify a violation as physics (block) or taste (tag).
+ *
+ * Physics violations (BLOCK):
+ * - Zone-physics mismatch
+ * - Material-timing mismatch
+ * - API errors
+ *
+ * Taste violations (TAG with @sigil-status divergent):
+ * - Fidelity preferences
+ * - Style deviations
+ * - Non-canonical patterns
+ */
+export function classifyViolation(violation: ValidationViolation): ViolationClass {
+  // Physics violations: zone and material constraints are safety
+  if (violation.type === 'zone') {
+    return 'physics';
+  }
+
+  if (violation.type === 'material') {
+    return 'physics';
+  }
+
+  if (violation.type === 'api') {
+    return 'physics';
+  }
+
+  // Fidelity violations are taste, not physics
+  if (violation.type === 'fidelity') {
+    return 'taste';
+  }
+
+  // Default to physics for safety
+  return 'physics';
+}
+
+/**
+ * v6.1: Validate with optimistic divergence.
+ * Physics violations → BLOCK (safety)
+ * Taste violations → TAG with @sigil-status divergent (allowed but tracked)
+ *
+ * Returns combined result with both violations and divergent patterns.
+ */
+export function validatePhysicsOptimistic(
+  code: string,
+  options: ValidationOptions = {}
+): {
+  allow: boolean;
+  violations: ValidationViolation[];
+  divergent: DivergentPattern[];
+  tag?: string;
+} {
+  const result = validatePhysics(code, options);
+
+  const physicsViolations: ValidationViolation[] = [];
+  const tasteViolations: ValidationViolation[] = [];
+
+  // Classify each violation
+  for (const violation of result.violations) {
+    const classification = classifyViolation(violation);
+    if (classification === 'physics') {
+      physicsViolations.push(violation);
+    } else {
+      tasteViolations.push(violation);
+    }
+  }
+
+  // Convert taste violations to divergent patterns
+  const divergent: DivergentPattern[] = tasteViolations.map((v, index) => ({
+    pattern: `divergent-${v.type}-${index}`,
+    reason: v.message,
+    tag: `@sigil-status divergent`,
+    detectedAt: new Date().toISOString(),
+  }));
+
+  // Only block on physics violations
+  const allow = physicsViolations.length === 0;
+
+  // Generate tag if there are divergent patterns
+  const tag = divergent.length > 0
+    ? `/** @sigil-status divergent - ${divergent.length} taste deviation(s) */`
+    : undefined;
+
+  return {
+    allow,
+    violations: physicsViolations,
+    divergent,
+    tag,
+  };
+}
+
+/**
+ * v6.1: Check if code has divergent status.
+ */
+export function isDivergent(code: string): boolean {
+  return /@sigil-status\s+divergent/.test(code);
+}
+
+/**
+ * v6.1: Extract divergent patterns from tagged code.
+ */
+export function extractDivergentPatterns(code: string): string[] {
+  const patterns: string[] = [];
+  const regex = /@sigil-status\s+divergent(?:\s*-\s*(.+?))?(?:\*\/|\n)/g;
+  let match;
+
+  while ((match = regex.exec(code)) !== null) {
+    if (match[1]) {
+      patterns.push(match[1].trim());
+    }
+  }
+
+  return patterns;
+}
+
+// =============================================================================
+// HOOK BRIDGE EXPORTS
+// =============================================================================
+
+/**
+ * Hook result type for bash script bridge.
+ */
+export interface HookValidationResult {
+  /** Whether validation passed */
+  valid: boolean;
+  /** Physics violations found (blocking) */
+  violations: Array<{
+    type: string;
+    severity: string;
+    message: string;
+    suggestion?: string;
+  }>;
+  /** v6.1: Divergent patterns (allowed but tagged) */
+  divergent: string[];
+  /** v6.1: Tag to add to code if divergent */
+  tag?: string;
+}
+
+/**
+ * Validation function for bash hook bridge.
+ * Called by validate.sh via npx tsx.
+ *
+ * v6.1: Now uses optimistic divergence - taste violations are tagged, not blocked.
+ *
+ * @param code - Code content to validate
+ * @param filePath - Optional file path for context
+ * @param projectRoot - Project root for workshop lookup
+ * @returns HookValidationResult
+ */
+export function validatePhysicsForHook(
+  code: string,
+  filePath?: string,
+  projectRoot: string = process.cwd()
+): HookValidationResult {
+  // Load workshop if available
+  let workshop: Workshop | undefined;
+  const workshopPath = `${projectRoot}/.sigil/workshop.json`;
+
+  try {
+    workshop = loadWorkshop(workshopPath);
+  } catch {
+    // No workshop available, continue without API checks
+  }
+
+  // v6.1: Use optimistic divergence instead of blocking on all violations
+  const result = validatePhysicsOptimistic(code, {
+    workshop,
+    projectRoot,
+    checkApi: !!workshop,
+    checkFidelity: true,
+  });
+
+  // Transform to hook result format
+  return {
+    valid: result.allow,
+    violations: result.violations.map(v => ({
+      type: v.type,
+      severity: v.severity,
+      message: v.message,
+      suggestion: v.suggestion,
+    })),
+    divergent: result.divergent.map(d => d.pattern),
+    tag: result.tag,
+  };
 }
