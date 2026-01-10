@@ -1,0 +1,74 @@
+# Sigil v7.5 — PreToolUse Hook
+#
+# Validates code before Write/Edit operations against:
+# - Contagion rules (Gold cannot import Draft)
+# - Physics constraints (zone-physics compatibility)
+#
+# Performance target: <50ms
+#
+# Usage: Claude Code automatically runs this hook before Write/Edit tools
+
+name: sigil-sentinel
+description: Validate code against Sigil registry and physics rules
+version: 7.5.0
+
+# Trigger on Write and Edit tools
+triggers:
+  - tool: Write
+  - tool: Edit
+
+# Validation script
+validate:
+  # Script to run for validation
+  script: .claude/hooks/scripts/sentinel-validate.sh
+
+  # Arguments passed to script
+  args:
+    - file_path  # Path being written/edited
+    - content    # Content being written
+
+  # Timeout in milliseconds
+  timeout_ms: 50
+
+  # Response handling
+  on_error: warn  # warn | block | ignore
+  on_timeout: warn
+
+# What to do with validation result
+response:
+  # Block operation if validation fails with error severity
+  block_on_error: true
+
+  # Show warnings but allow operation
+  show_warnings: true
+
+  # Include suggestions in block message
+  include_suggestions: true
+
+# Caching
+cache:
+  # Cache registry parsing for 5 seconds
+  registry_ttl_ms: 5000
+
+  # Skip validation for non-TSX/TS files
+  skip_patterns:
+    - "*.md"
+    - "*.json"
+    - "*.yaml"
+    - "*.yml"
+    - "*.sh"
+    - "*.css"
+
+# Validation rules enabled
+rules:
+  # Check contagion (Gold cannot import Draft)
+  contagion: true
+
+  # Check physics constraints
+  physics: true
+
+  # Check Gold modification without sanctify
+  gold_modification: true
+
+  # Show nomination opportunities (info only)
+  nomination_hints: true

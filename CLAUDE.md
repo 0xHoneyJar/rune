@@ -1,19 +1,18 @@
 # Sigil: Design Context Framework
 
-> "Code is precedent. Survival is the vote. Never interrupt flow."
+> "Control the patterns, not the files."
 
 ## What is Sigil?
 
 Sigil is a design context framework that helps AI agents make consistent design decisions by:
 
-1. **Pre-computed Workshop Index** — 5ms queries instead of 200ms JIT grep
-2. **Virtual Sanctuary** — Seeds for cold start projects (Linear-like, Vercel-like, Stripe-like)
-3. **Physics Validation** — Block physics violations, not novelty
-4. **Survival-Based Precedent** — Patterns earn status through usage, not approval dialogs
-5. **Context Forking** — Ephemeral inspiration without polluting taste
-6. **10 Claude Code Skills** — Complete lifecycle with hooks
-7. **v6.1: Optimistic Divergence** — Taste violations tagged, not blocked
-8. **v6.1: Merge-Driven Gardening** — <5 min pattern promotion latency
+1. **Registry-Based Authority** — Gold/Silver/Draft registries define component status
+2. **Contagion Enforcement** — ESLint rules prevent Draft from infecting Gold
+3. **Pre-computed Workshop Index** — 5ms queries instead of 200ms JIT grep
+4. **Virtual Sanctuary** — Seeds for cold start projects (Linear-like, Vercel-like, Stripe-like)
+5. **Physics Validation** — Block physics violations, not novelty
+6. **Survival-Based Precedent** — Patterns earn status through usage, not approval dialogs
+7. **v7.5: Nomination Pattern** — Agent nominates, human approves (never auto-promote)
 
 ---
 
@@ -31,6 +30,137 @@ Sigil is a design context framework that helps AI agents make consistent design 
 2. **Taste-Key Curation** — canonical-candidate status requires explicit approval
 3. **Hard Eviction** — Virtual Sanctuary evicts when real components exist
 4. **Optimistic Divergence** — Taste violations tagged, not blocked
+
+---
+
+## v7.5 Registry Authority (CRITICAL)
+
+### The Registry Is The Canon
+
+**BEFORE generating any UI code, you MUST read the Gold registry:**
+
+```
+src/gold/index.ts
+```
+
+This file defines what components are "blessed" (canonical). If a component is exported from this file, it is Gold. If not, it is not Gold.
+
+### Authority Hierarchy
+
+| Tier | Registry | Can Import | Description |
+|------|----------|------------|-------------|
+| **Gold** | `src/gold/index.ts` | Gold only | Canonical, copy exactly |
+| **Silver** | `src/silver/index.ts` | Gold, Silver | Proven, use when Gold lacks coverage |
+| **Draft** | `src/draft/index.ts` | Anything | Quarantined experiments |
+
+### Import Rules (Contagion Model)
+
+```
+Gold  → Gold only (pure canon)
+Silver → Gold, Silver (proven)
+Draft → Gold, Silver, Draft (quarantined)
+Features → anything (application code)
+```
+
+**NEVER** generate code where Gold imports from Draft. This violates contagion rules and will be caught by ESLint.
+
+### Agent Protocol for UI Tasks
+
+1. **Read `src/gold/index.ts` first** — Understand available patterns
+2. **Match vocabulary to zone** — "claim" → critical, "navigate" → casual
+3. **Find archetype in Gold** — Copy the pattern exactly
+4. **If no Gold archetype** — Check Silver, or use `/forge` to explore
+
+### Nomination (Never Auto-Promote)
+
+**CRITICAL: The agent NEVER modifies registry files directly.**
+
+When you identify a pattern that should be promoted:
+
+1. **Collect evidence**: Uses (≥5), consistency score (≥95%), mutiny count (0)
+2. **Propose nomination**: Generate PR body with evidence
+3. **Wait for human approval**: Never modify the registry yourself
+
+```typescript
+// Example nomination proposal
+// "I've noticed `LoadingSpinner` is used in 12 files with identical props.
+// Nomination: Add to src/gold/index.ts:
+// export { LoadingSpinner } from '../components/LoadingSpinner';"
+```
+
+**Nomination Criteria:**
+
+| Metric | Threshold | Description |
+|--------|-----------|-------------|
+| Uses | ≥5 | Occurrences across codebase |
+| Consistency | ≥95% | Same props/usage pattern |
+| Mutinies | 0 | No deviations or violations |
+
+**Promotion Paths:**
+
+```
+Unregistered → Silver (proving ground)
+Draft → Silver (graduated from experiments)
+Silver → Gold (battle-tested canonical)
+```
+
+### Auto-Demotion
+
+Gold components modified without `sanctify` label are automatically demoted:
+
+```typescript
+// This modification WITHOUT @sanctify will demote to Silver:
+export function Button() { ... }
+
+// This modification WITH @sanctify preserves Gold status:
+/** @sanctify - Approved design update */
+export function Button() { ... }
+```
+
+**Demotion Triggers:**
+- Gold component modified without `sanctify` label → demoted to Silver
+- Component gains mutinies (violations) → may be demoted
+- Consistency score drops below 95% → flagged for review
+
+### Sanctify Label
+
+The `@sanctify` label preserves Gold status during intentional modifications:
+
+```typescript
+/**
+ * @sanctify - v2.0 design refresh approved by design lead
+ * Changes: Updated padding, new hover state
+ */
+export function CriticalButton({ ... }) { ... }
+```
+
+**When to use @sanctify:**
+- Approved design updates
+- Bug fixes in Gold components
+- Accessibility improvements
+- Performance optimizations
+
+**Never use @sanctify for:**
+- Experimental changes (use Draft instead)
+- Unreviewed modifications
+- Personal preference changes
+
+### Registry Files
+
+| File | Purpose |
+|------|---------|
+| `src/gold/index.ts` | THE CANON — blessed components |
+| `src/silver/index.ts` | Proven patterns awaiting promotion |
+| `src/draft/index.ts` | Quarantined experiments |
+| `src/components/` | All implementations (paths never change) |
+
+### Path Aliases
+
+```typescript
+import { CriticalButton } from '@/gold';    // Gold registry
+import { IconButton } from '@/silver';       // Silver registry
+import { ExperimentalNav } from '@/draft';   // Draft registry
+```
 
 ---
 
@@ -248,6 +378,71 @@ Pre-computed at `.sigil/workshop.json`:
 | Full rebuild | <2s | ~1.5s |
 | Pattern observation | <10ms | ~5ms |
 | Craft log generation | <100ms | ~50ms |
+
+### Background Execution
+
+Operations exceeding 30 seconds should run in background to avoid blocking flow:
+
+```typescript
+// Use run_in_background: true for long operations
+{
+  "command": "parallel magick {} -resize 800x out/{/} ::: *.png",
+  "run_in_background": true
+}
+```
+
+**When to Background:**
+| Duration | Action |
+|----------|--------|
+| <10s | Run inline |
+| 10-30s | Inline with progress indicator |
+| >30s | Background with notification |
+
+**Background Protocol:**
+1. Start operation with `run_in_background: true`
+2. Notify user: "Processing 143 images in background..."
+3. Continue other work
+4. Notify when complete: "Image processing complete (143 files, 15s)"
+
+**Never block flow** — Long operations must not prevent user interaction.
+
+### Performance Quick Reference
+
+| Operation | Tool | When |
+|-----------|------|------|
+| Single image | `magick` | Always |
+| Batch (<10) | `magick` loop | Simple cases |
+| Batch (>10) | `parallel` | Default for batch |
+| Heavy work (>10MB) | `vips` | Large files, many ops |
+| >30 seconds | background | Always |
+
+**Tool Selection:**
+```
+Need image processing?
+├── Single file?
+│   └── magick ✓
+├── Multiple files?
+│   ├── <10 files → magick loop
+│   └── >10 files → parallel + magick
+├── Large files (>10MB)?
+│   └── vips (5-10x faster)
+└── >30 seconds?
+    └── run_in_background: true
+```
+
+**Key Commands:**
+```bash
+# Batch resize with parallel
+parallel magick {} -resize 400x out/{/} ::: *.png
+
+# High-performance with vips
+vips resize input.png output.png 0.5
+
+# Animated WebP (NEVER ffmpeg for alpha)
+magick -delay 4 -loop 0 frames/*.png output.webp
+```
+
+See `sigil-mark/principles/image-tooling.md` for full documentation.
 
 ---
 
@@ -562,9 +757,18 @@ import { CriticalZone, GlassLayout, MachineryLayout } from 'sigil-mark';
 ## Directory Structure
 
 ```
+src/                    # v7.5 Registry System
+├── gold/
+│   └── index.ts       # THE CANON — blessed components
+├── silver/
+│   └── index.ts       # Proven patterns
+├── draft/
+│   └── index.ts       # Quarantined experiments
+└── components/        # All implementations (paths never change)
+
 .sigil/
 ├── workshop.json       # Pre-computed index
-├── survival.json       # Pattern tracking
+├── survival.json       # Pattern tracking (historical)
 ├── seed.yaml          # Virtual Sanctuary
 ├── craft-log/         # Session logs
 │   └── {date}-{component}.md
@@ -576,7 +780,12 @@ sigil-mark/
 ├── providers/         # SigilProvider
 ├── hooks/             # useSigilMutation
 ├── layouts/           # Zone layouts
-├── process/           # Agent-time utilities (v6.0)
+├── principles/        # v7.5: Expert knowledge layer
+│   ├── motion-implementation.md
+│   ├── image-tooling.md
+│   ├── color-oklch.md
+│   └── svg-patterns.md
+├── process/           # Agent-time utilities
 │   ├── workshop-builder.ts
 │   ├── workshop-query.ts
 │   ├── startup-sentinel.ts
@@ -588,10 +797,15 @@ sigil-mark/
 │   ├── era-manager.ts
 │   ├── survival-observer.ts
 │   ├── chronicling-rationale.ts
-│   ├── auditing-cohesion.ts
-│   └── agent-orchestration.ts
+│   └── auditing-cohesion.ts
 ├── moodboard.md
 └── rules.md
+
+packages/
+└── eslint-plugin-sigil/   # v7.5 Contagion enforcement
+    └── src/rules/
+        ├── gold-imports-only.ts
+        └── no-gold-imports-draft.ts
 
 .claude/
 ├── skills/
@@ -636,5 +850,5 @@ Key changes:
 
 ---
 
-*Sigil v6.1.0 "Agile Muse"*
-*Last Updated: 2026-01-08*
+*Sigil v7.5.0 "The Reference Studio"*
+*Last Updated: 2026-01-09*

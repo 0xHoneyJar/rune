@@ -73,4 +73,42 @@ export const relaxed: Linter.Config = {
   },
 };
 
+/**
+ * Contagion configuration - registry-based authority enforcement
+ *
+ * Part of Sigil v7.5 "The Reference Studio"
+ *
+ * Rules:
+ * - gold-imports-only: Gold can only import from Gold registry
+ * - no-gold-imports-draft: Gold cannot import Draft (quarantine)
+ *
+ * The contagion model:
+ * - Gold → Gold only (pure canon)
+ * - Silver → Gold, Silver (proven patterns)
+ * - Draft → anything (quarantined experiments)
+ */
+export const contagion: Linter.Config = {
+  plugins: ["sigil"],
+  rules: {
+    // Gold can only import from Gold registry
+    // Error because this maintains canon purity
+    "sigil/gold-imports-only": "error",
+
+    // Gold cannot import Draft code
+    // Error because Draft is quarantined
+    "sigil/no-gold-imports-draft": "error",
+  },
+};
+
+/**
+ * Contagion configuration with warnings (for gradual adoption)
+ */
+export const contagionWarn: Linter.Config = {
+  plugins: ["sigil"],
+  rules: {
+    "sigil/gold-imports-only": "warn",
+    "sigil/no-gold-imports-draft": "warn",
+  },
+};
+
 export default recommended;

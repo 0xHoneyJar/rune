@@ -20,6 +20,12 @@
 
     "baseUrl": ".",
     "paths": {
+      "@/gold": ["src/gold/index.ts"],
+      "@/gold/*": ["src/gold/*"],
+      "@/silver": ["src/silver/index.ts"],
+      "@/silver/*": ["src/silver/*"],
+      "@/draft": ["src/draft/index.ts"],
+      "@/draft/*": ["src/draft/*"],
       "@sigil/recipes/*": ["sigil-mark/recipes/*"],
       "@sigil/hooks": ["sigil-mark/hooks/index.ts"],
       "@sigil/hooks/*": ["sigil-mark/hooks/*"],
