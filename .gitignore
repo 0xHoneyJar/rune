@@ -134,10 +134,58 @@ app/tsconfig.json
 app/ecosystem.config.js
 
 # =============================================================================
-# SIGIL MOODBOARD RAW ASSETS
+# SIGIL ARTIFACT MODEL
 # =============================================================================
-# Raw moodboard assets are user-specific and should be processed/optimized
-# before being shared. Keep markdown docs and index, ignore raw images.
+# Sigil artifacts fall into three categories:
+#
+# 1. SHARED (tracked): Team taste, curated references, survival metrics
+#    - sigil-mark/*.md, sigil-mark/moodboard/*.md
+#    - .sigil/survival.json, .sigil/seed.yaml, .sigil/eras/
+#
+# 2. MACHINE-GENERATED (ignored): Rebuilds automatically
+#    - .sigil/workshop.json, .sigil/craft-log/
+#
+# 3. USER-SPECIFIC (ignored): Local experimentation, raw assets
+#    - sigil-mark/moodboard/sandbox/, raw images
+#
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# .sigil/ Machine-Generated State
+# -----------------------------------------------------------------------------
+# These files are generated per-session or rebuild automatically.
+# They should not be committed to version control.
+
+# Workshop index (pre-computed, rebuilds on package/import changes)
+.sigil/workshop.json
+
+# Craft logs (session-specific debugging, per-developer)
+.sigil/craft-log/
+
+# -----------------------------------------------------------------------------
+# .sigil/ Shared State (TRACKED - do not add to gitignore)
+# -----------------------------------------------------------------------------
+# These files ARE tracked and shared with the team:
+# - .sigil/survival.json      # Pattern tracking (team consensus)
+# - .sigil/survival-stats.json # Component metrics (team visibility)
+# - .sigil/seed.yaml          # Virtual Sanctuary taste (team direction)
+# - .sigil/pending-ops.json   # CI/CD queue (team operations)
+# - .sigil/eras/              # Historical record (team memory)
+
+# -----------------------------------------------------------------------------
+# Moodboard Sandbox (User-Specific Experimentation)
+# -----------------------------------------------------------------------------
+# Local experimentation space for design exploration.
+# Drop anything here without worrying about polluting team taste.
+# README.md is tracked to explain the directory's purpose.
+sigil-mark/moodboard/sandbox/*
+!sigil-mark/moodboard/sandbox/README.md
+
+# -----------------------------------------------------------------------------
+# Moodboard Raw Assets (User-Specific)
+# -----------------------------------------------------------------------------
+# Raw assets should be processed/optimized before sharing.
+# Curated markdown references are tracked.
 
 # Raw image formats (unprocessed)
 sigil-mark/moodboard/**/*.png

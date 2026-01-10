@@ -4,10 +4,43 @@
 
 Drop design inspiration here. The agent references it during `/craft`.
 
+## Artifact Model
+
+Moodboard content follows the Sigil artifact model:
+
+| Category | Path | Tracked | Purpose |
+|----------|------|---------|---------|
+| **Curated** | `references/`, `articles/`, `anti-patterns/` | Yes | Team taste, proven patterns |
+| **Sandbox** | `sandbox/` | No | Local experimentation |
+| **Raw Assets** | `*.png`, `*.gif`, etc. | No | Unprocessed images |
+
+### Mental Model
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    SIGIL MOODBOARD                          │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  sandbox/          →  YOUR experimentation (gitignored)     │
+│       ↓                                                     │
+│  [curate]          →  Process, document, tag                │
+│       ↓                                                     │
+│  references/       →  TEAM taste (tracked)                  │
+│  articles/                                                  │
+│  anti-patterns/                                             │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Workflow**: Drop raw assets in `sandbox/`. When valuable, curate to `references/` with markdown documentation. Delete the sandbox original.
+
 ## Directory Structure
 
 ```
 moodboard/
+├── sandbox/          # Local experimentation (gitignored)
+│   └── README.md
+│
 ├── references/       # Product/app inspiration (organize by source)
 │   └── stripe/
 │       ├── checkout-flow.md
