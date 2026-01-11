@@ -337,6 +337,35 @@ tool_search:
     scope_weight: 30
 
 # =============================================================================
+# Context Management (Claude Platform Integration v0.11.0)
+# =============================================================================
+# Client-side compaction with Lossless Ledger Protocol
+context_management:
+  # Enable client-side compaction integration
+  client_compaction: true
+  # Always preserve NOTES.md critical sections
+  preserve_notes_md: true
+  # Use simplified 3-step checkpoint (vs full 7-step)
+  simplified_checkpoint: true
+  # Auto-log thinking blocks to trajectory before compaction
+  auto_trajectory_log: true
+  # Preservation rules (what survives compaction)
+  preservation_rules:
+    # Items that ALWAYS survive compaction
+    always_preserve:
+      - notes_session_continuity
+      - notes_decision_log
+      - trajectory_entries
+      - active_beads
+    # Items that CAN be compacted after use
+    compactable:
+      - tool_results
+      - thinking_blocks
+      - verbose_debug
+      - redundant_file_reads
+      - intermediate_outputs
+
+# =============================================================================
 # Behavior Preferences
 # =============================================================================
 preferences:

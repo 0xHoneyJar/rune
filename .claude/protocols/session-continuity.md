@@ -1,11 +1,57 @@
 # Session Continuity Protocol
 
-> **Version**: 1.0 (v0.9.0 Lossless Ledger Protocol)
+> **Version**: 1.1 (v0.11.0 Claude Platform Integration)
 > **Paradigm**: Clear, Don't Compact
 
 ## Purpose
 
-Ensure zero information loss across context wipes (`/clear`) and session boundaries. The context window is treated as a **disposable workspace**; State Zone artifacts are the **lossless ledgers**.
+Ensure zero information loss across context wipes (`/clear`), compaction events, and session boundaries. The context window is treated as a **disposable workspace**; State Zone artifacts are the **lossless ledgers**.
+
+## Context Compaction Integration (v0.11.0)
+
+As of v0.11.0, this protocol integrates with Claude Code's client-side compaction feature.
+
+### Compaction vs /clear
+
+| Action | Trigger | Checkpoint | Recovery |
+|--------|---------|------------|----------|
+| `/compact` | User/Auto | Simplified (3-step) | Automatic (preserved content) |
+| `/clear` | User | Full (7-step) | Tiered (Level 1/2/3) |
+
+### Using context-manager.sh
+
+```bash
+# Check context status
+.claude/scripts/context-manager.sh status
+
+# Run pre-compaction check
+.claude/scripts/context-manager.sh compact --dry-run
+
+# Run simplified checkpoint before compaction
+.claude/scripts/context-manager.sh checkpoint
+
+# Recover after compaction (if needed)
+.claude/scripts/context-manager.sh recover 1  # Level 1
+.claude/scripts/context-manager.sh recover 2  # Level 2
+.claude/scripts/context-manager.sh recover 3  # Level 3
+```
+
+### Compaction Preservation
+
+Content that survives compaction (configured in `.loa.config.yaml`):
+
+| Item | Status | Rationale |
+|------|--------|-----------|
+| NOTES.md Session Continuity | PRESERVED | Recovery anchor |
+| NOTES.md Decision Log | PRESERVED | Audit trail |
+| Trajectory entries | PRESERVED | External files |
+| Active bead references | PRESERVED | Task continuity |
+| Tool results | COMPACTED | Summarized |
+| Thinking blocks | COMPACTED | Logged to trajectory |
+
+See: `.claude/protocols/context-compaction.md` for full compaction protocol.
+
+---
 
 ## Truth Hierarchy
 
@@ -444,10 +490,14 @@ git push             # Push to remote
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────┐
-│              v0.9.0 LOSSLESS LEDGER PROTOCOL DEPENDENCIES                   │
+│              v0.11.0 LOSSLESS LEDGER PROTOCOL DEPENDENCIES                  │
 ├────────────────────────────────────────────────────────────────────────────┤
 │                                                                            │
 │  SESSION-CONTINUITY (Core Protocol)                                        │
+│       │                                                                    │
+│       ├──▶ CONTEXT-COMPACTION (v0.11.0 - Compaction rules)                │
+│       │         │                                                          │
+│       │         └──▶ Preservation rules, simplified checkpoint            │
 │       │                                                                    │
 │       ├──▶ SYNTHESIS-CHECKPOINT (Pre-clear validation)                    │
 │       │         │                                                          │
@@ -470,9 +520,10 @@ git push             # Push to remote
 │                 └──▶ Decision Log, Session Continuity section             │
 │                                                                            │
 │  SCRIPTS                                                                   │
-│  ├── synthesis-checkpoint.sh ─── calls ──▶ grounding-check.sh             │
-│  ├── grounding-check.sh ──────── reads ──▶ trajectory/*.jsonl             │
-│  └── self-heal-state.sh ──────── recovers ▶ State Zone files              │
+│  ├── context-manager.sh ───── manages ──▶ compaction, checkpoint          │
+│  ├── synthesis-checkpoint.sh ─ calls ───▶ grounding-check.sh              │
+│  ├── grounding-check.sh ────── reads ───▶ trajectory/*.jsonl              │
+│  └── self-heal-state.sh ────── recovers ▶ State Zone files                │
 │                                                                            │
 │  FLOW:                                                                     │
 │  Session Start ──▶ self-heal-state.sh (if needed)                         │
@@ -483,17 +534,24 @@ git push             # Push to remote
 │       ▼ (Yellow threshold)                                                 │
 │  Delta-Synthesis (partial persist)                                         │
 │       │                                                                    │
-│       ▼ (User: /clear)                                                     │
-│  synthesis-checkpoint.sh ──▶ grounding-check.sh                           │
+│       ├──▶ (User: /compact)                                                │
+│       │    context-manager.sh checkpoint (simplified 3-step)               │
+│       │    │                                                               │
+│       │    ▼ (PASS)                                                        │
+│       │    Compaction with preservation rules                              │
 │       │                                                                    │
-│       ▼ (PASS)                                                             │
-│  Context cleared, Level 1 Recovery (~100 tokens)                           │
+│       └──▶ (User: /clear)                                                  │
+│            synthesis-checkpoint.sh ──▶ grounding-check.sh                  │
+│            │                                                               │
+│            ▼ (PASS)                                                        │
+│            Context cleared, Level 1 Recovery (~100 tokens)                 │
 │                                                                            │
 └────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Related Protocols
 
+- **context-compaction.md**: Compaction preservation rules (v0.11.0)
 - **synthesis-checkpoint.md**: Pre-clear validation (BLOCKING)
 - **jit-retrieval.md**: Lightweight identifier handling
 - **attention-budget.md**: Token threshold monitoring
@@ -563,6 +621,6 @@ session_continuity:
 
 ---
 
-**Document Version**: 1.0
-**Protocol Version**: v2.2 (Production-Hardened)
+**Document Version**: 1.1
+**Protocol Version**: v2.3 (Claude Platform Integration)
 **Paradigm**: Clear, Don't Compact
