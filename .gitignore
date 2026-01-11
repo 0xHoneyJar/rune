@@ -135,6 +135,14 @@ app/tsconfig.json
 app/ecosystem.config.js
 
 # =============================================================================
+# SIGIL GRIMOIRE STATE (v9.0+)
+# =============================================================================
+# Sigil grimoire state directory contains runtime-generated files.
+# These are project-specific and should not be committed.
+grimoires/sigil/state/*
+!grimoires/sigil/state/README.md
+
+# =============================================================================
 # SIGIL ARTIFACT MODEL
 # =============================================================================
 # Sigil artifacts fall into three categories:

@@ -1716,3 +1716,906 @@ describe('Path Aliases', () => {
 *SDD Addendum Generated: 2026-01-11*
 *Based on: PRD v7.7 Addendum*
 *Decisions: Path aliases, archive workbench/hud, consolidate zones*
+
+---
+
+# Sigil v9.0 "Core Scaffold" SDD
+
+**Version:** 9.0.0
+**Codename:** Core Scaffold
+**Status:** SDD Draft
+**Date:** 2026-01-11
+**Supersedes:** v7.6-7.7 (scope reduction)
+**Based on:** PRD v9.0, sigil-v9-package/PHASE_1_SCAFFOLD.md
+**Reference:** [SIGIL_CURRENT_STATE.md](context/SIGIL_CURRENT_STATE.md)
+
+---
+
+## 1. Executive Summary
+
+v9.0 is a **migration and consolidation**, not a rebuild. Sigil v7.7 already has:
+- **2,650 lines** runtime code (core, layouts, lenses, providers)
+- **22,137 lines** process layer (39 agent-time modules)
+- **548 lines** executable principles (useMotion, colors, spacing)
+- **47 Claude skills** for design workflows
+
+This SDD describes **migrating** existing code to the grimoire structure and **focusing** on `/craft` with physics and Gold patterns.
+
+### 1.1 The Inviolable Constraint
+
+> "Using Sigil IS the experience. Everything else is invisible."
+
+Every architectural decision passes this test:
+- **Does this require the designer to DO, ANSWER, CONFIGURE, or MAINTAIN anything?**
+- If yes → Cut it or make it invisible
+- If no → It can stay
+
+### 1.2 Phase 1 Scope (Migration Focus)
+
+| Action | What | Status |
+|--------|------|--------|
+| **MIGRATE** | Kernel configs to grimoire | Move 5 YAML files |
+| **MIGRATE** | Process layer to grimoire | Move 39 modules (~22K lines) |
+| **MIGRATE** | Moodboard to grimoire | Move reference files |
+| **MIGRATE** | Runtime state to grimoire | Move `.sigil/` contents |
+| **UPDATE** | Skill paths | Point to grimoire |
+| **VERIFY** | Physics system | Already exists at `src/components/gold/hooks/` |
+| **VERIFY** | Component registry | Already exists |
+| **FOCUS** | `/craft` command | Ensure clean flow |
+
+| Excluded (Phase 2+) |
+|---------------------|
+| Survival Engine activation |
+| Linter Gate activation |
+| Context Accumulation |
+| Diagnostician, Gardener |
+
+---
+
+## 2. System Architecture
+
+### 2.1 High-Level Component Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                        SIGIL v9.0 PHASE 1                            │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  ┌──────────────────┐                    ┌──────────────────┐       │
+│  │   Agent Layer    │                    │   Runtime Layer  │       │
+│  │                  │                    │                  │       │
+│  │ .claude/skills/  │       /craft       │ src/lib/sigil/   │       │
+│  │ crafting-        │◀──────────────────▶│ ├── physics.ts   │       │
+│  │ components/      │   generates with   │ └── useMotion    │       │
+│  │                  │   physics          │                  │       │
+│  └────────┬─────────┘                    └──────────────────┘       │
+│           │                                                          │
+│           │ reads                                                    │
+│           ▼                                                          │
+│  ┌──────────────────────────────────────────────────────────────┐   │
+│  │                     grimoires/sigil/                          │   │
+│  │  ┌────────────────┐    ┌────────────────┐                    │   │
+│  │  │ constitution/  │    │    state/      │ (gitignored)       │   │
+│  │  │ └── physics    │    │ └── empty      │ (Phase 2)          │   │
+│  │  │     .yaml      │    │                │                    │   │
+│  │  └────────────────┘    └────────────────┘                    │   │
+│  └──────────────────────────────────────────────────────────────┘   │
+│                                                                      │
+│  ┌──────────────────────────────────────────────────────────────┐   │
+│  │                     src/components/                           │   │
+│  │  ┌────────────────┐    ┌────────────────┐                    │   │
+│  │  │     gold/      │    │     draft/     │                    │   │
+│  │  │ ├── index.ts   │    │ ├── index.ts   │                    │   │
+│  │  │ └── (stable)   │    │ └── (new)      │                    │   │
+│  │  └────────────────┘    └────────────────┘                    │   │
+│  └──────────────────────────────────────────────────────────────┘   │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### 2.2 Data Flow
+
+```
+Designer: /craft "claim button that feels trustworthy"
+                        │
+                        ▼
+┌─────────────────────────────────────────────────────┐
+│              crafting-components skill               │
+│                                                      │
+│  1. Infer zone from vocabulary ("claim" → critical) │
+│  2. Map zone → physics (critical → server-tick)     │
+│  3. Check Gold registry first                       │
+│  4. Generate with useMotion('server-tick')          │
+│                                                      │
+└──────────────────────┬──────────────────────────────┘
+                       │
+                       ▼
+┌─────────────────────────────────────────────────────┐
+│                  Generated Code                      │
+│                                                      │
+│  import { useMotion } from '@/hooks/useMotion';     │
+│                                                      │
+│  export function ClaimButton({ amount, onClaim }) { │
+│    const motion = useMotion('server-tick');         │
+│    return (                                         │
+│      <button onClick={onClaim} style={motion}>      │
+│        Collect Your Earnings                        │
+│      </button>                                      │
+│    );                                               │
+│  }                                                  │
+│                                                      │
+└─────────────────────────────────────────────────────┘
+```
+
+---
+
+## 3. Directory Architecture
+
+### 3.1 Phase 1 Target Structure
+
+```
+.
+├── .claude/
+│   └── skills/
+│       └── crafting-components/     # Loa-convention skill
+│           ├── index.yaml           # Skill metadata
+│           └── SKILL.md             # Full documentation
+│
+├── grimoires/
+│   └── sigil/                       # Minimal grimoire for Phase 1
+│       ├── constitution/            # PUBLIC (tracked)
+│       │   └── physics.yaml         # Physics reference
+│       ├── state/                   # PRIVATE (gitignored)
+│       │   └── README.md            # Placeholder for Phase 2
+│       └── README.md
+│
+├── src/
+│   ├── lib/
+│   │   └── sigil/
+│   │       └── physics.ts           # Physics implementation
+│   │
+│   ├── hooks/
+│   │   └── useMotion.ts             # Re-export for imports
+│   │
+│   └── components/
+│       ├── gold/                    # Stable components
+│       │   └── index.ts
+│       └── draft/                   # Experimental components
+│           └── index.ts
+│
+└── CLAUDE.md                        # /craft instructions
+```
+
+### 3.2 Why This Structure
+
+| Location | Purpose | Rationale |
+|----------|---------|-----------|
+| `.claude/skills/crafting-components/` | Skill definition | Loa convention |
+| `grimoires/sigil/constitution/` | Design laws | Agent reference |
+| `src/lib/sigil/physics.ts` | Executable physics | Hooks > Markdown |
+| `src/hooks/useMotion.ts` | Convenient imports | Clean import paths |
+| `src/components/gold/` | Stable components | Path IS the tier |
+| `src/components/draft/` | Experimental | Path IS the tier |
+
+---
+
+## 4. Skill Architecture (Loa Conventions)
+
+### 4.1 Skill Naming Convention
+
+Following Loa's **gerund-based, hyphen-separated** pattern:
+
+| Pattern | Example | Meaning |
+|---------|---------|---------|
+| `{verb-ing}-{noun}` | `crafting-components` | Skill for crafting components |
+| `{verb-ing}-{noun}` | `validating-physics` | Skill for validating physics |
+| `{verb-ing}-{noun}` | `observing-survival` | Skill for observing survival |
+
+**Phase 1 primary skill:** `crafting-components`
+
+### 4.2 Skill Structure
+
+```
+.claude/skills/crafting-components/
+├── index.yaml           # Metadata, triggers, dependencies
+└── SKILL.md             # Full documentation and workflow
+```
+
+### 4.3 index.yaml (Loa Convention)
+
+```yaml
+# .claude/skills/crafting-components/index.yaml
+
+name: crafting-components
+version: "9.0.0"
+description: |
+  Use this skill IF the user wants to create or generate UI components.
+  Generates components with correct physics based on zone/vocabulary.
+  Outputs code with useMotion hooks and Gold registry checks.
+
+# Loa convention: descriptive triggers
+triggers:
+  - "/craft"
+  - "create a component"
+  - "build a button"
+  - "generate UI"
+  - "make a form"
+
+# Context files agent reads (grimoire pattern)
+context_files:
+  - grimoires/sigil/constitution/physics.yaml
+  - CLAUDE.md
+
+# Zone permissions (Loa pattern)
+zones:
+  system:
+    path: ".claude"
+    permission: "read"
+  state:
+    paths: ["grimoires/sigil/state"]
+    permission: "read-write"
+  app:
+    paths: ["src"]
+    permission: "read-write"
+
+# No dependencies for Phase 1 (minimal)
+dependencies: []
+
+# Color for UI (Loa convention)
+color: "purple"
+```
+
+### 4.4 SKILL.md
+
+```markdown
+# Sigil v9.0 Agent: Crafting Components
+
+> "Using Sigil IS the experience. Everything else is invisible."
+
+## Role
+
+**Component Crafter** — Generate UI components with correct physics.
+Never ask the designer to configure. Infer everything from context.
+
+## Trigger
+
+- `/craft` command
+- Intent to create/build/generate UI components
+
+## Workflow
+
+```
+1. DETECT ZONE
+   - Extract vocabulary from prompt ("claim", "deposit" → critical)
+   - Map vocabulary to zone
+   - Map zone to physics
+
+2. CHECK GOLD REGISTRY
+   - Look in src/components/gold/
+   - Prefer existing Gold components
+
+3. GENERATE WITH PHYSICS
+   - Import useMotion from @/hooks/useMotion
+   - Apply correct physics for zone
+   - Never use raw CSS transitions
+```
+
+## Physics Reference
+
+| Physics | Duration | Easing | Zone | Vocabulary |
+|---------|----------|--------|------|------------|
+| server-tick | 600ms | cubic-bezier(0.25, 0.1, 0.25, 1) | critical | claim, deposit, stake, withdraw |
+| deliberate | 800ms | cubic-bezier(0.4, 0, 0.2, 1) | important | settings, profile, preferences |
+| snappy | 150ms | cubic-bezier(0.4, 0, 1, 1) | casual | navigation, tooltip, info |
+| smooth | 300ms | cubic-bezier(0.4, 0, 0.2, 1) | standard | transitions, animations |
+
+## Zone Mapping
+
+| Zone | Physics | Vocabulary Examples |
+|------|---------|---------------------|
+| critical | server-tick | claim, deposit, stake, withdraw, approve |
+| important | deliberate | settings, profile, preferences, config |
+| casual | snappy | nav, menu, tooltip, dropdown, info |
+
+## Generation Template
+
+```tsx
+import { useMotion } from '@/hooks/useMotion';
+import { Button } from '@/components/gold';  // if exists
+
+export function ComponentName({ ...props }) {
+  const motion = useMotion('physics-name');  // inferred from zone
+
+  return (
+    <element style={motion}>
+      {/* Component content */}
+    </element>
+  );
+}
+```
+
+## Rules
+
+1. **Never ask** which physics to use — infer from vocabulary
+2. **Never ask** for configuration — use defaults
+3. **Always use** useMotion hook — never raw CSS
+4. **Always check** Gold registry first — prefer stable
+5. **Stay invisible** — designer never leaves flow state
+
+## Example
+
+Input: `/craft "claim button that feels trustworthy"`
+
+Detection:
+- Vocabulary: "claim" → critical zone
+- Physics: critical → server-tick (600ms)
+- Gold check: Button exists? Use it
+
+Output:
+```tsx
+import { useMotion } from '@/hooks/useMotion';
+
+export function ClaimButton({ amount, onClaim }) {
+  const motion = useMotion('server-tick');
+
+  return (
+    <button
+      onClick={onClaim}
+      style={motion}
+      className="bg-primary text-white px-6 py-3 rounded-lg"
+    >
+      Collect Your Earnings
+      <span className="text-sm opacity-80 block">
+        ${amount} ready to withdraw
+      </span>
+    </button>
+  );
+}
+```
+
+## Error Handling
+
+| Situation | Response |
+|-----------|----------|
+| Unknown vocabulary | Default to `smooth` physics, proceed |
+| No Gold components exist | Generate new component in draft/ |
+| Ambiguous zone | Use vocabulary context, don't ask |
+```
+
+---
+
+## 5. Physics System Architecture
+
+### 5.1 Executable Physics (TypeScript)
+
+**File:** `src/lib/sigil/physics.ts`
+
+```typescript
+/**
+ * Sigil v9.0 — Physics System
+ *
+ * Executable physics. Hooks > Markdown.
+ * Agent instruction: "Use useMotion for all motion."
+ */
+
+import { CSSProperties } from 'react';
+
+// =============================================================================
+// TYPES
+// =============================================================================
+
+export type PhysicsName = 'server-tick' | 'deliberate' | 'snappy' | 'smooth';
+export type ZoneName = 'critical' | 'important' | 'casual';
+
+export interface PhysicsConfig {
+  duration: number;
+  easing: string;
+}
+
+export interface MotionStyle extends CSSProperties {
+  transition: string;
+  '--sigil-duration': string;
+  '--sigil-easing': string;
+}
+
+// =============================================================================
+// CONSTANTS
+// =============================================================================
+
+export const PHYSICS: Record<PhysicsName, PhysicsConfig> = {
+  'server-tick': {
+    duration: 600,
+    easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)',
+  },
+  'deliberate': {
+    duration: 800,
+    easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+  },
+  'snappy': {
+    duration: 150,
+    easing: 'cubic-bezier(0.4, 0, 1, 1)',
+  },
+  'smooth': {
+    duration: 300,
+    easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+  },
+} as const;
+
+export const ZONE_PHYSICS: Record<ZoneName, PhysicsName> = {
+  'critical': 'server-tick',
+  'important': 'deliberate',
+  'casual': 'snappy',
+} as const;
+
+// =============================================================================
+// HOOKS
+// =============================================================================
+
+/**
+ * Get motion styles for a physics type.
+ *
+ * @example
+ * const motion = useMotion('server-tick');
+ * <button style={motion}>Click</button>
+ */
+export function useMotion(physics: PhysicsName): MotionStyle {
+  const config = PHYSICS[physics];
+  return {
+    transition: `all ${config.duration}ms ${config.easing}`,
+    '--sigil-duration': `${config.duration}ms`,
+    '--sigil-easing': config.easing,
+  };
+}
+
+/**
+ * Get motion styles for a zone.
+ *
+ * @example
+ * const motion = useZoneMotion('critical');
+ * <button style={motion}>Claim</button>
+ */
+export function useZoneMotion(zone: ZoneName): MotionStyle {
+  return useMotion(ZONE_PHYSICS[zone]);
+}
+
+/**
+ * Get raw physics config (for advanced use).
+ */
+export function getPhysics(physics: PhysicsName): PhysicsConfig {
+  return PHYSICS[physics];
+}
+```
+
+### 5.2 Hook Re-export
+
+**File:** `src/hooks/useMotion.ts`
+
+```typescript
+/**
+ * Sigil v9.0 — Motion Hook Export
+ *
+ * Convenient import path for useMotion.
+ * import { useMotion } from '@/hooks/useMotion';
+ */
+
+export {
+  useMotion,
+  useZoneMotion,
+  getPhysics,
+  PHYSICS,
+  ZONE_PHYSICS,
+} from '@/lib/sigil/physics';
+
+export type {
+  PhysicsName,
+  ZoneName,
+  PhysicsConfig,
+  MotionStyle,
+} from '@/lib/sigil/physics';
+```
+
+### 5.3 Physics Reference (Grimoire)
+
+**File:** `grimoires/sigil/constitution/physics.yaml`
+
+```yaml
+# Sigil v9.0 — Physics Constitution
+#
+# This file is READ by the agent, not imported by code.
+# The executable implementation is in src/lib/sigil/physics.ts
+
+version: "9.0.0"
+
+physics:
+  server-tick:
+    duration: 600
+    easing: "cubic-bezier(0.25, 0.1, 0.25, 1)"
+    zone: critical
+    vocabulary:
+      - claim
+      - deposit
+      - stake
+      - withdraw
+      - approve
+      - confirm
+    feel: "Deliberate financial action"
+
+  deliberate:
+    duration: 800
+    easing: "cubic-bezier(0.4, 0, 0.2, 1)"
+    zone: important
+    vocabulary:
+      - settings
+      - profile
+      - preferences
+      - config
+      - account
+    feel: "Important but not urgent"
+
+  snappy:
+    duration: 150
+    easing: "cubic-bezier(0.4, 0, 1, 1)"
+    zone: casual
+    vocabulary:
+      - nav
+      - menu
+      - tooltip
+      - dropdown
+      - info
+      - close
+    feel: "Quick UI feedback"
+
+  smooth:
+    duration: 300
+    easing: "cubic-bezier(0.4, 0, 0.2, 1)"
+    zone: standard
+    vocabulary: []  # Default fallback
+    feel: "Standard transitions"
+
+zones:
+  critical:
+    physics: server-tick
+    description: "Financial and irreversible actions"
+
+  important:
+    physics: deliberate
+    description: "Settings and profile changes"
+
+  casual:
+    physics: snappy
+    description: "Navigation and informational UI"
+
+  standard:
+    physics: smooth
+    description: "Default fallback zone"
+```
+
+---
+
+## 6. Component Registry Architecture
+
+### 6.1 Directory-Based Tiers
+
+**Rule:** Path IS the API. No registry parsing.
+
+```
+src/components/
+├── gold/           # getTier("Button") → checks here first
+│   └── index.ts
+└── draft/          # getTier("NewThing") → checks here second
+    └── index.ts
+```
+
+### 6.2 Tier Lookup
+
+```typescript
+// Tier determined by path existence
+function getTier(componentName: string): 'gold' | 'draft' | null {
+  if (fs.existsSync(`src/components/gold/${componentName}.tsx`)) {
+    return 'gold';
+  }
+  if (fs.existsSync(`src/components/draft/${componentName}.tsx`)) {
+    return 'draft';
+  }
+  return null;
+}
+```
+
+### 6.3 Index Files
+
+**File:** `src/components/gold/index.ts`
+
+```typescript
+/**
+ * @sigil-tier gold
+ *
+ * Stable components. Import from here.
+ * Components are added as they're promoted.
+ */
+
+// Export stable components as they're added
+// export * from './Button';
+// export * from './Card';
+
+export {};  // Empty initially
+```
+
+**File:** `src/components/draft/index.ts`
+
+```typescript
+/**
+ * @sigil-tier draft
+ *
+ * New/experimental components.
+ * Move to gold/ when stable.
+ */
+
+// Export draft components
+// export * from './NewFeature';
+
+export {};  // Empty initially
+```
+
+---
+
+## 7. CLAUDE.md Integration
+
+### 7.1 /craft Section
+
+Add to project `CLAUDE.md`:
+
+```markdown
+## /craft Command
+
+When designer uses `/craft` or asks to build UI:
+
+1. **Use physics hooks** (never raw transitions)
+   ```tsx
+   import { useMotion } from '@/hooks/useMotion';
+   const motion = useMotion('server-tick');
+   ```
+
+2. **Check Gold components first**
+   ```tsx
+   import { Button } from '@/components/gold';
+   ```
+
+3. **Match physics to zone**
+   | Zone | Physics | Actions |
+   |------|---------|---------|
+   | critical | server-tick | deposit, withdraw, claim, stake |
+   | important | deliberate | settings, profile |
+   | casual | snappy | navigation, tooltips |
+
+## Physics Reference
+
+```typescript
+'server-tick' // 600ms - Critical financial actions
+'deliberate'  // 800ms - Important confirmations
+'snappy'      // 150ms - Casual interactions
+'smooth'      // 300ms - Standard transitions
+```
+
+## Rules
+
+1. Never ask designer to configure anything
+2. Never ask which physics to use (infer from context)
+3. Always use hooks, never raw CSS transitions
+4. Check Gold registry before creating new components
+```
+
+---
+
+## 8. Minimal Grimoire Structure
+
+### 8.1 Phase 1 Content
+
+```
+grimoires/sigil/
+├── constitution/
+│   └── physics.yaml         # Agent reference (see 5.3)
+├── state/
+│   └── README.md            # "State files go here (Phase 2)"
+└── README.md                # Grimoire overview
+```
+
+### 8.2 README Files
+
+**File:** `grimoires/sigil/README.md`
+
+```markdown
+# Sigil Grimoire
+
+Design context for the Sigil physics system.
+
+## Structure
+
+- `constitution/` — Core design laws (physics, zones)
+- `state/` — Runtime state (gitignored, Phase 2)
+
+## Version
+
+Sigil v9.0 "Core Scaffold"
+```
+
+**File:** `grimoires/sigil/state/README.md`
+
+```markdown
+# Sigil State
+
+This directory is for runtime state files.
+
+**Phase 1:** Empty (using defaults)
+**Phase 2:** Will contain:
+- workshop.json (pre-computed index)
+- survival-stats.json (component tracking)
+- craft-log/ (session logs)
+
+This directory is gitignored.
+```
+
+### 8.3 Gitignore Update
+
+```gitignore
+# Sigil state (Phase 2)
+grimoires/sigil/state/*
+!grimoires/sigil/state/README.md
+```
+
+---
+
+## 9. Path Alias Configuration
+
+### 9.1 TypeScript Configuration
+
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@/hooks/*": ["src/hooks/*"],
+      "@/lib/*": ["src/lib/*"],
+      "@/components/*": ["src/components/*"]
+    }
+  },
+  "include": ["src/**/*"]
+}
+```
+
+### 9.2 Import Patterns
+
+```typescript
+// Physics hook
+import { useMotion } from '@/hooks/useMotion';
+
+// Gold components (when they exist)
+import { Button } from '@/components/gold';
+
+// Draft components
+import { NewThing } from '@/components/draft';
+```
+
+---
+
+## 10. Implementation Checklist
+
+### Day 1: Structure + Physics
+
+- [ ] Create directory structure
+  - [ ] `.claude/skills/crafting-components/`
+  - [ ] `grimoires/sigil/constitution/`
+  - [ ] `grimoires/sigil/state/`
+  - [ ] `src/lib/sigil/`
+  - [ ] `src/hooks/`
+  - [ ] `src/components/gold/`
+  - [ ] `src/components/draft/`
+
+- [ ] Create physics system
+  - [ ] `src/lib/sigil/physics.ts`
+  - [ ] `src/hooks/useMotion.ts`
+  - [ ] `grimoires/sigil/constitution/physics.yaml`
+
+- [ ] Create component registry
+  - [ ] `src/components/gold/index.ts`
+  - [ ] `src/components/draft/index.ts`
+
+### Day 2: Skill Definition
+
+- [ ] Create crafting-components skill
+  - [ ] `.claude/skills/crafting-components/index.yaml`
+  - [ ] `.claude/skills/crafting-components/SKILL.md`
+
+- [ ] Create grimoire README files
+  - [ ] `grimoires/sigil/README.md`
+  - [ ] `grimoires/sigil/state/README.md`
+
+### Day 3: Integration
+
+- [ ] Update CLAUDE.md
+  - [ ] /craft section
+  - [ ] Physics reference
+  - [ ] Rules section
+
+- [ ] Update tsconfig.json
+  - [ ] Verify path aliases
+
+- [ ] Update .gitignore
+  - [ ] `grimoires/sigil/state/*`
+
+- [ ] Test /craft
+  - [ ] `/craft "deposit button"`
+  - [ ] Verify uses `useMotion('server-tick')`
+
+---
+
+## 11. What Phase 2 Adds
+
+| Feature | Why Deferred | Trigger |
+|---------|--------------|---------|
+| Context accumulation | Needs usage patterns | After /craft works |
+| Survival engine | Needs stats | After patterns emerge |
+| Linter gate | Tied to survival | With survival engine |
+| Diagnostician | Needs observability | Phase 2 |
+| Gardener | Needs survival | After survival engine |
+| Full grimoire migration | Structure follows usage | After Phase 1 stable |
+
+**Rule:** Do not implement Phase 2 until Phase 1 works well.
+
+---
+
+## 12. Performance Targets
+
+| Operation | Target | Notes |
+|-----------|--------|-------|
+| Physics lookup | <1ms | Constant-time object access |
+| Gold check | <5ms | fs.existsSync |
+| Skill context load | <50ms | Small YAML file |
+| /craft response | <500ms | Total generation time |
+
+---
+
+## 13. Success Criteria
+
+### Functional Tests
+
+| Test | Expected |
+|------|----------|
+| `/craft "deposit button"` | Uses server-tick (600ms) |
+| `/craft "tooltip on hover"` | Uses snappy (150ms) |
+| `/craft "settings panel"` | Uses deliberate (800ms) |
+| Agent checks Gold first | Yes |
+| Agent uses hooks not raw CSS | Yes |
+
+### Structural Checks
+
+| Check | Verified |
+|-------|----------|
+| `src/lib/sigil/physics.ts` exists | |
+| `src/hooks/useMotion.ts` exists | |
+| `src/components/gold/index.ts` exists | |
+| `src/components/draft/index.ts` exists | |
+| `.claude/skills/crafting-components/` exists | |
+| `grimoires/sigil/constitution/physics.yaml` exists | |
+| CLAUDE.md has /craft section | |
+
+---
+
+## 14. The v9.0 Principles
+
+1. **Depth over breadth** — Get /craft working first
+2. **Executable over descriptive** — Hooks > Markdown
+3. **Path IS the API** — No registry parsing
+4. **Invisible operation** — Designer never configures
+5. **Loa conventions** — Gerund-based skill names
+6. **Minimal grimoire** — Constitution only for Phase 1
+7. **Deferred complexity** — Phase 2 adds the rest
+
+---
+
+*SDD Generated: 2026-01-11*
+*Based on: PRD v9.0, PHASE_1_SCAFFOLD.md*
+*Reference: [SIGIL_CURRENT_STATE.md](context/SIGIL_CURRENT_STATE.md)*
+*Key Insight: v9.0 is MIGRATION, not rebuild. Existing code: 25K+ lines.*
+*Philosophy: Depth over breadth. Migrate existing, focus on /craft.*
+*Next Step: `/sprint-plan` to break down migration tasks*

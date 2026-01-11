@@ -514,3 +514,465 @@ Sprint 3:
 
 *Sprint Plan Generated: 2026-01-10*
 *Next Step: `/implement sprint-1`*
+
+---
+
+# Addendum: Sigil v9.0 "Core Scaffold" Migration Sprint
+
+**Version:** 9.0.0
+**Codename:** Core Scaffold
+**Status:** Sprint Plan
+**Date:** 2026-01-11
+**Based on:** PRD v9.0, SDD v9.0
+**Reference:** [SIGIL_CURRENT_STATE.md](context/SIGIL_CURRENT_STATE.md)
+
+---
+
+## Executive Summary
+
+This sprint plan covers the **migration** of existing Sigil code (~25K lines) to the grimoire structure. This is NOT a rebuild — the physics system, skills, and process modules already exist.
+
+**Key Insight:** v9.0 is about consolidation and focus, not building.
+
+### What Already Exists (DO NOT REBUILD)
+
+| Component | Location | Lines |
+|-----------|----------|-------|
+| `useMotion` hook | `src/components/gold/hooks/useMotion.ts` | 229 |
+| `colors` utility | `src/components/gold/utils/colors.ts` | 280 |
+| `spacing` utility | `src/components/gold/utils/spacing.ts` | 248 |
+| Process modules | `sigil-mark/process/` | ~22,000 (39 modules) |
+| Claude skills | `.claude/skills/` | 47 skills |
+| Kernel configs | `sigil-mark/kernel/` | 5 YAML files |
+
+### Sprint Overview
+
+| Sprint | Focus | Duration |
+|--------|-------|----------|
+| Sprint 1 | Grimoire Structure + Constitution Migration | 1 day |
+| Sprint 2 | Process Layer + Skills Update | 1 day |
+| Sprint 3 | Integration + Verification | 1 day |
+
+**Total:** 3 days (migration, not build)
+
+---
+
+## Sprint 1: Grimoire Structure + Constitution Migration
+
+**Goal:** Create grimoire directory structure and migrate kernel configs.
+
+### Task 1.1: Create Grimoire Directory Structure
+
+**ID:** S1-M1
+**Description:** Create the `grimoires/sigil/` directory structure for the new grimoire pattern.
+
+**Acceptance Criteria:**
+- [ ] `grimoires/sigil/constitution/` directory exists
+- [ ] `grimoires/sigil/moodboard/` directory exists
+- [ ] `grimoires/sigil/process/` directory exists
+- [ ] `grimoires/sigil/state/` directory exists
+- [ ] `grimoires/sigil/README.md` exists with overview
+- [ ] `grimoires/sigil/state/README.md` exists (placeholder for Phase 2)
+
+**Effort:** Small
+**Dependencies:** None
+
+---
+
+### Task 1.2: Migrate Kernel Configs to Constitution
+
+**ID:** S1-M2
+**Description:** Move kernel YAML files from `sigil-mark/kernel/` to `grimoires/sigil/constitution/`.
+
+**Files to Move:**
+```
+sigil-mark/kernel/constitution.yaml  →  grimoires/sigil/constitution/constitution.yaml
+sigil-mark/kernel/physics.yaml       →  grimoires/sigil/constitution/physics.yaml
+sigil-mark/kernel/vocabulary.yaml    →  grimoires/sigil/constitution/vocabulary.yaml
+sigil-mark/kernel/workflow.yaml      →  grimoires/sigil/constitution/workflow.yaml
+sigil-mark/kernel/fidelity.yaml      →  grimoires/sigil/constitution/fidelity.yaml
+```
+
+**Acceptance Criteria:**
+- [ ] All 5 YAML files moved to `grimoires/sigil/constitution/`
+- [ ] Files are readable (no syntax errors)
+- [ ] Original files removed from `sigil-mark/kernel/`
+
+**Effort:** Small
+**Dependencies:** Task 1.1
+
+---
+
+### Task 1.3: Migrate Moodboard
+
+**ID:** S1-M3
+**Description:** Move moodboard files from `sigil-mark/moodboard/` to `grimoires/sigil/moodboard/`.
+
+**Acceptance Criteria:**
+- [ ] All moodboard files moved to `grimoires/sigil/moodboard/`
+- [ ] `moodboard.md` or equivalent exists
+- [ ] Reference images preserved (if any)
+
+**Effort:** Small
+**Dependencies:** Task 1.1
+
+---
+
+### Task 1.4: Update .gitignore for State Directory
+
+**ID:** S1-M4
+**Description:** Add gitignore entries for the new state directory.
+
+**Add to .gitignore:**
+```gitignore
+# Sigil grimoire state (private, per-project)
+grimoires/sigil/state/*
+!grimoires/sigil/state/README.md
+```
+
+**Acceptance Criteria:**
+- [ ] `.gitignore` updated with state exclusions
+- [ ] `README.md` in state directory is tracked
+
+**Effort:** Trivial
+**Dependencies:** Task 1.1
+
+---
+
+### Sprint 1 Exit Criteria
+
+- [x] `grimoires/sigil/constitution/` has 5 YAML files
+- [x] `grimoires/sigil/moodboard/` has reference files
+- [x] `.gitignore` updated for state directory
+- [x] `sigil-mark/kernel/` is empty (files moved)
+
+**Status:** COMPLETED (2026-01-11) ✅
+
+---
+
+## Sprint 2: Process Layer + Skills Update
+
+**Goal:** Migrate process modules and update skill paths to use grimoire.
+
+### Task 2.1: Migrate Process Layer
+
+**ID:** S2-M1
+**Description:** Move process modules from `sigil-mark/process/` to `grimoires/sigil/process/`.
+
+**Files to Move:**
+```
+sigil-mark/process/*.ts  →  grimoires/sigil/process/
+(39 modules, ~22K lines)
+```
+
+**Key Modules:**
+- `survival-engine.ts`
+- `linter-gate.ts`
+- `filesystem-registry.ts`
+- `workshop-builder.ts`
+- `workshop-query.ts`
+- `physics-validator.ts`
+- `physics-reader.ts`
+- `vocabulary-reader.ts`
+- `zone-reader.ts`
+- `era-manager.ts`
+- `survival-observer.ts`
+- ... and 28 more
+
+**Acceptance Criteria:**
+- [ ] All 39 modules moved to `grimoires/sigil/process/`
+- [ ] TypeScript compiles without errors
+- [ ] No broken internal imports within process layer
+
+**Effort:** Medium
+**Dependencies:** Sprint 1 complete
+
+---
+
+### Task 2.2: Migrate Runtime State
+
+**ID:** S2-M2
+**Description:** Move runtime state files from `.sigil/` to `grimoires/sigil/state/`.
+
+**Files to Move:**
+```
+.sigil/survival-stats.json  →  grimoires/sigil/state/survival-stats.json
+.sigil/pending-ops.json     →  grimoires/sigil/state/pending-ops.json
+```
+
+**Note:** Some state files are generated on startup, so move what exists and update paths.
+
+**Acceptance Criteria:**
+- [ ] Existing state files moved to `grimoires/sigil/state/`
+- [ ] `.sigil/` directory can be removed (after verification)
+- [ ] State files are gitignored
+
+**Effort:** Small
+**Dependencies:** Task 1.4 (gitignore updated)
+
+---
+
+### Task 2.3: Update Skill Context Paths
+
+**ID:** S2-M3
+**Description:** Update skill `index.yaml` files to read from grimoire paths.
+
+**Update `.claude/skills/crafting-components/index.yaml`:**
+```yaml
+context_files:
+  - grimoires/sigil/constitution/physics.yaml
+  - grimoires/sigil/constitution/vocabulary.yaml
+  - grimoires/sigil/constitution/zones.yaml
+```
+
+**Update `.claude/skills/sigil-core/index.yaml`:**
+```yaml
+context_files:
+  - grimoires/sigil/constitution/physics.yaml
+  - grimoires/sigil/constitution/zones.yaml
+  - grimoires/sigil/constitution/lenses.yaml
+  - grimoires/sigil/constitution/fidelity.yaml
+  - grimoires/sigil/constitution/vocabulary.yaml
+  - grimoires/sigil/moodboard/moodboard.md
+```
+
+**Acceptance Criteria:**
+- [ ] `crafting-components` skill points to grimoire paths
+- [ ] `sigil-core` skill points to grimoire paths
+- [ ] Skill loads without errors
+
+**Effort:** Small
+**Dependencies:** Tasks 1.2, 1.3 (configs migrated)
+
+---
+
+### Task 2.4: Update Process Module Imports
+
+**ID:** S2-M4
+**Description:** Update any imports in process modules that reference old paths.
+
+**Search and Replace:**
+- `sigil-mark/kernel/` → `grimoires/sigil/constitution/`
+- `.sigil/` → `grimoires/sigil/state/`
+
+**Acceptance Criteria:**
+- [ ] No references to `sigil-mark/kernel/` in process modules
+- [ ] No references to `.sigil/` in process modules
+- [ ] TypeScript compiles without errors
+
+**Effort:** Medium
+**Dependencies:** Tasks 2.1, 2.2
+
+---
+
+### Sprint 2 Exit Criteria
+
+- [ ] `grimoires/sigil/process/` has 39 modules
+- [ ] `grimoires/sigil/state/` has migrated state files
+- [ ] Skills read from grimoire paths
+- [ ] No broken imports in process layer
+- [ ] `sigil-mark/process/` is empty (files moved)
+- [ ] `.sigil/` is empty or removed
+
+---
+
+## Sprint 3: Integration + Verification
+
+**Goal:** Ensure existing physics system works with grimoire structure and `/craft` command functions correctly.
+
+### Task 3.1: Verify Physics System Works
+
+**ID:** S3-M1
+**Description:** Confirm existing `useMotion` hook at `src/components/gold/hooks/useMotion.ts` works correctly.
+
+**Tests:**
+- Import `useMotion` from `@/hooks/useMotion` or `src/components/gold/hooks/useMotion`
+- Verify all 4 physics types work: `server-tick`, `deliberate`, `snappy`, `smooth`
+- Verify physics values match constitution YAML
+
+**Acceptance Criteria:**
+- [ ] `useMotion('server-tick')` returns 600ms duration
+- [ ] `useMotion('deliberate')` returns 800ms duration
+- [ ] `useMotion('snappy')` returns 150ms duration
+- [ ] `useMotion('smooth')` returns 300ms duration
+- [ ] Hook exports work from both paths
+
+**Effort:** Small
+**Dependencies:** None (existing code)
+
+---
+
+### Task 3.2: Update CLAUDE.md with Grimoire Paths
+
+**ID:** S3-M2
+**Description:** Update project CLAUDE.md to reference grimoire paths and focus on `/craft` command.
+
+**Changes:**
+- Add grimoire path references
+- Emphasize `/craft` command workflow
+- Reference physics from grimoire constitution
+
+**Acceptance Criteria:**
+- [ ] CLAUDE.md references `grimoires/sigil/constitution/` for design context
+- [ ] `/craft` command section is clear and actionable
+- [ ] Physics reference table is accurate
+
+**Effort:** Small
+**Dependencies:** Sprint 1 complete
+
+---
+
+### Task 3.3: Update tsconfig.json Path Aliases (if needed)
+
+**ID:** S3-M3
+**Description:** Add path aliases for grimoire context if agent utilities need to import.
+
+**Add to tsconfig.json paths:**
+```json
+{
+  "paths": {
+    "@sigil-context/*": ["grimoires/sigil/*"]
+  }
+}
+```
+
+**Acceptance Criteria:**
+- [ ] Path aliases work for grimoire imports
+- [ ] TypeScript compiles without path errors
+
+**Effort:** Trivial
+**Dependencies:** None
+
+---
+
+### Task 3.4: Test /craft Command Flow
+
+**ID:** S3-M4
+**Description:** Verify `/craft` command generates components with correct physics.
+
+**Test Cases:**
+
+| Input | Expected Physics | Reason |
+|-------|------------------|--------|
+| `/craft "claim button"` | `server-tick` (600ms) | "claim" → critical zone |
+| `/craft "settings panel"` | `deliberate` (800ms) | "settings" → important zone |
+| `/craft "tooltip on hover"` | `snappy` (150ms) | "tooltip" → casual zone |
+| `/craft "animated card"` | `smooth` (300ms) | Default zone |
+
+**Acceptance Criteria:**
+- [ ] `/craft "claim button"` uses `useMotion('server-tick')`
+- [ ] `/craft "settings panel"` uses `useMotion('deliberate')`
+- [ ] `/craft "tooltip"` uses `useMotion('snappy')`
+- [ ] Generated code imports from `@/hooks/useMotion`
+- [ ] Generated code checks Gold registry first
+
+**Effort:** Medium
+**Dependencies:** Tasks 3.1, 3.2
+
+---
+
+### Task 3.5: Cleanup Legacy Directories
+
+**ID:** S3-M5
+**Description:** Remove or archive legacy directories after migration is verified.
+
+**Cleanup:**
+- Remove `sigil-mark/kernel/` (files moved to constitution)
+- Remove `sigil-mark/process/` (files moved to grimoire)
+- Remove `.sigil/` (files moved to state)
+- Optionally create symlinks for backwards compatibility
+
+**Acceptance Criteria:**
+- [ ] `sigil-mark/kernel/` is empty or removed
+- [ ] `sigil-mark/process/` is empty or removed
+- [ ] `.sigil/` is empty or removed
+- [ ] No broken references to old paths
+
+**Effort:** Small
+**Dependencies:** All other tasks complete
+
+---
+
+### Sprint 3 Exit Criteria
+
+- [ ] Existing `useMotion` hook works correctly
+- [ ] CLAUDE.md references grimoire paths
+- [ ] `/craft` command generates with correct physics
+- [ ] Legacy directories cleaned up
+- [ ] No TypeScript compilation errors
+
+---
+
+## Final Verification Checklist
+
+### Structure Verification
+
+| Check | Status |
+|-------|--------|
+| `grimoires/sigil/constitution/` has 5 YAML files | |
+| `grimoires/sigil/moodboard/` has reference files | |
+| `grimoires/sigil/process/` has 39 modules | |
+| `grimoires/sigil/state/` is gitignored | |
+| `src/components/gold/hooks/useMotion.ts` exists (229 lines) | |
+| `src/components/gold/utils/colors.ts` exists (280 lines) | |
+| `src/components/gold/utils/spacing.ts` exists (248 lines) | |
+
+### Functional Verification
+
+| Test | Expected | Status |
+|------|----------|--------|
+| `/craft "deposit button"` | Uses `server-tick` | |
+| `/craft "tooltip"` | Uses `snappy` | |
+| `/craft "settings form"` | Uses `deliberate` | |
+| Agent checks Gold first | Yes | |
+| Agent uses hooks not raw CSS | Yes | |
+
+### Migration Verification
+
+| Check | Status |
+|-------|--------|
+| No files in `sigil-mark/kernel/` | |
+| No files in `sigil-mark/process/` | |
+| No files in `.sigil/` | |
+| Skills read from grimoire paths | |
+| TypeScript compiles without errors | |
+
+---
+
+## Risk Assessment
+
+| Risk | Mitigation |
+|------|------------|
+| Broken imports after move | Run TypeScript compilation after each migration task |
+| Skills fail to load | Verify skill YAML syntax before and after path updates |
+| Physics values mismatch | Compare constitution YAML with TypeScript constants |
+| State files missing | Only move existing files, generate others on first run |
+
+---
+
+## What's NOT in This Sprint (Phase 2+)
+
+| Feature | Why Deferred |
+|---------|--------------|
+| Survival Engine activation | Needs usage patterns first |
+| Linter Gate activation | Tied to survival engine |
+| Context Accumulation | Manual defaults work initially |
+| Diagnostician | Needs observability infrastructure |
+| Gardener | Needs survival engine |
+| Full zone migration | Focus on `/craft` first |
+
+---
+
+## Next Steps After Sprint Completion
+
+1. **Verify `/craft` works** with all physics types
+2. **Monitor usage patterns** to inform Phase 2
+3. **Plan Phase 2** observability and survival engine activation
+
+---
+
+*v9.0 Sprint Plan Generated: 2026-01-11*
+*Based on: PRD v9.0, SDD v9.0*
+*Key Insight: This is a 3-day MIGRATION, not a build*
+*Philosophy: Migrate existing ~25K lines, focus on `/craft` flow*
+*Next Step: `/implement sprint-1`*
