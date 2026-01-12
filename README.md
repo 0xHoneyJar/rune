@@ -1,408 +1,260 @@
 # Sigil
 
-[![Version](https://img.shields.io/badge/version-10.1.0-blue.svg)](CHANGELOG.md)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+> *Design physics for code generation.*
 
-> *"The codebase is the dataset. Usage is the authority."*
+## What is Sigil?
 
-Design Context Framework for AI-assisted development. Learns your design preferences invisibly, promotes patterns through survival, and guides agents toward consistent decisions—without interrupting flow.
+AI agents generate UI without understanding your product's soul. Every generation is a coin flip—sometimes it matches your vision, sometimes it doesn't.
 
-## v10.1 "Usage Reality"
+Sigil solves this by teaching Claude the **physics** of UI. Not "make it pretty" or "use good UX"—actual physics: timing, sync strategies, confirmation patterns, animation curves.
 
-```
-THE LAYER CAKE
-──────────────────────────────────────────────────────────
+When you say `/craft "claim button"`, Sigil doesn't ask questions. It knows:
+- "claim" = financial mutation
+- financial = pessimistic sync (server confirms before UI updates)
+- pessimistic = 800ms deliberate timing
+- deliberate = confirmation required, escape hatch visible
 
-┌─────────────────────────────────────────────────────────┐
-│                  DESIGNER EXPERIENCE                    │
-│                                                         │
-│                      /craft                             │
-│                         │                               │
-│                "Just use it. Ship."                     │
-│                                                         │
-├─────────────────────────────────────────────────────────┤
-│                     SKILLS LAYER                        │
-│                                                         │
-│      ┌──────────┐   ┌──────────┐   ┌──────────────┐    │
-│      │  MASON   │   │ GARDENER │   │ DIAGNOSTICIAN│    │
-│      │          │   │          │   │              │    │
-│      │Generation│   │Governance│   │   Debugging  │    │
-│      │ UI+Copy  │   │ Survival │   │   Patterns   │    │
-│      └────┬─────┘   └────┬─────┘   └──────┬───────┘    │
-│           │              │                │             │
-├───────────┼──────────────┼────────────────┼─────────────┤
-│           └──────────────┼────────────────┘             │
-│                          │                              │
-│                ┌─────────▼─────────┐                    │
-│                │   CONTEXT LAYER   │                    │
-│                │                   │                    │
-│                │  ┌─────────────┐  │                    │
-│                │  │    Taste    │  │  Design prefs     │
-│                │  └─────────────┘  │                    │
-│                │  ┌─────────────┐  │                    │
-│                │  │   Persona   │  │  Who you build    │
-│                │  └─────────────┘  │  for              │
-│                │  ┌─────────────┐  │                    │
-│                │  │   Project   │  │  Codebase         │
-│                │  └─────────────┘  │  knowledge        │
-│                │                   │                    │
-│                └───────────────────┘                    │
-│                                                         │
-│              All invisible. All learned.                │
-│                                                         │
-├─────────────────────────────────────────────────────────┤
-│                     FOUNDATION                          │
-│                                                         │
-│                ┌───────────────────┐                    │
-│                │       CORE        │                    │
-│                │                   │                    │
-│                │  "Using it IS     │                    │
-│                │   the experience" │                    │
-│                └───────────────────┘                    │
-│                                                         │
-└─────────────────────────────────────────────────────────┘
-```
+The physics are automatic. You describe what you want in *feel*, Sigil handles implementation.
 
-**What's new in v10.1:**
-- **Usage-Based Authority** — Authority computed from imports (10+ = gold, 5+ = silver)
-- **Effect-Based Physics** — Physics inferred from effect type (mutation/query/local_state)
-- **AST Intent Inference** — TypeScript Compiler API reads code without JSDoc
-- **Invisible Context** — Taste, Persona, Project learned from accept/modify/reject
-- **Pattern Diagnostics** — Match symptoms to solutions automatically
-- **3 Consolidated Skills** — Mason, Gardener, Diagnostician (from 49 → 14 total)
-- **Core Library** — 6 modules at `src/lib/sigil/`
+## Philosophy
 
----
+### Artists Think in Feel
 
-## The Three Laws
+Designers don't think "I need optimistic updates with rollback on error." They think "this should feel snappy" or "this needs to feel trustworthy."
 
-### 1. Code is Precedent
-Patterns that survive in your codebase become canonical. No governance dialogs, no approval workflows. If you use a pattern 5+ times, it becomes the standard.
+Sigil translates feel into physics. You stay in flow. The machinery is invisible.
 
-### 2. Survival + Cleanliness = Gold
-Usage is necessary, linter gate is sufficient. 5+ Gold imports, 2+ weeks stable, lint passes → automatic promotion.
+### Effect Determines Everything
 
-### 3. Never Interrupt Flow
-No blocking dialogs. No approval prompts. Context accumulates invisibly. Designer never sees the machinery.
+Physics aren't chosen by adjectives or wishes. They're determined by **what the code does**:
+
+| Effect | Sync | Timing | Confirmation |
+|--------|------|--------|--------------|
+| Financial mutation | Pessimistic | 800ms | Required |
+| Destructive mutation | Pessimistic | 600ms | Required |
+| Standard mutation | Optimistic | 200ms | None |
+| Navigation | Immediate | 150ms | None |
+| Query/fetch | Optimistic | 150ms | None |
+| Local state | Immediate | 100ms | None |
+
+"Claim" is financial. "Delete" is destructive. "Like" is standard. "Toggle" is local.
+
+The word determines the effect. The effect determines the physics. No configuration needed.
+
+### The Prompt is the Product
+
+Sigil v11 has no runtime, no hooks, no custom tools. It's just prompts that teach Claude the physics system. When you install Sigil, you're adding knowledge—not dependencies.
 
 ---
 
 ## Installation
 
 ```bash
-# Mount Sigil onto any repository
-npx sigil mount
-
-# Start Claude Code
-claude
-/craft "your first component"
+curl -fsSL https://raw.githubusercontent.com/0xHoneyJar/sigil/main/.claude/scripts/mount-sigil.sh | bash
 ```
 
-**Time investment:** Zero configuration
-**Payoff:** Every generation inherits your design physics automatically
-
----
-
-## The Three Skills
-
-### Mason — Generation
-
+**What gets installed:**
 ```
-Trigger: /craft "..."
-
-Designer: /craft "trustworthy claim button"
-
-Mason:
-  ├── Reads Taste → Physics selection (deliberate)
-  ├── Reads Persona → Copy voice (friendly, low jargon)
-  ├── Reads Project → Conventions (@/ aliases)
-  ├── Reads Gold → Stable patterns to prefer
-  │
-  └── Generates complete UI with appropriate copy
+.claude/rules/sigil-*.md     # Physics (auto-discovered by Claude Code)
+grimoires/sigil/             # Configuration
+examples/components/         # Reference implementations
 ```
 
-**No questions asked.** Mason infers everything from context.
-
-### Gardener — Invisible Governance
-
+**What doesn't get touched:**
 ```
-Trigger: Background / git push
-
-Survival Engine:
-  ├── Draft → 5+ uses → Silver
-  │             2 weeks stable
-  │             Lint passes
-  │                    ↓
-  │               → Gold
-  │
-  └── Modified? 3+ rejections? → Demoted
-
-Designer never sees this process.
-```
-
-### Diagnostician — Debugging
-
-```
-Trigger: "It's broken" / "glitches" / error detected
-
-Pattern Library:
-  ├── Hydration mismatches
-  ├── Dialog instability
-  ├── CSS conflicts
-  ├── React pitfalls
-  └── Performance issues
-        │
-        ▼
-  Investigation (INVISIBLE)
-  Designer NEVER:
-    • Checks console
-    • Adds console.log
-    • Digs through logs
-        │
-        ▼
-  "I found the issue. Here's the fix..."
+CLAUDE.md                    # Your existing file is preserved
 ```
 
 ---
 
-## Context Layer
+## Usage
 
-All invisible. All learned from usage.
+```bash
+/craft "claim button"           # Financial: 800ms, pessimistic, confirmation
+/craft "like button"            # Standard: 200ms, optimistic
+/craft "delete with undo"       # Soft delete: optimistic + toast with undo
+/craft "dark mode toggle"       # Local: 100ms, immediate
+```
 
-### Taste Accumulation
-
-| Signal | Example | Learning |
-|--------|---------|----------|
-| Accept | Keeps `server-tick` physics | "Prefers deliberate for critical" |
-| Modify | Changes `snappy` to `deliberate` | "Deliberate > snappy for buttons" |
-| Reject | Discards generation | "Pattern doesn't fit" |
-
-### Persona Inference
-
-| Signal | Example | Learning |
-|--------|---------|----------|
-| Prompt | "skip the tutorial stuff" | Expert audience |
-| Kept copy | "Deposit" survived | Technical terms OK |
-| Changed copy | "Yield" → "Earnings" | Avoid DeFi jargon |
-
-### Project Familiarity
-
-| Signal | Example | Learning |
-|--------|---------|----------|
-| File found | `assets/logo.svg` | Asset folder exists |
-| Import style | `@/components/ui` | Using path aliases |
-| Naming | `claim-button.tsx` | Kebab-case convention |
+No questions asked. Physics inferred from the description.
 
 ---
 
-## Core Library
+## The Physics
+
+### Sync Strategies
+
+**Pessimistic**: Server confirms before UI updates. User sees pending state, then success/failure. For operations that can't be undone.
+
+**Optimistic**: UI updates immediately, rolls back on failure. For operations that are reversible and low-stakes.
+
+**Immediate**: No server round-trip. Pure client state.
+
+### How Sigil Detects Effect
 
 ```
-src/lib/sigil/
-├── index.ts          # Public API
-├── context.ts        # Context management
-├── survival.ts       # Authority computation
-├── physics.ts        # Physics inference
-├── ast-reader.ts     # AST intent inference
-├── diagnostician.ts  # Pattern matching
-└── search.ts         # Fuzzy file finding
+Financial mutation:
+  Keywords: claim, deposit, withdraw, transfer, swap, send, pay, purchase
+
+Destructive mutation:
+  Keywords: delete, remove, destroy, revoke, burn
+
+Standard mutation:
+  Keywords: save, update, edit, create, toggle, like, follow
+
+Local state:
+  Keywords: toggle, switch, expand, collapse, select
 ```
 
-### Usage-Based Authority
+### Protected Capabilities
 
-```typescript
-import { computeAuthority } from '@/lib/sigil';
+Some things must always work:
 
-// Authority computed from imports
-const tier = computeAuthority('Button');
-// → 'gold' (10+ imports)
-// → 'silver' (5-9 imports)
-// → 'draft' (1-4 imports)
+| Capability | Constraint |
+|------------|------------|
+| Withdraw | Always reachable |
+| Cancel | Always visible |
+| Balance | Always current |
+| Error recovery | Always possible |
+
+---
+
+## Examples
+
+### Financial Button (Pessimistic, 800ms)
+
+```tsx
+// Two-phase confirmation, no optimistic updates, deliberate timing
+export function ClaimButton({ amount, onSuccess }) {
+  const [showConfirm, setShowConfirm] = useState(false)
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: () => claimRewards(amount),
+    // NO onMutate — pessimistic means no optimistic updates
+    onSuccess
+  })
+
+  if (!showConfirm) {
+    return <button onClick={() => setShowConfirm(true)}>Claim {amount}</button>
+  }
+
+  return (
+    <div>
+      <p>Claim {amount}?</p>
+      <button onClick={() => setShowConfirm(false)}>Cancel</button>
+      <button onClick={() => mutate()} disabled={isPending}>
+        {isPending ? 'Claiming...' : 'Confirm'}
+      </button>
+    </div>
+  )
+}
 ```
 
-### Effect-Based Physics
+### Standard Mutation (Optimistic, 200ms)
 
-```typescript
-import { inferPhysics } from '@/lib/sigil';
+```tsx
+// Optimistic update, snappy spring, no confirmation
+export function LikeButton({ postId, initialLiked }) {
+  const queryClient = useQueryClient()
 
-// Physics inferred from effect type
-const physics = inferPhysics('mutation', 'financial');
-// → { sync: 'pessimistic', timing: 'deliberate' }
+  const { mutate } = useMutation({
+    mutationFn: () => toggleLike(postId),
+    onMutate: async () => {
+      // Optimistic update — UI changes immediately
+      const previous = queryClient.getQueryData(['post', postId])
+      queryClient.setQueryData(['post', postId], old => ({
+        ...old, liked: !old.liked
+      }))
+      return { previous }
+    },
+    onError: (err, _, context) => {
+      // Rollback on failure
+      queryClient.setQueryData(['post', postId], context.previous)
+    }
+  })
+
+  return <button onClick={() => mutate()}>Like</button>
+}
+```
+
+### Local State (Immediate, 100ms)
+
+```tsx
+// No server, instant spring animation
+export function ThemeToggle() {
+  const { theme, setTheme } = useTheme()
+
+  return (
+    <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+      <motion.div
+        animate={{ x: theme === 'dark' ? 20 : 0 }}
+        transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+      />
+    </button>
+  )
+}
+```
+
+---
+
+## Configuration
+
+Edit `grimoires/sigil/constitution.yaml` to customize:
+
+```yaml
+effects:
+  financial_mutation:
+    keywords: [claim, deposit, withdraw, transfer]
+    physics:
+      sync: pessimistic
+      timing_ms: 800
+      confirmation: required
+
+vocabulary:
+  # Add your product's terminology
+  harvest:
+    maps_to: financial_mutation
+    description: Collect yield rewards
 ```
 
 ---
 
 ## Architecture
 
-### Directory Structure
-
 ```
-src/lib/sigil/           # Core library (6 modules)
-├── index.ts
-├── context.ts
-├── survival.ts
-├── physics.ts
-├── ast-reader.ts
-├── diagnostician.ts
-└── search.ts
+.claude/rules/
+├── sigil-physics.md       # Core physics table + detection rules
+└── sigil-examples.md      # Reference examples for each effect
 
-grimoires/sigil/         # Design state
-├── .context/            # Invisible accumulation (gitignored)
-├── constitution.yaml    # Design constraints
-└── authority.yaml       # Component tiers
+grimoires/sigil/
+└── constitution.yaml      # Effects, authority, vocabulary, animations
 
-.claude/skills/          # 14 skills (3 Sigil + 11 Loa)
-├── mason/               # Generation
-├── gardener/            # Governance
-├── diagnostician/       # Debugging
-└── (11 Loa skills)      # Workflow automation
-
-.github/workflows/
-└── sigil-gardener.yaml  # Auto-promote on merge
+examples/components/
+├── ClaimButton.tsx        # Financial mutation
+├── DeleteButton.tsx       # Soft delete with undo
+├── LikeButton.tsx         # Standard mutation
+└── ThemeToggle.tsx        # Local state
 ```
 
-### Skills
+**Total:** ~650 lines of markdown/yaml + 4 example components.
 
-| Skill | Purpose |
-|-------|---------|
-| **mason** | Zone-aware generation with context |
-| **gardener** | Survival engine, invisible promotion |
-| **diagnostician** | Pattern-based debugging |
-
-### GitHub Actions
-
-The Gardener runs on every merge to main:
-
-```yaml
-on:
-  push:
-    branches: [main]
-    paths:
-      - 'src/**/*.tsx'
-      - 'src/**/*.ts'
-```
-
-Computes authority from imports, updates context automatically.
-
----
-
-## Commands
-
-| Command | Purpose |
-|---------|---------|
-| `/craft` | Design guidance with full context |
-| `/garden` | Check pattern health |
-| `/audit` | Visual cohesion report |
-
-### /craft
-
-```bash
-/craft "trustworthy claim button"
-```
-
-Flow:
-1. Infer zone from vocabulary ("claim" → critical)
-2. Read context (taste, persona, project)
-3. Apply physics (deliberate, 800ms)
-4. Select Gold patterns
-5. Generate code
-6. Update context (invisible)
-
-No questions. No configuration. Just works.
-
----
-
-## Cold Start
-
-**Day one: No context accumulated. What happens?**
-
-| Context | Cold Start | First Learning |
-|---------|------------|----------------|
-| Taste | Gold patterns if exist, else standard | First accept/modify |
-| Persona | Neutral voice | First prompt language |
-| Project | Scan codebase on mount | First file reference |
-
-By 5th `/craft`: Meaningful taste signal
-By 20th `/craft`: Confident context (90%)
-
----
-
-## Veto Mechanism
-
-Corrections are the veto. No forms, no config.
-
-```
-Designer: /craft "claim button"
-Agent: [Generates newcomer-friendly based on inference]
-
-Designer: "Use technical language, this is for DeFi natives"
-
-Agent: "Got it — adjusting for DeFi-native audience"
-       [Updates persona with 5x weight]
-       [Regenerates]
-```
-
-Explicit corrections override implicit signals.
-
----
-
-## Migration from Earlier Versions
-
-v10.1 consolidates the architecture:
-
-| Before | After |
-|--------|-------|
-| 49 skills | 14 skills |
-| 37 process files | 6 core library modules |
-| sigil-mark/ | grimoires/sigil/ |
-| JIT grep | Pre-computed authority |
-
-See [CHANGELOG.md](CHANGELOG.md) for version history.
-
----
-
-## Philosophy
-
-### The Problem
-
-AI agents generate UI without understanding your product's soul. Every generation is a coin flip—sometimes it matches your vision, sometimes it doesn't.
-
-### The v10.1 Insight: Usage is Reality
-
-Instead of configuration files and governance dialogs:
-- **Read the code** — AST tells us intent
-- **Count imports** — Usage determines authority
-- **Observe outcomes** — Accept/modify/reject shapes taste
-
-The codebase itself becomes the dataset. No questions needed.
+No runtime. No hooks. No build step. Just prompts.
 
 ---
 
 ## Why "Sigil"?
 
-A sigil is a symbolic representation of intent—a mark that carries meaning beyond its form. Sigil captures your product's design intent and makes it available to AI agents, ensuring every generated component carries the same soul.
+A sigil is a symbolic representation of intent—a mark that carries meaning beyond its form. Sigil captures your product's design physics and makes them available to AI agents, ensuring every generated component embodies the same feel.
 
 ---
-
-## Documentation
-
-- **[CLAUDE.md](CLAUDE.md)** — Agent protocol and quick reference
-- **[CHANGELOG.md](CHANGELOG.md)** — Version history
-
----
-
-## License
-
-[MIT](LICENSE)
 
 ## Links
 
+- [Installation Guide](docs/INSTALLATION.md)
 - [Claude Code](https://claude.ai/code)
-- [Loa Framework](https://github.com/0xHoneyJar/loa)
 - [Repository](https://github.com/0xHoneyJar/sigil)
 - [Issues](https://github.com/0xHoneyJar/sigil/issues)
 
 ---
 
-*Sigil v10.1.0 "Usage Reality"*
-*Last Updated: 2026-01-11*
+*Sigil v11.0.0 "Pure Craft"*
