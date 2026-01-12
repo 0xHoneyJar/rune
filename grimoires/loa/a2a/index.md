@@ -783,5 +783,38 @@ This document tracks all sprint artifacts and their approval status.
 
 ---
 
+---
+
+## Sigil v10.1.0 (Usage Reality)
+
+| Sprint | Theme | Status | Reviewer | Auditor |
+|--------|-------|--------|----------|---------|
+| 1 | Foundation | COMPLETED | ✅ Approved | ✅ Approved |
+| 2 | Core Libraries (Part 1) | COMPLETED | ✅ Approved | ✅ Approved |
+| 3 | Core Libraries (Part 2) | COMPLETED | ✅ Approved | ✅ Approved |
+| 4 | Skill Consolidation | COMPLETED | ✅ Approved | ✅ Approved |
+| 5 | Cleanup | COMPLETED | ✅ Approved | ✅ Approved |
+
+### v10.1 Overview
+
+**Goal:** Complete invisible studio architecture
+
+| Metric | Current (v9.1) | Target (v10.1) |
+|--------|----------------|----------------|
+| Skills count | 49 | 3 |
+| Process files | 36 | 6 |
+| Config exposed to designer | Many | 0 |
+| Questions per /craft | Variable | 0 |
+| File moves for promotion | Required | 0 |
+
+**Key Principles:**
+1. Usage is Authority (not directory)
+2. AST is Documentation (not JSDoc)
+3. Effect is Physics (not data type)
+4. Atomic Streaming (not yield & patch)
+5. Vector Search (not grep at scale)
+
+---
+
 *Last Updated: 2026-01-11*
-*Current Version: Sigil v9.1.0 "Migration Debt Zero" — COMPLETE*
+*Current Version: Sigil v10.1.0 "Usage Reality" — Migration Complete*
