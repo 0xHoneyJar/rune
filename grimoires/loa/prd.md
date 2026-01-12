@@ -1,117 +1,84 @@
-# Product Requirements Document: Sigil v9.1 Migration Completion
+# Product Requirements Document: Sigil v10.1 "Usage Reality"
 
-**Version:** 9.1.0
-**Codename:** Migration Debt Zero
+**Version:** 10.1.0
+**Codename:** Usage Reality
 **Status:** PRD Complete
 **Date:** 2026-01-11
-**Supersedes:** v9.0.0 "Core Scaffold" (partial migration)
-**Sources:** MIGRATION_AUDIT_REPORT.md, FULL_TECHNICAL_AUDIT.md, migrate-to-grimoire.sh
+**Supersedes:** v9.1.0 "Migration Debt Zero" (completed)
+**Sources:** sigil-v10.1-package.zip, CLAUDE.md, existing src/lib/sigil/
 
 ---
 
 ## 1. Executive Summary
 
-The v9.0 "Core Scaffold" migration is **incomplete**. Three independent audits reveal:
+Sigil v10.1 "Usage Reality" completes the v10 vision with three core principles:
 
-- **81 hardcoded `sigil-mark/` references** throughout the codebase
-- **Version schizophrenia** (v2.6, v4.1, v5.0, v6.0, v6.1, v7.6, v9.0 across files)
-- **Missing runtime layer** (providers, hooks, layouts don't exist)
-- **Orphaned files** (protected-capabilities.yaml not migrated)
-- **Phantom features** (skills reference non-existent lens-array, soul-binder, vibe-checks)
+1. **Usage is Authority** — Components earn Gold status through import counts, not directories
+2. **Effect is Physics** — The verb (mutation/query/local) determines timing, not the noun
+3. **Never Interrupt Flow** — Infer, don't ask; generate, don't configure
 
-**The Problem:**
-> "This is not a v9.0 release. It's a partially renamed v4.1-v7.6 codebase."
-> — Staff Engineer (Adversarial Review)
+**Current State:**
+- v9.1 migration complete: `sigil-mark/` deleted, grimoire structure established
+- Core library exists: `src/lib/sigil/` with 6 modules (~110K bytes)
+- Skills exist: Mason, Gardener, Diagnostician in `.claude/skills/`
+- Configuration exists: `grimoires/sigil/constitution.yaml`, `authority.yaml`
+- Runtime hook exists: `src/hooks/useMotion.ts`
 
-**Risk Level:** HIGH — Agent will fail to load context, reference wrong paths, and generate incorrect imports.
+**The Gap:**
+The v10.1 concepts are documented in CLAUDE.md but the skills don't fully implement them. The skills reference library functions that exist but aren't wired into the `/craft` and `/garden` workflows.
 
-**The Solution:** Complete the migration by:
-1. Fixing all 81 path references
-2. Consolidating version numbers to 9.1.0
-3. Moving orphaned files to grimoire
-4. Removing references to phantom features
-5. Deleting legacy `sigil-mark/` directory
+**The Solution:**
+Enhance the existing skills (Mason, Gardener, Diagnostician) to fully leverage the v10.1 library, enabling:
+- AST-based intent inference
+- Usage-based authority computation
+- Effect-based physics selection
+- Semantic pattern search
+- Pattern debugging without questions
 
 ---
 
 ## 2. Problem Statement
 
-### 2.1 The 81 Hardcoded References
+### 2.1 Skills Don't Use the Library
 
-**Evidence from MIGRATION_AUDIT_REPORT.md:**
+The Mason skill (`.claude/skills/mason/SKILL.md`) documents the correct workflow:
 
-| Location | Count | Impact |
-|----------|-------|--------|
-| `grimoires/sigil/process/*.ts` | 42 | Process layer points to old paths |
-| `.claude/skills/crafting-guidance/SKILL.md` | 15 | Skills load from wrong locations |
-| `CLAUDE.md` | 12 | Documentation misleads agent |
-| `tsconfig.json` | 6 | TypeScript aliases broken |
-| Other | 6 | Various |
-
-**Example violations:**
-
-```typescript
-// grimoires/sigil/process/constitution-reader.ts
-export const DEFAULT_CONSTITUTION_PATH = 'sigil-mark/constitution/protected-capabilities.yaml';
-// SHOULD BE: 'grimoires/sigil/constitution/protected-capabilities.yaml'
-
-// grimoires/sigil/process/moodboard-reader.ts
-export const DEFAULT_MOODBOARD_PATH = 'sigil-mark/moodboard';
-// SHOULD BE: 'grimoires/sigil/moodboard'
+```markdown
+## Workflow
+1. Context Loading - Load accumulated taste from grimoires/sigil/.context/
+2. Intent Inference - Parse request for component type and purpose
+3. Pattern Discovery - Search codebase for canonical patterns via search.ts
+4. AST Analysis - Use ast-reader.ts to analyze similar components
+5. Generation - Generate component with correct physics
+6. Context Update - Record generated patterns
 ```
 
-### 2.2 Version Schizophrenia
+But this workflow is **documentation**, not implementation. The skill file references:
+- `search.ts` for pattern discovery
+- `ast-reader.ts` for intent inference
+- `context.ts` for learning signals
 
-**Evidence from FULL_TECHNICAL_AUDIT.md:**
+These modules exist in `src/lib/sigil/` but aren't invoked by the skill.
 
-| File | Claims Version |
-|------|----------------|
-| `grimoires/sigil/README.md` | 9.0.0 |
-| `.sigilrc.yaml` | 4.1.0 |
-| `constitution.yaml` | 5.0.0 |
-| `vocabulary.yaml` | 5.0.0 |
-| `CLAUDE.md` | v7.6, v6.0, v6.1 (multiple refs) |
-| `process/constitution-reader.ts` | v2.6 (header) |
-| `process/index.ts` | v4.1 |
+### 2.2 Library Modules Not Integrated
 
-**Impact:** Agent doesn't know what version it's operating on.
+| Module | Lines | Status | Gap |
+|--------|-------|--------|-----|
+| `context.ts` | 15,462 | ✅ Implemented | Not called by skills |
+| `survival.ts` | 16,702 | ✅ Implemented | Not called by /garden |
+| `physics.ts` | 12,555 | ✅ Implemented | Not called by Mason |
+| `ast-reader.ts` | 17,296 | ✅ Implemented | Not called by Mason |
+| `diagnostician.ts` | 27,084 | ✅ Implemented | Not called on errors |
+| `search.ts` | 17,890 | ✅ Implemented | Not called for canonicals |
 
-### 2.3 Missing Runtime Layer
+### 2.3 v10.1 Package Provides Reference
 
-The skill tells agents to generate:
+The `sigil-v10.1-package.zip` provides a reference implementation with:
+- 6 MCP tools that implement the exact workflow
+- Clear input/output contracts
+- Tool composition examples
 
-```tsx
-import { useCriticalAction, CriticalZone, useLens } from 'sigil-mark';
-import { useSigilMutation } from 'sigil-mark';
-import { CriticalZone, GlassLayout, MachineryLayout } from 'sigil-mark';
-```
-
-**None of these exist.** The runtime layer was either never created, deleted during migration, or lives in a different repository.
-
-### 2.4 Orphaned Files
-
-Files referenced but not in grimoire:
-
-| Expected Path | Status |
-|---------------|--------|
-| `constitution/protected-capabilities.yaml` | Still in `sigil-mark/` |
-| `constitution/personas.yaml` | Referenced but doesn't exist |
-| `constitution/philosophy.yaml` | Referenced but doesn't exist |
-| `constitution/decisions/` | Referenced but doesn't exist |
-| `constitution/rules.md` | Referenced but doesn't exist |
-| `moodboard/evidence/` | Referenced but doesn't exist |
-
-### 2.5 Phantom Features
-
-Skills reference non-existent files:
-
-```yaml
-# .claude/skills/crafting-guidance/index.yaml
-checks:
-  - path: sigil-mark/soul-binder/immutable-values.yaml  # DOESN'T EXIST
-  - path: sigil-mark/soul-binder/canon-of-flaws.yaml    # DOESN'T EXIST
-  - path: sigil-mark/lens-array/lenses.yaml             # DOESN'T EXIST
-```
+While we're keeping the skill-based approach, the tool implementations provide the **logic** that skills should invoke.
 
 ---
 
@@ -119,374 +86,375 @@ checks:
 
 ### 3.1 Primary Goal
 
-**Zero `sigil-mark/` references remaining.**
+**Mason skill generates code using the full v10.1 pipeline:**
 
-```bash
-grep -r "sigil-mark" --include="*.ts" --include="*.yaml" --include="*.md" | wc -l
-# Target: 0
+```
+User: /craft "claim button for rewards pool"
+
+Mason internally:
+1. inferIntent("claim button for rewards pool")
+   → { mutation: true, financial: true, interactive: true }
+
+2. inferPhysicsFromEffect({ mutation: true, financial: true })
+   → { sync: 'pessimistic', timing: 800, confirmation: true }
+
+3. findCanonical("claim button financial")
+   → [{ file: "TransferButton.tsx", authority: "gold" }]
+
+4. analyzeAST("TransferButton.tsx")
+   → { patterns: { hooks: [...], animations: [...] } }
+
+5. [Generate code using patterns + physics]
+
+6. validateGeneration(code, physics)
+   → { valid: true }
 ```
 
 ### 3.2 Secondary Goals
 
-1. **Single version number** — All files report v9.1.0
-2. **Complete file migration** — All referenced files exist in grimoire
-3. **Clean skill paths** — Skills load from `grimoires/sigil/`
-4. **Working `/craft` flow** — Agent can generate code without errors
-5. **Deleted legacy directory** — No `sigil-mark/` in repo
+1. **Gardener skill computes authority** — Run `inferAuthority()` from survival.ts
+2. **Diagnostician activates on errors** — Call `matchSymptoms()` from diagnostician.ts
+3. **Context accumulates invisibly** — Call `processLearningSignal()` from context.ts
+4. **No questions policy enforced** — Skills infer, never ask
 
 ### 3.3 Non-Goals
 
-1. **Runtime layer creation** — That's a v10.0 feature, not migration debt
-2. **New features** — This is purely technical debt cleanup
-3. **Documentation overhaul** — Just path updates, not content changes
+1. **MCP tools** — We're enhancing skills, not creating tools
+2. **New library modules** — The 6 modules are complete
+3. **UI changes** — This is agent-time workflow only
+4. **Runtime layer** — useMotion.ts and physics already work
 
 ---
 
 ## 4. Requirements
 
-### 4.1 P0: Fix All Process Layer Paths
+### 4.1 P0: Mason Skill Integration
 
-**Files to update (42 references):**
+**Update `.claude/skills/mason/SKILL.md` to call library functions:**
 
-| File | Current Default | Should Be |
-|------|-----------------|-----------|
-| `constitution-reader.ts` | `sigil-mark/constitution/...` | `grimoires/sigil/constitution/...` |
-| `moodboard-reader.ts` | `sigil-mark/moodboard` | `grimoires/sigil/moodboard` |
-| `persona-reader.ts` | `sigil-mark/personas/...` | `grimoires/sigil/constitution/...` |
-| `vocabulary-reader.ts` | `sigil-mark/vocabulary/...` | `grimoires/sigil/constitution/...` |
-| `decision-reader.ts` | `sigil-mark/consultation-chamber/...` | `grimoires/sigil/constitution/...` |
-| `philosophy-reader.ts` | `sigil-mark/soul-binder/...` | `grimoires/sigil/constitution/...` |
-| `vibe-check-reader.ts` | `sigil-mark/surveys/...` | `grimoires/sigil/...` |
-| `lens-array-reader.ts` | `sigil-mark/lens-array/...` | `grimoires/sigil/...` |
-| `governance-logger.ts` | `sigil-mark/governance` | `grimoires/sigil/state/...` |
-| `agent-orchestration.ts` | `sigil-mark/vocabulary/...` | `grimoires/sigil/constitution/...` |
-| `garden-command.ts` | `sigil-mark/` in SCAN_PATHS | `grimoires/sigil/` |
+The skill should:
 
-**Acceptance Criteria:**
-- [ ] All 42 process layer references updated
-- [ ] `grep -r "sigil-mark" grimoires/sigil/process/` returns 0 results
-
----
-
-### 4.2 P0: Move Orphaned Files
-
-**Move `protected-capabilities.yaml`:**
-
-```bash
-mv sigil-mark/constitution/protected-capabilities.yaml \
-   grimoires/sigil/constitution/
-```
-
-**Create missing placeholder files:**
-
-```bash
-mkdir -p grimoires/sigil/constitution/decisions
-mkdir -p grimoires/sigil/moodboard/evidence
-
-touch grimoires/sigil/constitution/personas.yaml
-touch grimoires/sigil/constitution/philosophy.yaml
-touch grimoires/sigil/constitution/rules.md
-```
-
-**Acceptance Criteria:**
-- [ ] `protected-capabilities.yaml` in grimoire
-- [ ] All referenced directories exist
-- [ ] All referenced files exist (can be placeholders)
-
----
-
-### 4.3 P0: Fix Skill Paths
-
-**Update `.claude/skills/crafting-guidance/SKILL.md`:**
-
-Current (broken):
-```yaml
-zones:
-  state:
-    paths:
-      - sigil-mark/rules.md
-      - sigil-mark/vocabulary/vocabulary.yaml
-      - sigil-mark/constitution/protected-capabilities.yaml
-      - sigil-mark/personas/personas.yaml
-```
-
-Fixed:
-```yaml
-zones:
-  state:
-    paths:
-      - grimoires/sigil/constitution/rules.md
-      - grimoires/sigil/constitution/vocabulary.yaml
-      - grimoires/sigil/constitution/protected-capabilities.yaml
-      - grimoires/sigil/constitution/personas.yaml
-```
-
-**Update `.claude/skills/crafting-guidance/index.yaml`:**
-
-Remove phantom file references:
-```yaml
-# DELETE these lines - files don't exist
-checks:
-  - path: sigil-mark/soul-binder/immutable-values.yaml
-  - path: sigil-mark/soul-binder/canon-of-flaws.yaml
-  - path: sigil-mark/lens-array/lenses.yaml
-```
-
-**Acceptance Criteria:**
-- [ ] All skill paths point to `grimoires/sigil/`
-- [ ] No references to non-existent files
-- [ ] Skill loads successfully
-
----
-
-### 4.4 P0: Fix CLAUDE.md References
-
-**Update references to use grimoire paths:**
-
-From:
-```markdown
-| `sigil-mark/process/survival-engine.ts` | Auto-promotion engine |
-```
-
-To:
-```markdown
-| `grimoires/sigil/process/survival-engine.ts` | Auto-promotion engine |
-```
-
-**Update import examples:**
-
-From:
+1. **Call inferIntent** on every /craft request:
 ```typescript
-import { useSigilMutation } from 'sigil-mark';
+import { inferIntent } from '@/lib/sigil/ast-reader';
+const intent = await inferIntent({ target: userRequest });
 ```
 
-To:
+2. **Call inferPhysicsFromEffect** based on intent:
 ```typescript
-import { useMotion } from '@sigil/hooks';
-// Note: Full runtime layer (useSigilMutation, CriticalZone) is Phase 2
+import { inferPhysicsFromEffect } from '@/lib/sigil/physics';
+const physics = inferPhysicsFromEffect(intent);
+```
+
+3. **Call findCanonical** for pattern discovery:
+```typescript
+import { search, findCanonical } from '@/lib/sigil/search';
+const canonicals = await findCanonical(query, 'gold');
+```
+
+4. **Call analyzeAST** for pattern extraction:
+```typescript
+import { analyzeAST } from '@/lib/sigil/ast-reader';
+const patterns = await analyzeAST(canonicalFile);
+```
+
+5. **Call validateGeneration** after code generation:
+```typescript
+import { validateGeneration } from '@/lib/sigil/physics';
+const validation = validateGeneration(generatedCode, physics);
 ```
 
 **Acceptance Criteria:**
-- [ ] All CLAUDE.md paths point to grimoire
-- [ ] No references to non-existent runtime imports
-- [ ] Clear note about what exists vs Phase 2
+- [ ] Mason calls all 5 library functions in sequence
+- [ ] Mason never asks "What physics do you prefer?"
+- [ ] Mason never asks "What zone should this be in?"
+- [ ] Generated code includes correct physics values
+- [ ] Financial mutations get pessimistic sync + confirmation
 
 ---
 
-### 4.5 P1: Consolidate Version Numbers
+### 4.2 P0: Gardener Skill Integration
 
-**Update all files to v9.1.0:**
+**Update `.claude/skills/gardener/SKILL.md` to call survival.ts:**
 
-| File | Current | Target |
-|------|---------|--------|
-| `grimoires/sigil/README.md` | 9.0.0 | 9.1.0 |
-| `.sigilrc.yaml` | 4.1.0 | 9.1.0 |
-| `constitution.yaml` | 5.0.0 | 9.1.0 |
-| `vocabulary.yaml` | 5.0.0 | 9.1.0 |
-| `CLAUDE.md` header | v7.6 | v9.1 |
-| `process/index.ts` header | v4.1 | v9.1 |
-| `skills/crafting-guidance/SKILL.md` | v4.1 | v9.1 |
+The skill should:
 
-**Acceptance Criteria:**
-- [ ] All version references are 9.1.0
-- [ ] No mixed version numbers in codebase
-
----
-
-### 4.6 P1: Update tsconfig.json
-
-**Current (broken):**
-```json
-{
-  "paths": {
-    "@sigil/recipes/*": ["sigil-mark/recipes/*"],
-    "@sigil/hooks": ["sigil-mark/hooks/index.ts"],
-    "@sigil/hooks/*": ["sigil-mark/hooks/*"],
-    "@sigil/core/*": ["sigil-mark/core/*"]
-  },
-  "include": ["sigil-mark/**/*"]
-}
+1. **Call inferAuthority** for each component:
+```typescript
+import { inferAuthority, countImports } from '@/lib/sigil/survival';
+const authority = await inferAuthority(componentPath);
+// Returns: { tier: 'gold' | 'silver' | 'draft', imports: number, stability: number }
 ```
 
-**Fixed:**
-```json
-{
-  "paths": {
-    "@sigil-context/*": ["grimoires/sigil/*"],
-    "@sigil/hooks": ["src/components/gold/hooks/index.ts"],
-    "@sigil/hooks/*": ["src/components/gold/hooks/*"],
-    "@sigil/utils/*": ["src/components/gold/utils/*"]
-  },
-  "include": ["grimoires/sigil/**/*", "src/**/*"]
-}
+2. **Check promotion eligibility**:
+```typescript
+import { checkPromotion } from '@/lib/sigil/survival';
+const promotion = await checkPromotion(componentPath);
+// Returns: { eligible: boolean, confidence: number, blockers: string[] }
 ```
 
 **Acceptance Criteria:**
-- [ ] tsconfig paths point to correct locations
-- [ ] TypeScript compilation works
-- [ ] Imports resolve correctly
+- [ ] /garden reports accurate import counts
+- [ ] /garden shows authority tier (gold/silver/draft)
+- [ ] /garden identifies promotion-eligible components
+- [ ] No file moves required for authority changes
 
 ---
 
-### 4.7 P1: Align Physics Values
+### 4.3 P0: Diagnostician Skill Integration
 
-**Current inconsistencies:**
+**Update `.claude/skills/diagnostician/SKILL.md` to call diagnostician.ts:**
 
-| Motion | useMotion.ts | physics.yaml | vocabulary.yaml | .sigilrc.yaml |
-|--------|--------------|--------------|-----------------|---------------|
-| reassuring | N/A | N/A | 600ms | 1200ms ⚠️ |
+The skill should:
 
-**Fix:** Use `physics.yaml` as source of truth, update all others.
+1. **Call matchSymptoms** when errors reported:
+```typescript
+import { matchSymptoms, diagnose } from '@/lib/sigil/diagnostician';
+const matches = matchSymptoms(errorDescription);
+// Returns: { pattern: string, confidence: number, solution: string }[]
+```
+
+2. **Never ask diagnostic questions**:
+```markdown
+NEVER ASK:
+- "Can you check the console?"
+- "What browser are you using?"
+- "Can you reproduce the error?"
+
+INSTEAD INFER:
+- Match symptom patterns from PATTERNS constant
+- Provide likely solutions ranked by confidence
+- Run automated checks where possible
+```
 
 **Acceptance Criteria:**
-- [ ] All physics values consistent across files
-- [ ] Single source of truth established
+- [ ] Diagnostician matches symptoms without questions
+- [ ] Diagnostician provides solutions ranked by confidence
+- [ ] Covers 9 pattern categories (hydration, dialog, performance, etc.)
 
 ---
 
-### 4.8 P2: Delete Legacy Structure
+### 4.4 P1: Context Accumulation
 
-**After all fixes verified:**
+**Wire context.ts into skill workflows:**
+
+1. **After generation (Mason)**:
+```typescript
+import { processLearningSignal } from '@/lib/sigil/context';
+await processLearningSignal({
+  type: 'generation',
+  component: generatedComponent,
+  physics: appliedPhysics,
+  intent: inferredIntent
+});
+```
+
+2. **After user feedback**:
+```typescript
+await processLearningSignal({
+  type: 'feedback',
+  action: 'accept' | 'modify' | 'reject',
+  component: componentPath
+});
+```
+
+**Acceptance Criteria:**
+- [ ] Learning signals recorded to grimoires/sigil/.context/
+- [ ] Context influences future generations
+- [ ] No explicit configuration required
+
+---
+
+### 4.5 P1: Constitution Alignment
+
+**Ensure constitution.yaml matches library physics:**
+
+Current `grimoires/sigil/constitution.yaml`:
+```yaml
+effect_physics:
+  mutation:
+    sync: pessimistic
+    timing: 800
+```
+
+Library `src/lib/sigil/physics.ts`:
+```typescript
+export const EFFECT_PHYSICS = {
+  mutation: { sync: 'pessimistic', timing: 800 },
+  ...
+};
+```
+
+**Verify alignment:**
+- [ ] All effect types in constitution.yaml match physics.ts
+- [ ] All protected capabilities match
+- [ ] All physics presets match useMotion.ts
+
+---
+
+### 4.6 P2: Search Index Initialization
+
+**Enable semantic search:**
 
 ```bash
-rm -rf sigil-mark/
-```
+# Build search index
+npx sigil index-components src/components/
 
-**Safety check before deletion:**
-```bash
-# Verify no sigil-mark references remain
-grep -r "sigil-mark" --include="*.ts" --include="*.yaml" --include="*.md" | wc -l
-# Must be 0
+# Outputs to grimoires/sigil/index/
 ```
 
 **Acceptance Criteria:**
-- [ ] All references updated first
-- [ ] Validation script passes
-- [ ] `sigil-mark/` directory deleted
-- [ ] Git commit with deletion
+- [ ] search.ts can find canonical patterns
+- [ ] Index regenerates on component changes
+- [ ] Index is gitignored (build artifact)
 
 ---
 
-## 5. File Changes Summary
+## 5. Implementation Sprints
+
+### Sprint 1: Mason Pipeline (P0)
+
+1. Update Mason SKILL.md with library invocations
+2. Verify inferIntent() works with descriptions
+3. Verify inferPhysicsFromEffect() returns correct physics
+4. Verify findCanonical() returns Gold patterns
+5. Test end-to-end /craft flow
+
+**Exit Criteria:** `/craft "claim button"` generates code with 800ms pessimistic physics
+
+### Sprint 2: Gardener + Diagnostician (P0)
+
+6. Update Gardener SKILL.md with survival.ts calls
+7. Verify inferAuthority() counts imports correctly
+8. Update Diagnostician SKILL.md with diagnostician.ts calls
+9. Verify matchSymptoms() finds patterns
+
+**Exit Criteria:** `/garden` shows accurate authority, errors trigger pattern matching
+
+### Sprint 3: Context + Polish (P1-P2)
+
+10. Wire context.ts into Mason workflow
+11. Add feedback signal processing
+12. Initialize search index
+13. Verify end-to-end /craft → /garden → Diagnostician flow
+
+**Exit Criteria:** Full v10.1 pipeline operational
+
+---
+
+## 6. File Changes Summary
 
 ### Files to Update
 
 | File | Changes |
 |------|---------|
-| `grimoires/sigil/process/*.ts` (11 files) | Update DEFAULT_*_PATH constants |
-| `.claude/skills/crafting-guidance/SKILL.md` | Update all paths |
-| `.claude/skills/crafting-guidance/index.yaml` | Remove phantom references |
-| `CLAUDE.md` | Update paths, clarify runtime layer |
-| `tsconfig.json` | Fix path aliases |
-| `.sigilrc.yaml` | Update version |
-| `grimoires/sigil/constitution/*.yaml` | Update versions |
-| `grimoires/sigil/README.md` | Update version |
+| `.claude/skills/mason/SKILL.md` | Add library invocations |
+| `.claude/skills/gardener/SKILL.md` | Add survival.ts calls |
+| `.claude/skills/diagnostician/SKILL.md` | Add diagnostician.ts calls |
+| `.claude/skills/mason/index.yaml` | Update file references |
+| `.claude/skills/gardener/index.yaml` | Update file references |
+| `.claude/skills/diagnostician/index.yaml` | Update file references |
 
-### Files to Move
+### Files Already Complete
 
-| From | To |
-|------|-----|
-| `sigil-mark/constitution/protected-capabilities.yaml` | `grimoires/sigil/constitution/` |
-| `sigil-mark/kernel/schemas/*.json` | `grimoires/sigil/schemas/` |
-
-### Files to Create
-
-| Path | Content |
-|------|---------|
-| `grimoires/sigil/constitution/personas.yaml` | Placeholder with depositor, newcomer, power_user |
-| `grimoires/sigil/constitution/philosophy.yaml` | Placeholder with core principles |
-| `grimoires/sigil/constitution/rules.md` | Placeholder with motion rules |
-| `grimoires/sigil/constitution/decisions/README.md` | Directory placeholder |
-| `grimoires/sigil/moodboard/evidence/README.md` | Directory placeholder |
-
-### Files to Delete
-
-| Path | Reason |
+| File | Status |
 |------|--------|
-| `sigil-mark/` (entire directory) | Migration complete |
+| `src/lib/sigil/context.ts` | ✅ Implemented |
+| `src/lib/sigil/survival.ts` | ✅ Implemented |
+| `src/lib/sigil/physics.ts` | ✅ Implemented |
+| `src/lib/sigil/ast-reader.ts` | ✅ Implemented |
+| `src/lib/sigil/diagnostician.ts` | ✅ Implemented |
+| `src/lib/sigil/search.ts` | ✅ Implemented |
+| `src/hooks/useMotion.ts` | ✅ Implemented |
+| `grimoires/sigil/constitution.yaml` | ✅ Complete |
+| `grimoires/sigil/authority.yaml` | ✅ Complete |
+| `CLAUDE.md` | ✅ Documents v10.1 |
 
 ---
 
-## 6. Implementation Sprints
+## 7. Validation
 
-### Sprint 1: Process Layer Fixes (P0)
+### 7.1 Manual Test Cases
 
-1. Update all 11 process layer files with correct paths
-2. Move `protected-capabilities.yaml` to grimoire
-3. Create missing placeholder files and directories
-4. Verify `grep sigil-mark process/` returns 0
+**Test 1: Financial Mutation**
+```
+/craft "claim button for rewards"
+```
+Expected:
+- Physics: pessimistic, 800ms
+- Confirmation flow included
+- useMotion('deliberate') in output
 
-**Exit Criteria:** Process layer compiles, no sigil-mark references
+**Test 2: Query Component**
+```
+/craft "user balance display"
+```
+Expected:
+- Physics: optimistic, 150ms
+- No confirmation needed
+- useMotion('snappy') in output
 
-### Sprint 2: Skills + Configuration (P0-P1)
+**Test 3: Authority Check**
+```
+/garden src/components/Button.tsx
+```
+Expected:
+- Import count displayed
+- Stability days displayed
+- Authority tier (gold/silver/draft)
 
-5. Update skill SKILL.md paths
-6. Update skill index.yaml, remove phantom references
-7. Fix CLAUDE.md references
-8. Update tsconfig.json aliases
-9. Consolidate version numbers to 9.1.0
+**Test 4: Error Diagnosis**
+```
+User: "The dialog is glitching when I scroll"
+```
+Expected:
+- Diagnostician activates (no manual trigger)
+- Matches "dialog" + "scroll" symptoms
+- Provides solutions without asking browser info
 
-**Exit Criteria:** Skills load, TypeScript compiles, consistent versions
-
-### Sprint 3: Validation + Cleanup (P1-P2)
-
-10. Run validation script
-11. Fix any remaining references
-12. Align physics values
-13. Delete `sigil-mark/` directory
-14. Final audit
-
-**Exit Criteria:** Zero sigil-mark references, clean repo
-
----
-
-## 7. Validation Script
+### 7.2 Automated Validation
 
 ```bash
 #!/bin/bash
-# Run after each sprint to verify progress
+# validate-v10.1.sh
 
-echo "=== SIGIL v9.1 MIGRATION VALIDATION ==="
-
-echo ""
-echo "1. Checking for remaining sigil-mark references..."
-REMAINING=$(grep -r "sigil-mark" --include="*.ts" --include="*.yaml" --include="*.md" --include="*.json" 2>/dev/null | grep -v ".bak" | wc -l)
-
-if [ "$REMAINING" -gt 0 ]; then
-  echo "❌ FAIL: $REMAINING references remain"
-  grep -r "sigil-mark" --include="*.ts" --include="*.yaml" --include="*.md" --include="*.json" 2>/dev/null | head -10
-else
-  echo "✅ PASS: No sigil-mark references found"
-fi
+echo "=== SIGIL v10.1 VALIDATION ==="
 
 echo ""
-echo "2. Checking for required grimoire files..."
-REQUIRED_FILES=(
-  "grimoires/sigil/constitution/constitution.yaml"
-  "grimoires/sigil/constitution/physics.yaml"
-  "grimoires/sigil/constitution/vocabulary.yaml"
-  "grimoires/sigil/constitution/protected-capabilities.yaml"
-  "grimoires/sigil/constitution/personas.yaml"
-  "grimoires/sigil/constitution/philosophy.yaml"
-  "grimoires/sigil/constitution/rules.md"
-  "grimoires/sigil/moodboard/README.md"
-)
-
-for f in "${REQUIRED_FILES[@]}"; do
-  if [ -f "$f" ]; then
-    echo "  ✓ $f"
+echo "1. Checking library modules..."
+for module in context survival physics ast-reader diagnostician search; do
+  if [ -f "src/lib/sigil/${module}.ts" ]; then
+    echo "  ✓ ${module}.ts exists"
   else
-    echo "  ❌ MISSING: $f"
+    echo "  ❌ MISSING: ${module}.ts"
   fi
 done
 
 echo ""
-echo "3. Checking version consistency..."
-grep -r "version:" --include="*.yaml" grimoires/sigil/ | head -10
+echo "2. Checking skill files..."
+for skill in mason gardener diagnostician; do
+  if [ -f ".claude/skills/${skill}/SKILL.md" ]; then
+    echo "  ✓ ${skill}/SKILL.md exists"
+  else
+    echo "  ❌ MISSING: ${skill}/SKILL.md"
+  fi
+done
 
 echo ""
-echo "4. Checking process layer defaults..."
-grep -r "DEFAULT_.*_PATH" grimoires/sigil/process/*.ts 2>/dev/null | head -10
+echo "3. Checking constitution alignment..."
+if grep -q "mutation:" grimoires/sigil/constitution.yaml; then
+  echo "  ✓ constitution.yaml has effect_physics"
+else
+  echo "  ❌ Missing effect_physics in constitution.yaml"
+fi
+
+echo ""
+echo "4. Checking useMotion hook..."
+if [ -f "src/hooks/useMotion.ts" ]; then
+  echo "  ✓ useMotion.ts exists"
+else
+  echo "  ❌ MISSING: useMotion.ts"
+fi
 
 echo ""
 echo "=== VALIDATION COMPLETE ==="
@@ -498,11 +466,11 @@ echo "=== VALIDATION COMPLETE ==="
 
 | Metric | Current | Target |
 |--------|---------|--------|
-| `sigil-mark/` references | 81 | 0 |
-| Version numbers in use | 6+ | 1 (v9.1.0) |
-| Missing referenced files | 6+ | 0 |
-| Phantom skill references | 3 | 0 |
-| `sigil-mark/` directory | Exists | Deleted |
+| Mason asks configuration questions | Yes | No |
+| Gardener computes authority | No | Yes |
+| Diagnostician matches patterns | No | Yes |
+| Context accumulates | No | Yes |
+| /craft uses correct physics | Partial | Full |
 
 ---
 
@@ -510,42 +478,65 @@ echo "=== VALIDATION COMPLETE ==="
 
 | Risk | Impact | Mitigation |
 |------|--------|------------|
-| Missed reference breaks agent | Agent fails to load context | Run validation after each sprint |
-| Placeholder files lack content | Skills work but incomplete | Placeholder is acceptable for v9.1 |
-| Breaking change for downstream | Imports fail | This repo is source of truth |
-| Runtime layer still missing | Imports fail | Document clearly as Phase 2 |
+| Library modules have bugs | /craft fails | Test each module in isolation first |
+| Skills don't invoke library | No improvement | Verify invocations in skill output |
+| Physics values inconsistent | Wrong timings | Align constitution.yaml with physics.ts |
+| Search index empty | No canonicals found | Seed with initial components |
 
 ---
 
 ## 10. Out of Scope
 
-- **Runtime layer creation** (useSigilMutation, CriticalZone, etc.) — Phase 2
-- **New features or capabilities** — This is debt cleanup only
-- **Component creation** — Gold registry is empty, that's acceptable
-- **Documentation overhaul** — Just path updates
+1. **MCP tools** — Using enhanced skills approach instead
+2. **Runtime layer expansion** — useMotion.ts already works
+3. **New library modules** — All 6 modules complete
+4. **Component generation** — Focus is on skill integration
+5. **UI/visual changes** — Agent-time only
 
 ---
 
-## 11. The Promise
+## 11. Dependencies
 
-After v9.1:
+### Internal Dependencies
+
+| Dependency | Status | Required For |
+|------------|--------|--------------|
+| `src/lib/sigil/` | ✅ Complete | All skills |
+| `src/hooks/useMotion.ts` | ✅ Complete | Generated code |
+| `grimoires/sigil/constitution.yaml` | ✅ Complete | Physics config |
+| `grimoires/sigil/authority.yaml` | ✅ Complete | Tier thresholds |
+
+### External Dependencies
+
+None — all dependencies are internal.
+
+---
+
+## 12. The Promise
+
+After v10.1:
 
 ```
-grep -r "sigil-mark" | wc -l
-0
+/craft "claim button for rewards"
 
-ls sigil-mark/
-ls: sigil-mark/: No such file or directory
+# Mason internally:
+# 1. inferIntent() → { mutation: true, financial: true }
+# 2. inferPhysicsFromEffect() → { sync: 'pessimistic', timing: 800 }
+# 3. findCanonical() → TransferButton.tsx (gold)
+# 4. analyzeAST() → { patterns: [...] }
+# 5. Generate with physics
+# 6. validateGeneration() → valid
 
-cat grimoires/sigil/constitution/physics.yaml | head -1
-# Sigil v9.1.0 - Physics Configuration
+# Output: Code with correct physics, no questions asked
 ```
 
-**The migration will be complete.**
+**The Three Laws in Action:**
+1. Authority from usage (findCanonical → gold tier)
+2. Physics from effect (financial mutation → pessimistic)
+3. Never interrupt flow (infer, don't ask)
 
 ---
 
 *PRD Generated: 2026-01-11*
-*Sources: MIGRATION_AUDIT_REPORT.md, FULL_TECHNICAL_AUDIT.md, migrate-to-grimoire.sh*
-*Key Insight: v9.0 was a partial rename. v9.1 completes the migration.*
-*Estimated Effort: 3 sprints, ~2-4 hours total*
+*Sources: sigil-v10.1-package.zip, CLAUDE.md, src/lib/sigil/*
+*Key Insight: The library is complete. Skills need to call it.*
