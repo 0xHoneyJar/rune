@@ -1,26 +1,29 @@
+---
+timeout_minutes: 15
+
+reads:
+  - path: "src/components/"
+    purpose: "Components to analyze for authority"
+  - path: "src/**/*.tsx"
+    purpose: "Import statements to count usage"
+
+outputs:
+  - path: "stdout"
+    description: "Authority report with Gold/Silver/Draft tiers"
+
+no_dialogs:
+  - "Should this be promoted?"
+  - "Pattern X reached threshold"
+  - "Do you want to approve?"
+---
+
 # Monitoring Patterns
 
 > "Patterns earn status through usage, not approval dialogs."
 
-## Purpose
-
-monitoring-patterns is the invisible governance skill for Sigil. It monitors pattern usage and reports component authority based on real usage data. No approval dialogs, no manual promotion—just usage-based authority.
-
----
-
-## No Dialogs Policy
-
-Gardener NEVER:
-- Asks "Should this be promoted?"
-- Shows "Pattern X reached threshold"
-- Interrupts with approval requests
-- Requires manual nomination
-
-Gardener DOES:
-- Silently analyze usage
-- Report authority tiers
-- Identify canonical patterns
-- Track component health
+<objective>
+Monitor component authority based on real usage metrics. Report Gold (10+ imports, 14+ days), Silver (5+ imports), and Draft tiers. Authority is computed from codebase usage, never from approval dialogs or manual promotion.
+</objective>
 
 ---
 

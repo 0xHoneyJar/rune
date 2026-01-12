@@ -1,30 +1,42 @@
+---
+timeout_minutes: 20
+
+reads:
+  - path: "src/components/"
+    purpose: "Find the problematic component"
+  - path: "src/**/*.tsx"
+    purpose: "Analyze component implementation"
+
+outputs:
+  - path: "stdout"
+    description: "Diagnosis with confidence % and solution code"
+
+never_ask:
+  - "Can you check the console?"
+  - "What browser are you using?"
+  - "Can you share more details?"
+  - "What did you expect to happen?"
+  - "Can you reproduce the error?"
+
+pattern_categories:
+  - hydration
+  - dialog
+  - performance
+  - layout-shift
+  - server-component
+  - react-19
+  - state
+  - async
+  - animation
+---
+
 # Debugging UI
 
 > "Never ask 'check the console'. Just diagnose."
 
-## Purpose
-
-debugging-ui is the debugging skill for Sigil. It matches user symptoms to known patterns and provides solutions without asking clarifying questions.
-
----
-
-## Never Ask
-
-**I NEVER ask these questions:**
-
-| Forbidden Question | What To Do Instead |
-|--------------------|--------------------|
-| "Can you check the console?" | Read the error pattern, provide solution |
-| "What browser are you using?" | Cover solutions for all browsers |
-| "Can you share more details?" | Match patterns, list possibilities |
-| "What did you expect to happen?" | Infer expected behavior from context |
-| "Can you reproduce the error?" | Trust their description |
-
-**Instead, I:**
-- Match symptoms to known patterns immediately
-- Provide solutions ranked by confidence
-- List multiple possibilities if unsure
-- Show code fixes, not debugging steps
+<objective>
+Debug UI issues by matching symptoms to known patterns. Provide solutions ranked by confidence without asking clarifying questions. Categories: hydration, dialog, performance, CLS, RSC, React 19, state, async, animation.
+</objective>
 
 ---
 

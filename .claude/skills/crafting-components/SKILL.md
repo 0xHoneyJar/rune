@@ -1,35 +1,34 @@
+---
+timeout_minutes: 30
+
+reads:
+  - path: ".claude/rules/sigil-physics.md"
+    purpose: "Effect → physics mapping, core physics table"
+  - path: "grimoires/sigil/constitution.yaml"
+    purpose: "Effect definitions, physics presets, protected capabilities"
+  - path: "examples/components/"
+    purpose: "Reference implementations (ClaimButton, LikeButton, etc.)"
+  - path: "src/components/"
+    purpose: "Existing codebase patterns to match"
+
+outputs:
+  - path: "src/components/**/*.tsx"
+    description: "Generated component with correct physics"
+
+no_questions:
+  - "What physics do you prefer?"
+  - "Should I use framer-motion or CSS?"
+  - "What animation timing?"
+  - "Do you want confirmation?"
+---
+
 # Crafting Components
 
 > "The codebase is the dataset. Usage is the authority."
 
-## Purpose
-
-crafting-components is the generation skill for Sigil. It generates UI components with correct physics, using context inferred from the codebase rather than configuration questions.
-
----
-
-## Required Reading
-
-**BEFORE generating ANY component, read these files:**
-
-1. **Physics Rules** — `.claude/rules/sigil-physics.md`
-   - Effect → physics mapping
-   - Core physics table
-   - Detection keywords
-
-2. **Constitution** — `grimoires/sigil/constitution.yaml`
-   - Effect definitions with keywords
-   - Physics presets (timing, sync, confirmation)
-   - Protected capabilities
-   - Product vocabulary
-
-3. **Examples** — `examples/components/`
-   - ClaimButton.tsx (financial mutation)
-   - DeleteButton.tsx (soft delete with undo)
-   - LikeButton.tsx (standard mutation)
-   - ThemeToggle.tsx (local state)
-
-**Reading these files BEFORE generation ensures correct physics are applied.**
+<objective>
+Generate UI components with correct design physics. Infer effect type from keywords (financial, destructive, standard, local) and apply appropriate sync strategy, timing, and confirmation patterns. Never ask implementation questions—infer from codebase.
+</objective>
 
 ---
 
