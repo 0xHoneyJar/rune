@@ -194,25 +194,25 @@ When a task requires specialized capabilities, invoke Sigil skills:
 
 | Skill | Purpose | Trigger |
 |-------|---------|---------|
-| **mason** | Generate components with physics | `/craft` |
-| **gardener** | Report pattern authority | `/garden` |
-| **diagnostician** | Debug UI issues | Problem descriptions |
+| **crafting-components** | Generate components with physics | `/craft` |
+| **monitoring-patterns** | Report pattern authority | `/garden` |
+| **debugging-ui** | Debug UI issues | Problem descriptions |
 
 ### When to Invoke Skills
 
 | Situation | Skill |
 |-----------|-------|
-| Generate new component | `[mason skill]` via `/craft` |
-| Check component health | `[gardener skill]` via `/garden` |
-| Debug flickering/broken UI | `[diagnostician skill]` |
-| Find canonical patterns | `[gardener skill]` |
+| Generate new component | `[crafting-components skill]` via `/craft` |
+| Check component health | `[monitoring-patterns skill]` via `/garden` |
+| Debug flickering/broken UI | `[debugging-ui skill]` |
+| Find canonical patterns | `[monitoring-patterns skill]` |
 
 ### Example: Complex Component
 
 ```
 User: /craft "multi-step onboarding wizard"
 
-Mason:
+crafting-components:
 1. Parses intent → wizard with multiple steps
 2. Determines physics per step:
    - Form steps: standard mutation (optimistic, 200ms)
@@ -226,7 +226,7 @@ Mason:
 ```
 User: "my dialog flickers on mobile"
 
-Diagnostician:
+debugging-ui:
 1. Keywords: dialog, flickers, mobile
 2. Pattern match: Hydration + Dialog issues
 3. Diagnosis: useMediaQuery causing SSR mismatch

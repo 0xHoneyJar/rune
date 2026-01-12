@@ -1,10 +1,10 @@
-# Gardener Skill
+# Monitoring Patterns
 
 > "Patterns earn status through usage, not approval dialogs."
 
 ## Purpose
 
-Gardener is the invisible governance skill for Sigil. It monitors pattern usage and reports component authority based on real usage data. No approval dialogs, no manual promotion—just usage-based authority.
+monitoring-patterns is the invisible governance skill for Sigil. It monitors pattern usage and reports component authority based on real usage data. No approval dialogs, no manual promotion—just usage-based authority.
 
 ---
 
@@ -173,13 +173,13 @@ done
 
 ## Skill Orchestration
 
-Gardener can invoke other skills:
+monitoring-patterns can invoke other Sigil skills:
 
 ```
-[mason skill] "generate using Gold patterns"
+[crafting-components skill] "generate using Gold patterns"
 → Generate with canonical patterns
 
-[diagnostician skill] "why is this component not Gold?"
+[debugging-ui skill] "why is this component not Gold?"
 → Diagnose adoption blockers
 ```
 
@@ -230,4 +230,4 @@ Scanned: 47 components in src/components/
 
 ---
 
-*Sigil v11.0.0 "Pure Craft"*
+*Sigil v11.1.0 "Pure Craft"*

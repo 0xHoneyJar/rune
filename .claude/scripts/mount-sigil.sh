@@ -25,7 +25,7 @@ SIGIL_HOME="${SIGIL_HOME:-$HOME/.sigil/sigil}"
 SIGIL_REPO="${SIGIL_REPO:-https://github.com/0xHoneyJar/sigil.git}"
 SIGIL_BRANCH="${SIGIL_BRANCH:-main}"
 VERSION_FILE=".sigil-version.json"
-SIGIL_VERSION="11.0.1"
+SIGIL_VERSION="11.1.0"
 AUTO_YES=false
 
 # === Argument Parsing ===
@@ -183,7 +183,7 @@ install_examples() {
 install_skills() {
   step "Installing Sigil skills..."
 
-  local skills=("mason" "gardener" "diagnostician")
+  local skills=("crafting-components" "monitoring-patterns" "debugging-ui")
   local installed=0
 
   for skill in "${skills[@]}"; do
@@ -239,7 +239,7 @@ EOF
 main() {
   echo ""
   log "======================================================================="
-  log "  Sigil v11.0.1 — Pure Craft"
+  log "  Sigil v11.1.0 — Pure Craft"
   log "  Design Physics for Code Generation"
   log "======================================================================="
   log "  Branch: $SIGIL_BRANCH"
@@ -261,7 +261,7 @@ main() {
   echo ""
   info "What was installed:"
   info "  .claude/rules/sigil-*.md   -> Physics (auto-discovered)"
-  info "  .claude/skills/            -> mason, gardener, diagnostician"
+  info "  .claude/skills/            -> crafting-components, monitoring-patterns, debugging-ui"
   info "  .claude/commands/          -> /craft, /garden"
   info "  grimoires/sigil/           -> Constitution config"
   info "  examples/                  -> Reference components"
@@ -271,10 +271,10 @@ main() {
   info "  CLAUDE.md                  -> Your existing file is preserved!"
   echo ""
   info "Usage:"
-  info "  /craft \"claim button\"      -> Mason generates with 800ms pessimistic"
-  info "  /craft \"like button\"       -> Mason generates with 200ms optimistic"
-  info "  /garden                    -> Gardener reports pattern authority"
-  info "  \"dialog flickers\"          -> Diagnostician debugs issues"
+  info "  /craft \"claim button\"      -> crafting-components generates with 800ms pessimistic"
+  info "  /craft \"like button\"       -> crafting-components generates with 200ms optimistic"
+  info "  /garden                    -> monitoring-patterns reports pattern authority"
+  info "  \"dialog flickers\"          -> debugging-ui diagnoses issues"
   echo ""
   info "Skills are prompt-based. No configuration needed."
   echo ""

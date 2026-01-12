@@ -223,13 +223,13 @@ vocabulary:
 
 Sigil ships with three skills that orchestrate specialized workflows:
 
-### Mason — Generation
+### crafting-components — Generation
 
 ```
 /craft "trustworthy claim button"
 ```
 
-Mason generates components with correct physics:
+crafting-components generates components with correct physics:
 1. Parses intent from natural language
 2. Determines effect type (financial, destructive, standard, local)
 3. Searches for canonical patterns in codebase
@@ -237,26 +237,26 @@ Mason generates components with correct physics:
 
 No questions asked. Physics inferred automatically.
 
-### Gardener — Governance
+### monitoring-patterns — Governance
 
 ```
 /garden
 ```
 
-Gardener reports on pattern authority:
+monitoring-patterns reports on pattern authority:
 - **Gold** (10+ imports, 14+ days): Canonical patterns
 - **Silver** (5+ imports): Established patterns
 - **Draft** (<5 imports): Experimental
 
 Authority is computed from usage, not configuration.
 
-### Diagnostician — Debugging
+### debugging-ui — Debugging
 
 ```
 "my dialog flickers on mobile"
 ```
 
-Diagnostician matches symptoms to patterns:
+debugging-ui matches symptoms to patterns:
 - Hydration mismatches
 - Dialog/modal issues
 - Performance problems
@@ -276,12 +276,12 @@ Never asks "check the console." Just diagnoses and provides solutions.
 │   ├── sigil-physics.md       # Core physics + detection rules
 │   └── sigil-examples.md      # Reference examples
 ├── skills/
-│   ├── mason/                 # Generation skill
-│   ├── gardener/              # Governance skill
-│   └── diagnostician/         # Debugging skill
+│   ├── crafting-components/   # Generation skill
+│   ├── monitoring-patterns/   # Governance skill
+│   └── debugging-ui/          # Debugging skill
 └── commands/
-    ├── craft.md               # /craft → mason
-    └── garden.md              # /garden → gardener
+    ├── craft.md               # /craft → crafting-components
+    └── garden.md              # /garden → monitoring-patterns
 
 grimoires/sigil/
 └── constitution.yaml          # Effects, authority, vocabulary
@@ -312,4 +312,4 @@ A sigil is a symbolic representation of intent—a mark that carries meaning bey
 
 ---
 
-*Sigil v11.0.0 "Pure Craft"*
+*Sigil v11.1.0 "Pure Craft"*

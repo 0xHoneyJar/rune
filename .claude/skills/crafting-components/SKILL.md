@@ -1,10 +1,10 @@
-# Mason Skill
+# Crafting Components
 
 > "The codebase is the dataset. Usage is the authority."
 
 ## Purpose
 
-Mason is the generation skill for Sigil. It generates UI components with correct physics, using context inferred from the codebase rather than configuration questions.
+crafting-components is the generation skill for Sigil. It generates UI components with correct physics, using context inferred from the codebase rather than configuration questions.
 
 ---
 
@@ -245,13 +245,13 @@ export function ClaimButton({ poolId, amount, onSuccess }) {
 
 ## Skill Orchestration
 
-For complex tasks, Mason can invoke other skills:
+For complex tasks, crafting-components can invoke other Sigil skills:
 
 ```
-[diagnostician skill] "dialog flickers on mobile"
+[debugging-ui skill] "dialog flickers on mobile"
 → Debug UI issues with pattern matching
 
-[gardener skill]
+[monitoring-patterns skill]
 → Check component authority, run governance
 ```
 
@@ -272,4 +272,4 @@ When generating, verify protected capabilities are not blocked.
 
 ---
 
-*Sigil v11.0.0 "Pure Craft"*
+*Sigil v11.1.0 "Pure Craft"*

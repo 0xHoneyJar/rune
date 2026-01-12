@@ -1,10 +1,10 @@
-# Diagnostician Skill
+# Debugging UI
 
 > "Never ask 'check the console'. Just diagnose."
 
 ## Purpose
 
-Diagnostician is the debugging skill for Sigil. It matches user symptoms to known patterns and provides solutions without asking clarifying questions.
+debugging-ui is the debugging skill for Sigil. It matches user symptoms to known patterns and provides solutions without asking clarifying questions.
 
 ---
 
@@ -377,16 +377,16 @@ if (!mounted) return <DialogSkeleton />;
 
 ## Skill Orchestration
 
-Diagnostician can invoke other skills:
+debugging-ui can invoke other Sigil skills:
 
 ```
-[mason skill] "fix and regenerate component"
+[crafting-components skill] "fix and regenerate component"
 → Generate fixed version with correct patterns
 
-[gardener skill] "is there a Gold pattern for this?"
+[monitoring-patterns skill] "is there a Gold pattern for this?"
 → Find canonical implementation to reference
 ```
 
 ---
 
-*Sigil v11.0.0 "Pure Craft"*
+*Sigil v11.1.0 "Pure Craft"*
