@@ -104,7 +104,7 @@ export const DEFAULT_VOCABULARY: Vocabulary = {
 /**
  * Default path to the vocabulary file.
  */
-export const DEFAULT_VOCABULARY_PATH = 'sigil-mark/vocabulary/vocabulary.yaml';
+export const DEFAULT_VOCABULARY_PATH = 'grimoires/sigil/constitution/vocabulary.yaml';
 
 // =============================================================================
 // VALIDATION

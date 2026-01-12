@@ -127,7 +127,7 @@ export interface Moodboard {
 /**
  * Default path to the moodboard directory.
  */
-export const DEFAULT_MOODBOARD_PATH = 'sigil-mark/moodboard';
+export const DEFAULT_MOODBOARD_PATH = 'grimoires/sigil/moodboard';
 
 /**
  * Maximum directory scan depth.

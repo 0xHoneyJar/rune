@@ -46,7 +46,7 @@ export interface PolishOptions {
   severity?: 'error' | 'warning' | 'info';
   /** Use colors in output */
   color?: boolean;
-  /** Base path for sigil-mark */
+  /** Base path for grimoire */
   basePath?: string;
 }
 
@@ -189,7 +189,7 @@ export async function polish(options: PolishOptions = {}): Promise<PolishResult>
  * Run polish in check mode (for pre-commit/CI).
  *
  * @param staged - Check only staged files
- * @param basePath - Base path for sigil-mark
+ * @param basePath - Base path for grimoire
  * @returns Polish result
  */
 export async function polishCheck(staged = false, basePath?: string): Promise<PolishResult> {
@@ -205,7 +205,7 @@ export async function polishCheck(staged = false, basePath?: string): Promise<Po
  * Run polish and apply fixes.
  *
  * @param files - Files to polish
- * @param basePath - Base path for sigil-mark
+ * @param basePath - Base path for grimoire
  * @returns Polish result
  */
 export async function polishApply(

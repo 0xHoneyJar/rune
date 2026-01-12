@@ -1,21 +1,21 @@
 name: gardening-entropy
-version: "4.0.0"
-description: "Context health monitoring with drift detection and validation. v4.0 Sharp Tools."
+version: "9.1.0"
+description: "Context health monitoring with drift detection and validation. v9.1 Migration Debt Zero."
 role: "Health Monitor"
 command: /garden
 outputs:
-  - grimoires/sigil/reports/garden-{date}.yaml
+  - grimoires/sigil/state/reports/garden-{date}.yaml
 reads:
   - grimoires/sigil/moodboard/README.md
   - grimoires/sigil/constitution/constitution.yaml
-  - sigil-mark/personas/personas.yaml
-  - sigil-mark/evidence/
-  - sigil-mark/.sigil-observations/feedback/
-  - sigil-mark/consultation-chamber/decisions/
+  - grimoires/sigil/constitution/personas.yaml
+  - grimoires/sigil/moodboard/evidence/
+  - grimoires/sigil/state/feedback/
+  - grimoires/sigil/state/decisions/
   - .sigilrc.yaml
 
 prerequisites:
-  - sigil_mark_exists
+  - grimoire_exists
 tags:
   - garden
   - health

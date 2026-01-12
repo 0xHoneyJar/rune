@@ -12,7 +12,7 @@ examples:
 inputs: []
 
 outputs:
-  - path: sigil-mark/rules.md
+  - path: grimoires/sigil/constitution/rules.md
     description: Design rules organized by category
   - path: .sigilrc.yaml
     description: Updated zone definitions

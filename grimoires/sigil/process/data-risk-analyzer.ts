@@ -115,7 +115,7 @@ let constitutionCache: ConstitutionData | null = null;
  * Load constitution data from YAML.
  * Caches result for subsequent calls.
  *
- * @param basePath - Base path to sigil-mark (defaults to auto-detection)
+ * @param basePath - Base path to grimoire (defaults to auto-detection)
  * @returns Constitution data
  *
  * @internal
@@ -323,7 +323,7 @@ function isUtilityType(type: string): boolean {
  * Look up a type in the constitution to get its physics class.
  *
  * @param typeName - Type name to look up
- * @param basePath - Base path to sigil-mark (optional)
+ * @param basePath - Base path to grimoire (optional)
  * @returns Type lookup result
  *
  * @example
@@ -383,7 +383,7 @@ const RISK_LEVELS: Record<PhysicsClass, number> = {
  * Resolve the highest-risk physics class from multiple types.
  *
  * @param types - Array of type names
- * @param basePath - Base path to sigil-mark (optional)
+ * @param basePath - Base path to grimoire (optional)
  * @returns Resolved data physics with highest risk
  *
  * @example
@@ -486,7 +486,7 @@ export function resolveDataPhysics(types: string[], basePath?: string): Resolved
  * Analyze a function signature and resolve physics.
  *
  * @param signature - TypeScript function signature
- * @param basePath - Base path to sigil-mark (optional)
+ * @param basePath - Base path to grimoire (optional)
  * @returns Resolved data physics
  *
  * @example
@@ -508,7 +508,7 @@ export function analyzeSignaturePhysics(signature: string, basePath?: string): R
  * Convenience wrapper around resolveDataPhysics.
  *
  * @param dataType - Data type name
- * @param basePath - Base path to sigil-mark (optional)
+ * @param basePath - Base path to grimoire (optional)
  * @returns Resolved data physics
  *
  * @example
@@ -526,7 +526,7 @@ export function getPhysicsForDataType(dataType: string, basePath?: string): Reso
  * Convenience wrapper around resolveDataPhysics.
  *
  * @param dataTypes - Array of data type names
- * @param basePath - Base path to sigil-mark (optional)
+ * @param basePath - Base path to grimoire (optional)
  * @returns Resolved data physics (highest risk wins)
  *
  * @example
@@ -543,7 +543,7 @@ export function getPhysicsForDataTypes(dataTypes: string[], basePath?: string): 
  * Check if a type is known in the constitution.
  *
  * @param typeName - Type name to check
- * @param basePath - Base path to sigil-mark (optional)
+ * @param basePath - Base path to grimoire (optional)
  * @returns True if type is in constitution
  *
  * @example
@@ -561,7 +561,7 @@ export function isKnownDataType(typeName: string, basePath?: string): boolean {
 /**
  * Get all known data types from constitution.
  *
- * @param basePath - Base path to sigil-mark (optional)
+ * @param basePath - Base path to grimoire (optional)
  * @returns All known data types by category
  */
 export function getAllKnownDataTypes(basePath?: string): Record<DataCategory, string[]> {

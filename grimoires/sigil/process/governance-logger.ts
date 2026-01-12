@@ -67,7 +67,7 @@ export interface AmendmentProposal {
  * Options for negotiation.
  */
 export interface NegotiationOptions {
-  /** Base path for sigil-mark */
+  /** Base path for grimoire */
   basePath?: string;
   /** Override author name */
   author?: string;
@@ -99,7 +99,7 @@ export interface ViolationContext {
  * Get governance directory path.
  */
 function getGovernancePath(basePath: string = process.cwd()): string {
-  return join(basePath, 'sigil-mark/governance');
+  return join(basePath, 'grimoires/sigil/state');
 }
 
 /**
@@ -268,7 +268,7 @@ export function generateOverrideComment(
 /**
  * Generate unique amendment ID.
  *
- * @param basePath - Base path for sigil-mark
+ * @param basePath - Base path for grimoire
  * @returns Amendment ID like AMEND-2026-001
  */
 export function generateAmendmentId(basePath: string = process.cwd()): string {

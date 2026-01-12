@@ -1,9 +1,10 @@
-# Sigil v6.1 — Merge-Driven Gardener
+# Sigil v9.1 — Merge-Driven Gardener
 #
 # Runs pattern gardening on every push/merge to main.
 # Scans for @sigil-pattern tags and updates survival.json.
 #
 # v6.1: Replaces weekly cron with merge-driven CI for <5 min latency.
+# v9.1: Updated paths from sigil-mark/ to grimoires/sigil/
 
 name: Sigil Gardener
 
@@ -14,8 +15,8 @@ on:
     paths:
       - 'src/**/*.tsx'
       - 'src/**/*.ts'
-      - 'sigil-mark/**/*.tsx'
-      - 'sigil-mark/**/*.ts'
+      - 'grimoires/sigil/**/*.tsx'
+      - 'grimoires/sigil/**/*.ts'
 
   # Also run on merged PRs to main
   pull_request:
@@ -45,16 +46,13 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: sigil-mark/package-lock.json
 
       - name: Install dependencies
-        run: |
-          cd sigil-mark
-          npm ci
+        run: npm ci
 
       - name: Run Gardener
         run: |
-          npx tsx sigil-mark/process/garden-command.ts
+          npx tsx grimoires/sigil/process/garden-command.ts
 
       - name: Check for changes
         id: check_changes

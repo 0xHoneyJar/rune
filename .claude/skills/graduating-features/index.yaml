@@ -18,5 +18,5 @@ inputs:
     description: Feature name or ID to graduate
 
 outputs:
-  - path: sigil-mark/canon/graduated/{feature}.yaml
+  - path: grimoires/sigil/state/canon/graduated/{feature}.yaml
     description: Graduated feature record in Living Canon

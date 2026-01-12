@@ -154,7 +154,7 @@ export const DEFAULT_PHILOSOPHY: Philosophy = {
 /**
  * Default path to the philosophy file.
  */
-export const DEFAULT_PHILOSOPHY_PATH = 'sigil-mark/soul-binder/philosophy.yaml';
+export const DEFAULT_PHILOSOPHY_PATH = 'grimoires/sigil/constitution/philosophy.yaml';
 
 // =============================================================================
 // VALIDATION

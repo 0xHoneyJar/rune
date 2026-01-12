@@ -25,5 +25,5 @@ inputs:
     description: Domain for monitor selection (defi, creative, community, games)
 
 outputs:
-  - path: sigil-mark/proving-grounds/active/{feature}.yaml
+  - path: grimoires/sigil/state/proving-grounds/active/{feature}.yaml
     description: Proving status record with monitors and tracking

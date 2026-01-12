@@ -4,10 +4,10 @@ description: "Concept approval before building. Distinguishes concept from execu
 role: "Concept Gatekeeper"
 command: /greenlight
 outputs:
-  - sigil-mark/memory/decisions/*.yaml
+  - grimoires/sigil/state/decisions/*.yaml
 reads:
-  - sigil-mark/resonance/essence.yaml
-  - sigil-mark/taste-key/holder.yaml
+  - grimoires/sigil/moodboard/essence.yaml
+  - .sigil/taste-key.yaml
 
 prerequisites:
-  - sigil_mark_exists
+  - grimoire_exists

@@ -1,5 +1,5 @@
 /**
- * Sigil v7.6 - useMotion Hook
+ * Sigil v9.1 - useMotion Hook
  *
  * Motion physics as executable code. Replaces markdown principles
  * with type-safe, agent-queryable motion configurations.

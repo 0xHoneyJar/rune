@@ -31,7 +31,7 @@ import {
 
 /** Options for the amend command */
 export interface AmendOptions {
-  /** Base path for sigil-mark */
+  /** Base path for grimoire */
   basePath?: string;
   /** Proposer name */
   author?: string;
@@ -68,7 +68,7 @@ export interface AmendResult {
  *
  * @example
  * ```typescript
- * import { amend } from 'sigil-mark/process';
+ * import { amend } from '@sigil-context/process';
  *
  * const result = amend(
  *   'constitution.financial.forbidden[0]',
@@ -107,7 +107,7 @@ export function amend(
       success: true,
       proposal,
       proposalId: proposal.id,
-      proposalPath: `sigil-mark/governance/amendments/${proposal.id}.yaml`,
+      proposalPath: `grimoires/sigil/state/amendments/${proposal.id}.yaml`,
     };
   } catch (error) {
     return {

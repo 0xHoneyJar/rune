@@ -1,10 +1,10 @@
 name: crafting-components
-description: Generate UI components using zone-appropriate recipes (Sigil v1.2.4)
-version: "1.2.4"
+description: Generate UI components using zone-appropriate physics (Sigil v9.1)
+version: "9.1.0"
 command: /craft
 
 role: "Apprentice Smith"
-role_description: "Generates components using recipes. No raw physics outside sandbox."
+role_description: "Generates components using physics. No raw physics outside sandbox."
 
 outputs: []  # Generates code, not state files
 
@@ -12,16 +12,14 @@ reads:
   # Zone config
   - .sigilrc.yaml
   - src/**/.sigilrc.yaml
-  # Recipes
-  - sigil-mark/recipes/decisive/*.tsx
-  - sigil-mark/recipes/machinery/*.tsx
-  - sigil-mark/recipes/glass/*.tsx
-  # Core
-  - sigil-mark/core/zone-resolver.ts
-  - sigil-mark/hooks/useServerTick.ts
+  # Gold components
+  - src/components/gold/**/*.tsx
+  # Physics
+  - src/components/gold/hooks/useMotion.ts
+  - grimoires/sigil/constitution/physics.yaml
 
 prerequisites:
-  - sigil_mark_exists
+  - grimoire_exists
 
 context_injection: true
 

@@ -12,41 +12,31 @@ examples:
 inputs: []
 
 outputs:
-  # Core state zone
-  - path: sigil-mark/core/sync.yaml
-    description: Temporal Governor (tick modes, sync authority)
-  - path: sigil-mark/core/budgets.yaml
-    description: Cognitive, visual, complexity budgets
-  - path: sigil-mark/core/fidelity.yaml
+  # Constitution layer
+  - path: grimoires/sigil/constitution/physics.yaml
+    description: Motion timing and sync strategies
+  - path: grimoires/sigil/constitution/fidelity.yaml
     description: Fidelity Ceiling (Mod Ghost Rule)
-  - path: sigil-mark/core/lens.yaml
-    description: Lens Registry (rendering layers)
+  - path: grimoires/sigil/constitution/vocabulary.yaml
+    description: Term → zone/physics mapping
+  - path: grimoires/sigil/constitution/workflow.yaml
+    description: Team methodology rules
 
-  # Resonance layer
-  - path: sigil-mark/resonance/materials.yaml
-    description: Clay, Machinery, Glass physics
-  - path: sigil-mark/resonance/zones.yaml
-    description: Path-based zone definitions
-  - path: sigil-mark/resonance/tensions.yaml
-    description: Tuning sliders (playfulness, weight, density, speed)
-  - path: sigil-mark/resonance/essence.yaml
+  # Moodboard layer
+  - path: grimoires/sigil/moodboard/evidence/
+    description: Evidence screenshots and artifacts
+  - path: grimoires/sigil/moodboard/essence.yaml
     description: Product soul (populated by /envision)
 
-  # Memory layer
-  - path: sigil-mark/memory/eras/era-1.yaml
-    description: Era versioning template
-  - path: sigil-mark/memory/decisions/
+  # State layer
+  - path: grimoires/sigil/state/decisions/
     description: Decision records
-  - path: sigil-mark/memory/mutations/active/
-    description: Active mutations
-  - path: sigil-mark/memory/graveyard/
-    description: Deprecated decisions
+  - path: grimoires/sigil/state/eras/era-1.yaml
+    description: Era versioning template
 
   # Taste Key
-  - path: sigil-mark/taste-key/holder.yaml
+  - path: .sigil/taste-key.yaml
     description: Taste Key authority definition
-  - path: sigil-mark/taste-key/rulings/
-    description: Taste Key rulings directory
 
   # Configuration
   - path: .sigilrc.yaml

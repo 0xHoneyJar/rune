@@ -121,7 +121,7 @@ let vocabularyCachePath: string | null = null;
  * @param projectRoot - Project root directory
  */
 export function loadVocabulary(projectRoot: string = process.cwd()): Vocabulary {
-  const vocabPath = `${projectRoot}/sigil-mark/vocabulary/vocabulary.yaml`;
+  const vocabPath = `${projectRoot}/grimoires/sigil/constitution/vocabulary.yaml`;
 
   // Return cached if same path
   if (vocabularyCache && vocabularyCachePath === vocabPath) {

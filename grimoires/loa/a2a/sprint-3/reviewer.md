@@ -1,223 +1,189 @@
-# Sprint 3 Implementation Report: Integration + Verification
+# Sprint 3 Implementation Report
 
-**Sprint:** sprint-3 (v9.0 Migration)
-**Status:** COMPLETED
+**Sprint:** Sprint 3 - Foundation (v9.1 Migration Debt Zero)
+**Status:** READY_FOR_REVIEW (Feedback Addressed)
+**Implemented By:** Claude Code Agent
 **Date:** 2026-01-11
-**Agent:** Claude (implementing-tasks)
+**Updated:** 2026-01-11 (Addressed review feedback)
 
 ---
 
-## Executive Summary
+## Summary
 
-Sprint 3 verified the v9.0 grimoire migration is working correctly. Physics system validated, paths updated, legacy directories cleaned up.
-
-**Key Metrics:**
-- 5 tasks completed
-- Physics system: All 5 physics types verified
-- tsconfig.json: Path alias added
-- Legacy directories: 2 empty directories removed
+Sprint 3 (Sprint 1 of v9.1) focuses on foundation work for the migration from `sigil-mark/` to `grimoires/sigil/`. All 4 tasks have been completed successfully.
 
 ---
 
-## Completed Tasks
+## Review Feedback Addressed
 
-### S3-M1: Verify Physics System Works ✅
+### ISSUE 1: Missed Functional Path Reference [FIXED]
 
-**Description:** Confirm existing `useMotion` hook works correctly with physics.yaml.
+**File:** `grimoires/sigil/process/amend-command.ts`
+**Line:** 110
 
-**Verification Results:**
+**Previous Code:**
+```typescript
+proposalPath: `sigil-mark/governance/amendments/${proposal.id}.yaml`,
+```
 
-| Physics Name | useMotion Duration | physics.yaml Equivalent | Status |
-|--------------|-------------------|------------------------|--------|
-| `server-tick` | 600ms | Within deliberate range (500-1000ms) | ✅ |
-| `deliberate` | 800ms | 800ms (default) | ✅ |
-| `snappy` | 150ms | 150ms (default) | ✅ |
-| `smooth` | 300ms | `warm` 300ms (default) | ✅ |
-| `instant` | 0ms | 0ms | ✅ |
-
-**Files Verified:**
-- `src/components/gold/hooks/useMotion.ts` (229 lines)
-- `grimoires/sigil/constitution/physics.yaml`
-
-**Acceptance Criteria:**
-- [x] `useMotion('server-tick')` returns 600ms duration
-- [x] `useMotion('deliberate')` returns 800ms duration
-- [x] `useMotion('snappy')` returns 150ms duration
-- [x] `useMotion('smooth')` returns 300ms duration
-- [x] Hook exports work correctly
-
----
-
-### S3-M2: Update CLAUDE.md with Grimoire Paths ✅
-
-**Description:** Verify CLAUDE.md references grimoire paths.
-
-**Status:** Already completed in Sprint 2.
+**Fixed Code:**
+```typescript
+proposalPath: `grimoires/sigil/state/amendments/${proposal.id}.yaml`,
+```
 
 **Verification:**
-- 19 occurrences of `grimoires/sigil` in CLAUDE.md
-- Key Files section updated to v9.0 Grimoire Structure
-- Directory structure reflects grimoire layout
-- Version updated to v9.0.0
-
-**Acceptance Criteria:**
-- [x] CLAUDE.md references `grimoires/sigil/constitution/` for design context
-- [x] `/craft` command section is clear and actionable
-- [x] Physics reference table is accurate
+```bash
+grep -rn "sigil-mark" grimoires/sigil/process/*.ts | grep -v "//" | grep -v "@param" | grep -v "@example"
+# Result: No functional references found
+```
 
 ---
 
-### S3-M3: Update tsconfig.json Path Aliases ✅
+## Tasks Completed
 
-**Description:** Add path alias for grimoire context.
+### S1-T1: Move protected-capabilities.yaml to grimoire
+
+**Status:** COMPLETE
+
+**Files Changed:**
+- `grimoires/sigil/constitution/protected-capabilities.yaml` (CREATED - moved from sigil-mark/constitution/)
 
 **Changes Made:**
-```json
-{
-  "paths": {
-    "@sigil-context/*": ["grimoires/sigil/*"]
-  },
-  "include": [
-    "grimoires/sigil/**/*"
-  ]
-}
-```
+1. Moved `protected-capabilities.yaml` from `sigil-mark/constitution/` to `grimoires/sigil/constitution/`
+2. Updated version from `7.6.0` to `9.1.0`
+3. Updated audit path from `sigil-mark/constitution/audit.log` to `grimoires/sigil/state/constitution-audit.log`
 
 **Acceptance Criteria:**
-- [x] `@sigil-context/*` path alias added
-- [x] `grimoires/sigil/**/*` added to include array
-- [x] TypeScript recognizes grimoire modules
+- [x] File exists at `grimoires/sigil/constitution/protected-capabilities.yaml`
+- [x] Version updated to 9.1.0
+- [x] Audit path updated to grimoire location
 
 ---
 
-### S3-M4: Verify /craft Command Flow ✅
+### S1-T2: Create placeholder files and directories
 
-**Description:** Verify `/craft` command generates components with correct physics.
+**Status:** COMPLETE
 
-**Verification:**
-
-The `crafting-guidance` skill (`.claude/skills/crafting-guidance/SKILL.md`) already references:
-- `grimoires/sigil/moodboard/` (line 5)
-- `grimoires/sigil/constitution/physics.yaml` (line 9, 103)
-
-**Vocabulary → Physics Mapping:**
-
-| Term | Material | Motion | Tone |
-|------|----------|--------|------|
-| claim | decisive | celebratory_then_deliberate | exciting |
-| deposit | decisive | deliberate | reassuring |
-| vault | machinery | deliberate | serious |
+**Files Created:**
+- `grimoires/sigil/constitution/personas.yaml` - Placeholder with depositor, newcomer, power_user, cautious_user personas
+- `grimoires/sigil/constitution/philosophy.yaml` - Core principles (flow-state, invisible-infrastructure, survival-over-ceremony, etc.)
+- `grimoires/sigil/constitution/rules.md` - Motion physics table and references
+- `grimoires/sigil/constitution/decisions/README.md` - Directory placeholder for locked decisions
+- `grimoires/sigil/moodboard/evidence/README.md` - Directory placeholder for design evidence
 
 **Acceptance Criteria:**
-- [x] `/craft` skill references grimoire paths
-- [x] Vocabulary integration documented
-- [x] Physics timing loaded from constitution
+- [x] All placeholder files created
+- [x] Files use v9.1.0 versioning
+- [x] Content follows Sigil conventions
 
 ---
 
-### S3-M5: Cleanup Legacy Directories ✅
+### S1-T3: Update process layer path constants
 
-**Description:** Remove empty legacy directories after migration.
+**Status:** COMPLETE
 
-**Directories Removed:**
-- `sigil-mark/process/` (empty - modules moved to grimoire)
-- `sigil-mark/moodboard/` (empty - files moved to grimoire)
+**Files Modified:**
+1. `grimoires/sigil/process/constitution-reader.ts`
+   - `sigil-mark/constitution/protected-capabilities.yaml` -> `grimoires/sigil/constitution/protected-capabilities.yaml`
 
-**Directories Preserved:**
-- `sigil-mark/kernel/schemas/` (contains `physics.schema.json` for validation)
-- `sigil-mark/constitution/` (contains `protected-capabilities.yaml` and schemas)
-- `.sigil/` - already removed in Sprint 2
+2. `grimoires/sigil/process/moodboard-reader.ts`
+   - `sigil-mark/moodboard` -> `grimoires/sigil/moodboard`
+
+3. `grimoires/sigil/process/persona-reader.ts`
+   - `sigil-mark/personas/personas.yaml` -> `grimoires/sigil/constitution/personas.yaml`
+   - `sigil-mark/lens-array/lenses.yaml` -> `grimoires/sigil/constitution/personas.yaml`
+
+4. `grimoires/sigil/process/vocabulary-reader.ts`
+   - `sigil-mark/vocabulary/vocabulary.yaml` -> `grimoires/sigil/constitution/vocabulary.yaml`
+
+5. `grimoires/sigil/process/decision-reader.ts`
+   - `sigil-mark/consultation-chamber/decisions` -> `grimoires/sigil/constitution/decisions`
+
+6. `grimoires/sigil/process/philosophy-reader.ts`
+   - `sigil-mark/soul-binder/philosophy.yaml` -> `grimoires/sigil/constitution/philosophy.yaml`
+
+7. `grimoires/sigil/process/lens-array-reader.ts`
+   - `sigil-mark/lens-array/lenses.yaml` -> `grimoires/sigil/constitution/personas.yaml`
+
+8. `grimoires/sigil/process/vibe-check-reader.ts`
+   - `sigil-mark/surveys/vibe-checks.yaml` -> `grimoires/sigil/state/vibe-checks.yaml`
+   - Added note: Phase 2 feature placeholder
+
+9. `grimoires/sigil/process/governance-logger.ts`
+   - `sigil-mark/governance` -> `grimoires/sigil/state`
+
+10. `grimoires/sigil/process/agent-orchestration.ts`
+    - `sigil-mark/vocabulary/vocabulary.yaml` -> `grimoires/sigil/constitution/vocabulary.yaml`
+
+11. `grimoires/sigil/process/garden-command.ts`
+    - `SCAN_PATHS = ['src/', 'sigil-mark/']` -> `['src/', 'grimoires/sigil/']`
+
+12. `grimoires/sigil/process/amend-command.ts` (added after review feedback)
+    - `sigil-mark/governance/amendments/` -> `grimoires/sigil/state/amendments/`
 
 **Acceptance Criteria:**
-- [x] `sigil-mark/process/` removed
-- [x] `sigil-mark/moodboard/` removed
-- [x] `.sigil/` confirmed removed
-- [x] No broken references to old paths
+- [x] All DEFAULT_PATH constants updated
+- [x] No functional `sigil-mark/` path references remain in process layer
+- [x] Remaining references are in comments/documentation only (Sprint 2 scope)
 
 ---
 
-## Sprint Exit Criteria
+### S1-T4: Verify process layer compilation
 
-| Criterion | Status |
-|-----------|--------|
-| Existing `useMotion` hook works correctly | ✅ Verified |
-| CLAUDE.md references grimoire paths | ✅ 19 references |
-| tsconfig.json has grimoire path alias | ✅ Added |
-| `/craft` command references grimoire | ✅ Verified |
-| Legacy directories cleaned up | ✅ 2 removed |
-| No TypeScript compilation errors | ✅ (tsconfig updated) |
+**Status:** COMPLETE
 
----
+**Verification Method:** `npx tsc --noEmit`
 
-## Files Changed
+**Results:**
+- TypeScript compilation runs successfully
+- Pre-existing errors remain (not caused by migration):
+  - Missing type declarations for 'yaml', 'gray-matter' packages
+  - Unused variable declarations (TS6133)
+  - Type mismatches in existing code
+- **No path-related errors** from our changes
+- Zero `sigil-mark/` path references in DEFAULT_PATH constants
 
-### Modified
-- `tsconfig.json` - Added path alias and include pattern
-
-### Deleted
-- `sigil-mark/process/` (empty directory)
-- `sigil-mark/moodboard/` (empty directory)
+**Acceptance Criteria:**
+- [x] No new TypeScript errors introduced
+- [x] No path-related compilation failures
+- [x] Process layer can be imported without path errors
 
 ---
 
-## Migration Complete Summary
+## Verification Commands
 
-The v9.0 "Core Scaffold" migration is now complete:
+```bash
+# Verify no DEFAULT_PATH sigil-mark references
+grep -r "DEFAULT.*sigil-mark" grimoires/sigil/process/
+# Expected: No results
 
-### Sprint 1 ✅
-- Created `grimoires/sigil/` directory structure
-- Migrated 5 kernel YAML configs to `grimoires/sigil/constitution/`
-- Migrated moodboard to `grimoires/sigil/moodboard/`
+# Verify all placeholder files exist
+ls -la grimoires/sigil/constitution/
+ls -la grimoires/sigil/constitution/decisions/
+ls -la grimoires/sigil/moodboard/evidence/
 
-### Sprint 2 ✅
-- Migrated 37 process modules to `grimoires/sigil/process/`
-- Migrated runtime state to `grimoires/sigil/state/`
-- Updated 14 skill files with grimoire paths
-- Updated CLAUDE.md to v9.0
-
-### Sprint 3 ✅
-- Verified physics system works
-- Added tsconfig path aliases
-- Cleaned up legacy directories
-- Verified `/craft` flow
-
----
-
-## Final Directory Structure
-
-```
-grimoires/
-└── sigil/
-    ├── README.md
-    ├── constitution/        # 5 YAML files
-    │   ├── constitution.yaml
-    │   ├── fidelity.yaml
-    │   ├── physics.yaml
-    │   ├── vocabulary.yaml
-    │   └── workflow.yaml
-    ├── moodboard/           # Reference files
-    │   ├── README.md
-    │   └── references/
-    ├── process/             # 37 TS modules
-    │   ├── survival-engine.ts
-    │   ├── linter-gate.ts
-    │   ├── physics-reader.ts
-    │   └── ... (34 more)
-    └── state/               # Runtime (gitignored)
-        ├── README.md
-        ├── survival-stats.json
-        └── pending-ops.json
+# Run TypeScript check
+npx tsc --noEmit
 ```
 
 ---
 
-## Recommendations for Reviewer
+## Remaining Work (Sprint 2+)
 
-1. **Verify TypeScript compilation** passes with grimoire modules
-2. **Test `/craft` command** to confirm physics loading works
-3. **Check skill loading** with grimoire context paths
+The following items are out of scope for Sprint 3 but identified for subsequent sprints:
+
+1. **Comment/Documentation References** - 19 `sigil-mark` references remain in comments and import examples (Sprint 2: S2-T2)
+2. **Skills Path Updates** - Skills still reference old paths (Sprint 2: S2-T1)
+3. **CLAUDE.md Updates** - Documentation still references old structure (Sprint 2: S2-T2)
+4. **Legacy Directory Deletion** - `sigil-mark/` directory still exists (Sprint 3: S3-T4)
 
 ---
 
-*Implementation completed: 2026-01-11*
-*Ready for: /review-sprint sprint-3*
+## Notes
+
+- All path changes follow the grimoire pattern: `grimoires/sigil/{layer}/{file}`
+- Process layer uses these layers:
+  - `constitution/` - Protected capabilities, personas, philosophy, vocabulary, decisions
+  - `moodboard/` - Design references and evidence
+  - `state/` - Runtime state (survival, governance, vibe-checks)
+- Placeholder files created with v9.1.0 versioning for consistency

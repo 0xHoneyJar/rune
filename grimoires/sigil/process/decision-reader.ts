@@ -112,7 +112,7 @@ export const LOCK_PERIODS: Record<DecisionScope, number> = {
 /**
  * Default path to the decisions directory.
  */
-export const DEFAULT_DECISIONS_PATH = 'sigil-mark/consultation-chamber/decisions';
+export const DEFAULT_DECISIONS_PATH = 'grimoires/sigil/constitution/decisions';
 
 // =============================================================================
 // VALIDATION

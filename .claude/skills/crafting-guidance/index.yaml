@@ -1,6 +1,6 @@
 name: crafting-guidance
 description: Provide design guidance with value/flaw/lens awareness during implementation
-version: "0.3.1"
+version: "9.1.0"
 
 triggers:
   - "/craft"
@@ -23,10 +23,12 @@ inputs:
 
 outputs: []
 
+# v9.1: Removed phantom file references (soul-binder, lens-array don't exist)
+# Context now loaded from grimoires/sigil/constitution/ via process layer
 checks:
-  - path: sigil-mark/soul-binder/immutable-values.yaml
-    description: Check for value violations
-  - path: sigil-mark/soul-binder/canon-of-flaws.yaml
-    description: Check for protected flaw impacts
-  - path: sigil-mark/lens-array/lenses.yaml
-    description: Check for lens constraint violations
+  - path: grimoires/sigil/constitution/protected-capabilities.yaml
+    description: Check for protected capability violations
+  - path: grimoires/sigil/constitution/vocabulary.yaml
+    description: Check vocabulary term consistency
+  - path: grimoires/sigil/constitution/physics.yaml
+    description: Check physics timing constraints

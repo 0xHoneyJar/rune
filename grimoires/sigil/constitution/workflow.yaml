@@ -195,7 +195,7 @@ governance:
 
   # Log workflow violations
   log_violations: true
-  log_path: sigil-mark/governance/workflow-violations.log
+  log_path: grimoires/sigil/state/workflow-violations.log
 
   # Allow overrides with justification
   override_allowed: true

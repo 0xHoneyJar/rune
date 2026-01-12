@@ -131,7 +131,7 @@ export interface SurvivalScanResult {
  *
  * @example
  * ```typescript
- * import { garden } from 'sigil-mark/process';
+ * import { garden } from '@sigil-context/process';
  *
  * const result = await garden();
  * console.log(`Health: ${result.healthScore}%`);
@@ -216,7 +216,7 @@ export async function garden(options: GardenOptions = {}): Promise<GardenResult>
  *
  * @example
  * ```typescript
- * import { gardenDrift } from 'sigil-mark/process';
+ * import { gardenDrift } from '@sigil-context/process';
  *
  * const result = await gardenDrift();
  * console.log(formatGardenResult(result));
@@ -403,7 +403,7 @@ function capitalize(s: string): string {
 // =============================================================================
 
 const SURVIVAL_PATH = 'grimoires/sigil/state/survival.json';
-const SCAN_PATHS = ['src/', 'sigil-mark/'];
+const SCAN_PATHS = ['src/', 'grimoires/sigil/'];
 const SURVIVING_THRESHOLD = 3;
 const CANONICAL_CANDIDATE_THRESHOLD = 5;
 

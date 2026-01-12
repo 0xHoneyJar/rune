@@ -274,7 +274,7 @@ function buildPatterns(fidelity: FidelityConfig): ViolationPattern[] {
  * Scan a single file for violations.
  *
  * @param filePath - Path to file
- * @param basePath - Base path for sigil-mark
+ * @param basePath - Base path for grimoire
  * @returns Violations found in file
  */
 export function scanFile(filePath: string, basePath?: string): Violation[] {
@@ -357,7 +357,7 @@ export function scanFile(filePath: string, basePath?: string): Violation[] {
  * Scan multiple files for violations.
  *
  * @param filePatterns - Glob patterns or file paths
- * @param basePath - Base path for sigil-mark
+ * @param basePath - Base path for grimoire
  * @returns Scan result with all violations
  */
 export function scanFiles(filePatterns: string[], basePath?: string): ScanResult {
@@ -410,7 +410,7 @@ export function scanFiles(filePatterns: string[], basePath?: string): ScanResult
 /**
  * Scan staged files for violations (for pre-commit hook).
  *
- * @param basePath - Base path for sigil-mark
+ * @param basePath - Base path for grimoire
  * @returns Scan result for staged files
  */
 export function scanStagedFiles(basePath?: string): ScanResult {

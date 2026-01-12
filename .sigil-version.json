@@ -1,12 +1,12 @@
 {
-  "sigil_version": "7.7.0",
-  "framework_version": "7.7.0",
-  "codename": "Clean Slate",
+  "sigil_version": "9.1.0",
+  "framework_version": "9.1.0",
+  "codename": "Migration Debt Zero",
   "schema_version": 10,
-  "description": "Consolidated archive structure, cleaner sigil-mark/ directory for better DX",
+  "description": "Migration Debt Zero - All paths consolidated to grimoires/sigil/",
   "zones": {
     "system": ".claude/",
-    "state": "sigil-mark/",
+    "grimoire": "grimoires/sigil/",
     "runtime": ".sigil/"
   },
   "tools": [
@@ -60,10 +60,10 @@
     "consolidated_archive": true
   },
   "kernel": {
-    "constitution": "sigil-mark/kernel/constitution.yaml",
-    "fidelity": "sigil-mark/kernel/fidelity.yaml",
-    "vocabulary": "sigil-mark/kernel/vocabulary.yaml",
-    "workflow": "sigil-mark/kernel/workflow.yaml"
+    "constitution": "grimoires/sigil/constitution/constitution.yaml",
+    "fidelity": "grimoires/sigil/constitution/fidelity.yaml",
+    "vocabulary": "grimoires/sigil/constitution/vocabulary.yaml",
+    "workflow": "grimoires/sigil/constitution/workflow.yaml"
   },
   "skills": [
     "scanning-sanctuary",
@@ -84,14 +84,14 @@
     "Stop": "chronicling-rationale"
   },
   "runtime": {
-    "provider": "sigil-mark/providers/sigil-provider.tsx",
+    "provider": "@sigil/providers (Phase 2)",
     "hooks": [
       "useSigilMutation",
       "useZoneContext"
     ]
   },
   "process": {
-    "path": "sigil-mark/process/",
+    "path": "grimoires/sigil/process/",
     "agent_only": true,
     "modules": [
       "workshop-builder.ts",
@@ -146,41 +146,33 @@
       ".sigil/seed.yaml",
       ".sigil/pending-ops.json",
       ".sigil/eras/",
-      "sigil-mark/moodboard/*.md"
+      "grimoires/sigil/moodboard/*.md"
     ],
     "machine_generated": [
       ".sigil/workshop.json",
       ".sigil/craft-log/"
     ],
     "user_specific": [
-      "sigil-mark/moodboard/sandbox/",
-      "sigil-mark/moodboard/**/*.png"
+      "grimoires/sigil/moodboard/sandbox/",
+      "grimoires/sigil/moodboard/**/*.png"
     ],
     "archived": [
-      "sigil-mark/.archive/"
+      "grimoires/sigil/.archive/"
     ]
   },
   "directory_structure": {
     "active": [
-      "sigil-mark/core/",
-      "sigil-mark/hooks/",
-      "sigil-mark/layouts/",
-      "sigil-mark/lenses/",
-      "sigil-mark/providers/",
-      "sigil-mark/types/",
-      "sigil-mark/process/",
-      "sigil-mark/kernel/",
-      "sigil-mark/vocabulary/",
-      "sigil-mark/constitution/",
-      "sigil-mark/moodboard/",
-      "sigil-mark/__tests__/",
-      "sigil-mark/__examples__/",
-      "sigil-mark/scripts/"
+      "grimoires/sigil/constitution/",
+      "grimoires/sigil/moodboard/",
+      "grimoires/sigil/process/",
+      "grimoires/sigil/state/",
+      "src/components/gold/hooks/",
+      "src/components/gold/utils/"
     ],
     "archived": [
-      "sigil-mark/.archive/v1.0/",
-      "sigil-mark/.archive/v3.0/",
-      "sigil-mark/.archive/v4.0/"
+      "grimoires/sigil/.archive/v1.0/",
+      "grimoires/sigil/.archive/v3.0/",
+      "grimoires/sigil/.archive/v4.0/"
     ]
   },
   "performance": {
@@ -191,15 +183,17 @@
     "craft_log_ms": 100
   },
   "migration": {
-    "from_version": "7.6.0",
-    "migrated_at": "2026-01-10T00:00:00Z",
-    "script": "scripts/migrate-v7.7.sh",
+    "from_version": "7.7.0",
+    "migrated_at": "2026-01-11T00:00:00Z",
+    "script": "scripts/migrate-v9.1.sh",
     "changes": [
-      "Consolidated archives under sigil-mark/.archive/",
-      "Deleted empty directories (canon, codebase, knowledge)",
-      "Archived v3.0 legacy (lens-array, soul-binder, zones, components)",
-      "Archived v4.0 legacy (consultation-chamber, evidence, governance, personas, remote-config, surveys, skills)",
-      "Added migration script for /update command"
+      "All sigil-mark/ references updated to grimoires/sigil/",
+      "Process layer path constants consolidated (12 files)",
+      "Phantom file references removed from skills",
+      "tsconfig.json path aliases updated to grimoire structure",
+      "Version numbers consolidated to 9.1.0",
+      "18 skill index.yaml files updated to grimoire paths",
+      "Legacy sigil-mark/ directory deleted"
     ]
   },
   "deprecated": {
@@ -214,5 +208,5 @@
     "surveys": "Archived in .archive/v4.0/"
   },
   "setup_completed_at": "2026-01-08T00:00:00Z",
-  "last_updated": "2026-01-10T00:00:00Z"
+  "last_updated": "2026-01-11T00:00:00Z"
 }

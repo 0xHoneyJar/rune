@@ -1,8 +1,8 @@
-# Sigil v4.1 Configuration
+# Sigil v9.1 Configuration
 # "Truth is Core. Experience is Lens. Layouts ARE Zones."
 
-sigil: "4.1.0"
-codename: "Living Guardrails"
+sigil: "9.1.0"
+codename: "Migration Debt Zero"
 
 # ===============================================================================
 # PROJECT METADATA

@@ -7,11 +7,11 @@ role: "Material Smith"
 role_description: "Defines physics primitives and configures material selection"
 
 outputs:
-  - sigil-mark/resonance/materials.yaml (updated)
-  - sigil-mark/resonance/zones.yaml (updated)
+  - grimoires/sigil/constitution/physics.yaml (updated)
+  - .sigilrc.yaml (zones updated)
 
 prerequisites:
-  - sigil_mark_exists
+  - grimoire_exists
   - essence_yaml_exists
 
 triggers:

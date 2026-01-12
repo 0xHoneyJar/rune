@@ -25,7 +25,7 @@
  *
  * - REMOVED: ProcessContextProvider, useProcessContext, useConstitution, useDecisions
  * - These were React hooks that incorrectly used Node.js fs in browsers
- * - For runtime context, use SigilProvider from sigil-mark/providers
+ * - For runtime context, use SigilProvider from @sigil/providers (Phase 2)
  * - Process layer now ONLY exports reader functions for agent/build-time use
  *
  * ## Agent Protocol
@@ -37,10 +37,10 @@
  *
  * ## For Runtime Context
  *
- * Use SigilProvider from sigil-mark/providers instead:
+ * Use SigilProvider from @sigil/providers instead (Phase 2):
  *
  * ```tsx
- * import { SigilProvider, useSigilZoneContext } from 'sigil-mark/providers';
+ * import { SigilProvider, useSigilZoneContext } from '@sigil/providers';
  *
  * <SigilProvider persona="newcomer">
  *   <App />
@@ -292,7 +292,7 @@ export {
 // =============================================================================
 // IMPORTANT: Runtime hooks have been REMOVED in v4.1.
 // The Process layer is AGENT-ONLY and cannot run in browsers.
-// For runtime context, use SigilProvider from sigil-mark/providers.
+// For runtime context, use SigilProvider from @sigil/providers (Phase 2).
 //
 // These exports now throw helpful errors directing users to the correct APIs.
 // Types are preserved for backwards compatibility during migration.

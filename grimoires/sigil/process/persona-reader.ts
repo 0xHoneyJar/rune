@@ -273,7 +273,7 @@ const VALID_TRUST_LEVELS: TrustLevel[] = ['low', 'medium', 'high'];
 /**
  * Default path to the personas file.
  */
-export const DEFAULT_PERSONAS_PATH = 'sigil-mark/personas/personas.yaml';
+export const DEFAULT_PERSONAS_PATH = 'grimoires/sigil/constitution/personas.yaml';
 
 // =============================================================================
 // VALIDATION
@@ -811,7 +811,7 @@ export const DEFAULT_LENS_ARRAY = DEFAULT_PERSONA_ARRAY;
 /**
  * @deprecated Use DEFAULT_PERSONAS_PATH instead. Will be removed in v4.0.
  */
-export const DEFAULT_LENS_ARRAY_PATH = 'sigil-mark/lens-array/lenses.yaml';
+export const DEFAULT_LENS_ARRAY_PATH = 'grimoires/sigil/constitution/personas.yaml';
 
 let hasWarnedLensArray = false;
 

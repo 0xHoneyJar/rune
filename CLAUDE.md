@@ -101,9 +101,9 @@ Sigil is a design context framework that helps AI agents make consistent design 
 | `src/components/gold/hooks/useMotion.ts` | Motion physics hook |
 | `src/components/gold/utils/colors.ts` | OKLCH color system |
 | `src/components/gold/utils/spacing.ts` | 4px-based spacing scale |
-| `sigil-mark/process/survival-engine.ts` | Auto-promotion engine |
-| `sigil-mark/process/linter-gate.ts` | Quality gate checks |
-| `sigil-mark/process/filesystem-registry.ts` | Path-based tier lookup |
+| `grimoires/sigil/process/survival-engine.ts` | Auto-promotion engine |
+| `grimoires/sigil/process/linter-gate.ts` | Quality gate checks |
+| `grimoires/sigil/process/filesystem-registry.ts` | Path-based tier lookup |
 
 ---
 
@@ -516,12 +516,15 @@ Automatic documentation via Stop hook:
 
 ---
 
-## useSigilMutation Hook
+## useSigilMutation Hook (Phase 2)
 
-Runtime hook for mutations (unchanged from v5.0):
+> **Note:** Full runtime layer is Phase 2. The hooks and layouts described below are planned but not yet implemented.
+
+Runtime hook for mutations:
 
 ```tsx
-import { useSigilMutation } from 'sigil-mark';
+// Phase 2: Runtime hooks not yet implemented
+import { useSigilMutation } from '@sigil/hooks';
 
 function ClaimButton({ poolId }) {
   const { execute, simulate, confirm, state, physics } = useSigilMutation({
@@ -548,12 +551,13 @@ function ClaimButton({ poolId }) {
 
 ---
 
-## Zone Layouts
+## Zone Layouts (Phase 2)
 
 Pre-built layouts that set zone context:
 
 ```tsx
-import { CriticalZone, GlassLayout, MachineryLayout } from 'sigil-mark';
+// Phase 2: Zone layouts not yet implemented
+import { CriticalZone, GlassLayout, MachineryLayout } from '@sigil/layouts';
 
 // Critical zone: deliberate physics
 <CriticalZone financial>
@@ -609,12 +613,12 @@ src/components/
 ├── silver/             # Promoted but not gold
 └── draft/              # Experimental
 
-sigil-mark/
-├── core/              # Runtime core (useCriticalAction, physics)
-├── providers/         # SigilProvider
-├── hooks/             # useSigilMutation
-├── layouts/           # Zone layouts (CriticalZone, GlassLayout)
-└── lenses/            # DefaultLens, StrictLens
+# Phase 2: Runtime layer (not yet implemented)
+# src/sigil/
+# ├── providers/         # SigilProvider
+# ├── hooks/             # useSigilMutation
+# ├── layouts/           # Zone layouts (CriticalZone, GlassLayout)
+# └── lenses/            # DefaultLens, StrictLens
 
 .claude/
 ├── skills/
@@ -646,9 +650,15 @@ No automatic cross-loading - developer decides when to reference design context.
 
 ---
 
-## v9.0 Migration Notes
+## v9.1 Migration Notes
 
-Key changes from v7.6:
+Key changes in v9.1 "Migration Debt Zero":
+- All `sigil-mark/` references updated to `grimoires/sigil/`
+- Process layer path constants consolidated
+- Phantom file references removed from skills
+- Version numbers consolidated to 9.1.0
+
+Key changes from v7.6 (v9.0):
 - Moved kernel configs to `grimoires/sigil/constitution/`
 - Moved moodboard to `grimoires/sigil/moodboard/`
 - Moved process layer to `grimoires/sigil/process/`
@@ -657,5 +667,5 @@ Key changes from v7.6:
 
 ---
 
-*Sigil v9.0.0 "Core Scaffold"*
+*Sigil v9.1.0 "Migration Debt Zero"*
 *Last Updated: 2026-01-11*

@@ -3,7 +3,7 @@
 // It uses Node.js fs and will crash in browser environments.
 
 /**
- * Sigil v4.1 — Process Context (REMOVED)
+ * Sigil v9.1 — Process Context (REMOVED)
  *
  * @deprecated ProcessContextProvider and all React hooks have been REMOVED in v4.1.
  *
@@ -12,19 +12,19 @@
  * ## Why This Was Removed
  *
  * The Process layer reads YAML files using Node.js `fs`, which crashes in browsers.
- * v4.1 provides proper runtime context via SigilProvider instead.
+ * v4.1+ provides proper runtime context via SigilProvider instead.
  *
  * ## Migration
  *
  * ### For Runtime Context
- * Use SigilProvider from sigil-mark/providers instead:
+ * Use SigilProvider from @sigil/providers (Phase 2) instead:
  *
  * ```tsx
  * // BEFORE (v3.0 - broken in browsers)
- * import { ProcessContextProvider, useProcessContext } from 'sigil-mark/process';
+ * import { ProcessContextProvider, useProcessContext } from '@sigil-context/process';
  *
- * // AFTER (v4.1 - works correctly)
- * import { SigilProvider, useSigilZoneContext, useSigilPersonaContext } from 'sigil-mark/providers';
+ * // AFTER (v4.1+ - works correctly)
+ * import { SigilProvider, useSigilZoneContext, useSigilPersonaContext } from '@sigil/providers';
  *
  * // Wrap your app
  * <SigilProvider persona="newcomer">
@@ -41,7 +41,7 @@
  *
  * ```typescript
  * // In agent/build scripts (NOT browser code)
- * import { readConstitution, readPersonas, readZones } from 'sigil-mark/process';
+ * import { readConstitution, readPersonas, readZones } from '@sigil-context/process';
  * ```
  *
  * See MIGRATION-v4.1.md for full migration guide.
@@ -110,13 +110,13 @@ export interface ProcessContextProviderProps {
 // =============================================================================
 
 const REMOVAL_MESSAGE = `
-[Sigil v4.1] ProcessContextProvider has been REMOVED.
+[Sigil v9.1] ProcessContextProvider has been REMOVED.
 
 The Process layer is AGENT-ONLY and cannot run in browsers.
 
 For runtime context, use SigilProvider instead:
 
-  import { SigilProvider, useSigilZoneContext } from 'sigil-mark/providers';
+  import { SigilProvider, useSigilZoneContext } from '@sigil/providers';
 
   // Wrap your app
   <SigilProvider persona="newcomer">
@@ -130,7 +130,7 @@ See MIGRATION-v4.1.md for full migration guide.
 `;
 
 /**
- * @deprecated REMOVED in v4.1. Use SigilProvider from sigil-mark/providers instead.
+ * @deprecated REMOVED in v4.1. Use SigilProvider from @sigil/providers instead.
  * @throws Always throws with migration instructions.
  */
 export function ProcessContextProvider(): never {
@@ -156,8 +156,8 @@ export function useProcessContext(): never {
  */
 export function useConstitution(): never {
   throw new Error(
-    '[Sigil v4.1] useConstitution has been REMOVED.\n\n' +
-      'For agent-time reading, use readConstitution() from sigil-mark/process.\n' +
+    '[Sigil v9.1] useConstitution has been REMOVED.\n\n' +
+      'For agent-time reading, use readConstitution() from @sigil-context/process.\n' +
       'For runtime, constitution data should be passed via props.\n\n' +
       'See MIGRATION-v4.1.md for full migration guide.'
   );
@@ -169,8 +169,8 @@ export function useConstitution(): never {
  */
 export function useLensArray(): never {
   throw new Error(
-    '[Sigil v4.1] useLensArray has been REMOVED.\n\n' +
-      'For runtime persona context, use useSigilPersonaContext from sigil-mark/providers.\n\n' +
+    '[Sigil v9.1] useLensArray has been REMOVED.\n\n' +
+      'For runtime persona context, use useSigilPersonaContext from @sigil/providers.\n\n' +
       'See MIGRATION-v4.1.md for full migration guide.'
   );
 }
@@ -181,8 +181,8 @@ export function useLensArray(): never {
  */
 export function useDecisions(): never {
   throw new Error(
-    '[Sigil v4.1] useDecisions has been REMOVED.\n\n' +
-      'For agent-time reading, use readAllDecisions() from sigil-mark/process.\n' +
+    '[Sigil v9.1] useDecisions has been REMOVED.\n\n' +
+      'For agent-time reading, use readAllDecisions() from @sigil-context/process.\n' +
       'Decisions are read at agent-time, not runtime.\n\n' +
       'See MIGRATION-v4.1.md for full migration guide.'
   );
@@ -194,8 +194,8 @@ export function useDecisions(): never {
  */
 export function useCurrentPersona(): never {
   throw new Error(
-    '[Sigil v4.1] useCurrentPersona has been REMOVED.\n\n' +
-      'For runtime persona context, use useSigilPersonaContext from sigil-mark/providers.\n\n' +
+    '[Sigil v9.1] useCurrentPersona has been REMOVED.\n\n' +
+      'For runtime persona context, use useSigilPersonaContext from @sigil/providers.\n\n' +
       'See MIGRATION-v4.1.md for full migration guide.'
   );
 }
@@ -206,8 +206,8 @@ export function useCurrentPersona(): never {
  */
 export function useDecisionsForCurrentZone(): never {
   throw new Error(
-    '[Sigil v4.1] useDecisionsForCurrentZone has been REMOVED.\n\n' +
-      'For agent-time reading, use getDecisionsForZone() from sigil-mark/process.\n' +
+    '[Sigil v9.1] useDecisionsForCurrentZone has been REMOVED.\n\n' +
+      'For agent-time reading, use getDecisionsForZone() from @sigil-context/process.\n' +
       'Decisions are read at agent-time, not runtime.\n\n' +
       'See MIGRATION-v4.1.md for full migration guide.'
   );

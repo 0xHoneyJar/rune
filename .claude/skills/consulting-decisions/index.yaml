@@ -20,5 +20,5 @@ inputs:
     description: Topic to consult on
 
 outputs:
-  - path: sigil-mark/consultation-chamber/decisions/{id}.yaml
+  - path: grimoires/sigil/state/decisions/{id}.yaml
     description: Decision record with consultation details

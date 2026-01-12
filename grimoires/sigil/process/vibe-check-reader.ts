@@ -250,7 +250,8 @@ export const DEFAULT_VIBE_CHECKS: VibeChecks = {
 /**
  * Default path to the vibe checks file.
  */
-export const DEFAULT_VIBE_CHECKS_PATH = 'sigil-mark/surveys/vibe-checks.yaml';
+// NOTE: Vibe checks are a Phase 2 feature. Path is placeholder.
+export const DEFAULT_VIBE_CHECKS_PATH = 'grimoires/sigil/state/vibe-checks.yaml';
 
 // =============================================================================
 // VALIDATION

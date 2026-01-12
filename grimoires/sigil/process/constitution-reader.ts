@@ -1,5 +1,5 @@
 /**
- * Sigil v2.6 — Constitution Reader
+ * Sigil v9.1 — Constitution Reader
  *
  * Reads and validates the Constitution (protected capabilities).
  * Implements graceful degradation: never throws, always returns valid data.
@@ -90,7 +90,7 @@ export const DEFAULT_CONSTITUTION: Constitution = {
 /**
  * Default path to the constitution file.
  */
-export const DEFAULT_CONSTITUTION_PATH = 'sigil-mark/constitution/protected-capabilities.yaml';
+export const DEFAULT_CONSTITUTION_PATH = 'grimoires/sigil/constitution/protected-capabilities.yaml';
 
 // =============================================================================
 // VALIDATION

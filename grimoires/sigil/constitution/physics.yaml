@@ -9,7 +9,7 @@
 # - physics-resolver.ts (runtime)
 # - eslint-plugin-sigil/zone-compliance (compile-time)
 
-version: "4.1.0"
+version: "9.1.0"
 
 # =============================================================================
 # MOTION DEFINITIONS

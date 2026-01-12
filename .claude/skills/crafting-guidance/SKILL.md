@@ -4,14 +4,14 @@ zones:
     paths:
       - grimoires/sigil/moodboard/
       - grimoires/sigil/moodboard.md
-      - sigil-mark/rules.md
-      - sigil-mark/vocabulary/vocabulary.yaml
+      - grimoires/sigil/constitution/rules.md
+      - grimoires/sigil/constitution/vocabulary.yaml
       - grimoires/sigil/constitution/physics.yaml
-      - sigil-mark/constitution/protected-capabilities.yaml
-      - sigil-mark/personas/personas.yaml
-      - sigil-mark/consultation-chamber/decisions/
-      - sigil-mark/evidence/
-      - sigil-mark/philosophy/philosophy.yaml
+      - grimoires/sigil/constitution/protected-capabilities.yaml
+      - grimoires/sigil/constitution/personas.yaml
+      - grimoires/sigil/constitution/decisions/
+      - grimoires/sigil/moodboard/evidence/
+      - grimoires/sigil/constitution/philosophy.yaml
       - .sigilrc.yaml
     permission: read
   config:
@@ -20,7 +20,7 @@ zones:
     permission: read
 ---
 
-# Crafting Guidance Skill (v4.1)
+# Crafting Guidance Skill (v9.1)
 
 ## Purpose
 
@@ -81,7 +81,7 @@ If Sigil is not initialized, auto-setup before guidance:
 I notice Sigil hasn't been set up yet. I'll initialize it now...
 
 Created:
-  - sigil-mark/
+  - grimoires/sigil/
   - .sigilrc.yaml (defaults)
 
 For design context, run:
@@ -98,11 +98,11 @@ Proceeding with default context...
 1. **Auto-Setup**: If `.sigil-setup-complete` missing, initialize Sigil
 2. **Design Context**: Check for moodboard + rules
 3. **Zone Config**: Load zones from `.sigilrc.yaml`
-4. **Personas**: Load from `sigil-mark/personas/personas.yaml`
-5. **Vocabulary**: Load from `sigil-mark/vocabulary/vocabulary.yaml`
-6. **Physics**: Load from `grimoires/sigil/constitution/physics.yaml` (v4.1)
-7. **Philosophy**: Load from `sigil-mark/philosophy/philosophy.yaml`
-8. **Decisions**: Load from `sigil-mark/consultation-chamber/decisions/`
+4. **Personas**: Load from `grimoires/sigil/constitution/personas.yaml`
+5. **Vocabulary**: Load from `grimoires/sigil/constitution/vocabulary.yaml`
+6. **Physics**: Load from `grimoires/sigil/constitution/physics.yaml`
+7. **Philosophy**: Load from `grimoires/sigil/constitution/philosophy.yaml`
+8. **Decisions**: Load from `grimoires/sigil/constitution/decisions/`
 
 ---
 
@@ -208,7 +208,7 @@ Use `--no-gaps` to suppress gap detection output:
 ### Loading Decisions
 
 ```
-1. Read sigil-mark/consultation-chamber/decisions/*.yaml
+1. Read grimoires/sigil/constitution/decisions/*.yaml
 2. Filter for active (non-expired) decisions
 3. Check decision scope against current zone/component
 4. Warn if implementation conflicts with locked decision
@@ -418,7 +418,7 @@ Which approach works better for your use case?
 
 ## Code Generation (v4.0)
 
-**IMPORTANT:** Process layer is agent-only. Do NOT generate code that imports from `sigil-mark/process`.
+**IMPORTANT:** Process layer is agent-only. Do NOT generate code that imports from `grimoires/sigil/process`.
 
 ### Correct Pattern
 

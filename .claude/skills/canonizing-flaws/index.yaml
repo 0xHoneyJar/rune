@@ -19,5 +19,5 @@ inputs:
     description: "Name of the emergent behavior to protect"
 
 outputs:
-  - path: sigil-mark/soul-binder/canon-of-flaws.yaml
+  - path: grimoires/sigil/state/canon-of-flaws.yaml
     description: Updated Canon of Flaws with new entry

@@ -210,7 +210,7 @@ export const DEFAULT_LENS_ARRAY: LensArray = {
 /**
  * Default path to the lens array file.
  */
-export const DEFAULT_LENS_ARRAY_PATH = 'sigil-mark/lens-array/lenses.yaml';
+export const DEFAULT_LENS_ARRAY_PATH = 'grimoires/sigil/constitution/personas.yaml';
 
 // =============================================================================
 // VALIDATION
