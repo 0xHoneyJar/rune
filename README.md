@@ -227,6 +227,40 @@ Corrections weight 5x. Usage is feedback. Taste is physics personalized.
 
 ---
 
+## From Task to Queue
+
+Got a feature, not a component? Use `/distill` to extract the craft-able pieces.
+
+```
+/distill "implement mobile checkout flow"
+
+┌─ Distilled: Mobile Checkout Flow ─────────────────────┐
+│                                                       │
+│  Touchpoints found:  8                                │
+│  Components extracted:  6                             │
+│                                                       │
+│  Effect Distribution:                                 │
+│    Financial:    2 (cart total, pay CTA)              │
+│    Standard:     2 (address form, shipping)           │
+│    Local:        1 (payment toggle)                   │
+│    Query:        1 (order summary)                    │
+│                                                       │
+└───────────────────────────────────────────────────────┘
+
+## Queue (Ready for CRAFT.md)
+
+- [ ] cart total display — financial, always accurate, pessimistic
+- [ ] pay now button — financial, 800ms, confirmation, elevated
+- [ ] address form — standard, optimistic, inline validation
+- [ ] shipping selector — standard, radio group, immediate
+- [ ] payment method toggle — local, accordion, touch-friendly
+- [ ] order summary — query, skeleton loading, pull-to-refresh
+```
+
+**Bridges architecture → physics.** If using Loa for PRD/SDD, `/distill` takes sprint tasks and extracts the components with physics hints.
+
+---
+
 ## Ralph Mode
 
 For continuous generation, Sigil supports [Ralph-style loops](https://ghuntley.com/ralph/) — one component per loop, tune until consistent.
@@ -317,4 +351,4 @@ Sigil enforces these. You can override with justification.
 
 ---
 
-*v12.5.0*
+*v12.6.0*
