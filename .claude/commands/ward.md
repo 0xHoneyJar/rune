@@ -1,9 +1,9 @@
 ---
-name: "rams"
+name: "ward"
 version: "1.0.0"
 description: |
-  Run accessibility and visual design review.
-  Comprehensive audit against Sigil design physics.
+  Protective barrier check against Sigil design physics.
+  Reveals violations before they harm users.
 
   Checks: physics compliance, performance patterns,
   protected capabilities, material constraints,
@@ -47,14 +47,14 @@ context_files:
     required: false
 
 outputs:
-  - path: "grimoires/sigil/rams-report.md"
+  - path: "grimoires/sigil/ward-report.md"
     type: "file"
     description: "Audit findings with severity and fix suggestions"
 ---
 
-# /rams
+# /ward
 
-Review Against Material/System — Comprehensive Sigil physics audit.
+Protective barrier check — reveals physics violations before they harm users.
 
 <philosophy>
 ## The Audit Philosophy
@@ -249,7 +249,7 @@ Group by severity:
 ### Step 4: Generate Report
 
 ```
-┌─ RAMS Audit Report ───────────────────────────────────────┐
+┌─ Ward Report ─────────────────────────────────────────────┐
 │                                                           │
 │  Scanned:    [N] components                               │
 │  Passed:     [M] ([%])                                    │
@@ -284,7 +284,7 @@ Group by severity:
 └───────────────────────────────────────────────────────────┘
 ```
 
-Save full report to `grimoires/sigil/rams-report.md`.
+Save full report to `grimoires/sigil/ward-report.md`.
 </step_4>
 
 <step_5>
@@ -450,7 +450,7 @@ User: /rams
 
 Scanning 47 component files for Sigil compliance...
 
-┌─ RAMS Audit Report ───────────────────────────────────────┐
+┌─ Ward Report ─────────────────────────────────────────────┐
 │                                                           │
 │  Scanned:    47 components                                │
 │  Passed:     39 (83%)                                     │

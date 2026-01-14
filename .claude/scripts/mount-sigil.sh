@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Sigil v12 — Mount Script
-# Design Physics for AI Code Generation
+# Sigil v13 — Mount Script
+# Design Physics + React Implementation Rules
 #
 # Key principle: NEVER override existing CLAUDE.md
 # Uses .claude/rules/ for framework instructions (Claude Code native discovery)
@@ -25,7 +25,7 @@ SIGIL_HOME="${SIGIL_HOME:-$HOME/.sigil/sigil}"
 SIGIL_REPO="${SIGIL_REPO:-https://github.com/0xHoneyJar/sigil.git}"
 SIGIL_BRANCH="${SIGIL_BRANCH:-main}"
 VERSION_FILE=".sigil-version.json"
-SIGIL_VERSION="12.7.0"
+SIGIL_VERSION="13.0.0"
 AUTO_YES=false
 
 # === Argument Parsing ===
@@ -56,9 +56,9 @@ while [[ $# -gt 0 ]]; do
       echo ""
       echo "What this does:"
       echo "  1. Creates .claude/rules/ with Sigil physics (behavioral, animation, material)"
-      echo "  2. Creates .claude/commands/ with /craft command"
-      echo "  3. Creates grimoires/sigil/ with taste.md"
-      echo "  4. Creates examples/ with reference components"
+      echo "  2. Creates .claude/rules/ with React implementation rules (from Vercel Labs)"
+      echo "  3. Creates .claude/commands/ with /craft command"
+      echo "  4. Creates grimoires/sigil/ with taste.md"
       echo "  5. NEVER touches existing CLAUDE.md in your repo"
       echo ""
       echo "Examples:"
@@ -131,21 +131,24 @@ install_rules() {
 
   mkdir -p .claude/rules
 
-  # Copy Sigil rule files (numbered 00-07 and sigil-*.md)
+  # Copy all rule files (physics + React implementation)
   if [[ -d "$SIGIL_HOME/.claude/rules" ]]; then
-    local count=0
+    local physics_count=0
+    local react_count=0
     for rule_file in "$SIGIL_HOME/.claude/rules"/*.md; do
       if [[ -f "$rule_file" ]]; then
         local filename=$(basename "$rule_file")
-        # Only copy Sigil rules (numbered or sigil- prefixed)
-        if [[ "$filename" =~ ^[0-9]{2}- ]] || [[ "$filename" =~ ^sigil- ]]; then
-          cp "$rule_file" ".claude/rules/$filename"
-          log "  Installed $filename"
-          count=$((count + 1))
+        cp "$rule_file" ".claude/rules/$filename"
+        # Count by category
+        if [[ "$filename" =~ ^[0-9]{2}-sigil ]] || [[ "$filename" =~ ^0[0-8]- ]]; then
+          physics_count=$((physics_count + 1))
+        elif [[ "$filename" =~ ^1[0-6]-react ]]; then
+          react_count=$((react_count + 1))
         fi
       fi
     done
-    log "Installed $count rule files"
+    log "Installed $physics_count physics rules (00-08)"
+    log "Installed $react_count React implementation rules (10-16)"
   else
     err "No .claude/rules/ found in Sigil home"
   fi
@@ -179,19 +182,6 @@ EOF
   fi
 }
 
-# === Install Examples ===
-install_examples() {
-  step "Installing example components..."
-
-  if [[ -d "$SIGIL_HOME/examples" ]]; then
-    mkdir -p examples
-    cp -r "$SIGIL_HOME/examples/"* examples/ 2>/dev/null || true
-    log "  Installed examples/"
-  else
-    info "No examples directory in Sigil home (optional)"
-  fi
-}
-
 # === Install Commands ===
 install_commands() {
   step "Installing commands..."
@@ -209,28 +199,6 @@ install_commands() {
   done
 }
 
-# === Install Scripts ===
-install_scripts() {
-  step "Installing scripts..."
-
-  # Install ralph.sh for Ralph loop
-  if [[ -f "$SIGIL_HOME/.claude/scripts/ralph.sh" ]]; then
-    cp "$SIGIL_HOME/.claude/scripts/ralph.sh" "ralph.sh"
-    chmod +x "ralph.sh"
-    log "  Installed ralph.sh"
-  fi
-
-  # Create CRAFT.md template if it doesn't exist
-  if [[ ! -f "grimoires/sigil/CRAFT.md" ]]; then
-    if [[ -f "$SIGIL_HOME/CRAFT.md" ]]; then
-      cp "$SIGIL_HOME/CRAFT.md" "grimoires/sigil/CRAFT.md"
-      log "  Installed CRAFT.md template"
-    fi
-  else
-    log "  CRAFT.md already exists (preserved)"
-  fi
-}
-
 # === Create Version File ===
 create_version_file() {
   step "Creating version manifest..."
@@ -242,7 +210,10 @@ create_version_file() {
   "updated_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "sigil_home": "$SIGIL_HOME",
   "branch": "$SIGIL_BRANCH",
-  "physics": ["behavioral", "animation", "material"],
+  "layers": {
+    "physics": ["behavioral", "animation", "material"],
+    "implementation": ["async", "bundle", "rendering", "rerender", "server", "js"]
+  },
   "note": "Sigil uses .claude/rules/ - does not modify root CLAUDE.md"
 }
 EOF
@@ -254,8 +225,8 @@ EOF
 main() {
   echo ""
   log "======================================================================="
-  log "  Sigil v12.7.0"
-  log "  Design Physics for AI Code Generation"
+  log "  Sigil v13.0.0"
+  log "  Design Physics + React Implementation Rules"
   log "======================================================================="
   log "  Branch: $SIGIL_BRANCH"
   echo ""
@@ -264,9 +235,7 @@ main() {
   setup_sigil_home
   install_rules
   install_commands
-  install_scripts
   install_grimoire
-  install_examples
   create_version_file
 
   echo ""
@@ -275,25 +244,24 @@ main() {
   log "======================================================================="
   echo ""
   info "What was installed:"
-  info "  .claude/rules/sigil-*.md       -> Physics (behavioral, animation, material)"
-  info "  .claude/commands/              -> /craft, /distill, /inscribe, /surface"
+  info "  .claude/rules/00-08-sigil-*.md -> Physics (behavioral, animation, material)"
+  info "  .claude/rules/10-16-react-*.md -> React implementation (Vercel best practices)"
+  info "  .claude/commands/              -> /craft, /style, /animate, /behavior"
   info "  grimoires/sigil/taste.md       -> Taste accumulation"
-  info "  grimoires/sigil/CRAFT.md       -> Ralph loop template"
-  info "  ralph.sh                       -> Ralph loop runner"
   info "  .sigil-version.json            -> Version tracking"
   echo ""
   info "What was NOT touched:"
   info "  CLAUDE.md                      -> Your existing file is preserved!"
   echo ""
   info "Commands:"
-  info "  /craft \"claim button\"         -> Generate with full physics"
-  info "  /distill \"mobile checkout\"    -> Break task into Queue"
-  info "  /inscribe                      -> Promote learnings to rules"
-  info "  /surface \"glassmorphism card\" -> Material physics only"
+  info "  /craft \"claim button\"         -> Full physics (behavioral + animation + material)"
+  info "  /style \"glassmorphism card\"   -> Material physics only"
+  info "  /animate \"bouncy modal\"       -> Animation physics only"
+  info "  /behavior \"optimistic save\"   -> Behavioral physics only"
   echo ""
-  info "Ralph Mode:"
-  info "  ./ralph.sh 20                  -> Run 20 iterations"
-  info "  ./ralph.sh 10 grimoires/sigil/CRAFT.md"
+  info "Physics + Implementation:"
+  info "  Sigil detects effect -> applies physics -> uses React best practices"
+  info "  45 Vercel Labs rules ensure correct React patterns automatically"
   echo ""
   info "Sigil learns from your corrections. Use it, and it becomes yours."
   echo ""
