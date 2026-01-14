@@ -184,7 +184,9 @@ Adds rules to `.claude/rules/`. Your `CLAUDE.md` stays untouched.
 
 | Command | Purpose |
 |---------|---------|
-| `/craft` | Full physics (behavioral + animation + material) |
+| `/craft` | Apply physics to any UX-affecting change (new, refine, configure, polish) |
+| `/ward` | Audit codebase against physics (violations, performance, protected capabilities) |
+| `/garden` | Health report on component authority (Gold/Silver/Draft tiers) |
 | `/style` | Material only (looks wrong, behavior fine) |
 | `/animate` | Animation only (movement feels off) |
 | `/behavior` | Behavioral only (timing/sync wrong) |
@@ -196,10 +198,13 @@ Adds rules to `.claude/rules/`. Your `CLAUDE.md` stays untouched.
 ## Usage
 
 ```
-/craft "claim button"              # All three physics layers
-/craft "snappy like button"        # Adjectives inform physics
-/craft "glassmorphism card"        # Material keywords detected
-/style "elevated card"             # Material only, no behavior
+/craft "claim button"                    # Generate new component
+/craft "improve light mode readability"  # Refine configuration
+/craft "polish hover states"             # Batch polish across files
+/craft "optimize loading UX"             # Data pattern refinement
+/ward                                    # Audit full codebase
+/ward physics                            # Audit physics only
+/garden                                  # Component authority report
 ```
 
 Before generating, Sigil shows its analysis:
@@ -361,4 +366,4 @@ Loa plans structure. Sigil tunes feel. They meet at the component boundary.
 
 ---
 
-*v13.0.0*
+*v14.0.0*
