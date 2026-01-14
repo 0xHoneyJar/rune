@@ -238,22 +238,23 @@ while :; do cat CRAFT.md | claude-code ; done
 
 **CRAFT.md** — your prompt template:
 ```markdown
-## Task
-Generate components for [PROJECT]:
+## Components
 
-### ClaimButton
-Effect: financial
-Feel: trustworthy, deliberate
-Material: elevated
+/craft "claim rewards button — trustworthy, deliberate, elevated"
 
-### LikeButton
-Effect: standard
-Feel: snappy, playful
-Material: minimal
+/craft "like button for posts — snappy, playful, minimal"
+
+/craft "dark mode toggle — instant, smooth, minimal"
 
 ## Learnings
+
+### Keywords
 - 2026-01-13: "harvest" should be financial
+
+### Timing
 - 2026-01-13: Prefer 600ms over 800ms
+
+### Material
 - 2026-01-13: All buttons use 8px radius
 ```
 
