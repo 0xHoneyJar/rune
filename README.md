@@ -188,7 +188,7 @@ Adds rules to `.claude/rules/`. Your `CLAUDE.md` stays untouched.
 | `/style` | Material only (looks wrong, behavior fine) |
 | `/animate` | Animation only (movement feels off) |
 | `/behavior` | Behavioral only (timing/sync wrong) |
-| `/distill` | Break task into Queue items |
+| `/distill` | Break feature into craft-able components |
 | `/inscribe` | Promote patterns to rules |
 
 ---
@@ -199,7 +199,7 @@ Adds rules to `.claude/rules/`. Your `CLAUDE.md` stays untouched.
 /craft "claim button"              # All three physics layers
 /craft "snappy like button"        # Adjectives inform physics
 /craft "glassmorphism card"        # Material keywords detected
-/surface "docs callout"            # Material only, no behavior
+/style "elevated card"             # Material only, no behavior
 ```
 
 Before generating, Sigil shows its analysis:
@@ -225,6 +225,44 @@ If wrong, correct it. Sigil learns from your feedback.
 
 ---
 
+## Pair Design
+
+Sigil works like two people at a whiteboard — one sketching, one reacting.
+
+```
+/craft "claim button"
+→ "feels too corporate"
+→ [adjusts]
+→ "warmer, but the timing is off"
+→ /behavior
+→ "yes, that's it"
+→ [logs to taste, done]
+```
+
+**The conversation is the loop.** You work on a component, iterate until it feels right, maybe notice something about another component along the way, work on that. Discoveries happen while doing.
+
+This isn't a queue you grind through overnight. It's a creative session where:
+
+- **You** bring taste, context, persona, GTM instincts
+- **Sigil** brings physics vocabulary and memory
+
+When Sigil asks "Does this feel right?", it's prompting you to think about your user:
+
+- Who is clicking this?
+- What's the moment?
+- What should they feel?
+
+Your answers — even vague ones like "feels heavy" or "too clinical" — teach the sigil.
+
+**When to start fresh:**
+- Context gets muddy
+- Drifted into unrelated territory
+- Just feels off
+
+That's just a new conversation. No ceremony needed.
+
+---
+
 ## Taste
 
 Your accumulated preferences across all physics layers.
@@ -238,99 +276,7 @@ Session 4:  Sigil applies all three automatically
 
 Corrections weight 5x. Usage is feedback. Taste is physics personalized.
 
----
-
-## From Task to Queue
-
-Got a feature, not a component? Use `/distill` to extract the craft-able pieces.
-
-```
-/distill "implement mobile checkout flow"
-
-┌─ Distilled: Mobile Checkout Flow ─────────────────────┐
-│                                                       │
-│  Touchpoints found:  8                                │
-│  Components extracted:  6                             │
-│                                                       │
-│  Effect Distribution:                                 │
-│    Financial:    2 (cart total, pay CTA)              │
-│    Standard:     2 (address form, shipping)           │
-│    Local:        1 (payment toggle)                   │
-│    Query:        1 (order summary)                    │
-│                                                       │
-└───────────────────────────────────────────────────────┘
-
-## Queue (Ready for CRAFT.md)
-
-- [ ] cart total display — financial, always accurate, pessimistic
-- [ ] pay now button — financial, 800ms, confirmation, elevated
-- [ ] address form — standard, optimistic, inline validation
-- [ ] shipping selector — standard, radio group, immediate
-- [ ] payment method toggle — local, accordion, touch-friendly
-- [ ] order summary — query, skeleton loading, pull-to-refresh
-```
-
-**Bridges architecture → physics.** If using Loa for PRD/SDD, `/distill` takes sprint tasks and extracts the components with physics hints.
-
----
-
-## Ralph Mode
-
-For design work, Sigil uses a continuous feedback loop. **You are the backpressure.**
-
-**Run:**
-```bash
-./ralph.sh 20 grimoires/sigil/CRAFT.md
-```
-
-**The cycle:**
-
-```
-1. Claude picks unchecked item from Queue
-2. Invokes /craft, shows physics analysis
-3. Generates component
-4. PAUSES — "Does this feel right?"
-5. You respond:
-   - "yes" → marks [x], commits, continues
-   - correction → adds Sign, regenerates
-   - "focus style" → uses /style for material only
-6. Repeat until Queue complete
-7. /inscribe → patterns become permanent
-```
-
-**You are in the loop continuously, not reviewing after.**
-
-**Tools for focused iteration:**
-
-| Command | Layer | When to use |
-|---------|-------|-------------|
-| `/craft` | All three | New component, full physics |
-| `/style` | Material | "looks wrong, behavior fine" |
-| `/animate` | Animation | "movement feels off" |
-| `/behavior` | Behavioral | "timing is wrong" |
-
-**Signs accumulate your corrections:**
-
-```markdown
-## Signs
-### Timing
-- 500ms not 800ms
-
-### Material
-- no shadows
-- radius: 12px
-```
-
-**`/inscribe`** makes patterns permanent:
-```
-/inscribe
-
-Found 3 patterns:
-• Financial timing → 500ms? (y/n)
-• Remove shadows? (y/n)
-
-The sigil is inscribed.
-```
+**`/inscribe`** graduates patterns to permanent rules when they're solid enough.
 
 ---
 
@@ -366,16 +312,16 @@ Sigil enforces these. You can override with justification.
 
 ## Loa Integration
 
-Sigil is designed to work with [Loa](https://github.com/0xHoneyJar/loa) and will be available as a construct on [Loa Constructs](https://constructs.network).
+Sigil is designed to work with [Loa](https://github.com/0xHoneyJar/loa).
 
 **The division of labor:**
 
 | Loa (Architecture) | Sigil (Physics) |
 |-------------------|-----------------|
 | "What to build" | "How it feels" |
-| PRD → SDD → Tasks | Distill → Craft → Inscribe |
-| Plan once, execute | Loop until right |
-| Deterministic | Iterative |
+| PRD → SDD → Sprint | Craft → Iterate → Inscribe |
+| Spec'd upfront | Emerges through iteration |
+| Deterministic | Creative |
 
 **The handoff:**
 
@@ -388,20 +334,22 @@ Loa workflow                     Sigil takes over
                     ↓
               "implement checkout UI"
                     ↓
-              /distill → Queue
+              /distill → components with physics hints
                     ↓
-              Ralph loop → /craft × N
+              /craft each component
                     ↓
-              /inscribe → taste persists
+              iterate until right
+                    ↓
+              /inscribe when patterns solidify
 ```
 
 **Why the split:**
 
 Architecture can be spec'd upfront — data models, APIs, dependencies. These are deterministic.
 
-Feel cannot be fully spec'd. You know "trustworthy" when you see it, but you can't describe it completely in advance. Feel emerges through iteration — loop, observe, tune, loop.
+Feel cannot be fully spec'd. You know "trustworthy" when you see it, but you can't describe it completely in advance. Feel emerges through iteration — observe, tune, repeat.
 
-Loa plans structure. Sigil tunes feel. They meet at the task/component boundary.
+Loa plans structure. Sigil tunes feel. They meet at the component boundary.
 
 ---
 
@@ -410,8 +358,7 @@ Loa plans structure. Sigil tunes feel. They meet at the task/component boundary.
 - [GitHub](https://github.com/0xHoneyJar/sigil)
 - [Issues](https://github.com/0xHoneyJar/sigil/issues)
 - [Loa Framework](https://github.com/0xHoneyJar/loa)
-- [Loa Constructs](https://constructs.network)
 
 ---
 
-*v12.7.0*
+*v13.0.0*

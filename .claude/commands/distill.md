@@ -7,7 +7,7 @@ description: |
 
 # /distill
 
-Extract the component essences from a broader task. Output a Queue ready for `/craft`.
+Extract the component essences from a broader task. Get a list of components with physics hints ready for `/craft`.
 
 ## Input
 
@@ -59,18 +59,18 @@ For each component, note the physics cues from the task context:
 | Action bar | Standard | thumb-reachable, snappy |
 | Card grid | Query | responsive, swipeable |
 
-### Step 4: Generate Queue
+### Step 4: Generate Component List
 
-Output a CRAFT.md-ready Queue with physics hints:
+Output components with physics hints:
 
 ```markdown
-## Queue
+## Components
 
-- [ ] mobile nav drawer — local, touch-friendly, collapsible, 44px targets
-- [ ] mobile action bar — standard, thumb-reachable, snappy
-- [ ] responsive card grid — query, swipeable, optimistic loading
-- [ ] pull-to-refresh — query, immediate feedback, spring animation
-- [ ] bottom sheet modal — local, gesture-dismissible, elevated
+1. **mobile nav drawer** — local, touch-friendly, collapsible, 44px targets
+2. **mobile action bar** — standard, thumb-reachable, snappy
+3. **responsive card grid** — query, swipeable, optimistic loading
+4. **pull-to-refresh** — query, immediate feedback, spring animation
+5. **bottom sheet modal** — local, gesture-dismissible, elevated
 ```
 
 ### Step 5: Priority Sort
@@ -98,14 +98,13 @@ Reorder by:
 │                                                       │
 └───────────────────────────────────────────────────────┘
 
-## Queue (Ready for CRAFT.md)
+## Components (ready for /craft)
 
-- [ ] [component] — [effect], [physics hints]
-- [ ] [component] — [effect], [physics hints]
+1. [component] — [effect], [physics hints]
+2. [component] — [effect], [physics hints]
 ...
 
-Copy this Queue to your CRAFT.md and run:
-while :; do cat CRAFT.md | claude-code ; done
+Start with: /craft "[first component] — [hints]"
 ```
 
 ## Integration with Loa
@@ -136,16 +135,16 @@ User: /distill "implement mobile checkout flow"
 │                                                       │
 └───────────────────────────────────────────────────────┘
 
-## Queue (Ready for CRAFT.md)
+## Components (ready for /craft)
 
-- [ ] cart total display — financial, always accurate, pessimistic
-- [ ] pay now button — financial, 800ms, confirmation required, elevated
-- [ ] address form — standard, optimistic, inline validation
-- [ ] shipping selector — standard, radio group, immediate feedback
-- [ ] payment method toggle — local, accordion, touch-friendly
-- [ ] order summary — query, skeleton loading, pull-to-refresh
+1. **cart total display** — financial, always accurate, pessimistic
+2. **pay now button** — financial, 800ms, confirmation required, elevated
+3. **address form** — standard, optimistic, inline validation
+4. **shipping selector** — standard, radio group, immediate feedback
+5. **payment method toggle** — local, accordion, touch-friendly
+6. **order summary** — query, skeleton loading, pull-to-refresh
 
-Copy this Queue to your CRAFT.md and run the Ralph loop.
+Start with: /craft "cart total display — financial, always accurate"
 ```
 
 ## When to Use
@@ -156,4 +155,4 @@ Copy this Queue to your CRAFT.md and run the Ralph loop.
 | Vague feature request | `/distill` |
 | "Make mobile work" | `/distill` |
 | Single known component | `/craft` directly |
-| Material-only changes | `/surface` |
+| Material-only changes | `/style` |
