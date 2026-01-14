@@ -1,6 +1,6 @@
 ---
 name: "craft"
-version: "12.1.0"
+version: "12.2.0"
 description: |
   Generate UI components with design physics.
   Shows physics analysis before generating, like RAMS shows accessibility issues.
@@ -29,6 +29,9 @@ context_files:
   - path: ".claude/rules/04-sigil-protected.md"
     required: true
     purpose: "Protected capabilities checklist"
+  - path: ".claude/rules/05-sigil-animation.md"
+    required: true
+    purpose: "Animation physics - easing, timing by frequency, springs"
 
 outputs:
   - path: "src/components/$COMPONENT_NAME.tsx"
@@ -91,7 +94,15 @@ Display analysis in this exact format, then wait for confirmation:
 │  │  Sync:         [Pessimistic/Optimistic/Immediate]│  │
 │  │  Timing:       [Xms] [why this timing]           │  │
 │  │  Confirmation: [Required/None/Toast+Undo]        │  │
-│  │  Animation:    [curve type]                      │  │
+│  └──────────────────────────────────────────────────┘  │
+│                                                        │
+│  ┌─ Animation ─────────────────────────────────────┐   │
+│  │  Easing:       [ease-out/spring/ease-in-out]    │   │
+│  │  Spring:       [stiffness, damping] (if spring) │   │
+│  │  Entrance:     [Xms, curve]                     │   │
+│  │  Exit:         [Xms, curve] (asymmetric)        │   │
+│  │  Frequency:    [high/medium/low/rare]           │   │
+│  │  Interruptible: [Yes/No]                        │   │
 │  └──────────────────────────────────────────────────┘  │
 │                                                        │
 │  Codebase:     [animation lib] + [data fetching lib]   │
@@ -101,6 +112,7 @@ Display analysis in this exact format, then wait for confirmation:
 │  [✓/✗] Cancel button                                  │
 │  [✓/✗] Error recovery                                 │
 │  [✓/✗] Balance display (if financial)                │
+│  [✓/✗] Reduced motion support                        │
 │                                                        │
 └────────────────────────────────────────────────────────┘
 
@@ -134,15 +146,18 @@ Component generated. Run /garden to check if it's becoming canonical.
 
 ## Detection Quick Reference
 
-| Keywords | Effect | Sync | Timing |
-|----------|--------|------|--------|
-| claim, deposit, withdraw, transfer, swap, stake | Financial | Pessimistic | 800ms |
-| delete, remove, destroy, revoke, burn | Destructive | Pessimistic | 600ms |
-| archive, trash, soft-delete, dismiss | Soft Delete | Optimistic | 200ms |
-| save, update, like, follow, create, bookmark | Standard | Optimistic | 200ms |
-| toggle, switch, expand, collapse, select | Local State | Immediate | 100ms |
+| Keywords | Effect | Sync | Timing | Easing |
+|----------|--------|------|--------|--------|
+| claim, deposit, withdraw, transfer, swap, stake | Financial | Pessimistic | 800ms | ease-out (deliberate) |
+| delete, remove, destroy, revoke, burn | Destructive | Pessimistic | 600ms | ease-out (deliberate) |
+| archive, trash, soft-delete, dismiss | Soft Delete | Optimistic | 200ms | spring(500, 30) |
+| save, update, like, follow, create, bookmark | Standard | Optimistic | 200ms | spring(500, 30) |
+| toggle, switch, expand, collapse, select | Local State | Immediate | 100ms | spring(700, 35) |
+| command palette, keyboard nav, frequent hover | High-freq | Immediate | 0ms | none |
 
 **Type Override**: `Currency`, `Money`, `Balance`, `Wei`, `Token`, `BigInt` in props → always Financial.
+
+**Frequency Override**: If component is used 50+ times/day → reduce or remove animation regardless of effect type.
 
 ---
 
@@ -166,7 +181,14 @@ User: /craft "claim button for staking rewards"
 │  │  Sync:         Pessimistic (server confirms)     │  │
 │  │  Timing:       800ms (time to verify amount)     │  │
 │  │  Confirmation: Required (two-phase)              │  │
-│  │  Animation:    Deliberate ease-out               │  │
+│  └──────────────────────────────────────────────────┘  │
+│                                                        │
+│  ┌─ Animation ─────────────────────────────────────┐   │
+│  │  Easing:       ease-out (deliberate)            │   │
+│  │  Entrance:     300ms, ease-out                  │   │
+│  │  Exit:         150ms, ease-in                   │   │
+│  │  Frequency:    Low (occasional claim)           │   │
+│  │  Interruptible: No (financial)                  │   │
 │  └──────────────────────────────────────────────────┘  │
 │                                                        │
 │  Codebase:     framer-motion + tanstack-query          │
@@ -176,6 +198,7 @@ User: /craft "claim button for staking rewards"
 │  ✓ Cancel button                                      │
 │  ✓ Error recovery                                     │
 │  ✓ Amount display                                     │
+│  ✓ Reduced motion support                            │
 │                                                        │
 └────────────────────────────────────────────────────────┘
 
@@ -213,7 +236,15 @@ User: no, this just toggles visibility of the rewards section, no server call
 │  │  Sync:         Immediate (no server)             │  │
 │  │  Timing:       100ms instant                     │  │
 │  │  Confirmation: None                              │  │
-│  │  Animation:    Snappy spring                     │  │
+│  └──────────────────────────────────────────────────┘  │
+│                                                        │
+│  ┌─ Animation ─────────────────────────────────────┐   │
+│  │  Easing:       spring (snappy)                  │   │
+│  │  Spring:       stiffness: 700, damping: 35      │   │
+│  │  Entrance:     100ms, spring                    │   │
+│  │  Exit:         100ms, spring                    │   │
+│  │  Frequency:    Medium (toggle during session)   │   │
+│  │  Interruptible: Yes                             │   │
 │  └──────────────────────────────────────────────────┘  │
 │                                                        │
 └────────────────────────────────────────────────────────┘
@@ -222,7 +253,7 @@ Proceed with these physics?
 
 User: yes
 
-[Generates local state toggle]
+[Generates local state toggle with spring animation]
 ```
 
 ### Example 3: Ambiguous Detection
@@ -272,9 +303,19 @@ Infer these from effect type without asking:
 - **Sync strategy** → from physics table
 - **Timing** → from physics table
 - **Confirmation** → from physics table
+- **Easing type** → from animation physics (effect → easing)
+- **Spring values** → from animation physics (effect → stiffness/damping)
+- **Entrance/Exit asymmetry** → entrances slower than exits
+- **Interruptibility** → financial/destructive = no, others = yes
 - **Animation library** → from package.json discovery
 - **Data fetching** → from package.json discovery
 - **Toast library** → from package.json discovery
+
+Animation frequency is inferred from context:
+- Command palette, keyboard nav → high frequency → no animation
+- Dropdowns, tooltips → medium frequency → fast animation
+- Modals, confirmations → low frequency → standard animation
+- Onboarding, celebrations → rare → can use longer animations
 
 ---
 
