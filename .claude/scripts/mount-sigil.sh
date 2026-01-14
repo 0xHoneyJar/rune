@@ -199,6 +199,51 @@ install_commands() {
   done
 }
 
+# === Install Scripts ===
+install_scripts() {
+  step "Installing helper scripts..."
+
+  mkdir -p .claude/scripts
+
+  # Install Sigil-specific scripts (agent-browser, sigil-* utilities)
+  local script_count=0
+  for script_file in "$SIGIL_HOME/.claude/scripts"/agent-browser*.sh \
+                     "$SIGIL_HOME/.claude/scripts"/check-agent-browser.sh \
+                     "$SIGIL_HOME/.claude/scripts"/sigil-*.sh; do
+    if [[ -f "$script_file" ]]; then
+      local filename=$(basename "$script_file")
+      cp "$script_file" ".claude/scripts/$filename"
+      chmod +x ".claude/scripts/$filename"
+      script_count=$((script_count + 1))
+    fi
+  done
+
+  if [[ $script_count -gt 0 ]]; then
+    log "Installed $script_count helper scripts"
+  fi
+}
+
+# === Install Protocols ===
+install_protocols() {
+  step "Installing protocols..."
+
+  mkdir -p .claude/protocols
+
+  # Install Sigil-specific protocols
+  local protocol_count=0
+  for protocol_file in "$SIGIL_HOME/.claude/protocols"/browser-automation.md; do
+    if [[ -f "$protocol_file" ]]; then
+      local filename=$(basename "$protocol_file")
+      cp "$protocol_file" ".claude/protocols/$filename"
+      protocol_count=$((protocol_count + 1))
+    fi
+  done
+
+  if [[ $protocol_count -gt 0 ]]; then
+    log "Installed $protocol_count protocols"
+  fi
+}
+
 # === Create Version File ===
 create_version_file() {
   step "Creating version manifest..."
@@ -235,6 +280,8 @@ main() {
   setup_sigil_home
   install_rules
   install_commands
+  install_scripts
+  install_protocols
   install_grimoire
   create_version_file
 
@@ -246,7 +293,9 @@ main() {
   info "What was installed:"
   info "  .claude/rules/00-08-sigil-*.md -> Physics (behavioral, animation, material)"
   info "  .claude/rules/10-16-react-*.md -> React implementation (Vercel best practices)"
-  info "  .claude/commands/              -> /craft, /style, /animate, /behavior"
+  info "  .claude/commands/              -> /craft, /ward, /style, /animate, /behavior"
+  info "  .claude/scripts/               -> Helper scripts (agent-browser, utilities)"
+  info "  .claude/protocols/             -> Usage protocols (browser-automation)"
   info "  grimoires/sigil/taste.md       -> Taste accumulation"
   info "  .sigil-version.json            -> Version tracking"
   echo ""
