@@ -25,7 +25,7 @@ SIGIL_HOME="${SIGIL_HOME:-$HOME/.sigil/sigil}"
 SIGIL_REPO="${SIGIL_REPO:-https://github.com/0xHoneyJar/sigil.git}"
 SIGIL_BRANCH="${SIGIL_BRANCH:-main}"
 VERSION_FILE=".sigil-version.json"
-SIGIL_VERSION="12.5.0"
+SIGIL_VERSION="12.7.0"
 AUTO_YES=false
 
 # === Argument Parsing ===
@@ -198,14 +198,36 @@ install_commands() {
 
   mkdir -p .claude/commands
 
-  if [[ -f "$SIGIL_HOME/.claude/commands/craft.md" ]]; then
-    cp "$SIGIL_HOME/.claude/commands/craft.md" ".claude/commands/craft.md"
-    log "  Installed /craft command"
+  # Install all Sigil commands
+  for cmd_file in "$SIGIL_HOME/.claude/commands"/*.md; do
+    if [[ -f "$cmd_file" ]]; then
+      local filename=$(basename "$cmd_file")
+      cp "$cmd_file" ".claude/commands/$filename"
+      local cmd_name="${filename%.md}"
+      log "  Installed /$cmd_name command"
+    fi
+  done
+}
+
+# === Install Scripts ===
+install_scripts() {
+  step "Installing scripts..."
+
+  # Install ralph.sh for Ralph loop
+  if [[ -f "$SIGIL_HOME/.claude/scripts/ralph.sh" ]]; then
+    cp "$SIGIL_HOME/.claude/scripts/ralph.sh" "ralph.sh"
+    chmod +x "ralph.sh"
+    log "  Installed ralph.sh"
   fi
 
-  if [[ -f "$SIGIL_HOME/.claude/commands/garden.md" ]]; then
-    cp "$SIGIL_HOME/.claude/commands/garden.md" ".claude/commands/garden.md"
-    log "  Installed /garden command"
+  # Create CRAFT.md template if it doesn't exist
+  if [[ ! -f "grimoires/sigil/CRAFT.md" ]]; then
+    if [[ -f "$SIGIL_HOME/CRAFT.md" ]]; then
+      cp "$SIGIL_HOME/CRAFT.md" "grimoires/sigil/CRAFT.md"
+      log "  Installed CRAFT.md template"
+    fi
+  else
+    log "  CRAFT.md already exists (preserved)"
   fi
 }
 
@@ -232,7 +254,7 @@ EOF
 main() {
   echo ""
   log "======================================================================="
-  log "  Sigil v12.5.0"
+  log "  Sigil v12.7.0"
   log "  Design Physics for AI Code Generation"
   log "======================================================================="
   log "  Branch: $SIGIL_BRANCH"
@@ -242,6 +264,7 @@ main() {
   setup_sigil_home
   install_rules
   install_commands
+  install_scripts
   install_grimoire
   install_examples
   create_version_file
@@ -252,19 +275,25 @@ main() {
   log "======================================================================="
   echo ""
   info "What was installed:"
-  info "  .claude/rules/00-07-sigil-*.md -> Physics (behavioral, animation, material)"
-  info "  .claude/commands/craft.md      -> /craft command"
+  info "  .claude/rules/sigil-*.md       -> Physics (behavioral, animation, material)"
+  info "  .claude/commands/              -> /craft, /distill, /inscribe, /surface"
   info "  grimoires/sigil/taste.md       -> Taste accumulation"
-  info "  examples/                      -> Reference components"
+  info "  grimoires/sigil/CRAFT.md       -> Ralph loop template"
+  info "  ralph.sh                       -> Ralph loop runner"
   info "  .sigil-version.json            -> Version tracking"
   echo ""
   info "What was NOT touched:"
   info "  CLAUDE.md                      -> Your existing file is preserved!"
   echo ""
-  info "Usage:"
-  info "  /craft \"claim button\"   -> Financial: 800ms pessimistic, confirmation"
-  info "  /craft \"like button\"    -> Standard: 200ms optimistic, spring"
-  info "  /craft \"dark mode toggle\" -> Local: 100ms immediate"
+  info "Commands:"
+  info "  /craft \"claim button\"         -> Generate with full physics"
+  info "  /distill \"mobile checkout\"    -> Break task into Queue"
+  info "  /inscribe                      -> Promote learnings to rules"
+  info "  /surface \"glassmorphism card\" -> Material physics only"
+  echo ""
+  info "Ralph Mode:"
+  info "  ./ralph.sh 20                  -> Run 20 iterations"
+  info "  ./ralph.sh 10 grimoires/sigil/CRAFT.md"
   echo ""
   info "Sigil learns from your corrections. Use it, and it becomes yours."
   echo ""
