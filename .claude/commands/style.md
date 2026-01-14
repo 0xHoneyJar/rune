@@ -1,9 +1,9 @@
 ---
-name: "surface"
-version: "12.4.0"
+name: "style"
+version: "12.7.0"
 description: |
-  Apply material physics to components.
-  Use when you only need surface treatment (no behavioral physics).
+  Apply material physics only.
+  Use when looks are wrong but behavior is fine.
   For full physics (behavioral + animation + material), use /craft.
 
 arguments:

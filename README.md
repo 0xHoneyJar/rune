@@ -184,10 +184,12 @@ Adds rules to `.claude/rules/`. Your `CLAUDE.md` stays untouched.
 
 | Command | Purpose |
 |---------|---------|
-| `/craft` | Generate component with full physics (behavioral + animation + material) |
-| `/surface` | Apply material physics only (styling, no behavior) |
-| `/distill` | Break a task into craft-able Queue items |
-| `/inscribe` | Promote learned patterns to permanent rules |
+| `/craft` | Full physics (behavioral + animation + material) |
+| `/style` | Material only (looks wrong, behavior fine) |
+| `/animate` | Animation only (movement feels off) |
+| `/behavior` | Behavioral only (timing/sync wrong) |
+| `/distill` | Break task into Queue items |
+| `/inscribe` | Promote patterns to rules |
 
 ---
 
@@ -274,73 +276,60 @@ Got a feature, not a component? Use `/distill` to extract the craft-able pieces.
 
 ## Ralph Mode
 
-For continuous generation, Sigil supports [Ralph-style loops](https://ghuntley.com/ralph/) — one component per loop, tune until consistent.
+For design work, Sigil uses a continuous feedback loop. **You are the backpressure.**
 
 **Run:**
 ```bash
 ./ralph.sh 20 grimoires/sigil/CRAFT.md
 ```
 
-**CRAFT.md structure:**
-```markdown
-## Queue           ← Components to build (picks ONE per loop)
-## Signs           ← Instructions to prevent known failures
-## Backpressure    ← Automated checks (build, types, render)
-```
-
 **The cycle:**
 
 ```
-1. Ralph runs Queue autonomously
-   → Picks unchecked item
-   → Invokes /craft
-   → Backpressure: build passes, no errors
-   → Marks [x], commits
-   → Repeats until Queue complete
-
-2. Loop completes — all items [x]
-
-3. HOTL reviews generated components
-   → "CTA feels too slow"
-   → "Card shadows too heavy"
-
-4. HOTL tunes CRAFT.md
-   → Reset items that felt wrong: [x] → [ ]
-   → Add Signs: "timing: 500ms", "no shadows"
-
-5. Run loop again
-   → Ralph regenerates unchecked items
-   → Reads Signs, applies corrections
-   → Overwrites existing files
-
-6. Repeat until feel is right
-
+1. Claude picks unchecked item from Queue
+2. Invokes /craft, shows physics analysis
+3. Generates component
+4. PAUSES — "Does this feel right?"
+5. You respond:
+   - "yes" → marks [x], commits, continues
+   - correction → adds Sign, regenerates
+   - "focus style" → uses /style for material only
+6. Repeat until Queue complete
 7. /inscribe → patterns become permanent
 ```
 
-**Key insight:** Backpressure is automated (builds, types). Feel is human. You tune **after** the loop, not during. Ralph runs autonomously; you observe patterns and tune between runs.
+**You are in the loop continuously, not reviewing after.**
 
-**Signs prevent failures:**
+**Tools for focused iteration:**
+
+| Command | Layer | When to use |
+|---------|-------|-------------|
+| `/craft` | All three | New component, full physics |
+| `/style` | Material | "looks wrong, behavior fine" |
+| `/animate` | Animation | "movement feels off" |
+| `/behavior` | Behavioral | "timing is wrong" |
+
+**Signs accumulate your corrections:**
 
 ```markdown
 ## Signs
 ### Timing
-- financial: 500ms not 800ms
+- 500ms not 800ms
 
 ### Material
-- no shadows, flat aesthetic
+- no shadows
 - radius: 12px
 ```
 
-**`/inscribe`** promotes patterns to rules:
+**`/inscribe`** makes patterns permanent:
 ```
 /inscribe
 
-Found 3 patterns to inscribe:
-• Adjust financial timing → 500ms? (y/n)
-• Remove shadows by default? (y/n)
+Found 3 patterns:
+• Financial timing → 500ms? (y/n)
+• Remove shadows? (y/n)
 
-The sigil is inscribed. Future /craft carries these marks.
+The sigil is inscribed.
 ```
 
 ---

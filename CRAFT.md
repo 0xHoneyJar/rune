@@ -1,6 +1,6 @@
 # CRAFT.md
 
-Ralph-style prompt for Sigil. One component per loop. Tune until consistent.
+Design physics through continuous human feedback. You are the backpressure.
 
 ```bash
 ./ralph.sh 20 grimoires/sigil/CRAFT.md
@@ -13,126 +13,76 @@ Ralph-style prompt for Sigil. One component per loop. Tune until consistent.
 Load every loop:
 - `.claude/rules/sigil-*` — Physics laws
 - `grimoires/sigil/taste.md` — Accumulated preferences
-- **Signs** below — Corrections from HOTL
+- **Signs** below — Your corrections
 
 ---
 
 ## Queue
 
 <!--
-Components to build. Pick ONE unchecked item per loop.
-Format: description — effect hint, feel hint, material hint
+Components to craft. ONE at a time, with your approval.
 -->
 
-- [ ] primary CTA button — financial, trustworthy, elevated
-- [ ] secondary action — standard, subtle, minimal
-- [ ] card container — query, clean, elevated
-- [ ] toggle switch — local, snappy, minimal
+- [ ] claim button — trustworthy, deliberate
+- [ ] card container — clean, elevated
+- [ ] toggle switch — snappy, immediate
 
 ---
 
 ## Task
 
-1. Pick the most important unchecked `[ ]` item from Queue
-2. **Invoke:** `/craft "<item description>"`
-3. Verify against **Backpressure** (automated checks)
-4. **Pass** → mark `[x]`, commit, continue to next item
-5. **Fail** → fix errors, retry
-6. When Queue complete → loop exits
+1. Pick first unchecked `[ ]` item
+2. Invoke: `/craft "<item>"`
+3. Show physics analysis
+4. Generate component
+5. **PAUSE — Ask: "Does this feel right?"**
+6. Wait for human response:
+   - **"yes"** → mark `[x]`, commit, continue to next
+   - **correction** → add to Signs, regenerate same item
+   - **"focus X"** → use `/style`, `/animate`, or `/behavior` to target layer
+7. Repeat until Queue complete
+
+**You are the backpressure. Nothing advances without your approval.**
 
 ---
 
 ## Signs
 
-<!--
-HOTL adds signs after reviewing completed loop.
-Signs prevent known failures on next run.
--->
-
 ### Timing
-<!-- e.g., "financial: 500ms not 800ms" -->
 
 ### Animation
-<!-- e.g., "prefer springs over ease-out" -->
 
 ### Material
-<!-- e.g., "no shadows, flat aesthetic" -->
-<!-- e.g., "radius: 12px not 8px" -->
+
+### Brand
 
 ---
 
-## Backpressure
+## Tools
 
-Automated checks — loop continues if ALL pass:
-
-- [ ] No TypeScript errors
-- [ ] Build succeeds
-- [ ] Component renders
-- [ ] Matches codebase conventions
-
-**These are automated. Feel is judged by HOTL after loop completes.**
-
----
-
-## After Loop Completes
-
-```
-1. Review generated components
-
-2. Identify what felt wrong:
-   - "CTA timing too slow"
-   - "Card shadows too heavy"
-
-3. Edit this file:
-   - Reset wrong items: [x] → [ ]
-   - Add Signs with corrections
-
-4. Run loop again:
-   ./ralph.sh 20 grimoires/sigil/CRAFT.md
-
-5. Ralph regenerates, reads Signs, overwrites files
-
-6. Repeat until feel is right
-
-7. Run /inscribe to make patterns permanent
-```
+| Command | Layer | When to use |
+|---------|-------|-------------|
+| `/craft` | All three | New component, full physics |
+| `/style` | Material | Looks wrong, behavior fine |
+| `/animate` | Animation | Movement feels off |
+| `/behavior` | Behavioral | Timing/sync is wrong |
 
 ---
 
 ## Example
 
 ```
-# First run
-./ralph.sh 20 CRAFT.md
-→ All items marked [x]
-→ Loop completes
+Claude: /craft "claim button — trustworthy"
+        [shows analysis, generates component]
+        Does this feel right?
 
-# HOTL reviews
-→ "CTA feels slow, card shadows heavy"
+Human: "timing feels slow"
 
-# HOTL edits CRAFT.md
-Queue:
-- [ ] primary CTA button    ← reset from [x]
-- [x] secondary action      ← keep
-- [ ] card container        ← reset from [x]
-- [x] toggle switch         ← keep
+Claude: Adding sign, regenerating...
+        Does this feel right?
 
-Signs:
-### Timing
-- financial: 500ms not 800ms
+Human: "yes"
 
-### Material
-- no shadows
-
-# Second run
-./ralph.sh 20 CRAFT.md
-→ Regenerates CTA and card with Signs applied
-→ Overwrites existing files
-→ Loop completes
-
-# HOTL reviews
-→ "Feels right now"
-
-# Make permanent
-/inscribe
+Claude: Marked [x], committed.
+        Moving to next item...
 ```
