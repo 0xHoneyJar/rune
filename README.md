@@ -9,6 +9,16 @@ $ curl -fsSL https://sigil.dev/install | bash
 
 ---
 
+## Why "Sigil"
+
+A sigil is a symbol that holds intention. You speak a desire, condense it into a mark, and the mark carries the meaning forward.
+
+That's what this does. You speak in feel — "trustworthy", "snappy", "glassy". Sigil condenses it into physics — timing, easing, surface. The physics carry the feel into code.
+
+Use it, and it learns. Accept a generation, and the sigil remembers. Modify it, and the sigil adapts. Over time, your sigil becomes yours — a condensed symbol of your taste that generates physics matching your intent.
+
+---
+
 ## The Problem
 
 AI generates UI without understanding *feel*. Every generation is a guess.
