@@ -39,14 +39,15 @@ Generate these components to discover your taste across physics layers:
 
 ## Task
 
-1. Pick ONE component from Queue
-2. Run `/craft` with brand context (e.g., "minimal", "playful", "premium")
+1. Pick ONE unchecked `[ ]` component from Queue
+2. **Invoke:** `/craft "<component> — <brand context>"`
+   Example: `/craft "primary CTA button — minimal, premium"`
 3. Observe: Does it **feel right** for your brand?
-4. If wrong → add Sign describing what felt off
-5. If right → mark `[x]`, note what worked in Learnings
+4. **Wrong** → add Sign describing what felt off, do NOT mark complete
+5. **Right** → mark `[x]`, note what worked in Learnings
 6. Pattern 3+ times → ready for `/inscribe`
 
-**Goal: Discover preferences, not ship components.**
+**Only mark [x] when it feels right. Loop retries until it does.**
 
 ---
 

@@ -33,14 +33,14 @@ Format: description — effect hint, feel hint, material hint
 
 ## Task
 
-1. Study **Queue**, choose most important unchecked item
-2. Run `/craft` for that ONE component
-3. Verify against **Backpressure** criteria
-4. Pass → mark `[x]`, commit, push
-5. Fail → add to **Learnings**, loop continues
-6. Pattern 3+ times → note "Ready for /inscribe"
+1. Study **Queue**, choose most important unchecked `[ ]` item
+2. **Invoke the command:** `/craft "<item description from Queue>"`
+3. Verify generated component against **Backpressure** criteria
+4. **Pass** → mark `[x]`, commit, push
+5. **Fail** → add Sign describing what was wrong, do NOT mark complete
+6. Pattern 3+ times in Signs → note "Ready for /inscribe"
 
-**One component per loop. Trust eventual consistency.**
+**One component per loop. Only mark [x] when it passes. Trust eventual consistency.**
 
 ---
 
