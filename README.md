@@ -229,48 +229,42 @@ Corrections weight 5x. Usage is feedback. Taste is physics personalized.
 
 ## Ralph Mode
 
-For continuous generation, Sigil supports [Ralph-style loops](https://ghuntley.com/ralph/) — run until the guitar is tuned.
+For continuous generation, Sigil supports [Ralph-style loops](https://ghuntley.com/ralph/) — one component per loop, tune until consistent.
 
 **The Loop:**
 ```bash
 while :; do cat CRAFT.md | claude-code ; done
 ```
 
+**Key principle:** One thing per loop. Not a batch. Trust eventual consistency.
+
 **CRAFT.md** — your prompt template:
 ```markdown
-## Components
+## Queue
+- [ ] claim rewards button — trustworthy, deliberate, elevated
+- [ ] like button for posts — snappy, playful, minimal
 
-/craft "claim rewards button — trustworthy, deliberate, elevated"
-
-/craft "like button for posts — snappy, playful, minimal"
-
-/craft "dark mode toggle — instant, smooth, minimal"
+## Task
+1. Pick most important unchecked item from Queue
+2. Run /craft for that ONE component
+3. Verify against Acceptance criteria
+4. Pass → mark [x] complete, commit
+5. Fail → add to Learnings, loop continues
 
 ## Learnings
-
-### Keywords
-- 2026-01-13: "harvest" should be financial
-
 ### Timing
-- 2026-01-13: Prefer 600ms over 800ms
-
-### Material
-- 2026-01-13: All buttons use 8px radius
+- 2026-01-13: financial 800ms → 600ms preferred
 ```
 
-**The Feedback Loop:**
+**The Cycle:**
 ```
-CRAFT.md → Loop → Generate → Review → Learnings
-                                          ↓
-                                      /inscribe
-                                          ↓
-                              Sigil rules marked
-                                          ↓
-                              Future /craft carries
-                              these marks forward
+Loop 1: /craft "claim button" → wrong timing → add Learning → loop
+Loop 2: /craft "claim button" → reads Learning → correct → mark [x] → commit
+Loop 3: /craft "like button" → correct first try → mark [x] → commit
+Loop 4: Queue empty → run /inscribe → marks become permanent
 ```
 
-**`/inscribe`** makes learnings permanent:
+**`/inscribe`** promotes learnings to Sigil's rules:
 ```
 /inscribe
 
@@ -278,9 +272,11 @@ Found 3 learnings to inscribe:
 • Add "harvest" to financial keywords? (y/n)
 • Adjust financial timing 800ms → 600ms? (y/n)
 • Set default radius to 8px? (y/n)
+
+The sigil is inscribed. Future /craft carries these marks forward.
 ```
 
-Each iteration adds marks to the sigil. Eventually, it generates exactly what you want without correction.
+Each failed loop teaches. Each `/inscribe` makes the teaching permanent. Eventually, the sigil generates exactly what you want without correction.
 
 ---
 
