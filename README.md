@@ -251,7 +251,7 @@ Effect: standard
 Feel: snappy, playful
 Material: minimal
 
-## Tuning Notes
+## Learnings
 - 2026-01-13: "harvest" should be financial
 - 2026-01-13: Prefer 600ms over 800ms
 - 2026-01-13: All buttons use 8px radius
@@ -259,26 +259,27 @@ Material: minimal
 
 **The Feedback Loop:**
 ```
-CRAFT.md → Loop → Generate → Review → Tuning Notes
+CRAFT.md → Loop → Generate → Review → Learnings
                                           ↓
-                                       /tune
+                                      /inscribe
                                           ↓
-                              Sigil rules updated
+                              Sigil rules marked
                                           ↓
-                              Future /craft improved
+                              Future /craft carries
+                              these marks forward
 ```
 
-**`/tune`** promotes learnings back to Sigil:
+**`/inscribe`** makes learnings permanent:
 ```
-/tune
+/inscribe
 
-Found 3 tuning notes to promote:
+Found 3 learnings to inscribe:
 • Add "harvest" to financial keywords? (y/n)
 • Adjust financial timing 800ms → 600ms? (y/n)
 • Set default radius to 8px? (y/n)
 ```
 
-Each iteration tunes the guitar. Eventually, Sigil generates exactly what you want without correction.
+Each iteration adds marks to the sigil. Eventually, it generates exactly what you want without correction.
 
 ---
 

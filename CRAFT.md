@@ -1,6 +1,6 @@
 # CRAFT.md
 
-Ralph-style prompt for Sigil. Run in a loop, tune until consistent.
+Ralph-style prompt for Sigil. Run in a loop, inscribe learnings until consistent.
 
 ```bash
 while :; do cat CRAFT.md | claude-code ; done
@@ -25,7 +25,7 @@ Read and apply:
 
 Generate the following components:
 
-### 1. [Component Name]
+### 1. Toast
 ```
 Description: [what it does]
 Effect hint: [financial/destructive/standard/local]
@@ -61,27 +61,28 @@ Before marking complete:
 
 ---
 
-## Tuning Notes
+## Learnings
 
 <!--
 Operator: Add learnings here after each loop iteration.
-These notes persist and refine future generations.
+These marks persist and refine future generations.
+Run /inscribe to make them permanent in Sigil's rules.
 Format: YYYY-MM-DD: observation → correction
 -->
 
-### Physics Tuning
-<!-- Wrong effect detected? Note the correction. -->
+### Keywords
+<!-- Wrong effect detected? Note what it should be. -->
 
-### Timing Tuning
+### Timing
 <!-- Wrong duration? Note preferred values. -->
 
-### Animation Tuning
+### Animation
 <!-- Wrong easing? Note preferred springs/curves. -->
 
-### Material Tuning
+### Material
 <!-- Wrong surface? Note preferred treatments. -->
 
-### Codebase Tuning
+### Codebase
 <!-- Wrong patterns? Note conventions to follow. -->
 
 ---
@@ -112,18 +113,18 @@ Feel: instant, smooth
 Material: minimal
 ```
 
-### Tuning Notes (example)
+### Learnings (example)
 
-#### Physics Tuning
+#### Keywords
 - 2026-01-13: "claim" detected as financial ✓
 - 2026-01-13: "like" detected as standard ✓
 
-#### Timing Tuning
+#### Timing
 - 2026-01-13: Reduced financial timing to 600ms (team preference)
 
-#### Animation Tuning
+#### Animation
 - 2026-01-13: Using spring(500,25) instead of spring(500,30) — bouncier feel
 
-#### Material Tuning
+#### Material
 - 2026-01-13: All buttons use 8px radius (design system)
 - 2026-01-13: No shadows on standard buttons (minimal aesthetic)

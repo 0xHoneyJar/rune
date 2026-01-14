@@ -1,48 +1,48 @@
 ---
-name: "tune"
+name: "inscribe"
 version: "1.0.0"
 description: |
-  Promote tuning notes from CRAFT.md back to Sigil's rules.
-  Closes the Ralph feedback loop — learnings become physics.
+  Inscribe learnings from CRAFT.md into Sigil's rules.
+  Closes the Ralph feedback loop — learnings become permanent marks.
 
 arguments:
   - name: "source"
     type: "string"
     required: false
     default: "CRAFT.md"
-    description: "File containing tuning notes"
+    description: "File containing learnings to inscribe"
 
 context_files:
   - path: "CRAFT.md"
     required: false
-    purpose: "Source of tuning notes"
+    purpose: "Source of learnings"
   - path: "grimoires/sigil/taste.md"
     required: false
     purpose: "Accumulated taste signals"
   - path: ".claude/rules/08-sigil-lexicon.md"
     required: true
-    purpose: "Target for keyword updates"
+    purpose: "Target for keyword inscriptions"
   - path: ".claude/rules/01-sigil-physics.md"
     required: true
-    purpose: "Target for timing updates"
+    purpose: "Target for timing inscriptions"
   - path: ".claude/rules/05-sigil-animation.md"
     required: true
-    purpose: "Target for animation updates"
+    purpose: "Target for animation inscriptions"
   - path: ".claude/rules/07-sigil-material.md"
     required: true
-    purpose: "Target for material updates"
+    purpose: "Target for material inscriptions"
 ---
 
-# /tune
+# /inscribe
 
-Promote tuning notes to Sigil's rules. Close the feedback loop.
+Inscribe learnings into the sigil. Make marks permanent.
 
 <workflow>
 
-## Step 1: Gather Tuning Notes
+## Step 1: Gather Learnings
 
-Read tuning sources in order:
-1. `CRAFT.md` → Tuning Notes section
+Read sources in order:
+1. `CRAFT.md` → Learnings section
 2. `grimoires/sigil/taste.md` → MODIFY signals with patterns
 
 Look for:
@@ -57,7 +57,7 @@ Look for:
 Group into categories:
 
 ```
-┌─ Tuning Analysis ──────────────────────────────────┐
+┌─ Inscription Analysis ─────────────────────────────┐
 │                                                    │
 │  Keywords (→ 08-sigil-lexicon.md)                 │
 │  ─────────────────────────────────                │
@@ -80,20 +80,20 @@ Group into categories:
 └────────────────────────────────────────────────────┘
 ```
 
-## Step 3: Propose Updates
+## Step 3: Propose Inscriptions
 
 For each finding, show:
-1. What will change
-2. Which file
-3. The specific edit
+1. What will be inscribed
+2. Which rule file
+3. The specific mark
 
 Format:
 ```
-Proposed Update 1/N
-───────────────────
+Proposed Inscription 1/N
+────────────────────────
 File:   .claude/rules/08-sigil-lexicon.md
-Change: Add "harvest" to Financial keywords
-Reason: Seen 3x in tuning notes, always corrected to financial
+Mark:   Add "harvest" to Financial keywords
+Reason: Seen 3x in learnings, always corrected to financial
 
 Current:
   Primary: claim, deposit, withdraw, transfer...
@@ -103,39 +103,39 @@ Proposed:
   Extended: mint, burn, stake, unstake, bridge, approve, redeem, harvest
                                                               ^^^^^^^^
 
-Apply? (yes/no/skip)
+Inscribe? (yes/no/skip)
 ```
 
-## Step 4: Apply Approved Updates
+## Step 4: Apply Inscriptions
 
-For each approved update:
+For each approved inscription:
 1. Edit the target rule file
-2. Add a comment noting the source: `# Added via /tune from CRAFT.md`
+2. Add a comment noting the source: `# Inscribed via /inscribe from CRAFT.md`
 3. Log to taste.md:
    ```
-   ## [timestamp] | TUNE
+   ## [timestamp] | INSCRIBE
    Source: CRAFT.md
-   Promoted: "harvest" → financial keyword
+   Mark: "harvest" → financial keyword
    ---
    ```
 
 ## Step 5: Summary
 
-Show what was tuned:
+Show what was inscribed:
 
 ```
-┌─ Tuning Complete ──────────────────────────────────┐
+┌─ Inscription Complete ─────────────────────────────┐
 │                                                    │
-│  Applied: 3 updates                               │
-│  Skipped: 1 update                                │
+│  Inscribed: 3 marks                               │
+│  Skipped:   1 mark                                │
 │                                                    │
-│  Files modified:                                  │
+│  Files marked:                                    │
 │  • .claude/rules/08-sigil-lexicon.md (1 keyword)  │
 │  • .claude/rules/01-sigil-physics.md (1 timing)   │
 │  • .claude/rules/05-sigil-animation.md (1 spring) │
 │                                                    │
-│  The guitar is tuned. Future /craft will use      │
-│  these preferences automatically.                 │
+│  The sigil is inscribed. Future /craft will       │
+│  carry these marks forward.                       │
 │                                                    │
 └────────────────────────────────────────────────────┘
 ```
@@ -144,15 +144,15 @@ Show what was tuned:
 
 <parsing_patterns>
 
-## How to Parse Tuning Notes
+## How to Parse Learnings
 
 Look for these patterns in natural language:
 
 ### Keywords
 ```
-"X should be financial"     → add X to financial keywords
+"X should be financial"     → inscribe X to financial keywords
 "X detected wrong"          → check what it should be
-"always correcting X to Y"  → add X to Y effect keywords
+"always correcting X to Y"  → inscribe X to Y effect keywords
 ```
 
 ### Timing
@@ -182,10 +182,10 @@ Look for these patterns in natural language:
 
 ## Safety Rules
 
-1. **Show before applying** — Never auto-apply without confirmation
-2. **One at a time** — Present each update individually
+1. **Show before inscribing** — Never auto-apply without confirmation
+2. **One at a time** — Present each inscription individually
 3. **Preserve existing** — Add to lists, don't replace
-4. **Comment source** — Mark updates with their origin
+4. **Comment source** — Mark inscriptions with their origin
 5. **Log everything** — Record to taste.md for audit trail
 
 </safety>
