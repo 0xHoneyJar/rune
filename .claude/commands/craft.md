@@ -1,21 +1,30 @@
 ---
 name: "craft"
-version: "13.0.0"
+version: "14.0.0"
 description: |
-  Generate UI components with unified design physics.
+  Apply design physics to any UX-affecting change.
   Three layers: Behavioral + Animation + Material = Feel.
-  Shows analysis before generating. Learns from usage.
+
+  Crafting is not limited to component generation.
+  It applies to anything that affects what users experience:
+  - New components
+  - Existing code refinement
+  - Configuration and theming
+  - Data patterns and hooks
+  - Polish passes and fine-tuning
 
 arguments:
   - name: "description"
     type: "string"
     required: true
-    description: "What to build"
+    description: "What to craft — new, refine, or polish"
     examples:
       - "claim button"
-      - "like button for posts"
-      - "delete with undo"
-      - "glassmorphism card"
+      - "improve light mode readability"
+      - "refine these lines to be easier to read"
+      - "optimize the loading state for this data flow"
+      - "polish the hover states across the nav"
+      - "glassmorphism card with spring animation"
 
 context_files:
   - path: ".claude/rules/00-sigil-core.md"
@@ -50,52 +59,97 @@ context_files:
     purpose: "Accumulated taste signals"
 
 outputs:
-  - path: "src/components/$COMPONENT_NAME.tsx"
-    type: "file"
-    description: "Generated component with unified physics"
+  dynamic: true
+  description: "Output depends on craft type - component, config, styles, or code edit"
 
 workflow_next: "garden"
 ---
 
 # /craft
 
-Generate UI components with unified design physics (behavioral + animation + material).
+Apply design physics to any UX-affecting change.
+
+<philosophy>
+## The Craft Philosophy
+
+**Crafting is applying physics to create feel.**
+
+Feel emerges from the interplay of three layers:
+- **Behavioral** — How things respond (sync, timing, confirmation)
+- **Animation** — How things move (easing, springs, frequency)
+- **Material** — How things look (surface, fidelity, grit)
+
+These layers aren't separate concerns. They're three expressions of the same physics. A financial action must be behaviorally pessimistic (800ms, confirmation), animated deliberately (ease-out, non-interruptible), and materially trustworthy (elevated, clear). Change one layer and the others must adjust.
+
+**Craft applies everywhere feel matters:**
+| Craft Type | Example | Physics Applied |
+|------------|---------|-----------------|
+| New component | "claim button" | All three layers, new file |
+| Refinement | "make this feel snappier" | Adjust timing/animation |
+| Configuration | "improve light mode" | Material physics to theme |
+| Data patterns | "optimize loading UX" | Behavioral physics to data flow |
+| Polish | "refine hover states" | Animation + material to existing |
+</philosophy>
 
 <action_default>
 ## Action Default
 
-CRITICAL: After user confirms analysis, generate complete working code immediately.
+CRITICAL: After user confirms analysis, apply changes immediately.
 
-DO:
-- Write the full component file
+**DO:**
+- Detect what's being crafted (new vs. refine vs. configure)
+- Apply physics appropriate to the craft type
 - Match codebase conventions exactly
-- Include all three physics layers
+- Write complete, working code
 
-DO NOT:
+**DO NOT:**
 - Describe what you would build
 - Ask "would you like me to generate this?"
 - Provide partial implementations
-- Add comments unless explaining physics override
+- Add unnecessary comments
+
+**IMPORTANT:** Craft is about doing, not discussing. Show physics, get confirmation, apply.
 </action_default>
 
 <permissions>
 ## Permission Boundaries
 
 **Proactive** (do without asking):
-- Read package.json, existing components, taste.md
+- Read package.json, existing code, taste.md
+- Discover conventions and patterns
 - Show physics analysis
-- Detect effect from keywords/types/context
+- Detect craft type, effect, and material
 
 **Requires confirmation** (ask first):
-- Write new component files
-- Modify existing components
-- Override physics defaults based on user input
+- Write new files
+- Modify existing files
+- Override physics defaults
+- Apply changes to configuration
 
 **Never** (even if asked):
-- Delete existing components without explicit request
-- Modify package.json or node_modules
+- Delete files without explicit request
+- Modify package.json dependencies
 - Skip protected capability checks
+- Make financial operations optimistic
 </permissions>
+
+<craft_detection>
+## Craft Type Detection
+
+Detect what's being crafted before detecting effect:
+
+| Signal | Craft Type | Output |
+|--------|------------|--------|
+| "new", "create", "build", no existing file | **Generate** | New component file |
+| "refine", "polish", "improve", existing file | **Refine** | Edit existing code |
+| "theme", "colors", "mode", config file | **Configure** | Edit config/theme |
+| "loading", "data", "fetch", "state" | **Pattern** | Hook or utility |
+| "hover", "focus", "states", multiple files | **Polish** | Batch edits |
+
+**Ambiguity Resolution:**
+If unclear, ask ONE question:
+> "Is this a new component, or refining something that exists?"
+</craft_detection>
 
 <output_modes>
 ## Output Modes
@@ -104,17 +158,40 @@ Check `grimoires/sigil/taste.md` for `output_mode` preference.
 
 **Compact mode** (default after 5+ accepts):
 ```
-ClaimButton | Financial | Pessimistic 800ms | Confirm: Yes
-Animation: ease-out | Material: elevated, 8px radius
-Protected: [all pass]
+[Target] | [Effect] | [Craft Type]
+Behavioral: [sync] [timing] | Animation: [easing] | Material: [surface]
+Protected: [pass/fail] | Codebase: [libs detected]
 
-Proceed? (y/n)
+Apply? (y/n)
 ```
 
-**Verbose mode** (default for new users):
-Full analysis box with nested sections.
+**Verbose mode** (default for new users, after REJECT):
+```
+┌─ Craft Analysis ───────────────────────────────────────┐
+│                                                        │
+│  Target:       [what's being crafted]                  │
+│  Craft Type:   [generate/refine/configure/pattern]    │
+│  Effect:       [effect type if applicable]             │
+│  Detected by:  [signals that triggered detection]      │
+│                                                        │
+│  Behavioral    [Sync] | [Timing] | [Confirmation]      │
+│  Animation     [Easing] | [Spring/duration] | [Freq]   │
+│  Material      [Surface] | [Shadow] | [Radius]         │
+│                                                        │
+│  Codebase:     [styling] + [animation] + [data]        │
+│                                                        │
+│  Output:       [file(s) to create/modify]              │
+│                                                        │
+│  Protected (if applicable):                            │
+│  [✓/✗] Cancel  [✓/✗] Recovery  [✓/✗] Touch  [✓/✗] Focus│
+│                                                        │
+└────────────────────────────────────────────────────────┘
+
+Proceed? (yes / or describe what's different)
+```
 
 Auto-switch to compact after 5 consecutive ACCEPT signals.
+Reset to verbose after any REJECT signal.
 </output_modes>
 
 <workflow>
@@ -125,11 +202,11 @@ Auto-switch to compact after 5 consecutive ACCEPT signals.
 
 Use TodoWrite to track this workflow:
 ```
-1. [ ] Discover context (libs, conventions)
-2. [ ] Detect effect and material
+1. [ ] Discover context (libs, conventions, existing code)
+2. [ ] Detect craft type and effect
 3. [ ] Show physics analysis
 4. [ ] Get user confirmation
-5. [ ] Generate component
+5. [ ] Apply changes
 6. [ ] Collect feedback
 7. [ ] Log taste signal
 ```
@@ -158,24 +235,40 @@ Extract from dependencies:
 - Toast: `sonner` | `react-hot-toast` | native
 - Styling: `tailwindcss` | `styled-components` | `@emotion`
 
-**1c. Read one existing component** to match:
-- Import style (named vs default, path aliases)
-- File structure (single file vs folder)
-- Naming conventions (PascalCase, kebab-case files)
+**1c. If refining existing code:**
+- Read the file(s) being refined
+- Understand current patterns before changing
+- Note what's working vs. what needs adjustment
+
+**1d. If configuring theme/config:**
+- Read the config file structure
+- Understand the existing design tokens
+- Note constraints (CSS variables, Tailwind config, etc.)
 </step_1>
 
 <step_2>
-### Step 2: Detect Effect and Material
+### Step 2: Detect Craft Type and Effect
 
-**Effect Detection** (determines behavioral + animation physics):
+**Craft Type Detection** (determines output):
+
+| Input Signals | Craft Type | What to Do |
+|---------------|------------|------------|
+| Component name, no existing file | Generate | Create new component |
+| "refine", "polish", existing file ref | Refine | Edit existing file |
+| "theme", "mode", "colors", config ref | Configure | Edit config file |
+| "loading", "data flow", "fetch pattern" | Pattern | Create/edit hook or utility |
+| "hover states", "focus rings", multi-file | Polish | Batch edits |
+
+**Effect Detection** (determines physics):
 
 | Priority | Signal | Example |
 |----------|--------|---------|
 | 1. Types | Props with `Currency`, `Money`, `Wei` | Always Financial |
 | 2. Keywords | "claim", "delete", "like", "toggle" | See lexicon |
 | 3. Context | "with undo", "for wallet" | Modifies effect |
+| 4. Frequency | "used constantly", "high-traffic" | Reduces animation |
 
-**Material Detection** (determines surface physics):
+**Material Detection** (determines surface):
 
 | Keyword | Treatment |
 |---------|-----------|
@@ -184,66 +277,124 @@ Extract from dependencies:
 | flat | no shadows, solid colors |
 | outlined | border only |
 | retro, pixel | grit signatures |
-| (no keyword) | Infer from effect |
+| "readable", "clearer" | contrast, typography focus |
+| (no keyword) | Infer from effect and craft type |
 </step_2>
 
 <step_3>
 ### Step 3: Show Physics Analysis
 
-**If compact mode:**
-```
-[ComponentName] | [Effect] | [Sync] [Timing] | Confirm: [Yes/No]
-Animation: [easing] | Material: [surface], [radius]
-Protected: [pass/fail indicators]
+Show analysis appropriate to craft type:
 
-Proceed? (y/n)
+**For Generate (new component):**
 ```
-
-**If verbose mode:**
-```
-┌─ Physics Analysis ─────────────────────────────────────┐
+┌─ Craft Analysis ───────────────────────────────────────┐
+│  Target:       ClaimButton (new)                       │
+│  Craft Type:   Generate                                │
+│  Effect:       Financial mutation                      │
 │                                                        │
-│  Component:    [ComponentName]                         │
-│  Effect:       [Effect type]                           │
-│  Detected by:  [keyword/type/context that triggered]   │
+│  Behavioral    Pessimistic | 800ms | Confirmation      │
+│  Animation     ease-out | 800ms | Non-interruptible   │
+│  Material      Elevated | Soft shadow | 8px radius     │
 │                                                        │
-│  Behavioral    [Sync] | [Timing] | [Confirmation]      │
-│  Animation     [Easing] | [Spring values] | [Interrupt]│
-│  Material      [Surface] | [Shadow] | [Radius] | [Grit]│
-│                                                        │
-│  Codebase:     [styling] + [animation] + [data]        │
-│                                                        │
-│  Protected:                                            │
-│  [✓/✗] Cancel  [✓/✗] Error recovery  [✓/✗] 44px       │
-│  [✓/✗] Focus ring  [✓/✗] Reduced motion               │
-│                                                        │
+│  Output:       src/components/ClaimButton.tsx          │
+│  Protected:    [✓] All capabilities included          │
 └────────────────────────────────────────────────────────┘
+```
+
+**For Refine (existing code):**
+```
+┌─ Craft Analysis ───────────────────────────────────────┐
+│  Target:       vocs.config.ts (theme)                  │
+│  Craft Type:   Refine                                  │
+│  Issue:        Lines hard to read in light mode        │
+│                                                        │
+│  Material      Contrast: Increase | Background: Adjust │
+│  Changes:      lineColor → higher contrast value       │
+│                backgroundSecondary → softer tone       │
+│                                                        │
+│  Output:       Edit vocs.config.ts                     │
+└────────────────────────────────────────────────────────┘
+```
+
+**For Configure (theme/config):**
+```
+┌─ Craft Analysis ───────────────────────────────────────┐
+│  Target:       Theme configuration                     │
+│  Craft Type:   Configure                               │
+│  Mode:         Light mode refinement                   │
+│                                                        │
+│  Material      Readability focus                       │
+│  Changes:      - Border colors: +20% contrast          │
+│                - Text secondary: darken for legibility │
+│                - Code blocks: softer background        │
+│                                                        │
+│  Output:       Edit [config file path]                 │
+└────────────────────────────────────────────────────────┘
+```
+
+**For Pattern (data/hooks):**
+```
+┌─ Craft Analysis ───────────────────────────────────────┐
+│  Target:       Loading state pattern                   │
+│  Craft Type:   Pattern                                 │
+│  Effect:       Query (optimistic, 150ms)               │
+│                                                        │
+│  Behavioral    Suspense boundary placement             │
+│  Animation     Skeleton with subtle pulse              │
+│  Material      Skeleton matches content shape          │
+│                                                        │
+│  Output:       src/hooks/useOptimisticQuery.ts         │
+└────────────────────────────────────────────────────────┘
+```
+
+**For Polish (batch updates):**
+```
+┌─ Craft Analysis ───────────────────────────────────────┐
+│  Target:       Hover states across navigation          │
+│  Craft Type:   Polish                                  │
+│  Scope:        3 files identified                      │
+│                                                        │
+│  Animation     Hover: spring(500, 30), 150ms feel      │
+│  Material      Hover: +5% brightness, subtle lift      │
+│                                                        │
+│  Output:       Edit src/components/Nav*.tsx (3 files)  │
+└────────────────────────────────────────────────────────┘
+```
 
 Proceed? (yes / or describe what's different)
-```
 </step_3>
 
 <step_4>
 ### Step 4: Get Confirmation
 
 Wait for user response:
-- **"yes", "y", "proceed"** → Generate immediately (Step 5)
+- **"yes", "y", "proceed"** → Apply immediately (Step 5)
 - **Correction provided** → Update analysis, show again
 - **Question asked** → Answer, then re-confirm
 </step_4>
 
 <step_5>
-### Step 5: Generate Component
+### Step 5: Apply Changes
 
-IMMEDIATELY generate complete working code that:
-- Uses discovered libraries only (never assume)
-- Matches existing code style exactly
-- Applies all three physics layers from analysis
-- Includes all protected capabilities
-- Has reduced motion fallback
-- Has no comments (unless explaining physics override)
+IMMEDIATELY apply changes based on craft type:
 
-Write the full component. Do not describe — build.
+**Generate:** Write complete new file with all three physics layers.
+
+**Refine:** Use Edit tool to modify existing code, preserving what works.
+
+**Configure:** Edit config file with physics-informed values.
+
+**Pattern:** Write hook or utility with appropriate physics baked in.
+
+**Polish:** Apply batch edits across identified files.
+
+**For all craft types:**
+- Use discovered libraries only (never assume)
+- Match existing code style exactly
+- Apply physics from analysis
+- Include protected capabilities where applicable
+- No comments unless explaining physics override
 </step_5>
 
 <step_6>
@@ -251,25 +402,30 @@ Write the full component. Do not describe — build.
 
 Ask the user to reflect on feel from their end user's perspective:
 
+**For Generate:**
 > "Does this feel right? Think about your user in the moment of clicking."
 
-**Prompt creative reflection:**
-- Who is clicking this? (new user, power user, anxious customer)
-- What's the moment? (first deposit, routine action, high-stakes decision)
-- What should they feel? (trust, speed, safety, delight)
+**For Refine:**
+> "Is this better? Does it feel like what you were going for?"
 
-**If user gives feedback:**
-Listen for what layer is off:
-- "feels slow/fast" → behavioral (`/behavior`)
-- "movement feels off" → animation (`/animate`)
-- "looks wrong" → material (`/style`)
+**For Configure:**
+> "Does this look right for your product's personality?"
 
-Ask follow-up: "What should it feel like instead?"
-Use their language — don't force physics terminology.
+**For Pattern:**
+> "Does this data flow feel smooth to the user?"
+
+**For Polish:**
+> "Do these interactions feel cohesive now?"
+
+**Listen for signals:**
+- "feels slow/fast" → behavioral layer
+- "movement feels off" → animation layer
+- "looks wrong" → material layer
+- "something's not quite right" → ask which layer
 
 **Signal detection:**
 - ACCEPT: "yes", "looks good", "perfect", moves to next task
-- MODIFY: Describes what's off ("feels heavy", "too clinical", "needs more weight")
+- MODIFY: Describes what's off ("too slow", "needs more contrast")
 - REJECT: "no", "wrong", "start over"
 </step_6>
 
@@ -278,28 +434,31 @@ Use their language — don't force physics terminology.
 
 Append to `grimoires/sigil/taste.md`:
 
-**ACCEPT** (user confirms):
+**ACCEPT:**
 ```markdown
 ## [YYYY-MM-DD HH:MM] | ACCEPT
-Component: [name]
-Effect: [type]
-Physics: [behavioral], [animation], [material]
+Target: [what was crafted]
+Craft Type: [generate/refine/configure/pattern/polish]
+Effect: [if applicable]
+Physics: [key values applied]
 ---
 ```
 
-**MODIFY** (user edits file or selects non-Yes option):
+**MODIFY:**
 ```markdown
 ## [YYYY-MM-DD HH:MM] | MODIFY
-Component: [name]
+Target: [what was crafted]
+Craft Type: [type]
 Changed: [what user indicated was off]
-Learning: [infer preference]
+Learning: [infer preference for future]
 ---
 ```
 
-**REJECT** (user says no/wrong/redo):
+**REJECT:**
 ```markdown
 ## [YYYY-MM-DD HH:MM] | REJECT
-Component: [name]
+Target: [what was crafted]
+Craft Type: [type]
 Reason: [user feedback]
 ---
 ```
@@ -309,67 +468,97 @@ Reason: [user feedback]
 <error_recovery>
 ## Error Recovery
 
-**Detection fails** (can't determine effect):
+**Craft type unclear:**
+1. Ask ONE question: "Is this new, or refining something that exists?"
+2. If still unclear: Infer from context (file reference = refine, no reference = generate)
+
+**Effect detection fails:**
 1. Ask max 2 clarifying questions
 2. If still unclear: Default to Standard, note in analysis
 3. Format: "⚠ Defaulted to Standard (unclear input)"
 
-**Missing package.json**:
-1. Check imports in existing component files
+**Missing package.json:**
+1. Check imports in existing files
 2. Infer libraries from import statements
 3. If no files exist: Ask user for preferences
 
-**Convention conflict** (multiple styles found):
-1. Show both patterns
-2. Ask which to follow
-3. Log preference to taste.md for future
+**File to refine not found:**
+1. Ask user to specify the file path
+2. Or offer to create new instead
 
-**Protected capability violation**:
+**Protected capability violation:**
 1. Stop generation
 2. Explain which capability would be violated
 3. Offer compliant alternative
 </error_recovery>
 
 <quick_reference>
-## Detection Quick Reference
+## Quick Reference
+
+### Effect → Physics
 
 | Keywords | Effect | Sync | Timing | Confirm |
 |----------|--------|------|--------|---------|
-| claim, deposit, withdraw, transfer, swap, stake | Financial | Pessimistic | 800ms | Yes |
+| claim, deposit, withdraw, transfer, stake | Financial | Pessimistic | 800ms | Yes |
 | delete, remove, destroy, revoke, burn | Destructive | Pessimistic | 600ms | Yes |
-| archive, trash, soft-delete, dismiss | Soft Delete | Optimistic | 200ms | Toast+Undo |
-| save, update, like, follow, create, bookmark | Standard | Optimistic | 200ms | No |
-| toggle, switch, expand, collapse, select | Local State | Immediate | 100ms | No |
-| command palette, keyboard nav, frequent hover | High-freq | Immediate | 0ms | No |
+| archive, trash, dismiss, soft-delete | Soft Delete | Optimistic | 200ms | Toast+Undo |
+| save, update, like, follow, create | Standard | Optimistic | 200ms | No |
+| toggle, switch, expand, collapse | Local State | Immediate | 100ms | No |
+| command palette, keyboard nav | High-freq | Immediate | 0ms | No |
 
-**Type Override**: `Currency`, `Money`, `Balance`, `Wei`, `Token`, `BigInt` → always Financial
-**Frequency Override**: 50+ uses/day → reduce or remove animation
+### Craft Type → Output
+
+| Craft Type | Typical Output |
+|------------|----------------|
+| Generate | New `src/components/[Name].tsx` |
+| Refine | Edit to existing file |
+| Configure | Edit to config/theme file |
+| Pattern | New or edit `src/hooks/[name].ts` |
+| Polish | Batch edits across files |
+
+### Material Keywords
+
+| Keyword | Treatment |
+|---------|-----------|
+| glassmorphism | blur, transparency, subtle border |
+| elevated | shadow, slight lift |
+| flat | no shadows, solid colors |
+| readable, clearer | contrast, typography focus |
+| retro, pixel | grit signatures |
 </quick_reference>
 
 <when_not_to_use>
 ## When NOT to Use /craft
 
-- **Single property change**: Use Edit tool directly
-- **Only styling wrong**: Use `/style` instead
-- **Only animation wrong**: Use `/animate` instead
-- **Only timing wrong**: Use `/behavior` instead
-- **Non-UI code**: Not applicable
-- **Tiny fix to existing component**: Edit directly
+- **1-3 line change**: Use Edit tool directly
+- **Only animation wrong**: Use `/animate` instead (faster)
+- **Only styling wrong**: Use `/style` instead (faster)
+- **Only timing wrong**: Use `/behavior` instead (faster)
+- **Non-UX code**: Backend logic, tests, etc. — physics don't apply
 
-Rule: If it's a 1-3 line change, don't use /craft.
+**Rule:** If it doesn't affect what users feel, don't use /craft.
 </when_not_to_use>
 
 <examples>
 ## Examples
 
-### Example 1: Financial with Creative Feedback
+### Example 1: New Component (Generate)
 
 ```
 User: /craft "claim button for staking rewards"
 
-StakingClaimButton | Financial | Pessimistic 800ms | Confirm: Yes
-Animation: ease-out 800ms | Material: elevated, 8px, soft shadow
-Protected: [✓ all pass]
+┌─ Craft Analysis ───────────────────────────────────────┐
+│  Target:       StakingClaimButton (new)                │
+│  Craft Type:   Generate                                │
+│  Effect:       Financial mutation                      │
+│                                                        │
+│  Behavioral    Pessimistic | 800ms | Confirmation      │
+│  Animation     ease-out | 800ms | Non-interruptible   │
+│  Material      Elevated | Soft shadow | 8px radius     │
+│                                                        │
+│  Output:       src/components/StakingClaimButton.tsx   │
+│  Protected:    [✓] All capabilities included          │
+└────────────────────────────────────────────────────────┘
 
 Proceed? (y/n)
 
@@ -379,56 +568,114 @@ User: y
 
 Does this feel right? Think about your user in the moment of clicking.
 
-User: feels a bit too slow, our users claim rewards multiple times a day
+User: feels a bit slow, our users claim multiple times a day
 
-Ah, high-frequency financial action. That changes things.
-Reducing to 600ms — still deliberate but respects their workflow.
+Ah, high-frequency financial action. Adjusting to 600ms — still
+deliberate but respects their workflow.
 
-[Applies adjustment, logs MODIFY: "User prefers faster timing for routine financial actions"]
+[Applies adjustment, logs MODIFY with learning]
 ```
 
-### Example 2: Understanding the Persona
+### Example 2: Theme Refinement (Configure)
 
 ```
-User: /craft "delete account button"
+User: /craft "improve light mode readability, the lines are hard to read"
 
-⚠ Destructive action detected. Before I generate:
-Who is clicking this? What's their state of mind?
+┌─ Craft Analysis ───────────────────────────────────────┐
+│  Target:       Theme configuration                     │
+│  Craft Type:   Configure                               │
+│  Issue:        Lines hard to read in light mode        │
+│                                                        │
+│  Material      Readability focus                       │
+│  Changes:      - Border colors: increase contrast      │
+│                - Text secondary: darken for legibility │
+│                - Line elements: higher opacity         │
+│                                                        │
+│  Output:       Edit vocs.config.ts                     │
+└────────────────────────────────────────────────────────┘
 
-User: frustrated users who want to leave, we want to give them one last chance
+Proceed? (y/n)
 
-Got it — this should feel serious but not hostile.
-Adding a "We're sorry to see you go" confirmation with clear cancel.
-Timing: 600ms to give weight without feeling punitive.
+User: y
 
-DeleteAccountButton | Destructive | Pessimistic 600ms | Confirm: Yes (soft tone)
+[Edits config with improved contrast values]
 
-Proceed?
+Does this look right for your product's personality?
 
-User: yes, but make the cancel button more prominent than confirm
+User: much better, but maybe a touch more contrast on the borders
 
-[Generates with prominent cancel, logs taste signal]
+[Increases border contrast, logs MODIFY]
 ```
 
-### Example 3: GTM Context Matters
+### Example 3: Existing Code Polish (Refine)
 
 ```
-User: /craft "subscribe button"
+User: /craft "refine hover states on the navigation, they feel inconsistent"
 
-User: actually this is for a free trial, not paid
+┌─ Craft Analysis ───────────────────────────────────────┐
+│  Target:       Navigation hover states                 │
+│  Craft Type:   Polish                                  │
+│  Scope:        3 files: NavItem, NavGroup, NavHeader   │
+│                                                        │
+│  Animation     Hover: spring(500, 30), 150ms feel      │
+│  Material      Hover: +5% brightness, subtle shadow    │
+│                                                        │
+│  Output:       Edit src/components/Nav*.tsx            │
+└────────────────────────────────────────────────────────┘
 
-That changes the physics entirely.
-Free trial = low commitment = should feel easy and fast.
+Proceed? (y/n)
 
-SubscribeButton | Standard | Optimistic 200ms | Confirm: No
-Animation: spring(500,30) — snappy, encouraging
-Material: elevated with brand gradient — draws attention
+User: y
 
-Does this match how you want users to feel about trying your product?
+[Applies consistent hover physics across all 3 files]
 
-User: yes but maybe even snappier, we want zero friction
+Do these interactions feel cohesive now?
 
-[Adjusts to 150ms with spring(600,30), logs MODIFY]
+User: yes, much better
+
+[Logs ACCEPT]
+```
+
+### Example 4: Data Pattern (Pattern)
+
+```
+User: /craft "optimize the loading state for the dashboard data"
+
+┌─ Craft Analysis ───────────────────────────────────────┐
+│  Target:       Dashboard loading pattern               │
+│  Craft Type:   Pattern                                 │
+│  Effect:       Query (optimistic, 150ms)               │
+│                                                        │
+│  Behavioral    Suspense boundary at data component     │
+│  Animation     Skeleton with subtle pulse (1.5s)       │
+│  Material      Skeleton matches card layout            │
+│                                                        │
+│  Output:       Edit src/components/Dashboard.tsx       │
+│                Add src/components/DashboardSkeleton.tsx│
+└────────────────────────────────────────────────────────┘
+
+Proceed? (y/n)
+
+User: y, but the skeleton should show the rough shape of the charts too
+
+Good call — skeletal content should preview what's coming.
+
+[Generates skeleton with chart placeholders, logs taste signal]
+```
+
+### Example 5: Quick Refinement (Compact Mode)
+
+```
+User: /craft "make the submit button snappier"
+
+SubmitButton | Standard | Refine
+Animation: 200ms → 150ms, spring(600,30) | Material: unchanged
+
+Apply? (y/n)
+
+User: y
+
+[Applies change]
 ```
 </examples>
 
