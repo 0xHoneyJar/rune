@@ -23,6 +23,13 @@ arguments:
       - "material"
       - "animation"
       - "file:src/components/ClaimButton.tsx"
+  - name: "url"
+    type: "string"
+    required: false
+    description: "URL for visual validation (enables runtime checks)"
+    examples:
+      - "http://localhost:3000"
+      - "https://staging.example.com"
 
 context_files:
   - path: ".claude/rules/00-sigil-core.md"
@@ -51,7 +58,7 @@ outputs:
     type: "file"
     description: "Audit findings with severity and fix suggestions"
 
-integrations: [ck]
+integrations: [ck, agent-browser]
 ---
 
 # /ward
@@ -123,6 +130,14 @@ Check non-negotiable capabilities.
 - Cancel always reachable (not hidden during pending)
 - Error recovery paths (not dead ends)
 - Balance invalidation after financial mutations
+
+**Visual checks (when URL provided):**
+If a URL is provided, visual validation enhances protected checks:
+- `ab_check_touch_targets()` — Runtime measurement of actual rendered sizes
+- `ab_check_focus_rings()` — Keyboard navigation test for focus visibility
+- Screenshot capture for material audit
+
+See `.claude/protocols/browser-automation.md` for fallback behavior.
 
 ### 4. Material Audit
 Check material physics constraints.
@@ -220,6 +235,20 @@ For detected effect, verify:
 - `ease-in` usage (not ease-in-out)
 - `<svg className="animate-` without wrapper
 - Missing `prefers-reduced-motion` check
+
+**2g. Visual Check (if URL provided):**
+```bash
+# Silently detect browser availability
+if .claude/scripts/check-agent-browser.sh --quiet | grep -q "INSTALLED"; then
+    source .claude/scripts/agent-browser-api.sh
+    ab_open "${URL}"
+    touch_violations=$(ab_check_touch_targets)
+    focus_missing=$(ab_check_focus_rings)
+    ab_screenshot "grimoires/sigil/observations/ward-$(date +%Y%m%d).png"
+    ab_close
+fi
+```
+Visual checks silently enhance findings when available. If browser unavailable, skip without error.
 </step_2>
 
 <step_3>
@@ -523,10 +552,48 @@ Scanning for performance issues...
 Fix these? (y/n)
 ```
 
+### Audit with Visual Validation
+
+```
+User: /ward http://localhost:3000
+
+Scanning 47 component files for Sigil compliance...
+Running visual checks on http://localhost:3000...
+
+┌─ Ward Report ─────────────────────────────────────────────┐
+│                                                           │
+│  Scanned:    47 components                                │
+│  Passed:     38 (81%)                                     │
+│  Critical:   3                                            │
+│  Warnings:   5                                            │
+│  Info:       3                                            │
+│                                                           │
+├─ Critical Issues ─────────────────────────────────────────┤
+│                                                           │
+│  🔴 Protected: Touch target below 44px (visual check)    │
+│     Element: .icon-btn                                    │
+│     Found: 32x32px                                        │
+│     Fix: Add min-h-[44px] min-w-[44px]                   │
+│                                                           │
+│  🔴 Protected: Focus ring not visible (visual check)     │
+│     Element: button#submit                                │
+│     Fix: Add focus:ring-2 focus:ring-offset-2            │
+│                                                           │
+│  🔴 Physics: Financial uses optimistic sync               │
+│     File: src/components/ClaimButton.tsx:24               │
+│     Fix: Remove onMutate                                  │
+│                                                           │
+├─ Attachments ─────────────────────────────────────────────┤
+│                                                           │
+│  Screenshot: grimoires/sigil/observations/ward-20260114.png │
+│                                                           │
+└───────────────────────────────────────────────────────────┘
+```
+
 ### Single File Audit
 
 ```
-User: /rams file:src/components/ClaimButton.tsx
+User: /ward file:src/components/ClaimButton.tsx
 
 Auditing ClaimButton.tsx...
 

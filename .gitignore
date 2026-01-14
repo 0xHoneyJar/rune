@@ -162,6 +162,11 @@ grimoires/sigil/context/*
 !grimoires/sigil/context/README.md
 !grimoires/sigil/context/**/.gitkeep
 
+# Visual observations (screenshots, snapshots from /observe)
+# Large binary files, generated per-session
+grimoires/sigil/observations/*
+!grimoires/sigil/observations/.gitkeep
+
 # =============================================================================
 # SIGIL ARTIFACT MODEL
 # =============================================================================
