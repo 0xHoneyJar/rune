@@ -18,40 +18,42 @@ AI generates UI without understanding *feel*. Every generation is a guess.
 - Optimistic update (social like)
 - Server confirmation (money transfer)
 
-These aren't style choices. They're physics.
+And the *look* matters too:
+- Clean and minimal (utility)
+- Elevated with depth (importance)
+- Textured with grit (character)
+
+These aren't style choices. They're **physics** and **material**.
 
 ---
 
-## The Mental Model
+## The Two Pillars
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                                                                 │
-│   What you say          What it means         How it behaves    │
-│   ─────────────         ─────────────         ──────────────    │
+│   PHYSICS                         MATERIAL                      │
+│   How it BEHAVES                  How it LOOKS                  │
+│   ──────────────                  ─────────────                 │
 │                                                                 │
-│   "claim button"   →    financial        →    pessimistic       │
-│                         mutation               800ms             │
-│                                                confirmation      │
+│   • Sync strategy                 • Surface treatment           │
+│   • Timing                        • Gradients, shadows          │
+│   • Confirmation                  • Borders, radius             │
+│   • Animation curves              • Texture/grit                │
 │                                                                 │
-│   "like button"    →    social           →    optimistic        │
-│                         interaction            200ms             │
-│                                                instant feel      │
-│                                                                 │
-│   "dark mode"      →    local            →    immediate         │
-│                         state                  100ms             │
-│                                                no server         │
+│                    ↓                                            │
+│              Together = FEEL                                    │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-The word determines the effect. The effect determines the physics.
+Physics determines behavior. Material determines surface. Feel emerges from both.
 
 ---
 
 ## Physics
 
-Physics describe how UI *behaves*, not how it *looks*.
+Physics describe how UI *behaves*.
 
 ```
 EFFECT              SYNC              TIMING          WHY
@@ -79,22 +81,54 @@ Local               Immediate         100ms           No server.
 
 ---
 
-## The Insight
+## Material
 
-You describe *feel*. Sigil handles physics.
+Material describes how UI *looks*.
 
 ```
-You think:           "trustworthy claim button"
+SURFACE             GRADIENT    SHADOW      BORDER      GRIT
+────────────────────────────────────────────────────────────────────
 
-Sigil knows:         "claim" = financial
-                     financial = pessimistic
-                     pessimistic = 800ms + confirmation
-                     trustworthy = deliberate animation
+Elevated            None        soft        subtle      Clean
+(cards, dialogs)    1 layer     depth       or none
 
-You get:             Component with correct physics
+Glassmorphism       None        lg          white/20    Clean
+(overlays)          blur        depth       subtle
+
+Flat                None        None        optional    Clean
+(minimal UI)        solid       flat        or none
+
+Retro               None        hard        solid 2px   Pixel
+(games, nostalgia)  sharp       offset      chunky
 ```
 
-No configuration. No questions. Physics are automatic.
+**Fidelity Ceiling**: Never exceed—gradients ≤2 stops, shadows ≤1 layer, radius ≤16px.
+
+---
+
+## The Mental Model
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                                                                 │
+│   What you say          What Sigil knows       What you get     │
+│   ─────────────         ──────────────         ────────────     │
+│                                                                 │
+│   "claim button"   →    PHYSICS: financial   →  pessimistic     │
+│                         MATERIAL: elevated       800ms          │
+│                                                  soft shadow    │
+│                                                  confirmation   │
+│                                                                 │
+│   "glassmorphism   →    PHYSICS: display     →  no sync         │
+│    card"                MATERIAL: glass          blur backdrop  │
+│                                                  subtle border  │
+│                                                                 │
+│   "retro pixel     →    PHYSICS: local       →  immediate       │
+│    toggle"              MATERIAL: retro          sharp edges    │
+│                                                  grit: pixel    │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -110,26 +144,37 @@ Adds rules to `.claude/rules/`. Your `CLAUDE.md` stays untouched.
 
 ## Usage
 
-```
-/craft "claim button"         # Financial: 800ms, pessimistic
-/craft "like button"          # Standard: 200ms, optimistic
-/craft "delete with undo"     # Soft delete: toast + undo
-/craft "dark mode toggle"     # Local: 100ms, immediate
-```
-
-Before generating, Sigil shows what physics it detected:
+### /craft — Physics + Material
 
 ```
-┌─ Physics Analysis ─────────────────────────────────────┐
+/craft "claim button"              # Financial physics, elevated material
+/craft "like button"               # Optimistic physics, flat material
+/craft "glassmorphism card"        # Display physics, glass material
+/craft "retro pixel badge"         # Local physics, pixel grit
+```
+
+Before generating, Sigil shows its analysis:
+
+```
+┌─ Sigil Analysis ───────────────────────────────────────┐
 │                                                        │
 │  Component:    ClaimButton                             │
 │  Effect:       Financial mutation                      │
-│  Detected by:  "claim" keyword                         │
 │                                                        │
-│  Sync:         Pessimistic (server confirms)           │
-│  Timing:       800ms (time to verify amount)           │
-│  Confirmation: Required (two-phase)                    │
-│  Animation:    ease-out (deliberate)                   │
+│  ╔═ PHYSICS (behavior) ═══════════════════════════════╗
+│  ║  Sync:         Pessimistic (server confirms)       ║
+│  ║  Timing:       800ms (time to verify)              ║
+│  ║  Confirmation: Required (two-phase)                ║
+│  ║  Animation:    ease-out (deliberate)               ║
+│  ╚════════════════════════════════════════════════════╝
+│                                                        │
+│  ╔═ MATERIAL (surface) ═══════════════════════════════╗
+│  ║  Surface:      Elevated                            ║
+│  ║  Shadow:       soft (1 layer)                      ║
+│  ║  Border:       solid, visible                      ║
+│  ║  Radius:       8px                                 ║
+│  ║  Grit:         Clean                               ║
+│  ╚════════════════════════════════════════════════════╝
 │                                                        │
 └────────────────────────────────────────────────────────┘
 
@@ -137,6 +182,15 @@ Proceed? (yes / or describe what's different)
 ```
 
 If wrong, correct it. Sigil learns from your feedback.
+
+### /surface — Material Only
+
+When you only need styling (no behavior):
+
+```
+/surface "glassmorphism card"      # Just the material treatment
+/surface "retro pixel badge"       # Just the grit signature
+```
 
 ---
 
@@ -146,36 +200,12 @@ Sigil learns your preferences over time.
 
 ```
 Session 1:  You change 800ms → 500ms
-Session 2:  You change 800ms → 500ms
-Session 3:  You change 800ms → 500ms
-Session 4:  Sigil generates with 500ms automatically
+Session 2:  You change soft shadow → no shadow
+Session 3:  You change radius 8px → 12px
+Session 4:  Sigil applies your preferences automatically
 ```
 
 Corrections weight 5x. Usage is feedback.
-
----
-
-## Animation
-
-Animation is how physics become visible.
-
-```
-EFFECT              EASING            FEEL
-───────────────────────────────────────────────────────
-
-Financial           ease-out          Deliberate. Weight
-                    800ms             communicates gravity.
-
-Standard            spring            Snappy. Organic.
-                    stiffness: 500    Feels alive.
-
-Local               spring            Instant. Direct.
-                    stiffness: 700    No waiting.
-
-High-frequency      none              Used 50x/day?
-                    0ms               Best animation is
-                                      no animation.
-```
 
 ---
 
@@ -187,7 +217,8 @@ Some things must always work:
 |------------|------|
 | Withdraw | Always reachable |
 | Cancel | Always visible |
-| Balance | Always current |
+| Touch target | ≥44px minimum |
+| Focus ring | Always visible |
 | Error recovery | Always possible |
 
 Sigil enforces these. You can override with justification.
@@ -196,13 +227,15 @@ Sigil enforces these. You can override with justification.
 
 ## Philosophy
 
-**Effect is truth.** What the code *does* determines how it *behaves*. Not preferences. Not adjectives. Effect.
+**Effect is truth.** What the code *does* determines physics. What it *is* determines material.
 
-**Feel over implementation.** You think in feel ("trustworthy", "snappy", "instant"). Sigil translates to physics.
+**Feel over implementation.** You think in feel ("trustworthy", "snappy", "glassmorphism"). Sigil translates to physics and material.
 
 **Usage is feedback.** No forms. No ratings. Accept, modify, or reject. Corrections teach more than silence.
 
 **Visible reasoning.** Sigil shows its analysis before generating. You can correct before wasted effort.
+
+**Look informs feel.** Physics and material are interconnected. A trustworthy button needs deliberate timing AND clear visual weight.
 
 ---
 
@@ -213,4 +246,4 @@ Sigil enforces these. You can override with justification.
 
 ---
 
-*v12.3.0*
+*v12.4.0*

@@ -1,10 +1,10 @@
 ---
 name: "craft"
-version: "12.3.0"
+version: "12.4.0"
 description: |
-  Generate UI components with design physics.
-  Shows physics analysis before generating, like RAMS shows accessibility issues.
-  Learns from usage via taste accumulation.
+  Generate UI components with design physics AND material.
+  Physics = how it behaves. Material = how it looks. Together = feel.
+  Shows analysis before generating, learns from usage via taste.
 
 arguments:
   - name: "description"
@@ -15,7 +15,8 @@ arguments:
       - "claim button"
       - "like button for posts"
       - "delete with undo"
-      - "dark mode toggle"
+      - "glassmorphism card"
+      - "retro pixel badge"
 
 context_files:
   - path: ".claude/rules/01-sigil-physics.md"
@@ -36,6 +37,9 @@ context_files:
   - path: ".claude/rules/06-sigil-taste.md"
     required: true
     purpose: "Taste accumulation - learn from accept/modify/reject"
+  - path: ".claude/rules/07-sigil-material.md"
+    required: true
+    purpose: "Material system - fidelity, ergonomics, grit"
   - path: "grimoires/sigil/taste.md"
     required: false
     purpose: "Accumulated taste signals (read for patterns)"
@@ -43,14 +47,14 @@ context_files:
 outputs:
   - path: "src/components/$COMPONENT_NAME.tsx"
     type: "file"
-    description: "Generated component with correct physics"
+    description: "Generated component with correct physics and material"
 
 workflow_next: "garden"
 ---
 
 # /craft
 
-Generate UI components with correct design physics.
+Generate UI components with correct physics and material.
 
 ## Workflow
 
@@ -79,6 +83,9 @@ grep -E "@tanstack/react-query|swr|apollo" package.json
 
 # Check toast library
 grep -E "sonner|react-hot-toast|react-toastify" package.json
+
+# Check styling approach
+grep -E "tailwind|styled-components|@emotion|css-modules" package.json
 ```
 
 **1c. Read existing component** to understand:
@@ -86,9 +93,9 @@ grep -E "sonner|react-hot-toast|react-toastify" package.json
 - File structure (single file vs folder)
 - Naming conventions (PascalCase, kebab-case files)
 
-### Step 2: Detect Effect Type
+### Step 2: Detect Effect Type AND Material
 
-Parse the user's description for effect indicators:
+**Physics Detection** (behavior):
 
 | Priority | Check | Example |
 |----------|-------|---------|
@@ -96,44 +103,69 @@ Parse the user's description for effect indicators:
 | 2. Keywords | "claim", "delete", "like", "toggle" | See detection rules |
 | 3. Context | "with undo", "for checkout", "wallet" | Modifies effect |
 
-### Step 3: Show Physics Analysis
+**Material Detection** (surface):
+
+| Keyword | Material Treatment |
+|---------|-------------------|
+| glassmorphism | blur backdrop, transparency, subtle border |
+| neumorphism | soft shadows, same-color depth |
+| flat | no shadows, solid colors |
+| elevated | shadow, slight lift |
+| outlined | border only, transparent bg |
+| ghost | no border, no bg |
+| minimal | reduce visual elements |
+| bold | increase weight/contrast |
+| retro, pixel | apply grit signatures |
+
+### Step 3: Show Analysis (Physics + Material)
 
 Display analysis in this exact format, then wait for confirmation:
 
 ```
-┌─ Physics Analysis ─────────────────────────────────────┐
+┌─ Sigil Analysis ───────────────────────────────────────┐
 │                                                        │
 │  Component:    [ComponentName]                         │
 │  Effect:       [Effect type]                           │
 │  Detected by:  [keyword/type/context that triggered]   │
 │                                                        │
-│  ┌─ Applied Physics ────────────────────────────────┐  │
-│  │  Sync:         [Pessimistic/Optimistic/Immediate]│  │
-│  │  Timing:       [Xms] [why this timing]           │  │
-│  │  Confirmation: [Required/None/Toast+Undo]        │  │
-│  └──────────────────────────────────────────────────┘  │
+│  ╔═ PHYSICS (behavior) ═══════════════════════════════╗
+│  ║                                                    ║
+│  ║  Sync:         [Pessimistic/Optimistic/Immediate]  ║
+│  ║  Timing:       [Xms] [why this timing]             ║
+│  ║  Confirmation: [Required/None/Toast+Undo]          ║
+│  ║                                                    ║
+│  ║  Animation:                                        ║
+│  ║  - Easing:       [ease-out/spring]                 ║
+│  ║  - Spring:       [stiffness, damping]              ║
+│  ║  - Entrance:     [Xms] / Exit: [Xms]               ║
+│  ║  - Interruptible: [Yes/No]                         ║
+│  ║                                                    ║
+│  ╚════════════════════════════════════════════════════╝
 │                                                        │
-│  ┌─ Animation ─────────────────────────────────────┐   │
-│  │  Easing:       [ease-out/spring/ease-in-out]    │   │
-│  │  Spring:       [stiffness, damping] (if spring) │   │
-│  │  Entrance:     [Xms, curve]                     │   │
-│  │  Exit:         [Xms, curve] (asymmetric)        │   │
-│  │  Frequency:    [high/medium/low/rare]           │   │
-│  │  Interruptible: [Yes/No]                        │   │
-│  └──────────────────────────────────────────────────┘  │
+│  ╔═ MATERIAL (surface) ═══════════════════════════════╗
+│  ║                                                    ║
+│  ║  Surface:      [flat/elevated/glass/outlined/etc]  ║
+│  ║  Gradient:     [None/2-stop/brand]                 ║
+│  ║  Shadow:       [None/soft/elevated]                ║
+│  ║  Border:       [None/subtle/solid]                 ║
+│  ║  Radius:       [Xpx]                               ║
+│  ║  Grit:         [Clean/Subtle/Retro/Pixel]          ║
+│  ║                                                    ║
+│  ╚════════════════════════════════════════════════════╝
 │                                                        │
-│  Codebase:     [animation lib] + [data fetching lib]   │
+│  Codebase:     [styling] + [animation] + [data]        │
 │  Template:     [pattern from 03-sigil-patterns.md]     │
 │                                                        │
-│  Protected capabilities:                               │
-│  [✓/✗] Cancel button                                  │
+│  Protected:                                            │
+│  [✓/✗] Cancel/escape hatch                            │
 │  [✓/✗] Error recovery                                 │
-│  [✓/✗] Balance display (if financial)                │
+│  [✓/✗] Touch target ≥44px                            │
+│  [✓/✗] Focus ring visible                            │
 │  [✓/✗] Reduced motion support                        │
 │                                                        │
 └────────────────────────────────────────────────────────┘
 
-Proceed with these physics? (yes / or describe what's different)
+Proceed? (yes / or describe what's different)
 ```
 
 ### Step 4: Wait for Confirmation
@@ -169,6 +201,7 @@ After user responds to the generated code, append to `grimoires/sigil/taste.md`:
 Component: [name]
 Effect: [type]
 Physics: [sync, timing, animation]
+Material: [surface, gradient, shadow, grit]
 ---
 ```
 
@@ -178,8 +211,9 @@ Physics: [sync, timing, animation]
 Component: [name]
 Effect: [type]
 Physics: [what was generated]
-Changed: [what user changed]
-Learning: [infer the preference - timing? animation? structure?]
+Material: [what was generated]
+Changed: [what user changed - physics? material? both?]
+Learning: [infer the preference]
 ---
 ```
 
@@ -217,92 +251,104 @@ Reason: [user feedback if given]
 ```
 User: /craft "claim button for staking rewards"
 
-[Step 1: Discover] Found framer-motion, @tanstack/react-query, sonner
-[Step 2: Detect] "claim" + "staking" → Financial
+[Step 1: Discover] Found tailwind, framer-motion, @tanstack/react-query, sonner
+[Step 2: Detect] "claim" + "staking" → Financial, no material keywords → default
 
-┌─ Physics Analysis ─────────────────────────────────────┐
+┌─ Sigil Analysis ───────────────────────────────────────┐
 │                                                        │
 │  Component:    StakingClaimButton                      │
 │  Effect:       Financial mutation                      │
 │  Detected by:  "claim" keyword + "staking" context     │
 │                                                        │
-│  ┌─ Applied Physics ────────────────────────────────┐  │
-│  │  Sync:         Pessimistic (server confirms)     │  │
-│  │  Timing:       800ms (time to verify amount)     │  │
-│  │  Confirmation: Required (two-phase)              │  │
-│  └──────────────────────────────────────────────────┘  │
+│  ╔═ PHYSICS (behavior) ═══════════════════════════════╗
+│  ║                                                    ║
+│  ║  Sync:         Pessimistic (server confirms)       ║
+│  ║  Timing:       800ms (time to verify amount)       ║
+│  ║  Confirmation: Required (two-phase)                ║
+│  ║                                                    ║
+│  ║  Animation:                                        ║
+│  ║  - Easing:       ease-out (deliberate)             ║
+│  ║  - Entrance:     300ms / Exit: 150ms               ║
+│  ║  - Interruptible: No (financial)                   ║
+│  ║                                                    ║
+│  ╚════════════════════════════════════════════════════╝
 │                                                        │
-│  ┌─ Animation ─────────────────────────────────────┐   │
-│  │  Easing:       ease-out (deliberate)            │   │
-│  │  Entrance:     300ms, ease-out                  │   │
-│  │  Exit:         150ms, ease-in                   │   │
-│  │  Frequency:    Low (occasional claim)           │   │
-│  │  Interruptible: No (financial)                  │   │
-│  └──────────────────────────────────────────────────┘  │
+│  ╔═ MATERIAL (surface) ═══════════════════════════════╗
+│  ║                                                    ║
+│  ║  Surface:      Elevated (financial = trustworthy)  ║
+│  ║  Gradient:     None (trust through clarity)        ║
+│  ║  Shadow:       soft (1 layer)                      ║
+│  ║  Border:       solid, visible                      ║
+│  ║  Radius:       8px                                 ║
+│  ║  Grit:         Clean                               ║
+│  ║                                                    ║
+│  ╚════════════════════════════════════════════════════╝
 │                                                        │
-│  Codebase:     framer-motion + tanstack-query          │
+│  Codebase:     tailwind + framer-motion + tanstack     │
 │  Template:     ClaimButton from 03-sigil-patterns.md   │
 │                                                        │
-│  Protected capabilities:                               │
+│  Protected:                                            │
 │  ✓ Cancel button                                      │
 │  ✓ Error recovery                                     │
-│  ✓ Amount display                                     │
+│  ✓ Touch target ≥44px                                │
+│  ✓ Focus ring visible                                │
 │  ✓ Reduced motion support                            │
 │                                                        │
 └────────────────────────────────────────────────────────┘
 
-Proceed with these physics? (yes / or describe what's different)
+Proceed? (yes / or describe what's different)
 
 User: yes
 
-[Generates component with framer-motion, useMutation, two-phase confirmation]
+[Generates component with correct physics AND material]
 ```
 
-### Example 2: Correction Flow
+### Example 2: Material-Focused Component
 
 ```
-User: /craft "rewards toggle"
+User: /craft "glassmorphism card for wallet balance"
 
-┌─ Physics Analysis ─────────────────────────────────────┐
+[Step 1: Discover] Found tailwind, framer-motion
+[Step 2: Detect] "wallet balance" → display (no mutation), "glassmorphism" → material
+
+┌─ Sigil Analysis ───────────────────────────────────────┐
 │                                                        │
-│  Component:    RewardsToggle                           │
-│  Effect:       Financial mutation                      │
-│  Detected by:  "rewards" context (potential money)     │
-│  ...                                                   │
+│  Component:    WalletBalanceCard                       │
+│  Effect:       Display only                            │
+│  Detected by:  "balance" (read) + "glassmorphism"      │
+│                                                        │
+│  ╔═ PHYSICS (behavior) ═══════════════════════════════╗
+│  ║                                                    ║
+│  ║  Sync:         None (display only)                 ║
+│  ║  Timing:       0ms (static content)                ║
+│  ║  Confirmation: None                                ║
+│  ║                                                    ║
+│  ║  Animation:                                        ║
+│  ║  - Easing:       fade-in on mount                  ║
+│  ║  - Entrance:     200ms / Exit: 150ms               ║
+│  ║  - Interruptible: Yes                              ║
+│  ║                                                    ║
+│  ╚════════════════════════════════════════════════════╝
+│                                                        │
+│  ╔═ MATERIAL (surface) ═══════════════════════════════╗
+│  ║                                                    ║
+│  ║  Surface:      Glassmorphism                       ║
+│  ║  Gradient:     None                                ║
+│  ║  Shadow:       lg (depth behind blur)              ║
+│  ║  Border:       1px white/20                        ║
+│  ║  Radius:       16px                                ║
+│  ║  Backdrop:     blur-xl (24px)                      ║
+│  ║  Grit:         Clean                               ║
+│  ║                                                    ║
+│  ╚════════════════════════════════════════════════════╝
+│                                                        │
 └────────────────────────────────────────────────────────┘
 
-Proceed with these physics?
-
-User: no, this just toggles visibility of the rewards section, no server call
-
-┌─ Physics Analysis (Corrected) ─────────────────────────┐
-│                                                        │
-│  Component:    RewardsToggle                           │
-│  Effect:       Local state                             │
-│  Detected by:  User override (UI visibility only)      │
-│                                                        │
-│  ┌─ Applied Physics ────────────────────────────────┐  │
-│  │  Sync:         Immediate (no server)             │  │
-│  │  Timing:       100ms instant                     │  │
-│  │  Confirmation: None                              │  │
-│  └──────────────────────────────────────────────────┘  │
-│                                                        │
-│  ┌─ Animation ─────────────────────────────────────┐   │
-│  │  Easing:       spring (snappy)                  │   │
-│  │  Spring:       stiffness: 700, damping: 35      │   │
-│  │  Entrance:     100ms, spring                    │   │
-│  │  Exit:         100ms, spring                    │   │
-│  │  Frequency:    Medium (toggle during session)   │   │
-│  │  Interruptible: Yes                             │   │
-│  └──────────────────────────────────────────────────┘  │
-│                                                        │
-└────────────────────────────────────────────────────────┘
-
-Proceed with these physics?
+Proceed? (yes / or describe what's different)
 
 User: yes
 
-[Generates local state toggle with spring animation]
+[Generates glassmorphism card with correct material]
 ```
 
 ### Example 3: Ambiguous Detection
