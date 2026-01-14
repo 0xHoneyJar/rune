@@ -156,6 +156,12 @@ grimoires/sigil/index/*
 grimoires/sigil/state/*
 !grimoires/sigil/state/README.md
 
+# User context (personas, brand, domain expertise)
+# Project-specific inputs that should never be committed
+grimoires/sigil/context/*
+!grimoires/sigil/context/README.md
+!grimoires/sigil/context/**/.gitkeep
+
 # =============================================================================
 # SIGIL ARTIFACT MODEL
 # =============================================================================

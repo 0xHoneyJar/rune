@@ -57,6 +57,12 @@ context_files:
   - path: "grimoires/sigil/taste.md"
     required: false
     purpose: "Accumulated taste signals"
+  - path: "grimoires/sigil/context/"
+    required: false
+    purpose: "Project-specific context - personas, brand, domain expertise"
+  - path: "grimoires/sigil/moodboard/"
+    required: false
+    purpose: "Visual references and team taste"
 
 outputs:
   dynamic: true
@@ -216,7 +222,23 @@ Mark each in_progress then completed as you work.
 <step_1>
 ### Step 1: Discover Context
 
-**1a. Read taste log** (if exists):
+**1a. Read project context** (if exists):
+```
+Scan grimoires/sigil/context/
+```
+Look for:
+- **Personas** (`context/personas/`) — User expertise, behavior, expectations
+- **Brand** (`context/brand/`) — Voice, tone, visual guidelines
+- **Domain** (`context/domain/`) — Best practices, domain-specific rules
+
+Extract physics implications from frontmatter and content:
+```yaml
+## Physics Implications
+- Can reduce confirmation timing (600ms vs 800ms)
+- Skip explanatory copy in confirmations
+```
+
+**1b. Read taste log** (if exists):
 ```
 Read grimoires/sigil/taste.md
 ```
@@ -225,7 +247,16 @@ Look for:
 - `output_mode` preference (compact vs verbose)
 - Timing/animation/material overrides
 
-**1b. Discover codebase conventions** (single read):
+**1c. Scan moodboard for references** (if relevant):
+```
+Scan grimoires/sigil/moodboard/
+```
+Look for:
+- Relevant `references/` by zone, term, or tag
+- Applicable `anti-patterns/` to avoid
+- Matching entries in `index.yaml`
+
+**1d. Discover codebase conventions** (single read):
 ```
 Read package.json
 ```
@@ -235,15 +266,25 @@ Extract from dependencies:
 - Toast: `sonner` | `react-hot-toast` | native
 - Styling: `tailwindcss` | `styled-components` | `@emotion`
 
-**1c. If refining existing code:**
+**1e. If refining existing code:**
 - Read the file(s) being refined
 - Understand current patterns before changing
 - Note what's working vs. what needs adjustment
 
-**1d. If configuring theme/config:**
+**1f. If configuring theme/config:**
 - Read the config file structure
 - Understand the existing design tokens
 - Note constraints (CSS variables, Tailwind config, etc.)
+
+**Context Priority:**
+When context conflicts with defaults, apply in this order:
+1. Protected capabilities (never override)
+2. Explicit user request in prompt
+3. Primary persona physics implications
+4. Brand guidelines
+5. Domain rules
+6. Taste log patterns
+7. Physics defaults
 </step_1>
 
 <step_2>
@@ -293,9 +334,16 @@ Show analysis appropriate to craft type:
 │  Craft Type:   Generate                                │
 │  Effect:       Financial mutation                      │
 │                                                        │
-│  Behavioral    Pessimistic | 800ms | Confirmation      │
-│  Animation     ease-out | 800ms | Non-interruptible   │
+│  Context:      (if context files found)                │
+│                DeFi Power User (primary persona)       │
+│                → Timing: 800ms → 600ms (expertise)     │
+│                → Copy: Minimal (high confidence)       │
+│                                                        │
+│  Behavioral    Pessimistic | 600ms | Confirmation      │
+│  Animation     ease-out | deliberate | no bounce       │
 │  Material      Elevated | Soft shadow | 8px radius     │
+│                                                        │
+│  References:   @moodboard/references/stripe/checkout   │
 │                                                        │
 │  Output:       src/components/ClaimButton.tsx          │
 │  Protected:    [✓] All capabilities included          │
@@ -491,6 +539,45 @@ Reason: [user feedback]
 2. Explain which capability would be violated
 3. Offer compliant alternative
 </error_recovery>
+
+<context_references>
+## Context References
+
+### Auto-Scan (Default)
+
+When you run `/craft`, the agent automatically scans:
+- `grimoires/sigil/context/` — Personas, brand, domain expertise
+- `grimoires/sigil/moodboard/` — Visual references, anti-patterns
+- `grimoires/sigil/taste.md` — Accumulated taste signals
+
+No special syntax needed — context is applied automatically.
+
+### Explicit References
+
+Use `@` syntax to explicitly reference context files:
+
+```bash
+# Reference a specific persona
+/craft "claim button" @context/personas/power-user.md
+
+# Reference a moodboard entry
+/craft "checkout flow" @moodboard/references/stripe/
+
+# Multiple references
+/craft "onboarding" @context/personas/first-time.md @context/brand/voice.md
+```
+
+**When to use explicit references:**
+- Override auto-detected persona
+- Force a specific brand guideline
+- Point to a specific moodboard example
+- Combine multiple context sources
+
+**Syntax rules:**
+- Paths are relative to `grimoires/sigil/`
+- Directories reference all files within
+- Single file references use `.md` extension
+</context_references>
 
 <quick_reference>
 ## Quick Reference

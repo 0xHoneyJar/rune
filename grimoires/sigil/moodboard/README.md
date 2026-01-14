@@ -2,7 +2,17 @@
 
 > "Your taste, versioned and queryable."
 
-Drop design inspiration here. The agent references it during `/craft`.
+Drop visual design inspiration here. The agent references it during `/craft`.
+
+## moodboard/ vs context/
+
+| Folder | Purpose | Content | Tracked |
+|--------|---------|---------|---------|
+| `moodboard/` | Visual references | Screenshots, articles, anti-patterns | Mostly yes |
+| `context/` | Project-specific input | Personas, brand, domain rules | No |
+
+**Use moodboard for "what"** — visual patterns, interactions, UI examples.
+**Use [context/](../context/README.md) for "who" and "how"** — the people and rules.
 
 ## Artifact Model
 
