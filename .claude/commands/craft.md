@@ -42,6 +42,9 @@ context_files:
   - path: ".claude/rules/07-sigil-material.md"
     required: true
     purpose: "Material physics - surface, fidelity, grit"
+  - path: ".claude/rules/08-sigil-lexicon.md"
+    required: true
+    purpose: "Lookup tables - keywords, adjectives, domains"
   - path: "grimoires/sigil/taste.md"
     required: false
     purpose: "Accumulated taste signals"
