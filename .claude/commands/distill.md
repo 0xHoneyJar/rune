@@ -1,5 +1,6 @@
 ---
 name: "distill"
+version: "1.0.0"
 description: |
   Distill a task into craft-able components.
   Bridge between architecture (Loa) and physics (Sigil).

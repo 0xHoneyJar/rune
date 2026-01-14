@@ -5,6 +5,48 @@ All notable changes to Sigil will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+---
+
+## [1.0.0] - 2025-01-14 — "SemVer Reset"
+
+### Summary
+
+v1.0.0 marks Sigil's first **SemVer-compliant stable release**. Previous versions used iteration counting rather than semantic versioning. This release normalizes all command versions to 1.0.0 and establishes proper versioning practices going forward.
+
+### Added
+
+- **`/ward`** — Comprehensive physics audit (violations, performance, protected capabilities)
+- **`/garden`** — Component authority health report (Gold/Silver/Draft tiers)
+- **`ck` integration** — Semantic search for fast codebase scanning
+- **`VERSIONING.md`** — Semantic versioning strategy documentation
+- **React performance rules** — Rules 10-16 for async, bundle, rendering optimization
+
+### Changed
+
+- **`/craft` v1.0.0** — Expanded from component-only to any UX-affecting change (generate, refine, configure, pattern, polish)
+- **All Sigil commands normalized to v1.0.0** — `/craft`, `/ward`, `/garden`, `/style`, `/animate`, `/behavior`, `/inscribe`, `/distill`
+- **Conventional commits** — All commits now follow conventional commit format
+
+### Versioning Note
+
+Previous versions (v0.5.0, v2.0.0, v5.0.0, v10.1.0, v11.0.0) did not follow SemVer. They incremented MAJOR for every iteration rather than for breaking changes. Those versions are preserved in git history but should not be referenced.
+
+Going forward:
+- **MAJOR** — Breaking changes to physics rules or command APIs
+- **MINOR** — New commands, new physics layers, new keywords
+- **PATCH** — Bug fixes, documentation, refactoring
+
+See `VERSIONING.md` for complete versioning strategy.
+
+---
+
+## Pre-1.0 History
+
+The following entries document Sigil's evolution before adopting SemVer.
+Version numbers in this section were iteration counts, not semantic versions.
+
+---
+
 ## [10.1.0] - 2026-01-11 — "Usage Reality"
 
 ### Summary

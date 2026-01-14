@@ -1,6 +1,6 @@
 ---
 name: "craft"
-version: "14.0.0"
+version: "1.0.0"
 description: |
   Apply design physics to any UX-affecting change.
   Three layers: Behavioral + Animation + Material = Feel.

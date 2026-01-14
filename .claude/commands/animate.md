@@ -1,6 +1,6 @@
 ---
 name: "animate"
-version: "13.0.0"
+version: "1.0.0"
 description: |
   Apply animation physics only.
   Use when movement feels off but behavior and looks are fine.

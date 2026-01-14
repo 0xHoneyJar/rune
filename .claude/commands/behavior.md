@@ -1,6 +1,6 @@
 ---
 name: "behavior"
-version: "13.0.0"
+version: "1.0.0"
 description: |
   Apply behavioral physics only.
   Use when timing/sync is wrong but looks and animation are fine.

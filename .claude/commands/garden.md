@@ -1,6 +1,6 @@
 ---
 name: "garden"
-version: "12.0.0"
+version: "1.0.0"
 description: |
   Health report on pattern authority and component usage.
   Shows which components are canonical (Gold), established (Silver), or experimental (Draft).
