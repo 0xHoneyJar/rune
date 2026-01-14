@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Sigil v11 "Pure Craft" — Mount Script
-# Design Physics Engine for AI-assisted development
+# Sigil v12 — Mount Script
+# Design Physics for AI Code Generation
 #
 # Key principle: NEVER override existing CLAUDE.md
 # Uses .claude/rules/ for framework instructions (Claude Code native discovery)
@@ -25,7 +25,7 @@ SIGIL_HOME="${SIGIL_HOME:-$HOME/.sigil/sigil}"
 SIGIL_REPO="${SIGIL_REPO:-https://github.com/0xHoneyJar/sigil.git}"
 SIGIL_BRANCH="${SIGIL_BRANCH:-main}"
 VERSION_FILE=".sigil-version.json"
-SIGIL_VERSION="11.1.0"
+SIGIL_VERSION="12.5.0"
 AUTO_YES=false
 
 # === Argument Parsing ===
@@ -46,7 +46,7 @@ while [[ $# -gt 0 ]]; do
     -h|--help)
       echo "Usage: mount-sigil.sh [OPTIONS]"
       echo ""
-      echo "Mount Sigil v11 'Pure Craft' Design Physics Engine."
+      echo "Mount Sigil v12 — Design Physics for AI Code Generation"
       echo ""
       echo "Options:"
       echo "  --branch <name>   Sigil branch to use (default: main)"
@@ -55,9 +55,9 @@ while [[ $# -gt 0 ]]; do
       echo "  -h, --help        Show this help message"
       echo ""
       echo "What this does:"
-      echo "  1. Creates .claude/rules/ with Sigil physics instructions"
-      echo "  2. Creates .claude/skills/ with mason, gardener, diagnostician"
-      echo "  3. Creates grimoires/sigil/ with constitution.yaml"
+      echo "  1. Creates .claude/rules/ with Sigil physics (behavioral, animation, material)"
+      echo "  2. Creates .claude/commands/ with /craft command"
+      echo "  3. Creates grimoires/sigil/ with taste.md"
       echo "  4. Creates examples/ with reference components"
       echo "  5. NEVER touches existing CLAUDE.md in your repo"
       echo ""
@@ -125,44 +125,57 @@ setup_sigil_home() {
   log "Sigil home ready at $SIGIL_HOME"
 }
 
-# === Install Rules (the key v11 pattern) ===
+# === Install Rules ===
 install_rules() {
   step "Installing Sigil rules to .claude/rules/..."
 
   mkdir -p .claude/rules
 
-  # Copy Sigil rule files (these are the physics instructions)
+  # Copy Sigil rule files (numbered 00-07 and sigil-*.md)
   if [[ -d "$SIGIL_HOME/.claude/rules" ]]; then
-    for rule_file in "$SIGIL_HOME/.claude/rules"/sigil-*.md; do
+    local count=0
+    for rule_file in "$SIGIL_HOME/.claude/rules"/*.md; do
       if [[ -f "$rule_file" ]]; then
         local filename=$(basename "$rule_file")
-        cp "$rule_file" ".claude/rules/$filename"
-        log "  Installed $filename"
+        # Only copy Sigil rules (numbered or sigil- prefixed)
+        if [[ "$filename" =~ ^[0-9]{2}- ]] || [[ "$filename" =~ ^sigil- ]]; then
+          cp "$rule_file" ".claude/rules/$filename"
+          log "  Installed $filename"
+          ((count++))
+        fi
       fi
     done
+    log "Installed $count rule files"
   else
-    # Fallback: create from CLAUDE.md if rules don't exist yet
-    warn "No .claude/rules/ found in Sigil home, checking for CLAUDE.md..."
-    if [[ -f "$SIGIL_HOME/CLAUDE.md" ]]; then
-      cp "$SIGIL_HOME/CLAUDE.md" ".claude/rules/sigil-physics.md"
-      log "  Created sigil-physics.md from CLAUDE.md"
-    fi
+    err "No .claude/rules/ found in Sigil home"
   fi
-
-  log "Rules installed (Claude Code will auto-discover these)"
 }
 
-# === Install Constitution ===
-install_constitution() {
-  step "Installing constitution.yaml..."
+# === Install Grimoire ===
+install_grimoire() {
+  step "Installing grimoires/sigil/..."
 
   mkdir -p grimoires/sigil
 
+  # Create empty taste.md for accumulation
+  if [[ ! -f "grimoires/sigil/taste.md" ]]; then
+    cat > "grimoires/sigil/taste.md" << 'EOF'
+# Sigil Taste Log
+
+Accumulated preferences across physics layers.
+
+---
+
+EOF
+    log "  Created taste.md"
+  else
+    log "  taste.md already exists (preserved)"
+  fi
+
+  # Copy constitution if exists
   if [[ -f "$SIGIL_HOME/grimoires/sigil/constitution.yaml" ]]; then
     cp "$SIGIL_HOME/grimoires/sigil/constitution.yaml" "grimoires/sigil/constitution.yaml"
     log "  Installed constitution.yaml"
-  else
-    warn "No constitution.yaml found in Sigil home"
   fi
 }
 
@@ -177,25 +190,6 @@ install_examples() {
   else
     info "No examples directory in Sigil home (optional)"
   fi
-}
-
-# === Install Skills ===
-install_skills() {
-  step "Installing Sigil skills..."
-
-  local skills=("crafting-components" "monitoring-patterns" "debugging-ui")
-  local installed=0
-
-  for skill in "${skills[@]}"; do
-    if [[ -d "$SIGIL_HOME/.claude/skills/$skill" ]]; then
-      mkdir -p ".claude/skills/$skill"
-      cp "$SIGIL_HOME/.claude/skills/$skill/"* ".claude/skills/$skill/" 2>/dev/null || true
-      log "  Installed $skill skill"
-      ((installed++))
-    fi
-  done
-
-  log "Installed $installed skills"
 }
 
 # === Install Commands ===
@@ -222,12 +216,11 @@ create_version_file() {
   cat > "$VERSION_FILE" << EOF
 {
   "version": "$SIGIL_VERSION",
-  "codename": "Pure Craft",
   "mounted_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "updated_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "sigil_home": "$SIGIL_HOME",
   "branch": "$SIGIL_BRANCH",
-  "architecture": "prompt-only",
+  "physics": ["behavioral", "animation", "material"],
   "note": "Sigil uses .claude/rules/ - does not modify root CLAUDE.md"
 }
 EOF
@@ -239,8 +232,8 @@ EOF
 main() {
   echo ""
   log "======================================================================="
-  log "  Sigil v11.1.0 — Pure Craft"
-  log "  Design Physics for Code Generation"
+  log "  Sigil v12.5.0"
+  log "  Design Physics for AI Code Generation"
   log "======================================================================="
   log "  Branch: $SIGIL_BRANCH"
   echo ""
@@ -248,10 +241,9 @@ main() {
   preflight
   setup_sigil_home
   install_rules
-  install_skills
-  install_constitution
-  install_examples
   install_commands
+  install_grimoire
+  install_examples
   create_version_file
 
   echo ""
@@ -260,23 +252,21 @@ main() {
   log "======================================================================="
   echo ""
   info "What was installed:"
-  info "  .claude/rules/sigil-*.md   -> Physics (auto-discovered)"
-  info "  .claude/skills/            -> crafting-components, monitoring-patterns, debugging-ui"
-  info "  .claude/commands/          -> /craft, /garden"
-  info "  grimoires/sigil/           -> Constitution config"
-  info "  examples/                  -> Reference components"
-  info "  .sigil-version.json        -> Version tracking"
+  info "  .claude/rules/00-07-sigil-*.md -> Physics (behavioral, animation, material)"
+  info "  .claude/commands/craft.md      -> /craft command"
+  info "  grimoires/sigil/taste.md       -> Taste accumulation"
+  info "  examples/                      -> Reference components"
+  info "  .sigil-version.json            -> Version tracking"
   echo ""
   info "What was NOT touched:"
-  info "  CLAUDE.md                  -> Your existing file is preserved!"
+  info "  CLAUDE.md                      -> Your existing file is preserved!"
   echo ""
   info "Usage:"
-  info "  /craft \"claim button\"      -> crafting-components generates with 800ms pessimistic"
-  info "  /craft \"like button\"       -> crafting-components generates with 200ms optimistic"
-  info "  /garden                    -> monitoring-patterns reports pattern authority"
-  info "  \"dialog flickers\"          -> debugging-ui diagnoses issues"
+  info "  /craft \"claim button\"   -> Financial: 800ms pessimistic, confirmation"
+  info "  /craft \"like button\"    -> Standard: 200ms optimistic, spring"
+  info "  /craft \"dark mode toggle\" -> Local: 100ms immediate"
   echo ""
-  info "Skills are prompt-based. No configuration needed."
+  info "Sigil learns from your corrections. Use it, and it becomes yours."
   echo ""
 }
 
