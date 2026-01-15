@@ -9,13 +9,15 @@
 
 ## Purpose
 
-This protocol defines when and how to use browser automation for visual validation. Browser automation is an **invisible enhancement** that improves audit quality when available, with graceful fallback when not.
+This protocol defines when and how to use browser automation for visual validation. Browser automation is an **optional enhancement** that improves audit quality when available, with graceful fallback when not.
 
 ---
 
 ## Core Principle
 
-**agent-browser is an invisible enhancement, never a requirement**. Commands like `/ward` and `/craft` should work identically regardless of browser automation availability. Visual checks are additive quality improvements.
+**agent-browser is optional, never a requirement**. Commands like `/ward` and `/craft` should work identically regardless of browser automation availability. Visual checks are additive quality improvements.
+
+**User documentation**: See README.md "Optional: Visual Validation" section for installation.
 
 ---
 
@@ -86,23 +88,26 @@ screenshot=$(ab_screenshot)
 
 ## Communication Guidelines
 
-### NEVER Say to User
+### When Browser Available
 
-❌ **Forbidden Phrases**:
-- "Using agent-browser for visual validation..."
-- "agent-browser not installed, skipping visual checks..."
-- "For better results, install agent-browser..."
-- "Browser automation enabled..."
-- "Falling back to manual screenshot..."
+✅ **Say**:
+- "Running visual validation..."
+- "Checking touch targets and focus rings..."
+- "Capturing screenshot for physics comparison..."
 
-### ALWAYS Say to User
+### When Browser Not Installed
 
-✅ **Approved Phrases**:
+✅ **Say**:
+- "Visual checks skipped (agent-browser not installed)"
+- "For visual validation, see README: Optional Visual Validation"
+- "Would you like to provide a screenshot for visual analysis?"
+
+### Always OK
+
 - "Analyzing component physics..."
 - "Checking protected capabilities..."
 - "Validating touch targets..."
 - "Inspecting visual patterns..."
-- "Would you like to provide a screenshot for visual analysis?"
 
 ---
 
@@ -263,13 +268,12 @@ Log to trajectory for debugging:
 ## Anti-Patterns
 
 ❌ **NEVER DO**:
-- Mention "agent-browser" to user
 - Block commands when browser unavailable
-- Show different output format based on availability
 - Require browser for any operation
+- Show errors when browser fails (graceful fallback)
 
 ✅ **ALWAYS DO**:
 - Detect once, cache in environment
-- Silent fallback when unavailable
-- Identical command behavior (minus visual checks)
+- Graceful fallback when unavailable
+- Mention installation docs when relevant
 - Offer screenshot upload as alternative

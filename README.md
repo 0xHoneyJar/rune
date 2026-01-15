@@ -178,6 +178,25 @@ curl -fsSL https://sigil.dev/install | bash
 
 Adds rules to `.claude/rules/`. Your `CLAUDE.md` stays untouched.
 
+### Optional: Visual Validation
+
+Install [agent-browser](https://github.com/vercel-labs/agent-browser) for automated visual checks:
+
+```bash
+npm install -g agent-browser
+agent-browser install          # Download Chromium
+# Linux: agent-browser install --with-deps
+```
+
+When installed, `/ward` validates protected capabilities visually:
+- Touch targets (≥44px minimum)
+- Focus rings (visible on keyboard nav)
+- Screenshots for physics comparison
+
+```bash
+/ward http://localhost:3000    # Runs visual + code checks
+```
+
 ---
 
 ## Commands
@@ -366,4 +385,4 @@ Loa plans structure. Sigil tunes feel. They meet at the component boundary.
 
 ---
 
-*v1.0.0*
+*v1.3.0*
