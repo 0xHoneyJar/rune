@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.4.0] - 2026-01-14 — "Visual Verification"
+
+### Summary
+
+v1.4.0 integrates the **agent-browser skill** into `/ward` and `/craft` for visual validation of protected capabilities and physics verification.
+
+### Added
+
+- **Visual verification step** in `/craft` v1.4.0 — Optional URL parameter for post-generation verification
+- **agent-browser skill integration** — Commands now use the official skill instead of bash script wrappers
+- **Screenshot capture** for taste signal logging — Screenshots saved to `grimoires/sigil/observations/`
+- **Protected capability verification** — Touch target (≥44px) and focus ring checks during visual validation
+- **Example 6** in `/craft` — Demonstrates visual verification workflow with URL
+
+### Changed
+
+- **`/ward` v1.1.0** — Updated visual check workflow to use agent-browser skill commands
+- **`/craft` v1.4.0** — Added URL argument and Step 5b for optional visual verification
+
+### Documentation
+
+- Updated `.claude/protocols/browser-automation.md` from "invisible" to "optional" enhancement
+- Added `.claude/skills/agent-browser/SKILL.md` with full command reference
+- Updated README with "Optional: Visual Validation" section
+
+---
+
 ## [1.3.0] - 2026-01-14 — "Session Health"
 
 ### Summary

@@ -1,6 +1,6 @@
 ---
 name: "ward"
-version: "1.0.0"
+version: "1.1.0"
 description: |
   Protective barrier check against Sigil design physics.
   Reveals violations before they harm users.
@@ -237,18 +237,32 @@ For detected effect, verify:
 - Missing `prefers-reduced-motion` check
 
 **2g. Visual Check (if URL provided):**
+
+When a URL is provided, invoke the `agent-browser` skill for visual validation:
+
+1. **Open URL**: `agent-browser open <url>`
+2. **Snapshot interactive elements**: `agent-browser snapshot -i`
+3. **Check touch targets**: Verify buttons/links have element refs, check computed sizes
+4. **Test focus visibility**: Tab through interactive elements, verify focus rings
+5. **Capture screenshot**: `agent-browser screenshot grimoires/sigil/observations/ward-$(date +%Y%m%d).png`
+6. **Close browser**: `agent-browser close`
+
+**Touch target verification:**
 ```bash
-# Silently detect browser availability
-if .claude/scripts/check-agent-browser.sh --quiet | grep -q "INSTALLED"; then
-    source .claude/scripts/agent-browser-api.sh
-    ab_open "${URL}"
-    touch_violations=$(ab_check_touch_targets)
-    focus_missing=$(ab_check_focus_rings)
-    ab_screenshot "grimoires/sigil/observations/ward-$(date +%Y%m%d).png"
-    ab_close
-fi
+agent-browser snapshot -i --json | # Parse for button/link elements
+# Check that interactive elements are ≥44px in rendered size
 ```
+
+**Focus ring verification:**
+```bash
+agent-browser click @e1           # Focus first interactive element
+agent-browser press Tab           # Tab through elements
+agent-browser screenshot          # Capture to verify visible focus ring
+```
+
 Visual checks silently enhance findings when available. If browser unavailable, skip without error.
+
+See `.claude/skills/agent-browser/SKILL.md` for full command reference.
 </step_2>
 
 <step_3>

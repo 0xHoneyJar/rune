@@ -1,6 +1,6 @@
 ---
 name: "craft"
-version: "1.3.0"
+version: "1.4.0"
 description: |
   Apply design physics to any UX-affecting change.
   Three layers: Behavioral + Animation + Material = Feel.
@@ -25,6 +25,13 @@ arguments:
       - "optimize the loading state for this data flow"
       - "polish the hover states across the nav"
       - "glassmorphism card with spring animation"
+  - name: "url"
+    type: "string"
+    required: false
+    description: "URL for visual verification after generation (optional)"
+    examples:
+      - "http://localhost:3000"
+      - "http://localhost:3000/component-preview"
 
 context_files:
   - path: ".claude/rules/00-sigil-core.md"
@@ -289,8 +296,9 @@ Use TodoWrite to track this workflow:
 4. [ ] Show physics analysis
 5. [ ] Get user confirmation
 6. [ ] Apply changes
-7. [ ] Collect feedback
-8. [ ] Log taste signal
+7. [ ] Visual verification (if URL provided)
+8. [ ] Collect feedback
+9. [ ] Log taste signal
 ```
 Mark each in_progress then completed as you work.
 
@@ -528,6 +536,33 @@ IMMEDIATELY apply changes based on craft type:
 - Apply physics from analysis
 - Include protected capabilities where applicable
 - No comments unless explaining physics override
+
+**5b. Visual Verification (optional, if URL provided):**
+
+When user provides a URL, use `agent-browser` skill to capture and verify:
+
+```bash
+# Open the component in browser
+agent-browser open <url>
+
+# Wait for component to render
+agent-browser wait --load networkidle
+
+# Capture screenshot for physics comparison
+agent-browser screenshot grimoires/sigil/observations/craft-[component]-$(date +%Y%m%d).png
+
+# Verify protected capabilities
+agent-browser snapshot -i  # Get interactive elements
+# Check touch targets ≥44px
+# Check focus rings visible
+
+agent-browser close
+```
+
+Screenshot is saved for taste signal and future comparison. Include in feedback collection:
+> "Here's a screenshot of the rendered component. Does this feel right?"
+
+See `.claude/skills/agent-browser/SKILL.md` for full command reference.
 </step_5>
 
 <step_6>
@@ -850,7 +885,48 @@ User: y
 [Applies change]
 ```
 
-### Example 6: Session Drift Warning
+### Example 6: Visual Verification with URL
+
+```
+User: /craft "claim button" http://localhost:3000/staking
+
+┌─ Craft Analysis ───────────────────────────────────────┐
+│  Target:       ClaimButton (new)                       │
+│  Craft Type:   Generate                                │
+│  Effect:       Financial mutation                      │
+│  URL:          http://localhost:3000/staking           │
+│                                                        │
+│  Behavioral    Pessimistic | 800ms | Confirmation      │
+│  Animation     ease-out | deliberate | no bounce       │
+│  Material      Elevated | Soft shadow | 8px radius     │
+│                                                        │
+│  Output:       src/components/ClaimButton.tsx          │
+│  Verify:       Visual check after generation           │
+└────────────────────────────────────────────────────────┘
+
+Proceed? (y/n)
+
+User: y
+
+[Generates component]
+
+Running visual verification...
+Opening http://localhost:3000/staking
+Capturing screenshot...
+Checking protected capabilities...
+✓ Touch target: 48px (≥44px)
+✓ Focus ring: visible
+
+Screenshot saved: grimoires/sigil/observations/craft-ClaimButton-20260114.png
+
+Here's the rendered component. Does this feel right?
+
+User: yes, looks good
+
+[Logs ACCEPT with screenshot reference]
+```
+
+### Example 7: Session Drift Warning
 
 ```
 User: /craft "notification badge"
