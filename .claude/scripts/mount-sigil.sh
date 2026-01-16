@@ -244,6 +244,28 @@ install_protocols() {
   fi
 }
 
+# === Install Skills ===
+install_skills() {
+  step "Installing skills..."
+
+  mkdir -p .claude/skills
+
+  # Install all skill directories
+  if [[ -d "$SIGIL_HOME/.claude/skills" ]]; then
+    local skill_count=0
+    for skill_dir in "$SIGIL_HOME/.claude/skills"/*/; do
+      if [[ -d "$skill_dir" ]]; then
+        local dirname=$(basename "$skill_dir")
+        cp -r "$skill_dir" ".claude/skills/$dirname"
+        skill_count=$((skill_count + 1))
+      fi
+    done
+    log "Installed $skill_count skills"
+  else
+    warn "No .claude/skills/ found in Sigil home"
+  fi
+}
+
 # === Create Version File ===
 create_version_file() {
   step "Creating version manifest..."
@@ -282,6 +304,7 @@ main() {
   install_commands
   install_scripts
   install_protocols
+  install_skills
   install_grimoire
   create_version_file
 
@@ -296,6 +319,7 @@ main() {
   info "  .claude/commands/              -> /craft, /ward, /style, /animate, /behavior"
   info "  .claude/scripts/               -> Helper scripts (agent-browser, utilities)"
   info "  .claude/protocols/             -> Usage protocols (browser-automation)"
+  info "  .claude/skills/                -> Skill definitions for Claude Code"
   info "  grimoires/sigil/taste.md       -> Taste accumulation"
   info "  .sigil-version.json            -> Version tracking"
   echo ""
