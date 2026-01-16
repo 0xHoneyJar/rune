@@ -250,13 +250,19 @@ install_skills() {
 
   mkdir -p .claude/skills
 
-  # Install all skill directories
+  # Install all skill directories (exclude symlinks to avoid cycles)
   if [[ -d "$SIGIL_HOME/.claude/skills" ]]; then
     local skill_count=0
     for skill_dir in "$SIGIL_HOME/.claude/skills"/*/; do
-      if [[ -d "$skill_dir" ]]; then
+      if [[ -d "$skill_dir" && ! -L "$skill_dir" ]]; then
         local dirname=$(basename "$skill_dir")
-        cp -r "$skill_dir" ".claude/skills/$dirname"
+        # Use rsync to safely copy, excluding symlinks
+        if command -v rsync >/dev/null 2>&1; then
+          rsync -a --exclude='*.symlink' --no-links "$skill_dir" ".claude/skills/"
+        else
+          # Fallback: cp without following symlinks
+          cp -RP "$skill_dir" ".claude/skills/$dirname"
+        fi
         skill_count=$((skill_count + 1))
       fi
     done
