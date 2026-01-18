@@ -1,8 +1,9 @@
 ---
 name: "update"
 version: "1.0.0"
+agent: "updating-sigil"
 description: |
-  Pull latest Loa framework updates from upstream repository.
+  Pull latest Sigil updates from upstream repository.
   Fetches, previews, confirms, and merges with conflict guidance.
 
 command_type: "git"

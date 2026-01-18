@@ -1,0 +1,48 @@
+name: "updating-sigil"
+version: "1.0.0"
+model: "sonnet"
+color: "purple"
+
+description: |
+  Pull latest Sigil framework updates from upstream repository.
+  Fetches, previews, confirms, and merges with conflict guidance.
+  Preserves local taste.md and user customizations.
+
+triggers:
+  - "/update"
+  - "update sigil"
+  - "pull sigil updates"
+  - "sync sigil"
+
+examples:
+  - input: "/update"
+    description: "Pull latest and refresh physics rules"
+  - input: "/update --check"
+    description: "Preview updates without applying"
+  - input: "/update --force"
+    description: "Force refresh even if current"
+
+inputs:
+  - name: check
+    type: flag
+    description: Preview updates without applying
+  - name: force
+    type: flag
+    description: Force refresh even if current
+
+outputs:
+  - path: .sigil-version.json
+    description: Updated version manifest
+
+zones:
+  state:
+    paths:
+      - .sigil-version.json
+      - grimoires/sigil/
+    permission: read-write
+  system:
+    paths:
+      - .claude/rules/
+      - .claude/skills/
+      - .claude/commands/
+    permission: read

@@ -1,6 +1,7 @@
 ---
 name: "craft"
 version: "1.4.0"
+agent: "crafting-physics"
 description: |
   Apply design physics to any UX-affecting change.
   Three layers: Behavioral + Animation + Material = Feel.

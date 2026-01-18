@@ -1,371 +1,651 @@
-# Sprint Plan: Sigil v10.1 "Usage Reality"
+# Sigil - Sprint Plan
 
-**Version:** 10.1.0
-**Status:** Sprint Plan Complete
-**Date:** 2026-01-11
-**PRD Reference:** grimoires/loa/prd.md
-**SDD Reference:** grimoires/loa/sdd.md
-**Supersedes:** v9.1.0 "Migration Debt Zero" Sprint Plan (completed)
+```
+    ╔═══════════════════════════════════════════════╗
+    ║  ✦ SIGIL                                      ║
+    ║  Loa Construct Migration                      ║
+    ║                                               ║
+    ║  Sprint Plan v2.0.0                           ║
+    ╚═══════════════════════════════════════════════╝
+```
 
----
-
-## Overview
-
-**Total Sprints:** 3
-**Estimated Total Tasks:** 14
-**Architecture:** Hooks-Based Skill Enhancement
-
-**Sprint Structure:**
-| Sprint | Focus | Tasks | Priority |
-|--------|-------|-------|----------|
-| Sprint 1 | Hooks Infrastructure | 5 | P0 |
-| Sprint 2 | Helpers + Skill Enhancements | 5 | P0 |
-| Sprint 3 | Context + Validation | 4 | P1 |
+**Version**: 2.0.0
+**Created**: 2026-01-16
+**Based On**: PRD v2.0.0, SDD v2.0.0
+**Status**: Ready for Implementation
+**Supersedes**: v10.1 "Usage Reality" Sprint Plan (completed)
 
 ---
 
-## Sprint 1: Hooks Infrastructure
+## Executive Summary
 
-**Goal:** Establish Claude Code hooks system to bridge library → skill gap
+This sprint plan breaks down the Sigil Loa Construct migration into 3 sprints. The key architectural decision is **separation of concerns**:
+- **Pack Distribution** (manifest.json): Only Sigil-specific functionality
+- **Development Tooling** (in repo): Loa commands/skills stay for maintaining Sigil
 
-**Exit Criteria:**
-- SessionStart hook injects physics context on conversation start
-- PreToolUse hook validates Edit/Write operations
-- Mason reads constitution.yaml before generating
+**Total Effort**: ~3-4 days
+**Sprints**: 3
+**Team**: 1 developer + Claude
 
-### Task 1.1: Create Hooks Configuration
+---
 
-**ID:** S1-01
-**Description:** Create `.claude/settings.local.json` with hooks configuration for SessionStart and PreToolUse events.
+## Sprint Overview
 
-**Acceptance Criteria:**
-- [x] File exists at `.claude/settings.local.json`
-- [x] SessionStart hook configured to run `sigil-init.sh`
-- [x] PreToolUse hook configured for Edit and Write tools
-- [x] Timeouts set (5000ms for init, 3000ms for validation)
+| Sprint | Focus | Duration | Tasks |
+|--------|-------|----------|-------|
+| Sprint 1 | Foundation | Day 1 | manifest.json, skill directories, skill renames |
+| Sprint 2 | Skills | Days 2-3 | Create 8 new Sigil skills with 3-level structure |
+| Sprint 3 | Polish | Day 4 | Command routing, README, validation, submission |
 
-**File:** `.claude/settings.local.json`
+---
+
+## Sprint 1: Pack Foundation
+
+**Goal**: Establish valid Loa Construct pack structure with manifest.json
+
+**Duration**: Day 1
+
+### Task 1.1: Create manifest.json
+
+**ID**: S1-T1
+**Description**: Create the pack manifest file with all Sigil-specific skills, commands, and rules
+**Acceptance Criteria**:
+- [ ] manifest.json exists at root
+- [ ] Includes all 11 Sigil skills (8 new + 2 renamed + agent-browser)
+- [ ] Includes all 12 Sigil commands
+- [ ] Includes all 18 Sigil rules (00-17)
+- [ ] Valid JSON syntax
+**Dependencies**: None
+**Testing**: JSON lint validation
+
+**File to Create**: `manifest.json`
+
 ```json
 {
-  "hooks": {
-    "SessionStart": [
-      {
-        "script": ".claude/scripts/sigil-init.sh",
-        "timeout": 5000
-      }
-    ],
-    "PreToolUse": {
-      "Edit": [".claude/scripts/validate-physics.sh"],
-      "Write": [".claude/scripts/validate-physics.sh"]
+  "$schema": "https://constructs.network/schemas/pack-manifest.json",
+  "name": "sigil",
+  "version": "2.0.0",
+  "description": "Design physics framework for AI-generated UI components. Three-layer physics: Behavioral + Animation + Material = Feel.",
+  "longDescription": "Sigil teaches Claude how to generate UI components with correct design physics. It detects effect from keywords and types, applies timing/sync/confirmation based on physics rules, and accumulates user taste preferences without configuration.",
+  "author": {
+    "name": "THJ Team",
+    "url": "https://thehoneyjar.xyz"
+  },
+  "repository": "https://github.com/0xHoneyJar/sigil",
+  "homepage": "https://sigil.design",
+  "license": "MIT",
+  "tier": "free",
+  "keywords": [
+    "design-system",
+    "ui-components",
+    "physics",
+    "animation",
+    "react",
+    "frontend",
+    "ux",
+    "accessibility",
+    "framer-motion"
+  ],
+  "skills": [
+    {
+      "name": "crafting-physics",
+      "path": ".claude/skills/crafting-physics",
+      "description": "Generate components with full 3-layer design physics"
+    },
+    {
+      "name": "styling-material",
+      "path": ".claude/skills/styling-material",
+      "description": "Apply material physics only (surface, shadow, typography)"
+    },
+    {
+      "name": "animating-motion",
+      "path": ".claude/skills/animating-motion",
+      "description": "Apply animation physics only (timing, easing, springs)"
+    },
+    {
+      "name": "applying-behavior",
+      "path": ".claude/skills/applying-behavior",
+      "description": "Apply behavioral physics only (sync, confirmation, timing)"
+    },
+    {
+      "name": "validating-physics",
+      "path": ".claude/skills/validating-physics",
+      "description": "Ward against physics violations"
+    },
+    {
+      "name": "surveying-patterns",
+      "path": ".claude/skills/surveying-patterns",
+      "description": "Survey pattern authority across codebase"
+    },
+    {
+      "name": "inscribing-taste",
+      "path": ".claude/skills/inscribing-taste",
+      "description": "Inscribe learnings into permanent rules"
+    },
+    {
+      "name": "distilling-components",
+      "path": ".claude/skills/distilling-components",
+      "description": "Bridge architecture to physics-ready components"
+    },
+    {
+      "name": "mounting-sigil",
+      "path": ".claude/skills/mounting-sigil",
+      "description": "Mount Sigil onto existing repositories"
+    },
+    {
+      "name": "updating-sigil",
+      "path": ".claude/skills/updating-sigil",
+      "description": "Update Sigil from upstream"
+    },
+    {
+      "name": "agent-browser",
+      "path": ".claude/skills/agent-browser",
+      "description": "Visual validation of generated components"
     }
-  }
+  ],
+  "commands": [
+    {
+      "name": "/craft",
+      "path": ".claude/commands/craft.md",
+      "description": "Generate component with full design physics"
+    },
+    {
+      "name": "/style",
+      "path": ".claude/commands/style.md",
+      "description": "Apply material physics only"
+    },
+    {
+      "name": "/animate",
+      "path": ".claude/commands/animate.md",
+      "description": "Apply animation physics only"
+    },
+    {
+      "name": "/behavior",
+      "path": ".claude/commands/behavior.md",
+      "description": "Apply behavioral physics only"
+    },
+    {
+      "name": "/ward",
+      "path": ".claude/commands/ward.md",
+      "description": "Check for physics violations"
+    },
+    {
+      "name": "/garden",
+      "path": ".claude/commands/garden.md",
+      "description": "Survey pattern authority"
+    },
+    {
+      "name": "/inscribe",
+      "path": ".claude/commands/inscribe.md",
+      "description": "Inscribe taste learnings permanently"
+    },
+    {
+      "name": "/distill",
+      "path": ".claude/commands/distill.md",
+      "description": "Distill tasks into craft-able components"
+    },
+    {
+      "name": "/mount",
+      "path": ".claude/commands/mount.md",
+      "description": "Mount Sigil onto a repository"
+    },
+    {
+      "name": "/update",
+      "path": ".claude/commands/update.md",
+      "description": "Update Sigil from upstream"
+    },
+    {
+      "name": "/setup",
+      "path": ".claude/commands/setup.md",
+      "description": "First-time Sigil setup"
+    },
+    {
+      "name": "/feedback",
+      "path": ".claude/commands/feedback.md",
+      "description": "Submit feedback about Sigil"
+    }
+  ],
+  "rules": [
+    {
+      "name": "sigil-core",
+      "path": ".claude/rules/00-sigil-core.md",
+      "description": "Core physics principles and action defaults"
+    },
+    {
+      "name": "sigil-physics",
+      "path": ".claude/rules/01-sigil-physics.md",
+      "description": "Behavioral physics - sync, timing, confirmation"
+    },
+    {
+      "name": "sigil-detection",
+      "path": ".claude/rules/02-sigil-detection.md",
+      "description": "Effect detection from keywords and types"
+    },
+    {
+      "name": "sigil-patterns",
+      "path": ".claude/rules/03-sigil-patterns.md",
+      "description": "Golden pattern implementations"
+    },
+    {
+      "name": "sigil-protected",
+      "path": ".claude/rules/04-sigil-protected.md",
+      "description": "Non-negotiable protected capabilities"
+    },
+    {
+      "name": "sigil-animation",
+      "path": ".claude/rules/05-sigil-animation.md",
+      "description": "Animation physics - easing, springs, frequency"
+    },
+    {
+      "name": "sigil-taste",
+      "path": ".claude/rules/06-sigil-taste.md",
+      "description": "Taste accumulation system"
+    },
+    {
+      "name": "sigil-material",
+      "path": ".claude/rules/07-sigil-material.md",
+      "description": "Material physics - surface, fidelity, grit"
+    },
+    {
+      "name": "sigil-lexicon",
+      "path": ".claude/rules/08-sigil-lexicon.md",
+      "description": "Keyword and adjective lookup tables"
+    },
+    {
+      "name": "react-core",
+      "path": ".claude/rules/10-react-core.md",
+      "description": "React implementation patterns"
+    },
+    {
+      "name": "react-async",
+      "path": ".claude/rules/11-react-async.md",
+      "description": "Async patterns and waterfalls"
+    },
+    {
+      "name": "react-bundle",
+      "path": ".claude/rules/12-react-bundle.md",
+      "description": "Bundle optimization"
+    },
+    {
+      "name": "react-rendering",
+      "path": ".claude/rules/13-react-rendering.md",
+      "description": "Rendering optimization"
+    },
+    {
+      "name": "react-rerender",
+      "path": ".claude/rules/14-react-rerender.md",
+      "description": "Re-render prevention"
+    },
+    {
+      "name": "react-server",
+      "path": ".claude/rules/15-react-server.md",
+      "description": "Server-side patterns"
+    },
+    {
+      "name": "react-js",
+      "path": ".claude/rules/16-react-js.md",
+      "description": "JavaScript micro-optimizations"
+    },
+    {
+      "name": "semantic-search",
+      "path": ".claude/rules/17-semantic-search.md",
+      "description": "Semantic code search integration"
+    }
+  ],
+  "minLoaVersion": "1.0.0"
 }
 ```
 
-**Dependencies:** None
-**Testing:** Start new Claude session, verify hooks configuration loads
+### Task 1.2: Create skill directory structure
+
+**ID**: S1-T2
+**Description**: Create directory structure for all 8 new Sigil skills
+**Acceptance Criteria**:
+- [ ] `.claude/skills/crafting-physics/` exists
+- [ ] `.claude/skills/styling-material/` exists
+- [ ] `.claude/skills/animating-motion/` exists
+- [ ] `.claude/skills/applying-behavior/` exists
+- [ ] `.claude/skills/validating-physics/` exists
+- [ ] `.claude/skills/surveying-patterns/` exists
+- [ ] `.claude/skills/inscribing-taste/` exists
+- [ ] `.claude/skills/distilling-components/` exists
+**Dependencies**: None
+**Testing**: Directory existence check
+
+### Task 1.3: Rename existing skills
+
+**ID**: S1-T3
+**Description**: Rename mounting-framework and updating-framework to Sigil-specific names
+**Acceptance Criteria**:
+- [ ] `.claude/skills/mounting-sigil/` exists with updated content
+- [ ] `.claude/skills/updating-sigil/` exists with updated content
+- [ ] index.yaml name fields updated
+- [ ] SKILL.md content updated for Sigil context
+**Dependencies**: None
+**Testing**: Skill invocation test
 
 ---
 
-### Task 1.2: Create SessionStart Hook
+## Sprint 2: Skill Creation
 
-**ID:** S1-02
-**Description:** Create `sigil-init.sh` script that injects physics rules and authority thresholds into Claude's context at session start.
+**Goal**: Create all 8 new Sigil-specific skills with 3-level architecture
 
-**Acceptance Criteria:**
-- [x] Script exists at `.claude/scripts/sigil-init.sh`
-- [x] Script is executable (`chmod +x`)
-- [x] Outputs constitution.yaml content
-- [x] Outputs authority.yaml content
-- [x] Outputs accumulated context from `.context/` if exists
-- [x] Handles missing files gracefully with warnings
+**Duration**: Days 2-3
 
-**File:** `.claude/scripts/sigil-init.sh`
+### Task 2.1: Create crafting-physics skill
 
-**Dependencies:** S1-01
-**Testing:** Run manually, verify output includes physics rules
+**ID**: S2-T1
+**Description**: Primary skill for full 3-layer physics generation
+**Acceptance Criteria**:
+- [ ] `index.yaml` with metadata (~100 tokens)
+- [ ] `SKILL.md` with full instructions (~2000 tokens)
+- [ ] `resources/` directory created
+- [ ] Triggers: `/craft`, "create component", "build a button"
+- [ ] Context files include all sigil rules
+- [ ] Outputs include taste.md
+**Dependencies**: S1-T2
+**Testing**: `/craft` invocation
 
----
+**index.yaml template**:
+```yaml
+name: "crafting-physics"
+version: "1.0.0"
+model: "sonnet"
+color: "purple"
 
-### Task 1.3: Create PreToolUse Validation Hook
+description: |
+  Apply design physics to any UX-affecting change. Three layers:
+  Behavioral + Animation + Material = Feel. Use for new components,
+  refinements, configurations, data patterns, and polish passes.
 
-**ID:** S1-03
-**Description:** Create `validate-physics.sh` script that validates generated code matches physics constraints before Edit/Write operations.
+triggers:
+  - "/craft"
+  - "create component"
+  - "build a button"
+  - "generate UI"
 
-**Acceptance Criteria:**
-- [x] Script exists at `.claude/scripts/validate-physics.sh`
-- [x] Script is executable
-- [x] Checks financial mutations have confirmation flow
-- [x] Checks mutations don't use snappy timing
-- [x] Checks interactive components have motion/transition
-- [x] Outputs warnings (not blocks) for violations
-- [x] Skips non-component files (.ts, .md, etc.)
+inputs:
+  - name: description
+    type: string
+    required: true
+    description: "What to craft"
+  - name: url
+    type: string
+    required: false
+    description: "URL for visual verification"
 
-**File:** `.claude/scripts/validate-physics.sh`
+outputs:
+  - path: "src/components/*.tsx"
+    description: "Generated component"
+  - path: "grimoires/sigil/taste.md"
+    description: "Updated taste signals"
 
-**Dependencies:** S1-01
-**Testing:** Run against sample component code, verify warnings appear
-
----
-
-### Task 1.4: Update Mason Skill - Required Reading
-
-**ID:** S1-04
-**Description:** Add "Required Reading" section to Mason SKILL.md that instructs Claude to read physics configuration before generating components.
-
-**Acceptance Criteria:**
-- [x] SKILL.md contains "## Required Reading" section
-- [x] Lists constitution.yaml as required reading
-- [x] Lists authority.yaml as required reading
-- [x] Lists physics.ts (lines 1-100) as required reading
-- [x] Reading happens BEFORE any generation
-
-**File:** `.claude/skills/mason/SKILL.md`
-
-**Dependencies:** None
-**Testing:** Run `/craft "test button"`, verify Claude reads config files first
-
----
-
-### Task 1.5: Update Mason Skill - Physics Decision Tree
-
-**ID:** S1-05
-**Description:** Add "Physics Decision Tree" section to Mason SKILL.md with clear branching logic for determining physics based on effect type.
-
-**Acceptance Criteria:**
-- [x] SKILL.md contains "## Physics Decision Tree" section
-- [x] Covers mutation vs query vs local_state branching
-- [x] Covers financial vs non-financial mutation branching
-- [x] Shows correct physics for each path:
-  - Financial mutation → server-tick (1200ms), confirmation
-  - Non-financial mutation → deliberate (800ms)
-  - Query → snappy (150ms)
-  - Local state → smooth/instant (0ms)
-- [x] Lists financial keywords: claim, deposit, withdraw, transfer, swap, burn
-
-**File:** `.claude/skills/mason/SKILL.md`
-
-**Dependencies:** S1-04
-**Testing:** Run `/craft "claim button"`, verify 800ms pessimistic physics in output
-
----
-
-## Sprint 2: Helpers + Skill Enhancements
-
-**Goal:** Create bash helper scripts and enhance Gardener/Diagnostician skills
-
-**Exit Criteria:**
-- Helper scripts compute import counts and stability days
-- `/garden` shows accurate authority tiers
-- Diagnostician matches patterns without asking questions
-
-### Task 2.1: Create count-imports.sh Helper
-
-**ID:** S2-01
-**Description:** Create bash script that counts how many files import a given component.
-
-**Acceptance Criteria:**
-- [x] Script exists at `.claude/scripts/count-imports.sh`
-- [x] Script is executable
-- [x] Takes component name as argument
-- [x] Searches src/ for import statements
-- [x] Handles .tsx, .ts, .jsx, .js files
-- [x] Returns numeric count
-
-**Usage:** `.claude/scripts/count-imports.sh Button`
-**Output:** `15`
-
-**Dependencies:** None
-**Testing:** Run on known component, verify count matches manual grep
-
----
-
-### Task 2.2: Create check-stability.sh Helper
-
-**ID:** S2-02
-**Description:** Create bash script that calculates days since last modification of a file.
-
-**Acceptance Criteria:**
-- [x] Script exists at `.claude/scripts/check-stability.sh`
-- [x] Script is executable
-- [x] Takes file path as argument
-- [x] Uses git log to get last commit timestamp
-- [x] Falls back to file stat if not in git
-- [x] Returns numeric days
-
-**Usage:** `.claude/scripts/check-stability.sh src/hooks/useMotion.ts`
-**Output:** `14`
-
-**Dependencies:** None
-**Testing:** Modify a file, verify script returns 0 days
-
----
-
-### Task 2.3: Create infer-authority.sh Helper
-
-**ID:** S2-03
-**Description:** Create bash script that combines import count and stability to infer authority tier.
-
-**Acceptance Criteria:**
-- [x] Script exists at `.claude/scripts/infer-authority.sh`
-- [x] Script is executable
-- [x] Takes file path as argument
-- [x] Calls count-imports.sh and check-stability.sh
-- [x] Applies thresholds from authority.yaml:
-  - Gold: 10+ imports AND 14+ days stable
-  - Silver: 5+ imports
-  - Draft: everything else
-- [x] Returns JSON with component, file, imports, stability_days, tier
-
-**Usage:** `.claude/scripts/infer-authority.sh src/hooks/useMotion.ts`
-**Output:**
-```json
-{
-  "component": "useMotion",
-  "file": "src/hooks/useMotion.ts",
-  "imports": 12,
-  "stability_days": 21,
-  "tier": "gold"
-}
+context_files:
+  - path: ".claude/rules/00-sigil-core.md"
+    required: true
+  - path: ".claude/rules/01-sigil-physics.md"
+    required: true
+  - path: ".claude/rules/02-sigil-detection.md"
+    required: true
+  - path: ".claude/rules/03-sigil-patterns.md"
+    required: true
+  - path: ".claude/rules/04-sigil-protected.md"
+    required: true
+  - path: ".claude/rules/05-sigil-animation.md"
+    required: true
+  - path: ".claude/rules/06-sigil-taste.md"
+    required: true
+  - path: ".claude/rules/07-sigil-material.md"
+    required: true
+  - path: ".claude/rules/08-sigil-lexicon.md"
+    required: true
+  - path: "grimoires/sigil/taste.md"
+    required: false
+  - path: "grimoires/sigil/constitution.yaml"
+    required: false
 ```
 
-**Dependencies:** S2-01, S2-02
-**Testing:** Run on various components, verify tier assignments
+### Task 2.2: Create styling-material skill
+
+**ID**: S2-T2
+**Description**: Material physics only (surface, shadow, typography)
+**Acceptance Criteria**:
+- [ ] `index.yaml` with material-focused metadata
+- [ ] `SKILL.md` with material physics instructions
+- [ ] Triggers: `/style`, "fix the styling", "change the look"
+- [ ] Context files: 07-sigil-material.md, 08-sigil-lexicon.md
+**Dependencies**: S1-T2
+**Testing**: `/style` invocation
+
+### Task 2.3: Create animating-motion skill
+
+**ID**: S2-T3
+**Description**: Animation physics only (timing, easing, springs)
+**Acceptance Criteria**:
+- [ ] `index.yaml` with animation-focused metadata
+- [ ] `SKILL.md` with animation physics instructions
+- [ ] Triggers: `/animate`, "fix the animation", "movement feels off"
+- [ ] Context files: 05-sigil-animation.md
+**Dependencies**: S1-T2
+**Testing**: `/animate` invocation
+
+### Task 2.4: Create applying-behavior skill
+
+**ID**: S2-T4
+**Description**: Behavioral physics only (sync, confirmation, timing)
+**Acceptance Criteria**:
+- [ ] `index.yaml` with behavioral-focused metadata
+- [ ] `SKILL.md` with behavioral physics instructions
+- [ ] Triggers: `/behavior`, "fix the timing", "sync is wrong"
+- [ ] Context files: 01-sigil-physics.md, 02-sigil-detection.md
+**Dependencies**: S1-T2
+**Testing**: `/behavior` invocation
+
+### Task 2.5: Create validating-physics skill
+
+**ID**: S2-T5
+**Description**: Ward against physics violations
+**Acceptance Criteria**:
+- [ ] `index.yaml` with validation-focused metadata
+- [ ] `SKILL.md` with validation instructions
+- [ ] Triggers: `/ward`, "check for physics violations"
+- [ ] Context files: 00-sigil-core.md, 04-sigil-protected.md
+**Dependencies**: S1-T2
+**Testing**: `/ward` invocation
+
+### Task 2.6: Create surveying-patterns skill
+
+**ID**: S2-T6
+**Description**: Garden authority across codebase
+**Acceptance Criteria**:
+- [ ] `index.yaml` with survey-focused metadata
+- [ ] `SKILL.md` with pattern authority instructions
+- [ ] Triggers: `/garden`, "show pattern authority"
+**Dependencies**: S1-T2
+**Testing**: `/garden` invocation
+
+### Task 2.7: Create inscribing-taste skill
+
+**ID**: S2-T7
+**Description**: Record learnings into Sigil rules
+**Acceptance Criteria**:
+- [ ] `index.yaml` with taste-focused metadata
+- [ ] `SKILL.md` with inscription instructions
+- [ ] Triggers: `/inscribe`, "save these preferences"
+- [ ] Outputs: `.claude/rules/*.md`
+**Dependencies**: S1-T2
+**Testing**: `/inscribe` invocation
+
+### Task 2.8: Create distilling-components skill
+
+**ID**: S2-T8
+**Description**: Bridge architecture to physics
+**Acceptance Criteria**:
+- [ ] `index.yaml` with distilling-focused metadata
+- [ ] `SKILL.md` with component analysis instructions
+- [ ] Triggers: `/distill`, "break this down into components"
+**Dependencies**: S1-T2
+**Testing**: `/distill` invocation
 
 ---
 
-### Task 2.4: Update Gardener Skill
+## Sprint 3: Polish & Submission
 
-**ID:** S2-04
-**Description:** Add "Authority Computation" section to Gardener SKILL.md with instructions to use bash helper scripts.
+**Goal**: Complete command routing, documentation, and submit to constructs.network
 
-**Acceptance Criteria:**
-- [x] SKILL.md contains "## Authority Computation with Bash Helpers" section
-- [x] Documents count-imports.sh usage
-- [x] Documents check-stability.sh usage
-- [x] Documents infer-authority.sh usage
-- [x] Shows tier threshold table
-- [x] Emphasizes: no file moves required
+**Duration**: Day 4
 
-**File:** `.claude/skills/gardener/SKILL.md`
+### Task 3.1: Update command frontmatter
 
-**Dependencies:** S2-01, S2-02, S2-03
-**Testing:** Run `/garden`, verify accurate authority report
+**ID**: S3-T1
+**Description**: Ensure all 12 Sigil commands have proper agent routing frontmatter
+**Acceptance Criteria**:
+- [ ] craft.md has agent routing (already has good frontmatter - verify)
+- [ ] style.md has agent: "styling-material"
+- [ ] animate.md has agent: "animating-motion"
+- [ ] behavior.md has agent: "applying-behavior"
+- [ ] ward.md has agent: "validating-physics"
+- [ ] garden.md has agent: "surveying-patterns"
+- [ ] inscribe.md has agent: "inscribing-taste"
+- [ ] distill.md has agent: "distilling-components"
+- [ ] mount.md has agent: "mounting-sigil"
+- [ ] update.md has agent: "updating-sigil"
+- [ ] setup.md has appropriate routing
+- [ ] feedback.md has appropriate routing
+**Dependencies**: Sprint 2 complete
+**Testing**: Command invocation verification
 
----
+### Task 3.2: Update README for pack documentation
 
-### Task 2.5: Update Diagnostician Skill
+**ID**: S3-T2
+**Description**: Update README.md with installation instructions and pack documentation
+**Acceptance Criteria**:
+- [ ] Installation section with constructs.network instructions
+- [ ] Command reference table
+- [ ] Skill overview
+- [ ] Quick start guide
+- [ ] Physics philosophy section
+**Dependencies**: S3-T1
+**Testing**: Manual review
 
-**ID:** S2-05
-**Description:** Add "Required Reading" and enhanced "Pattern Matching" sections to Diagnostician SKILL.md.
+### Task 3.3: Create PACK-SUBMISSION.md
 
-**Acceptance Criteria:**
-- [x] SKILL.md contains "## Required Reading" section
-  - Lists `src/lib/sigil/diagnostician.ts` as required
-- [x] Contains enhanced "## Pattern Categories with Keywords" table
-- [x] Contains "## Never Ask" section (explicit list with alternatives)
-- [x] Documents matching process:
-  1. Extract keywords from error description
-  2. Match against 9 pattern categories
-  3. Return solutions ranked by confidence
+**ID**: S3-T3
+**Description**: Create submission documentation for constructs.network
+**Acceptance Criteria**:
+- [ ] Pack metadata summary
+- [ ] Changelog from previous version
+- [ ] Test results
+- [ ] Known limitations
+- [ ] Contact information
+**Dependencies**: S3-T2
+**Testing**: Manual review
 
-**File:** `.claude/skills/diagnostician/SKILL.md`
+### Task 3.4: Validate manifest against schema
 
-**Dependencies:** None
-**Testing:** Report "dialog jumping" error, verify pattern match without questions
+**ID**: S3-T4
+**Description**: Validate manifest.json against Loa Constructs schema
+**Acceptance Criteria**:
+- [ ] All skill paths exist
+- [ ] All command paths exist
+- [ ] All rule paths exist
+- [ ] No duplicate entries
+- [ ] Schema validation passes
+**Dependencies**: S3-T1, S3-T2, S3-T3
+**Testing**: Schema validation tool
 
----
+### Task 3.5: End-to-end testing
 
-## Sprint 3: Context + Validation
+**ID**: S3-T5
+**Description**: Test complete pack installation and usage
+**Acceptance Criteria**:
+- [ ] `/craft` generates component with physics
+- [ ] `/style` applies material only
+- [ ] `/animate` applies animation only
+- [ ] `/behavior` applies behavioral only
+- [ ] `/ward` validates physics
+- [ ] Rules load correctly on session start
+- [ ] Taste accumulation works
+**Dependencies**: S3-T4
+**Testing**: Full workflow test
 
-**Goal:** Enable invisible context accumulation and end-to-end validation
+### Task 3.6: Submit to constructs.network
 
-**Exit Criteria:**
-- Context accumulates in `.context/` directory
-- Full pipeline works: /craft → /garden → diagnostician
-- Physics violations generate warnings
-
-### Task 3.1: Initialize Context Directory
-
-**ID:** S3-01
-**Description:** Create the `.context/` directory structure with initial schema files.
-
-**Acceptance Criteria:**
-- [x] Directory exists at `grimoires/sigil/.context/`
-- [x] Added to `.gitignore` (build artifact, machine-specific)
-- [x] Contains empty `taste.json` with schema
-- [x] Contains empty `persona.json` with schema
-- [x] Contains empty `project.json` with schema
-- [x] Contains empty `recent.json` (last 10 generations)
-
-**Schema for taste.json:**
-```json
-{
-  "version": "10.1",
-  "preferences": {},
-  "reinforcement": {
-    "accepted": 0,
-    "modified": 0,
-    "rejected": 0
-  }
-}
-```
-
-**Dependencies:** None
-**Testing:** Verify directory structure exists
-
----
-
-### Task 3.2: Enhance sigil-init.sh for Context
-
-**ID:** S3-02
-**Description:** Update SessionStart hook to also inject accumulated context from `.context/` directory.
-
-**Acceptance Criteria:**
-- [x] sigil-init.sh reads and outputs taste.json if exists
-- [x] sigil-init.sh reads and outputs recent.json if exists
-- [x] Context section clearly labeled in output
-- [x] Handles empty/missing context gracefully
-
-**Dependencies:** S1-02, S3-01
-**Testing:** Run with populated context, verify output
+**ID**: S3-T6
+**Description**: Submit pack for approval
+**Acceptance Criteria**:
+- [ ] Pack uploaded to constructs.network
+- [ ] Submission form completed
+- [ ] Confirmation received
+**Dependencies**: S3-T5
+**Testing**: N/A
 
 ---
 
-### Task 3.3: Create Validation Test Script
+## File Changes Summary
 
-**ID:** S3-03
-**Description:** Create a validation script that tests the full v10.1 pipeline.
+### Files to Create (19)
 
-**Acceptance Criteria:**
-- [x] Script exists at `.claude/scripts/validate-v10.1.sh`
-- [x] Checks all 6 library modules exist
-- [x] Checks all 3 skill files exist
-- [x] Checks constitution.yaml has effect_physics
-- [x] Checks authority.yaml has tier thresholds
-- [x] Checks useMotion.ts exists
-- [x] Checks all helper scripts are executable
-- [x] Outputs clear pass/fail for each check
+| File | Sprint | Task |
+|------|--------|------|
+| `manifest.json` | 1 | S1-T1 |
+| `.claude/skills/crafting-physics/index.yaml` | 2 | S2-T1 |
+| `.claude/skills/crafting-physics/SKILL.md` | 2 | S2-T1 |
+| `.claude/skills/styling-material/index.yaml` | 2 | S2-T2 |
+| `.claude/skills/styling-material/SKILL.md` | 2 | S2-T2 |
+| `.claude/skills/animating-motion/index.yaml` | 2 | S2-T3 |
+| `.claude/skills/animating-motion/SKILL.md` | 2 | S2-T3 |
+| `.claude/skills/applying-behavior/index.yaml` | 2 | S2-T4 |
+| `.claude/skills/applying-behavior/SKILL.md` | 2 | S2-T4 |
+| `.claude/skills/validating-physics/index.yaml` | 2 | S2-T5 |
+| `.claude/skills/validating-physics/SKILL.md` | 2 | S2-T5 |
+| `.claude/skills/surveying-patterns/index.yaml` | 2 | S2-T6 |
+| `.claude/skills/surveying-patterns/SKILL.md` | 2 | S2-T6 |
+| `.claude/skills/inscribing-taste/index.yaml` | 2 | S2-T7 |
+| `.claude/skills/inscribing-taste/SKILL.md` | 2 | S2-T7 |
+| `.claude/skills/distilling-components/index.yaml` | 2 | S2-T8 |
+| `.claude/skills/distilling-components/SKILL.md` | 2 | S2-T8 |
+| `PACK-SUBMISSION.md` | 3 | S3-T3 |
 
-**Dependencies:** All prior tasks
-**Testing:** Run script, verify all checks pass
+### Files to Rename (2)
 
----
+| From | To | Sprint | Task |
+|------|-----|--------|------|
+| `.claude/skills/mounting-framework/` | `.claude/skills/mounting-sigil/` | 1 | S1-T3 |
+| `.claude/skills/updating-framework/` | `.claude/skills/updating-sigil/` | 1 | S1-T3 |
 
-### Task 3.4: End-to-End Integration Test
+### Files to Update (13)
 
-**ID:** S3-04
-**Description:** Manually test the complete workflow to verify all components work together.
+| File | Changes | Sprint | Task |
+|------|---------|--------|------|
+| `README.md` | Installation, command reference | 3 | S3-T2 |
+| `.claude/commands/style.md` | Add agent routing | 3 | S3-T1 |
+| `.claude/commands/animate.md` | Add agent routing | 3 | S3-T1 |
+| `.claude/commands/behavior.md` | Add agent routing | 3 | S3-T1 |
+| `.claude/commands/ward.md` | Add agent routing | 3 | S3-T1 |
+| `.claude/commands/garden.md` | Add agent routing | 3 | S3-T1 |
+| `.claude/commands/inscribe.md` | Add agent routing | 3 | S3-T1 |
+| `.claude/commands/distill.md` | Add agent routing | 3 | S3-T1 |
+| `.claude/commands/mount.md` | Update agent to mounting-sigil | 3 | S3-T1 |
+| `.claude/commands/update.md` | Update agent to updating-sigil | 3 | S3-T1 |
+| `.claude/commands/setup.md` | Add agent routing | 3 | S3-T1 |
+| `.claude/commands/feedback.md` | Add agent routing | 3 | S3-T1 |
 
-**Acceptance Criteria:**
-- [x] Test 1: `/craft "claim button"` generates with 800ms pessimistic physics
-- [x] Test 2: `/craft "balance display"` generates with 150ms optimistic physics
-- [x] Test 3: `/garden src/hooks/useMotion.ts` shows authority tier
-- [x] Test 4: Report "dialog flickering" triggers Diagnostician pattern match
-- [x] All tests pass without Claude asking configuration questions
+### Files Unchanged (Dev Tooling - NOT in manifest)
 
-**Dependencies:** All prior tasks
-**Testing:** Manual execution of all 4 test cases
+These stay in repo for Sigil development but are excluded from manifest.json:
+
+**Loa Commands** (not in manifest):
+- architect.md, audit.md, audit-deployment.md, audit-sprint.md
+- implement.md, plan-and-analyze.md, review-sprint.md
+- ride.md, sprint-plan.md, translate.md, translate-ride.md
+- oracle.md, oracle-analyze.md, mcp-config.md
+- contribute.md, deploy-production.md
+
+**Loa Skills** (not in manifest):
+- auditing-security, deploying-infrastructure, designing-architecture
+- discovering-requirements, implementing-tasks, planning-sprints
+- reviewing-code, riding-codebase, translating-for-executives
 
 ---
 
@@ -373,20 +653,23 @@
 
 | ID | Task | Sprint | Priority | Dependencies |
 |----|------|--------|----------|--------------|
-| S1-01 | Create Hooks Configuration | 1 | P0 | None |
-| S1-02 | Create SessionStart Hook | 1 | P0 | S1-01 |
-| S1-03 | Create PreToolUse Validation Hook | 1 | P0 | S1-01 |
-| S1-04 | Update Mason - Required Reading | 1 | P0 | None |
-| S1-05 | Update Mason - Physics Decision Tree | 1 | P0 | S1-04 |
-| S2-01 | Create count-imports.sh | 2 | P0 | None |
-| S2-02 | Create check-stability.sh | 2 | P0 | None |
-| S2-03 | Create infer-authority.sh | 2 | P0 | S2-01, S2-02 |
-| S2-04 | Update Gardener Skill | 2 | P0 | S2-01, S2-02, S2-03 |
-| S2-05 | Update Diagnostician Skill | 2 | P0 | None |
-| S3-01 | Initialize Context Directory | 3 | P1 | None |
-| S3-02 | Enhance sigil-init.sh for Context | 3 | P1 | S1-02, S3-01 |
-| S3-03 | Create Validation Test Script | 3 | P1 | All prior |
-| S3-04 | End-to-End Integration Test | 3 | P1 | All prior |
+| S1-T1 | Create manifest.json | 1 | P0 | None |
+| S1-T2 | Create skill directory structure | 1 | P0 | None |
+| S1-T3 | Rename existing skills | 1 | P0 | None |
+| S2-T1 | Create crafting-physics skill | 2 | P0 | S1-T2 |
+| S2-T2 | Create styling-material skill | 2 | P0 | S1-T2 |
+| S2-T3 | Create animating-motion skill | 2 | P0 | S1-T2 |
+| S2-T4 | Create applying-behavior skill | 2 | P0 | S1-T2 |
+| S2-T5 | Create validating-physics skill | 2 | P0 | S1-T2 |
+| S2-T6 | Create surveying-patterns skill | 2 | P0 | S1-T2 |
+| S2-T7 | Create inscribing-taste skill | 2 | P0 | S1-T2 |
+| S2-T8 | Create distilling-components skill | 2 | P0 | S1-T2 |
+| S3-T1 | Update command frontmatter | 3 | P0 | Sprint 2 |
+| S3-T2 | Update README for pack documentation | 3 | P0 | S3-T1 |
+| S3-T3 | Create PACK-SUBMISSION.md | 3 | P0 | S3-T2 |
+| S3-T4 | Validate manifest against schema | 3 | P0 | S3-T1, S3-T2, S3-T3 |
+| S3-T5 | End-to-end testing | 3 | P0 | S3-T4 |
+| S3-T6 | Submit to constructs.network | 3 | P0 | S3-T5 |
 
 ---
 
@@ -394,96 +677,102 @@
 
 ```
 Sprint 1:
-  S1-01 (hooks config) ─┬─► S1-02 (sigil-init.sh)
-                        └─► S1-03 (validate-physics.sh)
-
-  S1-04 (Mason Required Reading) ─► S1-05 (Mason Physics Tree)
+  S1-T1 (manifest.json) ─ independent
+  S1-T2 (skill directories) ─ independent
+  S1-T3 (rename skills) ─ independent
 
 Sprint 2:
-  S2-01 (count-imports) ─┐
-                         ├─► S2-03 (infer-authority)
-  S2-02 (check-stability)┘              │
-                                        └─► S2-04 (Gardener skill)
-
-  S2-05 (Diagnostician) ─ independent
+  S1-T2 ─┬─► S2-T1 (crafting-physics)
+         ├─► S2-T2 (styling-material)
+         ├─► S2-T3 (animating-motion)
+         ├─► S2-T4 (applying-behavior)
+         ├─► S2-T5 (validating-physics)
+         ├─► S2-T6 (surveying-patterns)
+         ├─► S2-T7 (inscribing-taste)
+         └─► S2-T8 (distilling-components)
 
 Sprint 3:
-  S3-01 (context dir) ─┐
-                       └─► S3-02 (enhance sigil-init)
-  S1-02 ──────────────────┘
-
-  All prior ─► S3-03 (validation script) ─► S3-04 (E2E test)
+  Sprint 2 ─► S3-T1 (command frontmatter)
+                │
+                └─► S3-T2 (README) ─► S3-T3 (PACK-SUBMISSION)
+                         │                    │
+                         └────────┬───────────┘
+                                  │
+                                  ▼
+                            S3-T4 (validation)
+                                  │
+                                  ▼
+                            S3-T5 (E2E testing)
+                                  │
+                                  ▼
+                            S3-T6 (submit)
 ```
 
 ---
 
 ## Risk Assessment
 
-| Risk | Impact | Likelihood | Mitigation |
-|------|--------|------------|------------|
-| Hooks don't run as expected | High | Medium | Test hooks in isolation before integration |
-| Bash scripts fail on different environments | Medium | Low | Use /opt/homebrew/bin/bash, add fallbacks |
-| Physics validation too strict | Medium | Medium | Start with warnings only, no blocking |
-| Context files grow unbounded | Low | Medium | Limit recent.json to last 10 entries |
-| Skills don't read required files | Medium | Low | Explicit "MUST read" in SKILL.md |
+| Risk | Impact | Probability | Mitigation |
+|------|--------|-------------|------------|
+| Skill extraction complex | Medium | Low | Use craft.md as template |
+| Command routing breaks existing | High | Low | Test each command after update |
+| Manifest validation fails | Medium | Medium | Validate schema early |
+| Missing skill dependency | Low | Low | Cross-check context_files |
 
 ---
 
 ## Success Metrics
 
-| Metric | Baseline | Target | Measurement |
-|--------|----------|--------|-------------|
-| Mason asks config questions | Yes | No | Manual test |
-| /craft uses correct physics | Partial | 100% | Test all effect types |
-| /garden shows authority | No | Yes | Run on 5 components |
-| Diagnostician matches patterns | Partial | 100% | Test all 9 categories |
-| Physics warnings appear | No | Yes | Trigger intentional violation |
+| Metric | Target | Verification |
+|--------|--------|--------------|
+| Manifest validates | 100% | Schema tool |
+| Skills have index.yaml | 11/11 | File check |
+| Commands route correctly | 12/12 | Invocation test |
+| E2E /craft works | Pass | Manual test |
+| Pack submission approved | Yes | Registry response |
 
 ---
 
-## Files Created
+## Notes
 
-| File | Purpose | Sprint |
-|------|---------|--------|
-| `.claude/settings.local.json` | Hooks configuration | 1 |
-| `.claude/scripts/sigil-init.sh` | SessionStart hook | 1 |
-| `.claude/scripts/validate-physics.sh` | PreToolUse hook | 1 |
-| `.claude/scripts/count-imports.sh` | Import counter | 2 |
-| `.claude/scripts/check-stability.sh` | Stability checker | 2 |
-| `.claude/scripts/infer-authority.sh` | Authority inferer | 2 |
-| `.claude/scripts/validate-v10.1.sh` | Validation script | 3 |
-| `grimoires/sigil/.context/taste.json` | Taste preferences | 3 |
-| `grimoires/sigil/.context/persona.json` | Audience context | 3 |
-| `grimoires/sigil/.context/project.json` | Project conventions | 3 |
-| `grimoires/sigil/.context/recent.json` | Recent generations | 3 |
+### Key Architecture Decision
 
-## Files Updated
+Loa development commands/skills **stay in the repository** but are **NOT included in manifest.json**. This allows:
+- **Users**: Get focused Sigil design physics toolkit
+- **Maintainers**: Keep full Loa development capabilities
 
-| File | Changes | Sprint |
-|------|---------|--------|
-| `.claude/skills/mason/SKILL.md` | Required Reading, Physics Decision Tree | 1 |
-| `.claude/skills/gardener/SKILL.md` | Authority Computation with Bash Helpers | 2 |
-| `.claude/skills/diagnostician/SKILL.md` | Required Reading, Pattern Categories, Never Ask | 2 |
-| `.gitignore` | Add grimoires/sigil/.context/ | 3 |
+### Command Frontmatter Pattern
+
+Reference craft.md for the YAML frontmatter structure. Key fields:
+- `name`, `version`, `description`
+- `arguments` (with examples)
+- `context_files` (with required/optional flags)
+- `outputs`
+- `workflow_next`
+
+### Skill 3-Level Architecture
+
+1. **index.yaml** (~100 tokens): Metadata for skill discovery
+2. **SKILL.md** (~2000 tokens): Full instructions for skill execution
+3. **resources/** (on-demand): Templates, references, examples
 
 ---
 
-## Next Steps
+## Implementation Command
 
-After sprint plan approval:
+To start implementation:
+
 ```
 /implement sprint-1
 ```
 
-The implement command will:
-1. Pick up tasks from this sprint plan
-2. Execute them in dependency order
-3. Mark tasks complete as they finish
-4. Verify acceptance criteria
+The implement command handles task state automatically.
 
 ---
 
-*Sprint Plan Generated: 2026-01-11*
-*Total Tasks: 14*
-*Architecture: Hooks-Based Skill Enhancement*
-*Key Insight: Skills read, hooks inject, bash computes*
+```
+    ╔═══════════════════════════════════════════════╗
+    ║  SPRINT PLAN COMPLETE                         ║
+    ║  Ready for /implement sprint-1                ║
+    ╚═══════════════════════════════════════════════╝
+```

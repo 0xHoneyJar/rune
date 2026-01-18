@@ -1,6 +1,7 @@
 ---
 name: "behavior"
 version: "1.0.0"
+agent: "applying-behavior"
 description: |
   Apply behavioral physics only.
   Use when timing/sync is wrong but looks and animation are fine.

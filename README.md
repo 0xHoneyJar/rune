@@ -172,11 +172,27 @@ One input. Three physics layers. Unified feel.
 
 ## Installation
 
+### Via Loa Construct Registry (Recommended)
+
+```bash
+loa install sigil
+```
+
+Or add to your `.claude/constructs.yaml`:
+
+```yaml
+constructs:
+  - name: sigil
+    version: "^2.0.0"
+```
+
+### Manual Installation
+
 ```bash
 curl -fsSL https://sigil.dev/install | bash
 ```
 
-Adds rules to `.claude/rules/`. Your `CLAUDE.md` stays untouched.
+Adds rules to `.claude/rules/`, skills to `.claude/skills/`. Your `CLAUDE.md` stays untouched.
 
 ### Optional: Visual Validation
 
@@ -382,7 +398,8 @@ Loa plans structure. Sigil tunes feel. They meet at the component boundary.
 - [GitHub](https://github.com/0xHoneyJar/sigil)
 - [Issues](https://github.com/0xHoneyJar/sigil/issues)
 - [Loa Framework](https://github.com/0xHoneyJar/loa)
+- [Loa Construct Registry](https://constructs.network)
 
 ---
 
-*v1.3.0*
+*v2.0.0*

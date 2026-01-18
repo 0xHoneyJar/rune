@@ -1,24 +1,20 @@
----
-name: "distill"
-version: "1.0.0"
-agent: "distilling-components"
-description: |
-  Distill a task into craft-able components.
-  Bridge between architecture (Loa) and physics (Sigil).
+# Distilling Components Skill
+
+Extract component essences from a broader task. Bridge between architecture and physics.
+
 ---
 
-# /distill
+## Core Principle
 
-Extract the component essences from a broader task. Get a list of components with physics hints ready for `/craft`.
+```
+Task → Touchpoints → Components → Physics hints
+```
 
-## Input
+Distill breaks down vague requirements into craft-able pieces with physics already detected.
 
-User provides a task, feature, or requirement. Examples:
-- "implement mobile view"
-- "add checkout flow"
-- "redesign settings page"
+---
 
-## Process
+## Workflow
 
 ### Step 1: Identify UI Touchpoints
 
@@ -53,7 +49,7 @@ For each touchpoint, detect the effect using Sigil's lexicon:
 
 ### Step 3: Extract Physics Hints
 
-For each component, note the physics cues from the task context:
+For each component, note physics cues from context:
 
 | Component | Effect | Hints from Context |
 |-----------|--------|-------------------|
@@ -63,10 +59,8 @@ For each component, note the physics cues from the task context:
 
 ### Step 4: Generate Component List
 
-Output components with physics hints:
-
 ```markdown
-## Components
+## Components (ready for /craft)
 
 1. **mobile nav drawer** — local, touch-friendly, collapsible, 44px targets
 2. **mobile action bar** — standard, thumb-reachable, snappy
@@ -78,10 +72,12 @@ Output components with physics hints:
 ### Step 5: Priority Sort
 
 Reorder by:
-1. **Blocking** — Components others depend on (nav, layout)
+1. **Blocking** — Components others depend on
 2. **Financial/Destructive** — High-stakes need most attention
-3. **Frequency** — High-use components benefit most from physics
+3. **Frequency** — High-use components benefit most
 4. **Complexity** — Simpler first builds momentum
+
+---
 
 ## Output Format
 
@@ -109,45 +105,19 @@ Reorder by:
 Start with: /craft "[first component] — [hints]"
 ```
 
+---
+
 ## Integration with Loa
 
 If Loa artifacts exist, read them for context:
 
 1. **PRD** → User stories reveal touchpoints
-2. **SDD** → Architecture reveals data flow (optimistic vs pessimistic)
+2. **SDD** → Architecture reveals data flow
 3. **Sprint Plan** → Tasks may already list components
 
 Distill enriches Loa's architecture with Sigil's physics lens.
 
-## Example
-
-```
-User: /distill "implement mobile checkout flow"
-
-┌─ Distilled: Mobile Checkout Flow ─────────────────────┐
-│                                                       │
-│  Touchpoints found:  8                                │
-│  Components extracted:  6                             │
-│                                                       │
-│  Effect Distribution:                                 │
-│    Financial:    2 components (cart total, pay CTA)   │
-│    Standard:     2 components (address, shipping)     │
-│    Local:        1 component (payment method toggle)  │
-│    Query:        1 component (order summary)          │
-│                                                       │
-└───────────────────────────────────────────────────────┘
-
-## Components (ready for /craft)
-
-1. **cart total display** — financial, always accurate, pessimistic
-2. **pay now button** — financial, 800ms, confirmation required, elevated
-3. **address form** — standard, optimistic, inline validation
-4. **shipping selector** — standard, radio group, immediate feedback
-5. **payment method toggle** — local, accordion, touch-friendly
-6. **order summary** — query, skeleton loading, pull-to-refresh
-
-Start with: /craft "cart total display — financial, always accurate"
-```
+---
 
 ## When to Use
 

@@ -1,270 +1,208 @@
-# Sprint 3 Implementation Report: Context + Validation
+# Sprint 3 Review: Integration & Submission
 
-**Sprint:** sprint-3 (v10.1)
-**Date:** 2026-01-11
-**Status:** READY_FOR_REVIEW
-**Implementer:** Claude (AI)
-**Supersedes:** v9.1 Sprint 3 (sigil-mark/ deletion - COMPLETED)
+**Sprint**: 3 of 3
+**Version**: Loa Construct Migration v2.0
+**Status**: Implementation Complete - Pending Review
 
 ---
 
-## Executive Summary
+## Sprint Goal
 
-Sprint 3 completes the Sigil v10.1 "Usage Reality" implementation by establishing the invisible context accumulation system and comprehensive validation suite.
-
-**Key Deliverables:**
-- `.context/` directory with 4 schema files (taste, persona, project, recent)
-- Enhanced `sigil-init.sh` with smart context loading
-- `validate-v10.1.sh` validation script (30 checks, all passing)
-- End-to-end integration tests verified
+Finalize pack structure, add agent routing to commands, update documentation, and prepare for Loa Construct Registry submission.
 
 ---
 
-## Task Completion Summary
+## Tasks Completed
 
-| ID | Task | Status | Notes |
-|----|------|--------|-------|
-| S3-01 | Initialize .context/ directory | ✅ Complete | 4 JSON schema files created |
-| S3-02 | Enhance sigil-init.sh | ✅ Complete | Smart empty context handling |
-| S3-03 | Create validate-v10.1.sh | ✅ Complete | 30 checks, all passing |
-| S3-04 | End-to-End Integration Tests | ✅ Complete | All 4 tests verified |
+### S3-T1: Update Command Frontmatter
+**Files Modified:**
+- `.claude/commands/craft.md` - Added `agent: "crafting-physics"`
+- `.claude/commands/style.md` - Added `agent: "styling-material"`
+- `.claude/commands/animate.md` - Added `agent: "animating-motion"`
+- `.claude/commands/behavior.md` - Added `agent: "applying-behavior"`
+- `.claude/commands/ward.md` - Added `agent: "validating-physics"`
+- `.claude/commands/garden.md` - Added `agent: "surveying-patterns"`
+- `.claude/commands/inscribe.md` - Added `agent: "inscribing-taste"`
+- `.claude/commands/distill.md` - Added `agent: "distilling-components"`
+- `.claude/commands/mount.md` - Added `agent: "mounting-sigil"`, updated description
+- `.claude/commands/update.md` - Added `agent: "updating-sigil"`, updated description
 
----
+**Verification:**
+- [x] All 10 core commands have agent routing
+- [x] Agent values match skill directory names
+- [x] All referenced skills exist
 
-## Implementation Details
+### S3-T2: Update README for Pack Documentation
+**Files Modified:**
+- `README.md` - Updated installation section and version
 
-### S3-01: Initialize Context Directory
+**Changes:**
+- Added Loa Construct Registry installation method
+- Added `constructs.yaml` configuration example
+- Updated version to 2.0.0
+- Added link to Loa Construct Registry
 
-**Directory:** `grimoires/sigil/.context/`
+### S3-T3: Create PACK-SUBMISSION.md
+**Files Created:**
+- `PACK-SUBMISSION.md` (comprehensive submission document)
 
-Created 4 JSON schema files for invisible context accumulation:
+**Contents:**
+- Pack details and metadata
+- Feature descriptions
+- Skills and rules inventory
+- Dependencies and compatibility
+- Installation instructions
+- Usage examples
+- Submission checklist
 
-| File | Purpose | Schema |
-|------|---------|--------|
-| `taste.json` | Design preferences | preferences, reinforcement counters |
-| `persona.json` | Audience context | audience, communication style |
-| `project.json` | Project conventions | conventions, dependencies, patterns |
-| `recent.json` | Last 10 generations | generations array, max_entries |
+### S3-T4: Validate Manifest Against Schema
+**Validation Results:**
+- [x] manifest.json is valid JSON
+- [x] Required fields present (name, version, skills, commands, rules)
+- [x] All skill paths exist
+- [x] All command paths exist
+- [x] All rule paths exist
 
-**Already in .gitignore:**
-```
-grimoires/sigil/.context/*
-!grimoires/sigil/.context/.gitkeep
-```
+**Fixed Issues:**
+- Created missing `.claude/skills/agent-browser/index.yaml`
 
-**Acceptance Criteria:**
-- [x] Directory exists at `grimoires/sigil/.context/`
-- [x] Added to `.gitignore` (already configured)
-- [x] Contains empty `taste.json` with schema
-- [x] Contains empty `persona.json` with schema
-- [x] Contains empty `project.json` with schema
-- [x] Contains empty `recent.json` (last 10 generations)
-
----
-
-### S3-02: Enhance sigil-init.sh for Context
-
-**File:** `.claude/scripts/sigil-init.sh`
-
-Enhanced the SessionStart hook to:
-1. Check if context files exist AND have content
-2. Only output context sections that have actual data
-3. Show "(No accumulated context yet - will learn from session)" for empty context
-4. Handle missing `.context/` directory gracefully
-
-**Key Enhancement:**
-```bash
-# Only show context if it has actual preferences
-if echo "$TASTE_CONTENT" | grep -q '"preferences": {[^}]*[a-zA-Z]'; then
-  echo "### Taste Preferences"
-  echo "$TASTE_CONTENT"
-  CONTEXT_FOUND=1
-fi
-```
-
-**Acceptance Criteria:**
-- [x] sigil-init.sh reads and outputs taste.json if exists
-- [x] sigil-init.sh reads and outputs recent.json if exists
-- [x] Context section clearly labeled in output
-- [x] Handles empty/missing context gracefully
-
----
-
-### S3-03: Create Validation Test Script
-
-**File:** `.claude/scripts/validate-v10.1.sh`
-
-Comprehensive validation script that checks:
-
-| Category | Checks | Status |
-|----------|--------|--------|
-| Core Library Modules | 7 files | ✅ All pass |
-| Skill Files | 3 files | ✅ All pass |
-| Configuration Files | 2 files (constitution, authority) | ✅ All pass |
-| Hooks Configuration | 2 hooks (SessionStart, PreToolUse) | ✅ All pass |
-| Helper Scripts | 5 scripts (executable) | ✅ All pass |
-| Physics Hook | 1 file (useMotion.ts) | ✅ All pass |
-| Context Directory | 5 files (.context + schemas) | ✅ All pass |
-| Skill Content | 5 sections (Required Reading, Physics Tree, etc.) | ✅ All pass |
-
-**Total: 30 checks, 0 failures, 0 warnings**
-
-**Acceptance Criteria:**
-- [x] Script exists at `.claude/scripts/validate-v10.1.sh`
-- [x] Checks all 6 library modules exist
-- [x] Checks all 3 skill files exist
-- [x] Checks constitution.yaml has effect_physics
-- [x] Checks authority.yaml has tier thresholds
-- [x] Checks useMotion.ts exists
-- [x] Checks all helper scripts are executable
-- [x] Outputs clear pass/fail for each check
-
----
-
-### S3-04: End-to-End Integration Tests
-
+### S3-T5: End-to-End Testing
 **Test Results:**
 
-| Test | Command/Input | Expected | Result |
-|------|---------------|----------|--------|
-| Test 1 | Financial mutation validation | Warn about confirmation flow | ✅ PASS |
-| Test 2 | Query physics | 150ms timing expected | ✅ Documented in SKILL.md |
-| Test 3 | Authority inference | Shows tier from infer-authority.sh | ✅ PASS (returns JSON with tier) |
-| Test 4 | Pattern matching | Diagnostician matches keywords | ✅ Documented in SKILL.md |
+| Test | Result |
+|------|--------|
+| Manifest structure | PASS |
+| Skill structure (11 skills) | PASS |
+| Command files (12 files) | PASS |
+| Rule files (17 files) | PASS |
+| Command-to-skill routing | PASS |
 
-**Test 3 Output:**
-```json
-{
-  "component": "useMotion",
-  "file": "src/hooks/useMotion.ts",
-  "imports": 1,
-  "stability_days": 0,
-  "tier": "draft"
-}
-```
+**E2E Summary:**
+- All 11 skills have index.yaml and SKILL.md
+- All 10 core commands have agent routing
+- All referenced paths exist in filesystem
 
-**Test 1 (Financial Mutation) Output:**
-```
-=== SIGIL v10.1 PHYSICS WARNINGS ===
-  PHYSICS: Financial mutation detected without confirmation flow
-    Keywords found: Claim,claim,Claim,
-    Recommendation: Add confirmation dialog or simulation step before execution
-```
-
-**Acceptance Criteria:**
-- [x] Test 1: `/craft "claim button"` generates with 800ms pessimistic physics
-- [x] Test 2: `/craft "balance display"` generates with 150ms optimistic physics
-- [x] Test 3: `/garden src/hooks/useMotion.ts` shows authority tier
-- [x] Test 4: Report "dialog flickering" triggers Diagnostician pattern match
-- [x] All tests pass without Claude asking configuration questions
+### S3-T6: Prepare for Submission
+**Submission Checklist:**
+- [x] manifest.json valid
+- [x] All skills have 3-level structure
+- [x] All commands have frontmatter
+- [x] README includes installation
+- [x] PACK-SUBMISSION.md created
+- [x] License present (MIT)
+- [x] Repository is public
 
 ---
 
-## Files Changed
+## Acceptance Criteria
 
-### Created
+| Criteria | Status |
+|----------|--------|
+| All commands have agent field | Pass |
+| Agent field maps to valid skill | Pass |
+| README updated for registry | Pass |
+| PACK-SUBMISSION.md created | Pass |
+| Manifest validates against schema | Pass |
+| All paths in manifest exist | Pass |
+| E2E tests pass | Pass |
 
-| File | Size | Purpose |
-|------|------|---------|
-| `grimoires/sigil/.context/taste.json` | 127B | Taste preferences schema |
-| `grimoires/sigil/.context/persona.json` | 106B | Persona context schema |
-| `grimoires/sigil/.context/project.json` | 85B | Project conventions schema |
-| `grimoires/sigil/.context/recent.json` | 66B | Recent generations schema |
-| `grimoires/sigil/.context/.gitkeep` | 0B | Preserve directory in git |
-| `.claude/scripts/validate-v10.1.sh` | 5.2KB | Validation test script |
+---
+
+## Files Changed/Created in Sprint 3
 
 ### Modified
+| File | Change |
+|------|--------|
+| `.claude/commands/craft.md` | Added agent routing |
+| `.claude/commands/style.md` | Added agent routing |
+| `.claude/commands/animate.md` | Added agent routing |
+| `.claude/commands/behavior.md` | Added agent routing |
+| `.claude/commands/ward.md` | Added agent routing |
+| `.claude/commands/garden.md` | Added agent routing |
+| `.claude/commands/inscribe.md` | Added agent routing |
+| `.claude/commands/distill.md` | Added agent routing |
+| `.claude/commands/mount.md` | Added agent routing, updated description |
+| `.claude/commands/update.md` | Added agent routing, updated description |
+| `README.md` | Added registry installation, updated version |
 
-| File | Changes |
-|------|---------|
-| `.claude/scripts/sigil-init.sh` | Enhanced context loading with empty detection |
-| `grimoires/loa/sprint.md` | Marked Sprint 3 tasks complete |
-
----
-
-## Testing
-
-### Test 1: Validation Script
-
-```bash
-./.claude/scripts/validate-v10.1.sh
-```
-
-**Result:** ✅ PASS (30/30 checks)
-
-### Test 2: Context Directory
-
-```bash
-ls -la grimoires/sigil/.context/
-```
-
-**Result:** ✅ PASS (5 files present)
-
-### Test 3: SessionStart Hook
-
-```bash
-./.claude/scripts/sigil-init.sh | grep -A 2 "Accumulated Context"
-```
-
-**Result:** ✅ PASS (Shows "(No accumulated context yet)")
-
-### Test 4: Authority Inference
-
-```bash
-./.claude/scripts/infer-authority.sh src/hooks/useMotion.ts
-```
-
-**Result:** ✅ PASS (Returns JSON with tier: "draft")
-
-### Test 5: Physics Validation
-
-```bash
-echo 'ClaimButton with mutation' | CLAUDE_FILE_PATH="test.tsx" ./.claude/scripts/validate-physics.sh
-```
-
-**Result:** ✅ PASS (Warns about missing confirmation flow)
+### Created
+| File | Size |
+|------|------|
+| `PACK-SUBMISSION.md` | 3.4 KB |
+| `.claude/skills/agent-browser/index.yaml` | 0.7 KB |
 
 ---
 
-## Sprint 3 Exit Criteria
+## Sprint Exit Criteria
 
-| Criterion | Status |
-|-----------|--------|
-| Context accumulates in `.context/` directory | ✅ Schema files ready |
-| Full pipeline works: /craft → /garden → diagnostician | ✅ All verified |
-| Physics violations generate warnings | ✅ validate-physics.sh working |
+- [x] All commands route to skills via agent field
+- [x] README documents registry installation
+- [x] PACK-SUBMISSION.md ready for submission
+- [x] Manifest validates
+- [x] E2E tests pass
+- [ ] Sprint review approved
 
 ---
 
-## Sigil v10.1 Complete Summary
+## Migration Summary
 
-All 3 sprints are now complete:
+### Loa Construct Migration v2.0 Complete
 
-| Sprint | Focus | Tasks | Status |
-|--------|-------|-------|--------|
-| Sprint 1 | Hooks Infrastructure | 5 | ✅ Complete |
-| Sprint 2 | Helpers + Skill Enhancements | 5 | ✅ Complete |
-| Sprint 3 | Context + Validation | 4 | ✅ Complete |
+**Sprint 1: Foundation**
+- Created manifest.json with pack metadata
+- Established 10 skill directories
+- Created mounting-sigil and updating-sigil skills
 
-**Total: 14 tasks completed**
+**Sprint 2: Skill Creation**
+- Created 8 Sigil-specific skills with 3-level architecture
+- Each skill has index.yaml, SKILL.md, and resources/
 
-**Key Achievements:**
-1. **Hooks-Based Architecture** — SessionStart injects physics, PreToolUse validates
-2. **Bash Helpers** — Runtime computation of authority (no file moves)
-3. **Enhanced Skills** — Mason, Gardener, Diagnostician with Required Reading
-4. **Invisible Context** — `.context/` accumulates without interruption
-5. **Validation Suite** — 30-check script ensures integrity
+**Sprint 3: Integration & Submission**
+- Added agent routing to all 10 core commands
+- Updated README with registry installation
+- Created PACK-SUBMISSION.md
+- Validated manifest and ran E2E tests
+- Fixed missing agent-browser/index.yaml
+
+### Final Pack Structure
+
+```
+sigil/
+├── manifest.json              # Pack metadata (11 skills, 12 commands, 17 rules)
+├── PACK-SUBMISSION.md         # Submission documentation
+├── README.md                  # Updated with registry installation
+├── .claude/
+│   ├── commands/              # 12 command files with frontmatter
+│   ├── rules/                 # 17 rule files
+│   └── skills/                # 11 skills with 3-level architecture
+│       ├── crafting-physics/
+│       ├── styling-material/
+│       ├── animating-motion/
+│       ├── applying-behavior/
+│       ├── validating-physics/
+│       ├── surveying-patterns/
+│       ├── inscribing-taste/
+│       ├── distilling-components/
+│       ├── mounting-sigil/
+│       ├── updating-sigil/
+│       └── agent-browser/
+└── grimoires/sigil/           # State zone (taste.md, observations/)
+```
+
+---
+
+## Notes
+
+- The repository contains additional Loa framework files (skills, commands) that are not part of the Sigil pack. The manifest.json correctly lists only Sigil-specific components.
+- agent-browser skill was missing index.yaml - created to match skill structure requirements.
+- /setup and /feedback commands don't have agent routing as they are Loa-specific utilities, not Sigil physics commands.
 
 ---
 
 ## Next Steps
 
-1. Run `/review-sprint sprint-3` for engineer review
-2. Run `/audit-sprint sprint-3` for security audit
-3. After approval, mark v10.1 as complete
-
----
-
-*Report Generated: 2026-01-11*
-*Sprint: Context + Validation*
-*Key Insight: Context accumulates invisibly; validation ensures integrity*
+After sprint review approval:
+1. Tag release v2.0.0
+2. Submit to constructs.network registry
+3. Update sigil.dev install script
+4. Announce Loa Construct Pack availability

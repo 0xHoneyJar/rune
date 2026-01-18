@@ -1,0 +1,40 @@
+name: "agent-browser"
+version: "1.0.0"
+model: "haiku"
+color: "cyan"
+description: |
+  Visual validation of generated components.
+  Automates browser interactions for touch target verification,
+  focus ring testing, and screenshot capture.
+
+triggers:
+  - "visual validation"
+  - "check touch targets"
+  - "test focus rings"
+  - "take screenshot"
+  - "verify accessibility"
+
+examples:
+  - input: "check if button is 44px"
+    output: "Opens browser, measures element, reports size"
+  - input: "test focus visibility"
+    output: "Tabs through elements, captures focus states"
+
+inputs:
+  - name: "url"
+    type: "string"
+    required: true
+    description: "URL to validate"
+
+outputs:
+  - path: "grimoires/sigil/observations/*.png"
+    type: "file"
+    description: "Validation screenshots"
+
+zones:
+  state:
+    read: ["grimoires/sigil/observations/"]
+    read-write: ["grimoires/sigil/observations/"]
+
+integrations:
+  - agent-browser

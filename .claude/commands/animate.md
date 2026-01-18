@@ -1,6 +1,7 @@
 ---
 name: "animate"
 version: "1.0.0"
+agent: "animating-motion"
 description: |
   Apply animation physics only.
   Use when movement feels off but behavior and looks are fine.

@@ -1,10 +1,11 @@
 ---
 name: "mount"
 version: "1.0.0"
+agent: "mounting-sigil"
 description: |
-  Install Loa framework onto an existing repository. Prepares the System Zone,
-  initializes State Zone structure, and sets up integrity verification.
-  "The Loa mounts the repository, preparing to ride."
+  Install Sigil onto an existing repository. Prepares the design physics
+  rules, skills, and taste accumulation system.
+  "The Sigil marks the repository, ready to craft."
 
 command_type: "wizard"
 

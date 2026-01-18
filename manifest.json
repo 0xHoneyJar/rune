@@ -1,0 +1,233 @@
+{
+  "$schema": "https://constructs.network/schemas/pack-manifest.json",
+  "name": "sigil",
+  "version": "2.0.0",
+  "description": "Design physics framework for AI-generated UI components. Three-layer physics: Behavioral + Animation + Material = Feel.",
+  "longDescription": "Sigil teaches Claude how to generate UI components with correct design physics. It detects effect from keywords and types, applies timing/sync/confirmation based on physics rules, and accumulates user taste preferences without configuration.",
+  "author": {
+    "name": "THJ Team",
+    "url": "https://thehoneyjar.xyz"
+  },
+  "repository": "https://github.com/0xHoneyJar/sigil",
+  "homepage": "https://sigil.design",
+  "license": "MIT",
+  "tier": "free",
+  "keywords": [
+    "design-system",
+    "ui-components",
+    "physics",
+    "animation",
+    "react",
+    "frontend",
+    "ux",
+    "accessibility",
+    "framer-motion"
+  ],
+  "skills": [
+    {
+      "name": "crafting-physics",
+      "path": ".claude/skills/crafting-physics",
+      "description": "Generate components with full 3-layer design physics"
+    },
+    {
+      "name": "styling-material",
+      "path": ".claude/skills/styling-material",
+      "description": "Apply material physics only (surface, shadow, typography)"
+    },
+    {
+      "name": "animating-motion",
+      "path": ".claude/skills/animating-motion",
+      "description": "Apply animation physics only (timing, easing, springs)"
+    },
+    {
+      "name": "applying-behavior",
+      "path": ".claude/skills/applying-behavior",
+      "description": "Apply behavioral physics only (sync, confirmation, timing)"
+    },
+    {
+      "name": "validating-physics",
+      "path": ".claude/skills/validating-physics",
+      "description": "Ward against physics violations"
+    },
+    {
+      "name": "surveying-patterns",
+      "path": ".claude/skills/surveying-patterns",
+      "description": "Survey pattern authority across codebase"
+    },
+    {
+      "name": "inscribing-taste",
+      "path": ".claude/skills/inscribing-taste",
+      "description": "Inscribe learnings into permanent rules"
+    },
+    {
+      "name": "distilling-components",
+      "path": ".claude/skills/distilling-components",
+      "description": "Bridge architecture to physics-ready components"
+    },
+    {
+      "name": "mounting-sigil",
+      "path": ".claude/skills/mounting-sigil",
+      "description": "Mount Sigil onto existing repositories"
+    },
+    {
+      "name": "updating-sigil",
+      "path": ".claude/skills/updating-sigil",
+      "description": "Update Sigil from upstream"
+    },
+    {
+      "name": "agent-browser",
+      "path": ".claude/skills/agent-browser",
+      "description": "Visual validation of generated components"
+    }
+  ],
+  "commands": [
+    {
+      "name": "/craft",
+      "path": ".claude/commands/craft.md",
+      "description": "Generate component with full design physics"
+    },
+    {
+      "name": "/style",
+      "path": ".claude/commands/style.md",
+      "description": "Apply material physics only"
+    },
+    {
+      "name": "/animate",
+      "path": ".claude/commands/animate.md",
+      "description": "Apply animation physics only"
+    },
+    {
+      "name": "/behavior",
+      "path": ".claude/commands/behavior.md",
+      "description": "Apply behavioral physics only"
+    },
+    {
+      "name": "/ward",
+      "path": ".claude/commands/ward.md",
+      "description": "Check for physics violations"
+    },
+    {
+      "name": "/garden",
+      "path": ".claude/commands/garden.md",
+      "description": "Survey pattern authority"
+    },
+    {
+      "name": "/inscribe",
+      "path": ".claude/commands/inscribe.md",
+      "description": "Inscribe taste learnings permanently"
+    },
+    {
+      "name": "/distill",
+      "path": ".claude/commands/distill.md",
+      "description": "Distill tasks into craft-able components"
+    },
+    {
+      "name": "/mount",
+      "path": ".claude/commands/mount.md",
+      "description": "Mount Sigil onto a repository"
+    },
+    {
+      "name": "/update",
+      "path": ".claude/commands/update.md",
+      "description": "Update Sigil from upstream"
+    },
+    {
+      "name": "/setup",
+      "path": ".claude/commands/setup.md",
+      "description": "First-time Sigil setup"
+    },
+    {
+      "name": "/feedback",
+      "path": ".claude/commands/feedback.md",
+      "description": "Submit feedback about Sigil"
+    }
+  ],
+  "rules": [
+    {
+      "name": "sigil-core",
+      "path": ".claude/rules/00-sigil-core.md",
+      "description": "Core physics principles and action defaults"
+    },
+    {
+      "name": "sigil-physics",
+      "path": ".claude/rules/01-sigil-physics.md",
+      "description": "Behavioral physics - sync, timing, confirmation"
+    },
+    {
+      "name": "sigil-detection",
+      "path": ".claude/rules/02-sigil-detection.md",
+      "description": "Effect detection from keywords and types"
+    },
+    {
+      "name": "sigil-patterns",
+      "path": ".claude/rules/03-sigil-patterns.md",
+      "description": "Golden pattern implementations"
+    },
+    {
+      "name": "sigil-protected",
+      "path": ".claude/rules/04-sigil-protected.md",
+      "description": "Non-negotiable protected capabilities"
+    },
+    {
+      "name": "sigil-animation",
+      "path": ".claude/rules/05-sigil-animation.md",
+      "description": "Animation physics - easing, springs, frequency"
+    },
+    {
+      "name": "sigil-taste",
+      "path": ".claude/rules/06-sigil-taste.md",
+      "description": "Taste accumulation system"
+    },
+    {
+      "name": "sigil-material",
+      "path": ".claude/rules/07-sigil-material.md",
+      "description": "Material physics - surface, fidelity, grit"
+    },
+    {
+      "name": "sigil-lexicon",
+      "path": ".claude/rules/08-sigil-lexicon.md",
+      "description": "Keyword and adjective lookup tables"
+    },
+    {
+      "name": "react-core",
+      "path": ".claude/rules/10-react-core.md",
+      "description": "React implementation patterns"
+    },
+    {
+      "name": "react-async",
+      "path": ".claude/rules/11-react-async.md",
+      "description": "Async patterns and waterfalls"
+    },
+    {
+      "name": "react-bundle",
+      "path": ".claude/rules/12-react-bundle.md",
+      "description": "Bundle optimization"
+    },
+    {
+      "name": "react-rendering",
+      "path": ".claude/rules/13-react-rendering.md",
+      "description": "Rendering optimization"
+    },
+    {
+      "name": "react-rerender",
+      "path": ".claude/rules/14-react-rerender.md",
+      "description": "Re-render prevention"
+    },
+    {
+      "name": "react-server",
+      "path": ".claude/rules/15-react-server.md",
+      "description": "Server-side patterns"
+    },
+    {
+      "name": "react-js",
+      "path": ".claude/rules/16-react-js.md",
+      "description": "JavaScript micro-optimizations"
+    },
+    {
+      "name": "semantic-search",
+      "path": ".claude/rules/17-semantic-search.md",
+      "description": "Semantic code search integration"
+    }
+  ],
+  "minLoaVersion": "1.0.0"
+}

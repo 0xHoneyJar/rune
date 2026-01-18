@@ -1,51 +1,65 @@
----
-name: "garden"
-version: "1.0.0"
-agent: "surveying-patterns"
-description: |
-  Health report on pattern authority and component usage.
-  Shows which components are canonical (Gold), established (Silver), or experimental (Draft).
+# Surveying Patterns Skill
 
-arguments: []
+Health report on pattern authority and component usage.
 
-context_files:
-  - path: "src/components/"
-    required: false
-    purpose: "Components to analyze"
-  - path: ".claude/rules/01-sigil-physics.md"
-    required: true
-    purpose: "Physics reference"
-
-outputs:
-  - path: "stdout"
-    type: "report"
-    description: "Authority distribution and recommendations"
-
-integrations: [ck]
-
-no_questions:
-  - "Should I promote this component?"
-  - "Do you want to change the tier?"
 ---
 
-# /garden
+## Core Principle
 
-Get a health report on your component authority.
-
-## How It Works
-
-1. **Sigil scans** your components directory
-2. **Counts imports** for each component
-3. **Checks stability** (days since last change)
-4. **Reports tiers** and recommendations
-
-## Invocation
-
-```bash
-/garden
+```
+Usage → Authority → Templates
 ```
 
-## Output
+Authority is computed from the codebase, not configured. Components earn Gold by being used and surviving.
+
+---
+
+## Authority Tiers
+
+| Tier | Min Imports | Min Stability | Behavior |
+|------|-------------|---------------|----------|
+| **Gold** | 10+ | 14+ days | Use as templates in /craft |
+| **Silver** | 5+ | 7+ days | Prefer if no Gold exists |
+| **Draft** | <5 | any | Don't learn from these |
+
+---
+
+## How Authority Works
+
+- **Imports** = how many files use this component
+- **Stability** = days since last modification
+- **Gold** = proven patterns (use as templates)
+- **Orphan** = 0 imports (consider removing)
+
+---
+
+## Workflow
+
+### Step 1: Scan Components
+
+```bash
+# Find all components
+Glob: src/components/**/*.tsx
+
+# Count imports for each
+grep -r "import.*ComponentName" src/
+```
+
+### Step 2: Check Stability
+
+For each component, check days since last git commit:
+```bash
+git log -1 --format="%ci" -- path/to/component.tsx
+```
+
+### Step 3: Compute Tiers
+
+Apply thresholds:
+- Gold: 10+ imports AND 14+ days
+- Silver: 5+ imports
+- Draft: everything else
+
+### Step 4: Generate Report
 
 ```
 ┌─ Sigil Garden Report ──────────────────────────────────┐
@@ -77,24 +91,32 @@ Get a health report on your component authority.
 └────────────────────────────────────────────────────────┘
 ```
 
-## Authority Tiers
+---
 
-| Tier | Min Imports | Min Stability | Behavior |
-|------|-------------|---------------|----------|
-| **Gold** | 10+ | 14+ days | Use as templates in /craft |
-| **Silver** | 5+ | 7+ days | Prefer if no Gold exists |
-| **Draft** | <5 | any | Don't learn from these |
+## Integration with /craft
 
-## How Authority Works
+When generating new components:
+1. Check for Gold tier components with similar patterns
+2. Use Gold components as templates
+3. Match their physics and conventions
 
-- **Imports** = how many files use this component
-- **Stability** = days since last modification
-- **Gold** = proven patterns (use as templates)
-- **Orphan** = 0 imports (consider removing)
-
-Authority is computed from your codebase, not configured. Components earn Gold by being used and surviving.
+---
 
 ## What Sigil Never Asks
 
-- "Should I promote this?" → Promotion is earned, not requested
-- "Is this canonical?" → Import count decides, not preferences
+- "Should I promote this?" → Promotion is earned
+- "Is this canonical?" → Import count decides
+- "Do you want to change the tier?" → Authority is computed
+
+---
+
+## Recommendations
+
+**Orphans (0 imports)**:
+Consider removing or consolidating.
+
+**Approaching Gold**:
+High-value components worth stabilizing.
+
+**Draft with high usage**:
+May need refactoring before promotion.

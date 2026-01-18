@@ -1,284 +1,220 @@
-# Sprint 1 Implementation Report: Hooks Infrastructure
+# Sprint 1: Pack Foundation - Implementation Report
 
-**Sprint:** sprint-1 (v10.1)
-**Date:** 2026-01-11
-**Status:** READY_FOR_REVIEW
-**Implementer:** Claude (AI)
-**Supersedes:** v9.1 Sprint 1 (Migration Debt Zero - COMPLETED)
+**Sprint ID**: sprint-1 (Loa Construct Migration v2.0)
+**Date**: 2026-01-16
+**Status**: READY_FOR_REVIEW
+**Implementer**: Claude
+**Supersedes**: sprint-1 v10.1 (Hooks Infrastructure - COMPLETED)
 
 ---
 
 ## Executive Summary
 
-Sprint 1 establishes the Claude Code hooks infrastructure that bridges the gap between the Sigil v10.1 TypeScript library and skills. All 5 tasks have been completed successfully.
+Sprint 1 successfully established the Loa Construct pack foundation for Sigil. All 3 tasks completed:
 
-**Key Deliverables:**
-- Hooks configuration file (`.claude/settings.local.json`)
-- SessionStart hook script (`sigil-init.sh`)
-- PreToolUse validation hook script (`validate-physics.sh`)
-- Mason skill enhanced with Required Reading and Physics Decision Tree
-
----
-
-## Task Completion Summary
-
-| ID | Task | Status | Notes |
-|----|------|--------|-------|
-| S1-01 | Create Hooks Configuration | ✅ Complete | `.claude/settings.local.json` |
-| S1-02 | Create SessionStart Hook | ✅ Complete | `sigil-init.sh` - executable |
-| S1-03 | Create PreToolUse Validation Hook | ✅ Complete | `validate-physics.sh` - executable |
-| S1-04 | Update Mason - Required Reading | ✅ Complete | Added to SKILL.md |
-| S1-05 | Update Mason - Physics Decision Tree | ✅ Complete | Added to SKILL.md |
+| Task | Status | Files |
+|------|--------|-------|
+| S1-T1: Create manifest.json | ✓ Complete | 1 file created |
+| S1-T2: Create skill directory structure | ✓ Complete | 8 directories created |
+| S1-T3: Rename existing skills | ✓ Complete | 2 skills created (mounting-sigil, updating-sigil) |
 
 ---
 
-## Implementation Details
+## Task S1-T1: Create manifest.json
 
-### S1-01: Hooks Configuration
+### What Was Done
 
-**File:** `.claude/settings.local.json`
+Created `manifest.json` at repository root with complete pack metadata:
 
-```json
-{
-  "hooks": {
-    "SessionStart": [
-      {
-        "script": ".claude/scripts/sigil-init.sh",
-        "timeout": 5000,
-        "description": "Inject Sigil v10.1 physics context"
-      }
-    ],
-    "PreToolUse": {
-      "Edit": [
-        {
-          "script": ".claude/scripts/validate-physics.sh",
-          "timeout": 3000,
-          "description": "Validate physics compliance"
-        }
-      ],
-      "Write": [
-        {
-          "script": ".claude/scripts/validate-physics.sh",
-          "timeout": 3000,
-          "description": "Validate physics compliance"
-        }
-      ]
-    }
-  }
-}
-```
+- **11 skills** registered (8 new + 2 renamed + agent-browser)
+- **12 commands** registered
+- **17 rules** registered
+- Valid JSON syntax verified
 
-**Acceptance Criteria:**
-- [x] File exists at `.claude/settings.local.json`
-- [x] SessionStart hook configured to run `sigil-init.sh`
-- [x] PreToolUse hook configured for Edit and Write tools
-- [x] Timeouts set (5000ms for init, 3000ms for validation)
+### Files Created
 
----
-
-### S1-02: SessionStart Hook
-
-**File:** `.claude/scripts/sigil-init.sh`
-
-**Features:**
-- Injects `constitution.yaml` (effect physics) into Claude's context
-- Injects `authority.yaml` (tier thresholds) into Claude's context
-- Loads accumulated context from `.context/` if it exists
-- Provides Physics Decision Guide summary at end
-- Handles missing files gracefully with warnings
-
-**Output Format:**
-```
-=== SIGIL v10.1 PHYSICS CONTEXT ===
-
-## Effect Physics (from constitution.yaml)
-[contents of constitution.yaml]
-
----
-
-## Authority Thresholds (from authority.yaml)
-[contents of authority.yaml]
-
----
-
-## Accumulated Context (if exists)
-[contents of .context/*.json files]
-
-=== END SIGIL CONTEXT ===
-
-Physics Decision Guide:
-- MUTATION → pessimistic sync, 800ms, useMotion('deliberate')
-- QUERY → optimistic sync, 150ms, useMotion('snappy')
-- LOCAL_STATE → immediate sync, 0ms
-- SENSITIVE_MUTATION → 1200ms, requires confirmation
-```
-
-**Acceptance Criteria:**
-- [x] Script exists at `.claude/scripts/sigil-init.sh`
-- [x] Script is executable (`chmod +x`)
-- [x] Outputs constitution.yaml content
-- [x] Outputs authority.yaml content
-- [x] Outputs accumulated context from `.context/` if exists
-- [x] Handles missing files gracefully with warnings
-
----
-
-### S1-03: PreToolUse Validation Hook
-
-**File:** `.claude/scripts/validate-physics.sh`
-
-**Validation Checks:**
-1. **Financial mutations need confirmation** - Checks for claim/withdraw/transfer/etc. without confirmation dialog
-2. **Mutations shouldn't use snappy timing** - Warns if mutation uses 150ms instead of 800ms
-3. **Interactive components need motion** - Warns if onClick/onSubmit without useMotion
-4. **Sensitive ops shouldn't be optimistic** - Warns if ownership/delete uses optimistic sync
-5. **Preset matches effect type** - Warns if smooth/instant used with mutation
-
-**Behavior:**
-- Only runs on `.tsx` and `.jsx` files
-- Skips test files
-- Outputs warnings (non-blocking)
-- Always exits 0 to allow Claude to proceed
-
-**Output Format (when warnings exist):**
-```
-=== SIGIL v10.1 PHYSICS WARNINGS ===
-
-  PHYSICS: Financial mutation detected without confirmation flow
-    Keywords found: claim, withdraw
-    Recommendation: Add confirmation dialog or simulation step
-
-  PHYSICS: Mutation using snappy (150ms) timing
-    Mutations should use 'deliberate' (800ms) or 'server-tick' (600ms)
-
-Physics Reference:
-  mutation → pessimistic sync, 800ms, useMotion('deliberate')
-  query → optimistic sync, 150ms, useMotion('snappy')
-  sensitive_mutation → pessimistic, 1200ms, requires confirmation
-
-=== END WARNINGS ===
-```
-
-**Acceptance Criteria:**
-- [x] Script exists at `.claude/scripts/validate-physics.sh`
-- [x] Script is executable
-- [x] Checks financial mutations have confirmation flow
-- [x] Checks mutations don't use snappy timing
-- [x] Checks interactive components have motion/transition
-- [x] Outputs warnings (not blocks) for violations
-- [x] Skips non-component files (.ts, .md, etc.)
-
----
-
-### S1-04 & S1-05: Mason Skill Enhancement
-
-**File:** `.claude/skills/mason/SKILL.md`
-
-**Added Sections:**
-
-1. **Required Reading** - Lists files Mason MUST read before generating:
-   - `grimoires/sigil/constitution.yaml`
-   - `grimoires/sigil/authority.yaml`
-   - `src/lib/sigil/physics.ts` (lines 1-100)
-
-2. **Physics Decision Tree** - Visual decision tree for determining physics:
-   - MUTATION → Is financial? → SENSITIVE_MUTATION (1200ms) or MUTATION (800ms)
-   - QUERY → snappy (150ms)
-   - LOCAL_STATE → instant (0ms)
-
-3. **Financial/Sensitive Keywords Reference** - Table of keywords that trigger sensitive_mutation physics
-
-**Acceptance Criteria:**
-- [x] SKILL.md contains "## Required Reading" section
-- [x] Lists constitution.yaml as required reading
-- [x] Lists authority.yaml as required reading
-- [x] Lists physics.ts (lines 1-100) as required reading
-- [x] Reading happens BEFORE any generation
-- [x] SKILL.md contains "## Physics Decision Tree" section
-- [x] Covers mutation vs query vs local_state branching
-- [x] Covers financial vs non-financial mutation branching
-- [x] Shows correct physics for each path
-- [x] Lists financial keywords: claim, deposit, withdraw, transfer, swap, burn
-
----
-
-## Files Changed
-
-### Created
-
-| File | Size | Purpose |
-|------|------|---------|
-| `.claude/settings.local.json` | 500B | Hooks configuration |
-| `.claude/scripts/sigil-init.sh` | 2.5KB | SessionStart hook |
-| `.claude/scripts/validate-physics.sh` | 5.1KB | PreToolUse hook |
-
-### Modified
-
-| File | Changes |
+| File | Purpose |
 |------|---------|
-| `.claude/skills/mason/SKILL.md` | Added Required Reading and Physics Decision Tree sections |
+| `manifest.json` | Pack manifest for Loa Constructs |
+
+### Acceptance Criteria Verification
+
+- [x] manifest.json exists at root
+- [x] Includes all 11 Sigil skills
+- [x] Includes all 12 Sigil commands
+- [x] Includes all 17 Sigil rules (00-17, skipping 09)
+- [x] Valid JSON syntax
+
+### Testing
+
+```bash
+$ cat manifest.json | python3 -m json.tool > /dev/null
+✓ manifest.json is valid JSON
+```
 
 ---
 
-## Testing
+## Task S1-T2: Create Skill Directory Structure
 
-### Test 1: sigil-init.sh Execution
+### What Was Done
 
-```bash
-./.claude/scripts/sigil-init.sh
+Created directory structure for all 8 new Sigil skills with `resources/` subdirectories:
+
+```
+.claude/skills/
+├── crafting-physics/resources/
+├── styling-material/resources/
+├── animating-motion/resources/
+├── applying-behavior/resources/
+├── validating-physics/resources/
+├── surveying-patterns/resources/
+├── inscribing-taste/resources/
+└── distilling-components/resources/
 ```
 
-**Result:** ✅ PASS - Outputs constitution.yaml and authority.yaml content correctly
+### Acceptance Criteria Verification
 
-### Test 2: Script Permissions
+- [x] `.claude/skills/crafting-physics/` exists
+- [x] `.claude/skills/styling-material/` exists
+- [x] `.claude/skills/animating-motion/` exists
+- [x] `.claude/skills/applying-behavior/` exists
+- [x] `.claude/skills/validating-physics/` exists
+- [x] `.claude/skills/surveying-patterns/` exists
+- [x] `.claude/skills/inscribing-taste/` exists
+- [x] `.claude/skills/distilling-components/` exists
 
-```bash
-ls -la .claude/scripts/sigil-init.sh
-ls -la .claude/scripts/validate-physics.sh
-```
-
-**Result:** ✅ PASS - Both scripts have execute permissions (-rwxr-xr-x)
-
-### Test 3: Mason SKILL.md Structure
-
-```bash
-grep -c "Required Reading" .claude/skills/mason/SKILL.md
-grep -c "Physics Decision Tree" .claude/skills/mason/SKILL.md
-```
-
-**Result:** ✅ PASS - Both sections present
+All directories ready for Sprint 2 skill file creation.
 
 ---
 
-## Known Limitations
+## Task S1-T3: Rename Existing Skills
 
-1. **Hooks may not run in all Claude Code versions** - The hooks system is relatively new and behavior may vary
-2. **validate-physics.sh uses basic regex** - More complex code patterns may not be caught
-3. **Context directory doesn't exist yet** - Will be created in Sprint 3
+### What Was Done
+
+Created new Sigil-specific skills based on the framework skills:
+
+1. **mounting-sigil** (from mounting-framework concept)
+   - Updated to focus on Sigil physics installation
+   - index.yaml with Sigil-specific triggers and outputs
+   - SKILL.md with Sigil-focused workflow
+
+2. **updating-sigil** (from updating-framework concept)
+   - Updated to focus on Sigil updates
+   - index.yaml with update triggers
+   - SKILL.md with update workflow
+
+### Files Created
+
+| File | Size |
+|------|------|
+| `.claude/skills/mounting-sigil/index.yaml` | 1.7 KB |
+| `.claude/skills/mounting-sigil/SKILL.md` | 6.7 KB |
+| `.claude/skills/updating-sigil/index.yaml` | 1.1 KB |
+| `.claude/skills/updating-sigil/SKILL.md` | 4.0 KB |
+
+### Key Changes from Framework Skills
+
+| Aspect | mounting-framework | mounting-sigil |
+|--------|-------------------|----------------|
+| Name | mounting-framework | mounting-sigil |
+| Focus | Generic Loa framework | Sigil physics rules |
+| Output | State Zone | grimoires/sigil/ |
+| Skills installed | All Loa skills | 11 Sigil skills |
+| Commands installed | All Loa commands | 12 Sigil commands |
+
+### Acceptance Criteria Verification
+
+- [x] `.claude/skills/mounting-sigil/` exists with updated content
+- [x] `.claude/skills/updating-sigil/` exists with updated content
+- [x] index.yaml name fields updated
+- [x] SKILL.md content updated for Sigil context
+
+---
+
+## Files Summary
+
+### Created (11 total)
+
+| File | Task |
+|------|------|
+| `manifest.json` | S1-T1 |
+| `.claude/skills/crafting-physics/resources/` | S1-T2 |
+| `.claude/skills/styling-material/resources/` | S1-T2 |
+| `.claude/skills/animating-motion/resources/` | S1-T2 |
+| `.claude/skills/applying-behavior/resources/` | S1-T2 |
+| `.claude/skills/validating-physics/resources/` | S1-T2 |
+| `.claude/skills/surveying-patterns/resources/` | S1-T2 |
+| `.claude/skills/inscribing-taste/resources/` | S1-T2 |
+| `.claude/skills/distilling-components/resources/` | S1-T2 |
+| `.claude/skills/mounting-sigil/` (index.yaml + SKILL.md) | S1-T3 |
+| `.claude/skills/updating-sigil/` (index.yaml + SKILL.md) | S1-T3 |
+
+### Unchanged
+
+- All Loa development skills (auditing-security, etc.) - preserved for dev tooling
+- All Loa development commands - preserved for dev tooling
+- All existing rules - already complete
+
+---
+
+## Architecture Notes
+
+### Separation of Concerns Preserved
+
+The key architectural decision from the SDD is maintained:
+
+**In manifest.json** (Pack Distribution):
+- 11 Sigil-specific skills
+- 12 Sigil-specific commands
+- 17 physics rules
+
+**Not in manifest.json** (Dev Tooling - stays in repo):
+- 9 Loa development skills
+- 16 Loa development commands
+- All protocols
+
+This allows Sigil users to get a focused design physics toolkit while maintainers keep full Loa development capabilities.
 
 ---
 
 ## Next Steps
 
-Sprint 2 will:
-1. Create bash helper scripts (count-imports.sh, check-stability.sh, infer-authority.sh)
-2. Update Gardener skill with authority computation workflow
-3. Update Diagnostician skill with pattern reading workflow
+Sprint 2 will create the skill content (index.yaml + SKILL.md) for all 8 new Sigil skills:
+
+1. crafting-physics (S2-T1)
+2. styling-material (S2-T2)
+3. animating-motion (S2-T3)
+4. applying-behavior (S2-T4)
+5. validating-physics (S2-T5)
+6. surveying-patterns (S2-T6)
+7. inscribing-taste (S2-T7)
+8. distilling-components (S2-T8)
+
+---
+
+## Testing Recommendations
+
+For Sprint 1 review:
+
+1. **Validate manifest.json schema** - Run against Loa Constructs schema when available
+2. **Verify skill paths** - All 11 skills in manifest should resolve
+3. **Verify command paths** - All 12 commands in manifest should resolve
+4. **Verify rule paths** - All 17 rules in manifest should resolve
 
 ---
 
 ## Sprint Exit Criteria
 
-- [x] SessionStart hook runs on conversation start
-- [x] Physics rules visible in Claude's context
-- [x] PreToolUse hook validates Edit/Write operations
-- [x] Mason skill has Required Reading section
-- [x] Mason skill has Physics Decision Tree section
+- [x] manifest.json exists and is valid JSON
+- [x] All 8 new skill directories created with resources/
+- [x] mounting-sigil skill created with index.yaml + SKILL.md
+- [x] updating-sigil skill created with index.yaml + SKILL.md
+- [x] Separation of concerns maintained (Loa dev tools not in manifest)
 
 **Sprint 1 Status:** READY_FOR_REVIEW
 
 ---
 
-*Report Generated: 2026-01-11*
-*Sprint: Hooks Infrastructure*
-*Key Insight: Hooks inject context at session start, skills read it during generation*
+*Report Generated: 2026-01-16*
+*Sprint: Pack Foundation (Loa Construct Migration)*
+*Key Insight: manifest.json defines pack distribution; Loa dev tools stay in repo for maintainers*

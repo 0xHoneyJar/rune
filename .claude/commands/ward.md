@@ -1,6 +1,7 @@
 ---
 name: "ward"
 version: "1.1.0"
+agent: "validating-physics"
 description: |
   Protective barrier check against Sigil design physics.
   Reveals violations before they harm users.
