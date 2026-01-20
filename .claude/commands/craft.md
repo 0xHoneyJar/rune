@@ -1522,6 +1522,7 @@ Show analysis appropriate to craft type:
 │  Target:       ClaimButton (new)                       │
 │  Craft Type:   Generate                                │
 │  Effect:       Financial mutation                      │
+│  Iteration:    1 (new session)                         │
 │                                                        │
 │  Experiment:   (if --experiment flag provided)         │
 │                EXP-001: Rewards Visibility             │
@@ -1542,7 +1543,19 @@ Show analysis appropriate to craft type:
 │  Animation     ease-out | deliberate | no bounce       │
 │  Material      Elevated | Soft shadow | 8px radius     │
 │                                                        │
+│  ┌─ Data Physics ──────────────────────────────────┐   │
+│  │  (shown when web3 flow detected)                │   │
+│  │  Using ON-CHAIN for:                            │   │
+│  │  • Transaction values (accuracy required)       │   │
+│  │  • Button states (prevent failed tx)            │   │
+│  │  Using ENVIO for:                               │   │
+│  │  • Display values (acceptable staleness)        │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                        │
 │  References:   @moodboard/references/stripe/checkout   │
+│                                                        │
+│  Rules:        01-physics, 19-data-physics, 20-flows   │
+│  Tokens:       ~2,800                                  │
 │                                                        │
 │  Output:       src/components/ClaimButton.tsx          │
 │  Protected:    [✓] All capabilities included          │
@@ -1561,6 +1574,19 @@ Show analysis appropriate to craft type:
 - Show: user handle, truncated quote (first 30 chars...), user type, physics implication
 - If multiple observations match, show up to 2 most recent
 - Omit section entirely if no observations match
+
+**Data Physics Section Rules (web3 flows):**
+- Only show when web3 flow detected (via RLM triggers)
+- Triggers: stake, claim, withdraw, bridge, swap, approve, mint, burn
+- Or hooks: useWriteContract, useReadContract, useSendTransaction
+- Show "Using ON-CHAIN for" and "Using ENVIO for" guidance
+- Omit section if no web3 triggers detected
+- See 19-sigil-data-physics.md for full guidance
+
+**RLM Loading Section (verbose mode):**
+- Show which rules were loaded via RLM
+- Show approximate token count
+- Helps user understand context consumption
 
 **For Refine (existing code):**
 ```
