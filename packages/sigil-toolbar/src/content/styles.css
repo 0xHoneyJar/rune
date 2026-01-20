@@ -1,0 +1,669 @@
+/**
+ * Sigil Toolbar - Content Script Styles
+ */
+
+/* Toolbar container */
+.sigil-toolbar {
+  position: fixed;
+  z-index: 2147483647;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.sigil-toolbar.position-top-right {
+  top: 16px;
+  right: 16px;
+}
+
+.sigil-toolbar.position-top-left {
+  top: 16px;
+  left: 16px;
+}
+
+.sigil-toolbar.position-bottom-right {
+  bottom: 16px;
+  right: 16px;
+}
+
+.sigil-toolbar.position-bottom-left {
+  bottom: 16px;
+  left: 16px;
+}
+
+/* Toolbar panel */
+.sigil-toolbar-panel {
+  background: rgba(24, 24, 27, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 8px;
+  display: flex;
+  gap: 4px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Tool buttons */
+.sigil-tool-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 18px;
+}
+
+.sigil-tool-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.sigil-tool-btn:active {
+  transform: scale(0.95);
+}
+
+.sigil-tool-btn.active {
+  background: rgba(59, 130, 246, 0.3);
+  color: #3b82f6;
+}
+
+/* Annotation mode overlay */
+.sigil-annotation-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483646;
+  cursor: crosshair;
+  pointer-events: auto;
+}
+
+.sigil-annotation-overlay::before {
+  content: 'Click an element to annotate';
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(24, 24, 27, 0.95);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+/* Element highlight */
+.sigil-highlight {
+  outline: 2px solid #3b82f6 !important;
+  outline-offset: 2px !important;
+  background: rgba(59, 130, 246, 0.1) !important;
+}
+
+/* Modal overlay */
+.sigil-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483648;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Modal */
+.sigil-modal {
+  background: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  width: 480px;
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow: auto;
+  box-shadow: 0 16px 64px rgba(0, 0, 0, 0.5);
+}
+
+.sigil-modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sigil-modal-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+}
+
+.sigil-modal-close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.sigil-modal-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.sigil-modal-body {
+  padding: 20px;
+}
+
+.sigil-modal-footer {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* Form elements */
+.sigil-input {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.sigil-input:focus {
+  border-color: #3b82f6;
+}
+
+.sigil-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.sigil-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 6px;
+}
+
+/* Buttons */
+.sigil-btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sigil-btn-primary {
+  background: #3b82f6;
+  color: #fff;
+}
+
+.sigil-btn-primary:hover {
+  background: #2563eb;
+}
+
+.sigil-btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.sigil-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Physics info box */
+.sigil-physics-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+  font-family: 'SF Mono', Monaco, monospace;
+  font-size: 12px;
+}
+
+.sigil-physics-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.sigil-physics-value {
+  color: #3b82f6;
+}
+
+/* Violation badge */
+.sigil-violation-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.sigil-violation-error {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.sigil-violation-warning {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+}
+
+.sigil-violation-info {
+  background: rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+}
+
+/* ============================================================================
+   Toolbar v2 Styles (Preact UI)
+   ============================================================================ */
+
+/* Main toolbar container */
+.sigil-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(24, 24, 27, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 6px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Drag handle */
+.sigil-drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 36px;
+  cursor: grab;
+  color: rgba(255, 255, 255, 0.4);
+  border-radius: 4px;
+}
+
+.sigil-drag-handle:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.sigil-drag-handle:active {
+  cursor: grabbing;
+}
+
+/* Close button for panels */
+.sigil-close-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+}
+
+.sigil-close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+/* Panels */
+.sigil-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 280px;
+  background: rgba(24, 24, 27, 0.98);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.sigil-panel-wide {
+  min-width: 360px;
+}
+
+.sigil-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-weight: 600;
+  color: #fff;
+}
+
+.sigil-panel-content {
+  padding: 16px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Physics panel styles */
+.sigil-physics-info {
+  margin-bottom: 16px;
+}
+
+.sigil-physics-info h4,
+.sigil-violations h4 {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 8px 0;
+}
+
+.sigil-physics-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  font-size: 13px;
+}
+
+.sigil-physics-grid span:nth-child(odd) {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.sigil-physics-grid span:nth-child(even) {
+  color: #3b82f6;
+  font-weight: 500;
+}
+
+.sigil-success {
+  color: #22c55e;
+  font-size: 13px;
+  margin: 0;
+}
+
+.sigil-violation-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sigil-violation {
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.sigil-violation:last-child {
+  margin-bottom: 0;
+}
+
+.sigil-violation strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.sigil-violation p {
+  margin: 0;
+  opacity: 0.8;
+}
+
+.sigil-violation.sigil-error {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+}
+
+.sigil-violation.sigil-warning {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #fcd34d;
+}
+
+/* Animation panel styles */
+.sigil-animation-status {
+  margin-bottom: 16px;
+}
+
+.sigil-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.sigil-status-badge.paused {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
+
+.sigil-status-badge.running {
+  background: rgba(34, 197, 94, 0.2);
+  color: #86efac;
+}
+
+.sigil-animation-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.sigil-stat {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+}
+
+.sigil-stat-value {
+  display: block;
+  font-size: 24px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.sigil-stat-label {
+  display: block;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 4px;
+}
+
+/* Audit panel styles */
+.sigil-audit-summary {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sigil-audit-pass {
+  color: #22c55e;
+  font-weight: 500;
+}
+
+.sigil-audit-warn {
+  color: #f59e0b;
+  font-weight: 500;
+}
+
+.sigil-audit-fail {
+  color: #ef4444;
+  font-weight: 500;
+}
+
+.sigil-audit-results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sigil-audit-item {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.sigil-audit-item:last-child {
+  margin-bottom: 0;
+}
+
+.sigil-audit-capability {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.sigil-audit-message {
+  opacity: 0.7;
+  font-size: 12px;
+}
+
+.sigil-audit-item.sigil-pass {
+  background: rgba(34, 197, 94, 0.1);
+  border-left: 3px solid #22c55e;
+}
+
+.sigil-audit-item.sigil-warn {
+  background: rgba(245, 158, 11, 0.1);
+  border-left: 3px solid #f59e0b;
+}
+
+.sigil-audit-item.sigil-fail {
+  background: rgba(239, 68, 68, 0.1);
+  border-left: 3px solid #ef4444;
+}
+
+/* Menu panel styles */
+.sigil-form-group {
+  margin-bottom: 16px;
+}
+
+.sigil-form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 6px;
+}
+
+.sigil-form-group input {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 13px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.sigil-form-group input:focus {
+  border-color: #3b82f6;
+}
+
+.sigil-form-group input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.sigil-save-btn {
+  width: 100%;
+  padding: 10px 16px;
+  background: #3b82f6;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+
+.sigil-save-btn:hover {
+  background: #2563eb;
+}
+
+.sigil-shortcuts {
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sigil-shortcuts h4 {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 12px 0;
+}
+
+.sigil-shortcuts ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sigil-shortcuts li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.sigil-shortcuts kbd {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-family: 'SF Mono', Monaco, monospace;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Annotating indicator */
+.sigil-annotating-indicator {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(59, 130, 246, 0.95);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+  z-index: 2147483647;
+}
