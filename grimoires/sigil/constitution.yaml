@@ -237,3 +237,26 @@ conventions:
   component_structure: null    # folder pattern, naming, etc.
 
   # These get populated as you explore the codebase
+
+# =============================================================================
+# FEATURE FLAGS (v3 Operational Infrastructure)
+# =============================================================================
+# Enable/disable v3 operational features.
+# Gradual rollout: enable one at a time, validate, then enable next.
+
+features:
+  # Phase 1 (MVP) - Prevent Loops
+  lossless_state: true          # Truth hierarchy, grounding, recovery
+  notes_memory: true            # NOTES.md session memory
+  feedback_first: true          # Step -1 feedback check
+  anti_patterns: true           # Anti-pattern documentation (no runtime impact)
+
+  # Phase 2 - Ship Clean
+  subagent_validators: true     # Physics and codebase validators
+  attention_budget: true        # Context-aware response sizing
+  zone_architecture: true       # Zone documentation (no runtime impact)
+
+  # Phase 3 - Self-Improve
+  continuous_learning: true     # Automatic learning extraction
+  trajectory_logging: true      # Decision trajectory logs
+  run_mode_safety: true         # Hammer mode circuit breaker

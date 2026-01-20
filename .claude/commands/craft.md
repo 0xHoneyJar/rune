@@ -301,23 +301,109 @@ User chose to continue despite drift warning.
 <workflow>
 ## Workflow
 
+<step_minus_1>
+### Step -1: Feedback-First Check (Mandatory)
+
+Before starting ANY craft work, check for unaddressed feedback.
+
+**Feature Flag Check:**
+```
+Read grimoires/sigil/constitution.yaml
+If features.feedback_first == false: Skip to Step 0
+```
+
+**Check 1: Recent Signals for Same Component**
+```
+Read: grimoires/sigil/taste.md (last 10 signals)
+Filter: component.name matches current target (fuzzy)
+Look for: REJECT or MODIFY signals
+```
+
+If found:
+```
+┌─ Prior Feedback Detected ──────────────────────────────────┐
+│                                                            │
+│  Component: {component name} has recent feedback:          │
+│                                                            │
+│  {timestamp}: MODIFY                                       │
+│  Changed: {from} → {to}                                    │
+│  Learning: {inference}                                     │
+│                                                            │
+│  [a] Apply learnings automatically                         │
+│  [i] Ignore and proceed fresh                              │
+│  [r] Review all signals for this component                 │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Check 2: Loop Detection State**
+```
+Read: grimoires/sigil/craft-state.md
+Check: loop_detection.triggered == true
+```
+
+If triggered:
+```
+┌─ Loop Detection Active ────────────────────────────────────┐
+│                                                            │
+│  Previous session detected pattern: {pattern}              │
+│  Escalation was offered: {yes/no}                          │
+│  User chose: {choice}                                      │
+│                                                            │
+│  Consider a different approach this time.                  │
+│                                                            │
+│  [c] Continue with fresh approach                          │
+│  [e] View escalation options again                         │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Check 3: Pending Learnings**
+```
+Read: grimoires/sigil/pending-learnings.md (if exists)
+Filter: effect_type matches current detection
+Look for: Unapproved learnings with evidence
+```
+
+If relevant:
+```
+┌─ Pending Learning Available ───────────────────────────────┐
+│                                                            │
+│  There's an unapproved learning relevant to this:          │
+│                                                            │
+│  Discovery: {discovery}                                    │
+│  Evidence: {file:line}                                     │
+│                                                            │
+│  [a] Apply this learning                                   │
+│  [s] Skip for now                                          │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+```
+
+**Skip Conditions**:
+- User says "fresh start" or "ignore feedback"
+- No signals, no loop state, no learnings found
+- Feature flag `features.feedback_first` is false
+</step_minus_1>
+
 <step_0>
 ### Step 0: Track Progress
 
 Use TodoWrite to track this workflow:
 ```
-1. [ ] Load craft state (session persistence)
-2. [ ] Load rules via RLM (on-demand)
-3. [ ] Check loop detection (iteration 3+)
-4. [ ] Check session health (drift indicators)
-5. [ ] Discover context (libs, conventions, existing code)
-6. [ ] Detect craft type and effect
-7. [ ] Show physics analysis
-8. [ ] Get user confirmation
-9. [ ] Apply changes
-10. [ ] Visual verification (if URL provided)
-11. [ ] Collect feedback
-12. [ ] Log taste signal + update craft state
+-1. [ ] Feedback-first check (prior signals, loop state, learnings)
+0. [ ] Load NOTES.md + craft state (session recovery)
+1. [ ] Load rules via RLM (on-demand)
+2. [ ] Check loop detection (iteration 3+)
+3. [ ] Check session health (drift indicators)
+4. [ ] Discover context (libs, conventions, existing code)
+5. [ ] Detect craft type and effect
+6. [ ] Show physics analysis
+7. [ ] Get user confirmation
+8. [ ] Apply changes
+9. [ ] Visual verification (if URL provided)
+10. [ ] Collect feedback
+11. [ ] Log taste signal + update craft state + NOTES.md
 ```
 Mark each in_progress then completed as you work.
 
@@ -325,9 +411,30 @@ Mark each in_progress then completed as you work.
 </step_0>
 
 <step_0_1>
-### Step 0.1: Load Craft State (Session Persistence)
+### Step 0.1: Load Session Memory + Craft State
 
-Check for existing craft state to enable iterative debugging:
+Check for existing session state to enable recovery and iterative debugging.
+
+**Feature Flag Check:**
+```
+Read grimoires/sigil/constitution.yaml
+notes_memory_enabled = features.notes_memory (default: true)
+```
+
+**Read NOTES.md (if enabled):**
+```
+If notes_memory_enabled:
+  Read grimoires/sigil/NOTES.md
+  Extract:
+    - Current Focus (component, craft type, target file)
+    - Physics Decisions (effect, timing, animation)
+    - Blockers (unresolved questions)
+    - Session Continuity (last action, next action)
+
+  If NOTES.md has content AND matches current target:
+    Show: "Resuming from NOTES.md: {last_action}"
+    Apply prior physics decisions as defaults
+```
 
 **Read craft-state.md:**
 ```
@@ -989,6 +1096,162 @@ Display complete plan summary:
 └───────────────────────────────────────────────────────────┘
 ```
 </hammer_error_handling>
+
+<hammer_safety>
+### Hammer Mode Safety
+
+**Feature Flag Check:**
+```
+Read grimoires/sigil/constitution.yaml
+If features.run_mode_safety == false: Skip safety checks
+```
+
+**1. Opt-In Confirmation:**
+
+Before starting hammer mode, always require explicit confirmation:
+
+```
+┌─ Hammer Mode Confirmation ────────────────────────────────┐
+│                                                           │
+│  You're about to enter Hammer mode.                       │
+│                                                           │
+│  This will:                                               │
+│  • Run multiple Loa commands autonomously                 │
+│  • Create/modify PRD, SDD, and Sprint files               │
+│  • May take extended time to complete                     │
+│                                                           │
+│  Feature: {feature description}                           │
+│                                                           │
+│  [y] Proceed with Hammer mode                             │
+│  [n] Cancel, return to craft selection                    │
+│  [c] Switch to Chisel mode (UI only)                      │
+│                                                           │
+└───────────────────────────────────────────────────────────┘
+```
+
+**2. Circuit Breaker:**
+
+Track consecutive failures. Stop on 2 consecutive failures.
+
+```json
+// In hammer-state.json
+{
+  "consecutive_failures": 0,
+  "last_failure": null,
+  "circuit_breaker_triggered": false
+}
+```
+
+**On failure:**
+- Increment `consecutive_failures`
+- If `consecutive_failures >= 2`:
+  - Set `circuit_breaker_triggered: true`
+  - Show circuit breaker message
+
+```
+┌─ Circuit Breaker Triggered ───────────────────────────────┐
+│                                                           │
+│  Hammer mode stopped after 2 consecutive failures.        │
+│                                                           │
+│  Last failures:                                           │
+│  1. {phase}: {error summary}                              │
+│  2. {phase}: {error summary}                              │
+│                                                           │
+│  This safety measure prevents runaway failures.           │
+│                                                           │
+│  Options:                                                 │
+│  [r] Reset circuit breaker and retry last phase           │
+│  [d] Enter debug mode to investigate                      │
+│  [a] Abandon hammer mode                                  │
+│                                                           │
+└───────────────────────────────────────────────────────────┘
+```
+
+**On success:** Reset `consecutive_failures` to 0
+
+**3. Phase Checkpoints:**
+
+After each Loa command, create a checkpoint:
+
+```json
+// Update hammer-state.json after each phase
+{
+  "checkpoints": [
+    {
+      "phase": "prd",
+      "timestamp": "{ISO8601}",
+      "artifact": "grimoires/loa/prd.md",
+      "success": true
+    },
+    {
+      "phase": "sdd",
+      "timestamp": "{ISO8601}",
+      "artifact": "grimoires/loa/sdd.md",
+      "success": true
+    }
+  ]
+}
+```
+
+Show progress after each checkpoint:
+
+```
+┌─ Checkpoint: SDD Complete ────────────────────────────────┐
+│                                                           │
+│  ✓ PRD created                                            │
+│  ✓ SDD created ← current                                  │
+│  ○ Sprint planning                                        │
+│  ○ Implementation                                         │
+│                                                           │
+│  Elapsed: 12 minutes                                      │
+│                                                           │
+│  [c] Continue to sprint planning                          │
+│  [p] Pause here (can resume later)                        │
+│  [r] Review artifacts before continuing                   │
+│                                                           │
+└───────────────────────────────────────────────────────────┘
+```
+
+**4. Duration Warning:**
+
+Track elapsed time. Warn at 30 minutes:
+
+```
+┌─ Duration Warning ────────────────────────────────────────┐
+│                                                           │
+│  Hammer mode has been running for 30 minutes.             │
+│                                                           │
+│  Progress:                                                │
+│  ✓ PRD, SDD complete                                      │
+│  → Sprint planning in progress                            │
+│                                                           │
+│  [c] Continue                                             │
+│  [p] Pause and save progress                              │
+│  [a] Abort hammer mode                                    │
+│                                                           │
+└───────────────────────────────────────────────────────────┘
+```
+
+Repeat warning every 30 minutes.
+
+**5. Maximum File Limit:**
+
+Hammer mode has a maximum of 10 files per batch operation.
+
+```
+┌─ File Limit Warning ──────────────────────────────────────┐
+│                                                           │
+│  This operation would modify 15 files.                    │
+│  Maximum per batch: 10                                    │
+│                                                           │
+│  Options:                                                 │
+│  [s] Split into 2 batches                                 │
+│  [p] Pick 10 most important files                         │
+│  [a] Abort operation                                      │
+│                                                           │
+└───────────────────────────────────────────────────────────┘
+```
+</hammer_safety>
 </hammer_workflow>
 
 <debug_workflow>
@@ -1654,7 +1917,109 @@ Show analysis appropriate to craft type:
 ```
 
 Proceed? (yes / or describe what's different)
+
+**Grounding Enforcement (lossless_state feature):**
+
+**Feature Flag Check:**
+```
+Read grimoires/sigil/constitution.yaml
+If features.lossless_state == false: Skip grounding requirements
+```
+
+When enabled, all claims in analysis MUST cite sources:
+
+| Claim Type | Citation Format |
+|------------|-----------------|
+| Physics values | `(source: 01-sigil-physics.md)` |
+| Timing adjustments | `(source: taste.md signal-{n})` or `(source: Step -1 check)` |
+| Material choices | `(source: 07-sigil-material.md)` |
+| User preference | `(source: taste.md:{signal-id})` |
+| Codebase convention | `(source: {file}:{pattern})` |
+
+**Example grounded analysis:**
+```
+│  Behavioral    Pessimistic | 800ms | Confirmation              │
+│                (source: 01-sigil-physics.md:financial)          │
+│                Timing adjusted to 600ms                         │
+│                (source: taste.md:signal-12, "faster for DeFi")  │
+```
+
+Claims without sources are considered ungrounded and should be flagged.
 </step_3>
+
+<step_3b>
+### Step 3b: Trajectory Write
+
+**Feature Flag Check:**
+```
+Read grimoires/sigil/constitution.yaml
+If features.trajectory_logging == false: Skip to Step 4
+```
+
+Write trajectory entry to `grimoires/sigil/trajectory/{YYYY-MM-DD}-{component-name}.md`:
+
+**If file exists**: Append new session
+**If file does not exist**: Create with header
+
+```markdown
+# Trajectory: {Component Name}
+
+## Session {ISO8601 timestamp}
+
+### Input
+```
+User request: "{original request verbatim}"
+Component: {component name}
+Craft type: {generate/refine/configure/pattern/polish}
+```
+
+### Detection
+```
+Effect detected: {effect type}
+Keywords found: [{keywords that triggered detection}]
+Types found: [{types that influenced detection}]
+Context signals: [{context modifiers}]
+Confidence: {HIGH/MEDIUM/LOW}
+```
+
+### Decision
+```
+Physics applied:
+  Behavioral: {sync} | {timing} | {confirmation}
+  Animation: {easing} | {timing} | {spring if used}
+  Material: {surface} | {shadow} | {radius}
+
+Source citations:
+  - Timing: {source file and section}
+  - Sync: {source file and section}
+  - Animation: {source file and section}
+  - Material: {source file and section}
+
+Taste overrides:
+  - {list any taste.md adjustments, or "None"}
+
+RLM rules loaded:
+  - {list of rule files loaded}
+```
+
+### Outcome
+```
+Signal: (pending - filled in Step 7)
+Changes: (pending)
+Notes: (pending)
+```
+
+---
+```
+
+**File Naming**:
+- Date: Current date in YYYY-MM-DD format
+- Component: Kebab-case component name (e.g., `claim-button`)
+- Example: `2026-01-20-claim-button.md`
+
+**Append Logic**:
+If same component on same day, append `## Session {timestamp}` to existing file.
+</step_3b>
 
 <step_4>
 ### Step 4: Get Confirmation
@@ -1714,6 +2079,84 @@ Screenshot is saved for taste signal and future comparison. Include in feedback 
 
 See `.claude/skills/agent-browser/SKILL.md` for full command reference.
 </step_5>
+
+<step_5_5>
+### Step 5.5: Validation Gate
+
+**Feature Flag Check:**
+```
+Read grimoires/sigil/constitution.yaml
+If features.subagent_validators == false: Skip to Step 6
+```
+
+Run validators in sequence:
+
+**1. Physics Validator**
+```
+Run: .claude/subagents/physics-validator.md
+Input: Generated/modified file path
+```
+
+**2. Codebase Validator**
+```
+Run: .claude/subagents/codebase-validator.md
+Input: Generated/modified file path, discovered conventions
+```
+
+**Verdict Handling:**
+
+| Physics Result | Codebase Result | Action |
+|----------------|-----------------|--------|
+| COMPLIANT | COMPLIANT | Silent pass → Step 6 |
+| COMPLIANT | DRIFT_DETECTED | Show warning → proceed to Step 6 |
+| DRIFT_DETECTED | COMPLIANT | Show warning → proceed to Step 6 |
+| DRIFT_DETECTED | DRIFT_DETECTED | Show warnings → proceed to Step 6 |
+| CRITICAL_VIOLATION | Any | Block with prompt |
+| Any | CRITICAL_VIOLATION | Block with prompt |
+
+**On CRITICAL_VIOLATION:**
+
+```
+┌─ Validation Failed ────────────────────────────────────┐
+│                                                        │
+│  {Validator}: CRITICAL_VIOLATION                       │
+│                                                        │
+│  Issue: {description}                                  │
+│  Location: {file}:{line}                               │
+│                                                        │
+│  {Explanation of why this is critical}                 │
+│                                                        │
+│  [f] Apply suggested fix                               │
+│  [a] Acknowledge and proceed (not recommended)         │
+│  [c] Cancel and edit manually                          │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+```
+
+**User Response Handling:**
+- `f`: Apply fix, re-run validators
+- `a`: Log acknowledgment, proceed with warning in taste.md
+- `c`: Cancel craft, return control to user
+
+**On DRIFT_DETECTED (warning only):**
+
+```
+┌─ Validation Warning ───────────────────────────────────┐
+│                                                        │
+│  Style drift detected:                                 │
+│  • {issue 1}                                           │
+│  • {issue 2}                                           │
+│                                                        │
+│  [f] Apply auto-fixes                                  │
+│  [p] Proceed anyway                                    │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+```
+
+**Compact Mode (after 3+ COMPLIANT passes):**
+
+Skip showing validation output entirely. Only surface CRITICAL_VIOLATION.
+</step_5_5>
 
 <step_6>
 ### Step 6: Collect Feedback
@@ -1837,7 +2280,199 @@ next:
 If result is SUCCESS and user moves to different work:
 - Archive session to `grimoires/sigil/context/archive/`
 - Reset craft-state.md to empty template
+
+**7d. Update NOTES.md (Session Memory):**
+
+**Feature Flag Check:**
+```
+Read grimoires/sigil/constitution.yaml
+If features.notes_memory == false: Skip this step
+```
+
+Update `grimoires/sigil/NOTES.md` with session state:
+
+```yaml
+---
+last_updated: "{ISO8601}"
+session_id: "{component}-{timestamp}"
+---
+
+# Sigil Session Memory
+
+## Current Focus
+
+**Component**: {component name}
+**Craft Type**: {generate/refine/configure/pattern/polish}
+**Target File**: {file path if known}
+**Started**: {session start time}
+
+## Physics Decisions
+
+| Decision | Value | Rationale |
+|----------|-------|-----------|
+| Effect | {detected effect} | {why this effect} |
+| Timing | {ms value} | {from physics table or taste override} |
+| Animation | {easing/spring} | {frequency-based or taste} |
+| Confirmation | {required/none/toast} | {based on effect type} |
+
+## Blockers
+
+{List any issues preventing completion, or "(No blockers)"}
+
+## Learnings
+
+{Key insights from this session, or "(No learnings yet)"}
+- {If MODIFY signal: what user wanted different}
+- {If pattern detected: preference to apply in future}
+
+## Session Continuity
+
+**Last Action**: {what was just completed}
+**Next Action**: {what to do next, or "Awaiting user input"}
+**Context Needed**: {files to read if resuming after context clear}
+```
+
+**Update Triggers:**
+| Event | Update Action |
+|-------|---------------|
+| Craft started | Initialize all sections |
+| Physics detected | Update Physics Decisions |
+| Blocker encountered | Add to Blockers |
+| MODIFY signal | Add to Learnings |
+| Step completed | Update Last Action, Next Action |
+| Session ends | Clear to template |
+
+**7e. Update Trajectory Outcome:**
+
+**Feature Flag Check:**
+```
+Read grimoires/sigil/constitution.yaml
+If features.trajectory_logging == false: Skip this step
+```
+
+Update the trajectory file created in Step 3b with the outcome:
+
+1. Find the trajectory file: `grimoires/sigil/trajectory/{date}-{component}.md`
+2. Locate the latest session's "### Outcome" section
+3. Replace pending values with actual outcome:
+
+```markdown
+### Outcome
+```
+Signal: {ACCEPT/MODIFY/REJECT}
+Changes: {if MODIFY: what user changed}
+         {if ACCEPT: "None - accepted as generated"}
+         {if REJECT: "Rejected - {reason}"}
+Notes: {any relevant observations}
+```
+```
+
+**Signal-specific notes:**
+
+| Signal | Changes Field | Notes Field |
+|--------|---------------|-------------|
+| ACCEPT | "None - accepted as generated" | Any positive feedback |
+| MODIFY | List specific changes user requested | Inferred preference |
+| REJECT | "Rejected" + reason if given | What went wrong |
 </step_7>
+
+<step_7_5>
+### Step 7.5: Learning Extraction
+
+**Feature Flag Check:**
+```
+Read grimoires/sigil/constitution.yaml
+If features.continuous_learning == false: Skip to workflow end
+```
+
+**Trigger Conditions** (check any match):
+
+1. **Iteration threshold**: craft-state.md shows iteration ≥3 with PARTIAL results
+2. **Undocumented pattern**: Solution required approach not in rules
+3. **Web3 footgun**: BigInt falsy check, stale closure, receipt guard issue
+4. **User explicit**: User said "remember this", "this should be a rule"
+
+**If triggered:**
+
+```
+┌─ Learning Detected ────────────────────────────────────┐
+│                                                        │
+│  A discovery worth preserving was detected:            │
+│                                                        │
+│  Type: {iteration_threshold | undocumented | web3 |    │
+│         user_explicit}                                 │
+│  Context: {brief context}                              │
+│                                                        │
+│  Extracting to pending-learnings.md...                 │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+```
+
+**Extraction Process:**
+
+1. Generate learning entry with:
+   - Date and title
+   - Context (what was being crafted)
+   - Trigger (why extracted)
+   - Discovery (what was learned)
+   - Evidence (iteration history)
+   - Recommendation (specific action)
+   - Promotion target (where to add)
+
+2. Append to `grimoires/sigil/pending-learnings.md`:
+
+```markdown
+## [YYYY-MM-DD] {Discovery Title}
+
+**Context**: {component} - {craft type}
+**Trigger**: {trigger type}
+**Component**: {component name}
+
+### Discovery
+
+{What was learned - be specific}
+
+### Evidence
+
+- Iteration 1: {what happened}
+- Iteration 2: {what happened}
+- Iteration 3: {what fixed it}
+
+### Recommendation
+
+{Specific rule text, pattern, or anti-pattern to add}
+
+### Promotion Target
+
+- [ ] taste.md pattern
+- [ ] Rule update: {which rule file}
+- [ ] constitution.yaml addition
+- [ ] New anti-pattern in 00-sigil-core.md
+
+---
+```
+
+3. Show notification:
+
+```
+┌─ Learning Extracted ───────────────────────────────────┐
+│                                                        │
+│  "{discovery title}" saved to pending-learnings.md     │
+│                                                        │
+│  Review and promote with: /skill-audit                 │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+```
+
+**Web3 Footgun Detection:**
+
+| Pattern | Detection | Learning Type |
+|---------|-----------|---------------|
+| `if (amount)` with BigInt | Regex: `if\s*\(\s*\w+\s*\)` on BigInt var | "BigInt falsy check" |
+| Missing receipt guard | useEffect on receipt without hash check | "Receipt re-execution" |
+| Stale closure | useEffect with state dep missing | "Stale closure in effect" |
+| `??` fallback chain | Multiple `??` operators | "Ambiguous data source" |
+</step_7_5>
 </workflow>
 
 <error_recovery>
