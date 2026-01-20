@@ -1,0 +1,351 @@
+# RLM Rule Index
+# Maps detection patterns to rule files for on-demand loading
+# Reduces /craft context from ~10k tokens to ~2k tokens
+
+version: "1.0"
+
+# Core summary always loaded (~1k tokens)
+core_summary:
+  file: "rlm-core-summary.md"
+  tokens: 1000
+  always_load: true
+
+# Rules loaded based on pattern detection
+rules:
+  # ===========================================
+  # PRIORITY 1: Core Physics (always checked)
+  # ===========================================
+
+  # Behavioral Physics
+  - file: "01-sigil-physics.md"
+    triggers:
+      keywords:
+        - "sync"
+        - "timing"
+        - "confirmation"
+        - "optimistic"
+        - "pessimistic"
+        - "loading"
+      effects:
+        - "Financial"
+        - "Destructive"
+        - "Standard"
+        - "Local"
+    tokens: 750
+    priority: 1
+
+  # Effect Detection
+  - file: "02-sigil-detection.md"
+    triggers:
+      keywords:
+        - "claim"
+        - "deposit"
+        - "withdraw"
+        - "delete"
+        - "remove"
+        - "like"
+        - "follow"
+        - "toggle"
+        - "save"
+        - "update"
+      types:
+        - "Currency"
+        - "Money"
+        - "Balance"
+        - "Wei"
+        - "Token"
+        - "BigInt"
+    tokens: 950
+    priority: 1
+
+  # Protected Capabilities (NON-NEGOTIABLE)
+  - file: "04-sigil-protected.md"
+    triggers:
+      effects:
+        - "Financial"
+        - "Destructive"
+      keywords:
+        - "withdraw"
+        - "cancel"
+        - "balance"
+        - "escape"
+        - "back"
+    tokens: 800
+    priority: 1
+    always_check: true
+
+  # Data Physics (NEW - Web3)
+  - file: "19-sigil-data-physics.md"
+    triggers:
+      keywords:
+        - "envio"
+        - "indexed"
+        - "on-chain"
+        - "web3"
+        - "??"
+        - "fallback"
+        - "stale"
+      hooks:
+        - "useReadContract"
+        - "useWriteContract"
+        - "useQuery"
+        - "useContractRead"
+    tokens: 800
+    priority: 1
+
+  # Web3 Flow Patterns (NEW)
+  - file: "20-sigil-web3-flows.md"
+    triggers:
+      keywords:
+        - "stake"
+        - "claim"
+        - "withdraw"
+        - "bridge"
+        - "swap"
+        - "approve"
+        - "mint"
+        - "burn"
+        - "deposit"
+        - "redeem"
+      hooks:
+        - "useWriteContract"
+        - "usePrepareContractWrite"
+        - "useContractWrite"
+        - "useWaitForTransaction"
+        - "useWaitForTransactionReceipt"
+        - "useSendTransaction"
+    tokens: 1200
+    priority: 1
+
+  # ===========================================
+  # PRIORITY 2: Implementation Patterns
+  # ===========================================
+
+  # Golden Patterns
+  - file: "03-sigil-patterns.md"
+    triggers:
+      keywords:
+        - "button"
+        - "modal"
+        - "form"
+        - "component"
+        - "dialog"
+        - "toast"
+      craft_type:
+        - "generate"
+        - "refine"
+    tokens: 1650
+    priority: 2
+
+  # Animation Physics
+  - file: "05-sigil-animation.md"
+    triggers:
+      keywords:
+        - "animation"
+        - "transition"
+        - "motion"
+        - "spring"
+        - "easing"
+        - "bounce"
+        - "fade"
+      commands:
+        - "/animate"
+    tokens: 1500
+    priority: 2
+
+  # Material Physics
+  - file: "07-sigil-material.md"
+    triggers:
+      keywords:
+        - "style"
+        - "surface"
+        - "shadow"
+        - "glass"
+        - "material"
+        - "gradient"
+        - "border"
+        - "radius"
+      commands:
+        - "/style"
+    tokens: 1800
+    priority: 2
+
+  # Taste Accumulation
+  - file: "06-sigil-taste.md"
+    triggers:
+      keywords:
+        - "taste"
+        - "preference"
+        - "learn"
+        - "modify"
+        - "accept"
+        - "reject"
+    tokens: 1850
+    priority: 2
+
+  # Lexicon (Effect Keywords)
+  - file: "08-sigil-lexicon.md"
+    triggers:
+      keywords:
+        - "keyword"
+        - "domain"
+        - "context"
+        - "e-commerce"
+        - "social"
+        - "admin"
+    tokens: 1600
+    priority: 2
+
+  # ===========================================
+  # PRIORITY 3: React Rules (conditional)
+  # ===========================================
+
+  # React Core Index
+  - file: "10-react-core.md"
+    triggers:
+      project_has:
+        - "react"
+        - "next"
+      patterns:
+        - "useState"
+        - "useEffect"
+        - "useMemo"
+        - "useCallback"
+    tokens: 1700
+    priority: 3
+    conditional: true
+
+  # Async Patterns
+  - file: "11-react-async.md"
+    triggers:
+      keywords:
+        - "waterfall"
+        - "Promise.all"
+        - "Suspense"
+        - "parallel"
+      patterns:
+        - "async"
+        - "await"
+        - "fetch"
+    tokens: 1150
+    priority: 3
+    conditional: true
+
+  # Bundle Optimization
+  - file: "12-react-bundle.md"
+    triggers:
+      keywords:
+        - "bundle"
+        - "import"
+        - "dynamic"
+        - "lazy"
+        - "tree-shaking"
+    tokens: 1230
+    priority: 3
+    conditional: true
+
+  # Rendering Optimization
+  - file: "13-react-rendering.md"
+    triggers:
+      keywords:
+        - "render"
+        - "hydration"
+        - "SVG"
+        - "content-visibility"
+    tokens: 1340
+    priority: 3
+    conditional: true
+
+  # Re-render Prevention
+  - file: "14-react-rerender.md"
+    triggers:
+      keywords:
+        - "re-render"
+        - "memo"
+        - "transition"
+        - "derived"
+      patterns:
+        - "useMemo"
+        - "useCallback"
+        - "React.memo"
+    tokens: 1460
+    priority: 3
+    conditional: true
+
+  # Server/Client Patterns
+  - file: "15-react-server.md"
+    triggers:
+      keywords:
+        - "server"
+        - "client"
+        - "RSC"
+        - "SSR"
+        - "cache"
+        - "SWR"
+    tokens: 1400
+    priority: 3
+    conditional: true
+
+  # JS Micro-optimizations
+  - file: "16-react-js.md"
+    triggers:
+      keywords:
+        - "optimize"
+        - "performance"
+        - "loop"
+        - "Map"
+        - "Set"
+    tokens: 2670
+    priority: 3
+    conditional: true
+
+  # ===========================================
+  # PRIORITY 4: Specialized
+  # ===========================================
+
+  # Complexity Detection (large file, load sparingly)
+  - file: "18-sigil-complexity.md"
+    triggers:
+      keywords:
+        - "indexer"
+        - "envio"
+        - "multi-repo"
+        - "complexity"
+        - "handoff"
+      hooks:
+        - "@envio-dev/indexer"
+    tokens: 6800
+    priority: 4
+    conditional: true
+
+  # Semantic Search
+  - file: "17-semantic-search.md"
+    triggers:
+      keywords:
+        - "ck"
+        - "semantic"
+        - "search"
+    tokens: 185
+    priority: 4
+
+# Loading strategy
+loading:
+  # Maximum tokens to load per invocation (soft limit)
+  max_tokens: 4000
+
+  # Priority order for loading (lower = higher priority)
+  priority_order: [1, 2, 3, 4]
+
+  # Stop loading lower priority rules when limit reached
+  stop_on_limit: true
+
+  # Always include these regardless of limit (protected capabilities)
+  required:
+    - "04-sigil-protected.md"
+
+  # Skip these rules on iteration 2+ if already applied
+  skip_on_continuation:
+    - "03-sigil-patterns.md"
+    - "01-sigil-physics.md"
+    - "05-sigil-animation.md"
+    - "07-sigil-material.md"

@@ -42,33 +42,21 @@ arguments:
       - "--experiment EXP-002-claim-flow"
 
 context_files:
-  - path: ".claude/rules/00-sigil-core.md"
+  # RLM Core - Always loaded (~1k tokens instead of ~10k)
+  - path: ".claude/rules/rlm-core-summary.md"
     required: true
-    purpose: "Core instructions, priority hierarchy, action behavior"
-  - path: ".claude/rules/01-sigil-physics.md"
+    purpose: "Condensed physics decision tree - always loaded"
+  - path: ".claude/rules/index.yaml"
     required: true
-    purpose: "Behavioral physics - sync, timing, confirmation"
-  - path: ".claude/rules/02-sigil-detection.md"
-    required: true
-    purpose: "Effect detection with examples"
-  - path: ".claude/rules/03-sigil-patterns.md"
-    required: true
-    purpose: "Golden pattern templates"
+    purpose: "RLM rule index - maps patterns to on-demand rules"
   - path: ".claude/rules/04-sigil-protected.md"
     required: true
-    purpose: "Protected capabilities (non-negotiable)"
-  - path: ".claude/rules/05-sigil-animation.md"
-    required: true
-    purpose: "Animation physics - easing, springs, frequency"
-  - path: ".claude/rules/06-sigil-taste.md"
-    required: true
-    purpose: "Taste accumulation - learn from usage"
-  - path: ".claude/rules/07-sigil-material.md"
-    required: true
-    purpose: "Material physics - surface, fidelity, grit"
-  - path: ".claude/rules/08-sigil-lexicon.md"
-    required: true
-    purpose: "Lookup tables - keywords, adjectives, domains"
+    purpose: "Protected capabilities (non-negotiable) - always loaded"
+  # State persistence
+  - path: "grimoires/sigil/craft-state.md"
+    required: false
+    purpose: "Craft session state for iterative debugging"
+  # Dynamic context (loaded as needed)
   - path: "grimoires/sigil/taste.md"
     required: false
     purpose: "Accumulated taste signals"
@@ -90,6 +78,8 @@ context_files:
   - path: "grimoires/loa/context/ecosystem/"
     required: false
     purpose: "Multi-repo relationships and contract mappings"
+  # Note: Additional rules loaded dynamically via RLM based on detected patterns
+  # See index.yaml for trigger mappings
 
 outputs:
   dynamic: true
@@ -316,20 +306,227 @@ User chose to continue despite drift warning.
 
 Use TodoWrite to track this workflow:
 ```
-1. [ ] Check session health (drift indicators)
-2. [ ] Discover context (libs, conventions, existing code)
-3. [ ] Detect craft type and effect
-4. [ ] Show physics analysis
-5. [ ] Get user confirmation
-6. [ ] Apply changes
-7. [ ] Visual verification (if URL provided)
-8. [ ] Collect feedback
-9. [ ] Log taste signal
+1. [ ] Load craft state (session persistence)
+2. [ ] Load rules via RLM (on-demand)
+3. [ ] Check loop detection (iteration 3+)
+4. [ ] Check session health (drift indicators)
+5. [ ] Discover context (libs, conventions, existing code)
+6. [ ] Detect craft type and effect
+7. [ ] Show physics analysis
+8. [ ] Get user confirmation
+9. [ ] Apply changes
+10. [ ] Visual verification (if URL provided)
+11. [ ] Collect feedback
+12. [ ] Log taste signal + update craft state
 ```
 Mark each in_progress then completed as you work.
 
 **Session health check first**: If drift is at red threshold, pause workflow and show warning before continuing.
 </step_0>
+
+<step_0_1>
+### Step 0.1: Load Craft State (Session Persistence)
+
+Check for existing craft state to enable iterative debugging:
+
+**Read craft-state.md:**
+```
+Read grimoires/sigil/craft-state.md
+Parse YAML frontmatter
+```
+
+**Session Continuity Check:**
+```
+If session.id is not null:
+  Check if session.last_updated < 1 hour ago
+  Check if session.component matches current target (fuzzy match)
+
+  If same component AND < 1 hour:
+    → Continue existing session
+    → Increment iteration count
+    → Show: "Continuing session #{iteration} for {component}"
+
+  If different component OR > 1 hour:
+    → Archive old session to grimoires/sigil/context/archive/{session_id}.md
+    → Start new session
+    → Show: "Starting new session (previous: {old_component})"
+```
+
+**New Session Initialization:**
+```yaml
+session:
+  id: "{timestamp}-{component}-{random4}"
+  started: "{ISO8601}"
+  last_updated: "{ISO8601}"
+  component: "{detected component name}"
+  file: "{target file path}"
+
+iterations:
+  - number: 1
+    timestamp: "{ISO8601}"
+    action: "Initial craft"
+    result: "PENDING"
+    hypothesis: "{user's request}"
+```
+
+**Archive Format:**
+When archiving old sessions, write to:
+`grimoires/sigil/context/archive/{session_id}.md`
+
+Include:
+- Full session metadata
+- All iterations with results
+- Key findings
+- Final state
+</step_0_1>
+
+<step_0_2>
+### Step 0.2: Load Rules via RLM (On-Demand)
+
+Load additional rules based on detected patterns. This reduces context from ~10k tokens to ~2-4k tokens.
+
+**RLM Loading Algorithm:**
+```
+1. Parse user's request for triggers:
+   - Keywords: claim, stake, withdraw, delete, toggle, etc.
+   - Types: Currency, Wei, BigInt (if examining code)
+   - Effects: Financial, Destructive, Standard, Local
+   - Hooks: useWriteContract, useQuery, etc. (if in code context)
+
+2. Read .claude/rules/index.yaml
+
+3. For each rule in index.yaml:
+   If any trigger matches user's request:
+     Add rule to load_queue with priority
+
+4. Sort load_queue by priority (1 = highest)
+
+5. Load rules until token budget (~4000) reached:
+   loaded_tokens = 1000  # rlm-core-summary.md already loaded
+
+   For each rule in sorted load_queue:
+     If loaded_tokens + rule.tokens <= 4000:
+       Read rule file
+       Add to active_rules
+       loaded_tokens += rule.tokens
+     Else:
+       Stop loading (budget exceeded)
+
+6. If iteration > 1 (continuation session):
+   Skip rules in index.yaml's skip_on_continuation list
+   (These were already applied in previous iteration)
+```
+
+**Show RLM Loading (verbose mode):**
+```
+┌─ RLM Rules Loaded ─────────────────────────────────────┐
+│                                                        │
+│  Triggers detected:                                    │
+│  • "claim" → Financial effect                          │
+│  • "useWriteContract" → Web3 flow                      │
+│                                                        │
+│  Rules loaded (~2.8k tokens):                          │
+│  ✓ rlm-core-summary.md (always)                        │
+│  ✓ 04-sigil-protected.md (always)                      │
+│  ✓ 19-sigil-data-physics.md (web3 trigger)             │
+│  ✓ 20-sigil-web3-flows.md (claim trigger)              │
+│                                                        │
+│  Skipped (budget/not triggered):                       │
+│  ○ 03-sigil-patterns.md (continuation)                 │
+│  ○ 16-react-js.md (no performance trigger)             │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+```
+
+**Compact mode RLM (after 3+ accepts):**
+```
+RLM: +data-physics +web3-flows (~2.8k tokens)
+```
+
+**Required Rules (always loaded regardless of triggers):**
+- rlm-core-summary.md (decision tree)
+- 04-sigil-protected.md (non-negotiable capabilities)
+</step_0_2>
+
+<step_0_3>
+### Step 0.3: Check Loop Detection (Iteration 3+)
+
+When iteration count reaches 3 or higher, check for debugging loops.
+
+**Loop Detection Patterns:**
+
+| Pattern | Detection | Indicates |
+|---------|-----------|-----------|
+| each_fix_reveals_new_issue | All recent results contain "PARTIAL", "reveals", or "but" | Need deeper diagnosis |
+| repeated_fix_attempt | Same action attempted 2+ times | Need different approach |
+| stuck_hypothesis | Same hypothesis across 3+ iterations | Need fresh perspective |
+
+**Loop Detection Algorithm:**
+```
+If iterations.length >= 3:
+  recent = iterations.slice(-3)
+
+  # Check for each_fix_reveals_new_issue
+  partial_count = recent.filter(i =>
+    i.result == "PARTIAL" OR
+    i.action.includes("reveals") OR
+    i.action.includes("but")
+  ).length
+
+  If partial_count >= 2:
+    pattern = "each_fix_reveals_new_issue"
+    recommendation = "/observe diagnose"
+
+  # Check for repeated_fix_attempt
+  actions = recent.map(i => normalize(i.action))
+  If hasDuplicates(actions):
+    pattern = "repeated_fix_attempt"
+    recommendation = "/understand"
+
+  # Check for stuck_hypothesis
+  hypotheses = recent.map(i => normalize(i.hypothesis))
+  If allSame(hypotheses):
+    pattern = "stuck_hypothesis"
+    recommendation = "/plan-and-analyze"
+```
+
+**Show Escalation Protocol (when loop detected):**
+```
+┌─ Loop Detected ────────────────────────────────────────┐
+│                                                        │
+│  Iteration: 4 of {component}                           │
+│  Pattern: each_fix_reveals_new_issue                   │
+│                                                        │
+│  Recent attempts:                                      │
+│  • #2: Fixed X → revealed Y                            │
+│  • #3: Fixed Y → revealed Z                            │
+│  • #4: About to fix Z...                               │
+│                                                        │
+│  This suggests a deeper issue. Options:                │
+│                                                        │
+│  [d] /observe diagnose - Get diagnostic data           │
+│  [u] /understand - Research the system                 │
+│  [p] /plan-and-analyze - Full architecture review      │
+│  [c] Continue anyway (iteration 4)                     │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+```
+
+**Escalation Routing:**
+- [d] → Invoke `/observe diagnose {component}`
+- [u] → Invoke `/understand {component}`
+- [p] → Invoke `/plan-and-analyze {component}`
+- [c] → Continue with current craft, log escalation_offered: true
+
+**Update craft-state.md on escalation:**
+```yaml
+loop_detection:
+  triggered: true
+  pattern: "each_fix_reveals_new_issue"
+  escalation_offered: true
+  user_choice: "diagnose"  # or "understand", "plan", "continue"
+```
+</step_0_3>
 
 <step_0_4>
 ### Step 0.4: PRD Existence Check
@@ -1566,6 +1763,49 @@ When crafting with `--experiment`, also update the experiment file:
 ```
 
 2. If REJECT: Note in experiment that the craft attempt failed — may inform hypothesis
+
+**7c. Update Craft State (Session Persistence):**
+
+After collecting feedback, update `grimoires/sigil/craft-state.md`:
+
+```yaml
+# Update current iteration with result
+iterations:
+  - number: {current}
+    timestamp: "{ISO8601}"
+    action: "{what was attempted}"
+    result: "SUCCESS" | "PARTIAL" | "FAILED"
+    hypothesis: "{original request or refined hypothesis}"
+    rules_loaded: ["{list of RLM rules used}"]
+
+# Update session timestamp
+session:
+  last_updated: "{ISO8601}"
+
+# Record findings if any
+context:
+  findings:
+    - "{key insight from this iteration}"
+
+# Set next recommendation
+next:
+  recommendation: "continue" | "diagnose" | "escalate"
+  reason: "{why this recommendation}"
+  suggested_command: "{if escalation needed}"
+```
+
+**Result Mapping:**
+| User Signal | Result | Next Recommendation |
+|-------------|--------|---------------------|
+| ACCEPT | SUCCESS | continue |
+| MODIFY (minor) | PARTIAL | continue |
+| MODIFY (reveals new issue) | PARTIAL | diagnose (if iteration 2+) |
+| REJECT | FAILED | diagnose |
+
+**Session Cleanup:**
+If result is SUCCESS and user moves to different work:
+- Archive session to `grimoires/sigil/context/archive/`
+- Reset craft-state.md to empty template
 </step_7>
 </workflow>
 
