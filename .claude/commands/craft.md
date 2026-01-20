@@ -71,6 +71,9 @@ context_files:
   - path: "grimoires/sigil/moodboard/"
     required: false
     purpose: "Visual references and team taste"
+  - path: "grimoires/sigil/observations/"
+    required: false
+    purpose: "User behavior observations - diagnostics, insights, physics implications"
 
 outputs:
   dynamic: true
@@ -325,6 +328,38 @@ Extract physics implications from frontmatter and content:
 - Skip explanatory copy in confirmations
 ```
 
+**1a-obs. Scan observations for user behavior context** (if exists):
+```
+Scan grimoires/sigil/observations/
+```
+Look for:
+- **user-insights.md** — Aggregated validated findings from user feedback
+- **{user}-diagnostic.md** — Open diagnostics with `related_components` field
+- **open-questions.md** — Pending questions (may affect confidence)
+
+Extract physics implications from observations:
+
+| User Type | Physics Implication |
+|-----------|---------------------|
+| decision-maker | May need more data density, show amounts prominently |
+| builder | Tolerates complexity, can use technical language |
+| trust-checker | Needs confidence signals, frequent verification |
+| casual | Needs simplicity, clear affordances |
+
+For each diagnostic file with matching `related_components`:
+- Extract user quote and type
+- Note gap classification if validated (bug/discoverability/feature)
+- Apply user type physics adjustments
+
+**If observations exist and match the craft target:**
+- Include in analysis box (see Step 3)
+- Adjust physics based on user type patterns
+- Note observation-backed adjustments with source
+
+**If no observations or no match:**
+- Proceed without observation context
+- Observation section omitted from analysis box
+
 **1b. Read taste log and check session health** (if exists):
 ```
 Read grimoires/sigil/taste.md
@@ -374,11 +409,12 @@ Extract from dependencies:
 When context conflicts with defaults, apply in this order:
 1. Protected capabilities (never override)
 2. Explicit user request in prompt
-3. Primary persona physics implications
-4. Brand guidelines
-5. Domain rules
-6. Taste log patterns
-7. Physics defaults
+3. **Observation-backed insights** (user behavior evidence)
+4. Primary persona physics implications
+5. Brand guidelines
+6. Domain rules
+7. Taste log patterns
+8. Physics defaults
 </step_1>
 
 <step_2>
@@ -428,6 +464,11 @@ Show analysis appropriate to craft type:
 │  Craft Type:   Generate                                │
 │  Effect:       Financial mutation                      │
 │                                                        │
+│  Observations: (if matching diagnostics found)         │
+│                papa_flavio: "need to know rewards..."  │
+│                → User type: decision-maker             │
+│                → Implies: Show amount prominently      │
+│                                                        │
 │  Context:      (if context files found)                │
 │                DeFi Power User (primary persona)       │
 │                → Timing: 800ms → 600ms (expertise)     │
@@ -443,6 +484,13 @@ Show analysis appropriate to craft type:
 │  Protected:    [✓] All capabilities included          │
 └────────────────────────────────────────────────────────┘
 ```
+
+**Observations Section Rules:**
+- Only show if matching diagnostics exist for the craft target
+- Match by: component name in `related_components`, effect type, or keywords
+- Show: user handle, truncated quote (first 30 chars...), user type, physics implication
+- If multiple observations match, show up to 2 most recent
+- Omit section entirely if no observations match
 
 **For Refine (existing code):**
 ```
