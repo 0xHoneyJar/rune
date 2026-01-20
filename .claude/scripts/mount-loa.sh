@@ -21,9 +21,11 @@ step() { echo -e "${BLUE}[loa]${NC} -> $*"; }
 LOA_REMOTE_URL="${LOA_UPSTREAM:-https://github.com/0xHoneyJar/loa.git}"
 LOA_REMOTE_NAME="loa-upstream"
 LOA_BRANCH="${LOA_BRANCH:-main}"
+LOA_CHANNEL="${LOA_CHANNEL:-stable}"
 VERSION_FILE=".loa-version.json"
 CONFIG_FILE=".loa.config.yaml"
 CHECKSUMS_FILE=".claude/checksums.json"
+CHANNELS_FILE=".claude/channels.yaml"
 SKIP_BEADS=false
 STEALTH_MODE=false
 
@@ -32,6 +34,10 @@ while [[ $# -gt 0 ]]; do
   case $1 in
     --branch)
       LOA_BRANCH="$2"
+      shift 2
+      ;;
+    --channel)
+      LOA_CHANNEL="$2"
       shift 2
       ;;
     --stealth)
@@ -46,10 +52,16 @@ while [[ $# -gt 0 ]]; do
       echo "Usage: mount-loa.sh [OPTIONS]"
       echo ""
       echo "Options:"
-      echo "  --branch <name>   Loa branch to use (default: main)"
+      echo "  --channel <name>  Release channel: stable, develop, canary (default: stable)"
+      echo "  --branch <name>   Specific branch (overrides channel)"
       echo "  --stealth         Add state files to .gitignore"
       echo "  --skip-beads      Don't install/initialize Beads CLI"
       echo "  -h, --help        Show this help message"
+      echo ""
+      echo "Channels:"
+      echo "  stable   - Production releases (main branch)"
+      echo "  develop  - Pre-release dogfooding"
+      echo "  canary   - Feature branches (use with --branch)"
       exit 0
       ;;
     *)
@@ -58,6 +70,34 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
+
+# === Resolve Channel to Branch ===
+resolve_channel() {
+  # If --branch was explicitly set, use it (overrides channel)
+  if [[ "$LOA_BRANCH" != "main" ]]; then
+    return 0
+  fi
+
+  # Otherwise, resolve from channel
+  case "$LOA_CHANNEL" in
+    stable)
+      LOA_BRANCH="main"
+      ;;
+    develop)
+      LOA_BRANCH="develop"
+      ;;
+    canary)
+      if [[ "$LOA_BRANCH" == "main" ]]; then
+        err "Canary channel requires --branch argument"
+      fi
+      ;;
+    *)
+      err "Unknown channel: $LOA_CHANNEL (use stable, develop, or canary)"
+      ;;
+  esac
+}
+
+resolve_channel
 
 # yq compatibility (handles both mikefarah/yq and kislyuk/yq)
 yq_read() {
@@ -216,17 +256,35 @@ create_manifest() {
     upstream_version=$(jq -r '.framework_version // "0.6.0"' .claude/.loa-version.json 2>/dev/null)
   fi
 
+  local current_commit=""
+  current_commit=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+
   cat > "$VERSION_FILE" << EOF
 {
   "framework_version": "$upstream_version",
-  "schema_version": 2,
+  "schema_version": 3,
+  "channel": "$LOA_CHANNEL",
   "last_sync": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "components": {
+    "loa": {
+      "version": "$upstream_version",
+      "branch": "$LOA_BRANCH",
+      "commit": "$current_commit",
+      "remote": "$LOA_REMOTE_NAME"
+    }
+  },
   "zones": {
     "system": ".claude",
     "state": ["grimoires/loa", ".beads"],
     "app": ["src", "lib", "app"]
   },
-  "migrations_applied": ["001_init_zones"],
+  "preserved_paths": [
+    "grimoires/loa/",
+    "grimoires/sigil/taste.md",
+    ".loa.config.yaml",
+    ".claude/overrides/"
+  ],
+  "migrations_applied": ["001_init_zones", "002_channel_support"],
   "integrity": {
     "enforcement": "strict",
     "last_verified": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
@@ -234,7 +292,7 @@ create_manifest() {
 }
 EOF
 
-  log "Version manifest created"
+  log "Version manifest created (channel: $LOA_CHANNEL)"
 }
 
 # === Generate Cryptographic Checksums ===
@@ -414,10 +472,11 @@ init_beads() {
 main() {
   echo ""
   log "======================================================================="
-  log "  Loa Framework Mount v0.9.0"
+  log "  Loa Framework Mount v0.10.0"
   log "  Enterprise-Grade Managed Scaffolding"
   log "======================================================================="
-  log "  Branch: $LOA_BRANCH"
+  log "  Channel: $LOA_CHANNEL"
+  log "  Branch:  $LOA_BRANCH"
   echo ""
 
   preflight
@@ -443,6 +502,8 @@ EOF
   log "  Loa Successfully Mounted!"
   log "======================================================================="
   echo ""
+  info "Channel: $LOA_CHANNEL (branch: $LOA_BRANCH)"
+  echo ""
   info "Next steps:"
   info "  1. Run 'claude' to start Claude Code"
   info "  2. Issue '/ride' to analyze this codebase"
@@ -454,6 +515,11 @@ EOF
   info "  grimoires/loa/     -> State Zone (project memory)"
   info "  grimoires/loa/NOTES.md -> Structured agentic memory"
   info "  .beads/           -> Task graph (Beads)"
+  echo ""
+  info "Channel switching:"
+  info "  /switch-channel develop    -> Dogfood pre-release"
+  info "  /switch-channel stable     -> Return to production"
+  info "  /switch-channel --status   -> View current channel"
   echo ""
   warn "STRICT ENFORCEMENT: Direct edits to .claude/ will block agent execution."
   warn "Use .claude/overrides/ for customizations."

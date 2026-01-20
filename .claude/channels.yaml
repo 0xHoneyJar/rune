@@ -1,0 +1,63 @@
+# Loa + Sigil Release Channels
+#
+# Channels abstract git branches into named release tracks.
+# Use /switch-channel to move between channels.
+#
+# Version: 1.0.0
+
+schema_version: 1
+
+channels:
+  stable:
+    description: "Production releases - recommended for most users"
+    loa:
+      branch: main
+      remote: loa-upstream
+    sigil:
+      branch: main
+      remote: sigil-upstream
+    stability: high
+    auto_update: true
+
+  develop:
+    description: "Pre-release dogfooding - THJ developers and early adopters"
+    loa:
+      branch: develop
+      remote: loa-upstream
+    sigil:
+      branch: develop
+      remote: sigil-upstream
+    stability: medium
+    auto_update: false  # Manual updates preferred for testing
+
+  canary:
+    description: "Feature branches - experimental, may be unstable"
+    loa:
+      branch: null  # Specified via --branch flag
+      remote: loa-upstream
+    sigil:
+      branch: null  # Specified via --branch flag
+      remote: sigil-upstream
+    stability: low
+    auto_update: false
+
+# Default channel for new installations
+default_channel: stable
+
+# Files preserved during channel switches
+preserved_paths:
+  - grimoires/loa/
+  - grimoires/sigil/taste.md
+  - grimoires/sigil/context/
+  - grimoires/sigil/moodboard/
+  - .loa.config.yaml
+  - .claude/overrides/
+  - .beads/
+
+# Files that are always overwritten (framework-managed)
+managed_paths:
+  - .claude/commands/
+  - .claude/skills/
+  - .claude/protocols/
+  - .claude/scripts/
+  - .claude/rules/
