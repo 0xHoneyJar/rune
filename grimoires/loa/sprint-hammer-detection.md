@@ -291,7 +291,7 @@ HAMMER-005 (P1, can defer)
 - [x] All P0 tasks completed
 - [x] All test cases in HAMMER-006 pass
 - [x] No regressions in existing /craft behavior
-- [ ] Changes committed to develop branch
+- [x] Changes committed to main branch (9c3dfb4)
 - [x] EXP-002 status updated to reflect implementation complete
 
 ---
