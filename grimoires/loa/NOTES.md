@@ -64,27 +64,56 @@ None - all dependencies are optional (jq, yq)
 | 2026-01-01 | Skip legacy deprecation | Framework repo - docs are primary, not legacy |
 | 2026-01-01 | Mark PRD/SDD as reality-checked | Added grounding markers to existing docs |
 
-## Ride Summary (2026-01-01)
+## Ride Summary (2026-01-01) - SUPERSEDED
+
+See Ride Summary (2026-01-20) for current state.
+
+---
+
+## Ride Summary (2026-01-20)
 
 ### Key Metrics
-- Commands: 4 Sigil + 16 Loa
-- Skills: 4 Sigil + 10 Loa
-- Drift Score: 35%
-- Consistency: 8/10
-- Grounding: ~80%
+- Commands: 47 (was 20)
+- Rules: 21
+- Skills: 28 (was 14)
+- Subagents: 4 (new)
+- Protocols: 33 (new)
+- Drift Score: 8/100 (was 35/100) ✅ HEALTHY
+- Governance Score: 85/100
 
-### Critical Action Items
-1. **HIGH**: Implement /codify, /craft, /approve commands
-2. **HIGH**: Fix LICENSE reference in README.md
-3. **MEDIUM**: Create CHANGELOG.md
-4. **MEDIUM**: Add git tags for v2.0.0
+### Health Status
+| Category | Status |
+|----------|--------|
+| Code ↔ CLAUDE.md | 95% |
+| Code ↔ README.md | 90% |
+| Code ↔ CHANGELOG | 85% |
+| Overall | ✅ HEALTHY |
 
-### Files Created
-- loa-grimoire/context/claims-to-verify.md
-- loa-grimoire/reality/code-inventory.md
-- loa-grimoire/reality/hygiene-report.md
-- loa-grimoire/legacy/INVENTORY.md
-- loa-grimoire/drift-report.md
-- loa-grimoire/consistency-report.md
-- loa-grimoire/governance-report.md
-- loa-grimoire/trajectory-audit.md
+### Drift Findings (Minor)
+**Ghosts** (documented but missing):
+1. Voice Physics rule file (README mentions, no file)
+2. `loa install sigil` command (README, not implemented)
+3. `sigil-toolbar` extension (CHANGELOG, not shipped)
+
+**Shadows** (code but undocumented):
+1. Data Physics layer (rule 19, not in README)
+2. Run Mode commands (7 commands, not in README)
+3. Subagent system (4 validators)
+4. Constitution feature flags
+
+### Recommendations
+**Quick Fixes**:
+1. Add CODEOWNERS file
+2. Add v2.5.0 CHANGELOG entry
+3. Update README physics diagram (5 layers not 3)
+
+**Documentation**:
+1. Create 09-sigil-voice.md rule file
+2. Add Run Mode section to README
+3. Document feature flags in constitution
+
+### Files Updated/Created
+- grimoires/loa/reality/code-inventory.md (updated)
+- grimoires/loa/drift-report.md (created)
+- grimoires/loa/governance-report.md (created)
+- grimoires/loa/prd-v3-operational-infrastructure.md (updated with implementation status)

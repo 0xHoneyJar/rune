@@ -8,11 +8,229 @@
     ╚═══════════════════════════════════════════════════════════╝
 ```
 
-**Version**: 1.0.0
+**Version**: 2.0.0
 **Created**: 2026-01-20
+**Updated**: 2026-01-20 (post-/ride analysis)
 **PRD Reference**: `grimoires/loa/prd-v3-operational-infrastructure.md`
 **SDD Reference**: `grimoires/loa/sdd-v3-operational-infrastructure.md`
-**Status**: Ready for Implementation
+**Status**: ✅ FEATURES IMPLEMENTED - Documentation Sync Pending
+
+---
+
+## /ride Analysis Summary (2026-01-20)
+
+The `/ride` command analysis revealed that **most v3 features are already implemented**:
+
+| Phase | Status | Evidence |
+|-------|--------|----------|
+| Phase 1 (MVP) | ✅ Complete | Truth hierarchy in CLAUDE.md, NOTES.md exists |
+| Phase 2 | ✅ Available | Feature flags in constitution.yaml |
+| Phase 3 | ✅ Available | continuous-learning skill, run-mode protocol |
+
+**Current Drift Score**: 8/100 (healthy, was 35/100)
+**Governance Score**: 85/100
+
+### Remaining Work: Documentation Sync
+
+Only documentation gaps remain:
+- 3 Ghosts (documented but missing)
+- 5 Shadows (in code but undocumented)
+- CODEOWNERS file missing
+
+---
+
+## ACTIVE SPRINT: Documentation Sync
+
+**Goal**: Close drift gaps, achieve drift score 0/100
+**Duration**: ~1 hour
+**Priority**: Documentation only (no code changes)
+
+### Task DS-1: Create CODEOWNERS File
+
+**ID**: DS-T01
+**Priority**: P1
+**Effort**: XS (5 min)
+**Status**: pending
+
+**Description**:
+Create GitHub CODEOWNERS file for automatic PR reviewer assignment.
+
+**Acceptance Criteria**:
+- [ ] CODEOWNERS file exists at repository root
+- [ ] Physics rules assigned to maintainers
+- [ ] Commands assigned to maintainers
+
+**File to Create**: `CODEOWNERS`
+```
+# Sigil CODEOWNERS
+* @0xHoneyJar/sigil-maintainers
+.claude/rules/ @0xHoneyJar/sigil-physics
+.claude/commands/ @0xHoneyJar/sigil-maintainers
+grimoires/sigil/constitution.yaml @0xHoneyJar/sigil-maintainers
+```
+
+---
+
+### Task DS-2: Add v2.5.0 CHANGELOG Entry
+
+**ID**: DS-T02
+**Priority**: P1
+**Effort**: S (15 min)
+**Status**: pending
+
+**Description**:
+Document the v2.5.0 release features in CHANGELOG.md.
+
+**Acceptance Criteria**:
+- [ ] v2.5.0 entry added to CHANGELOG.md
+- [ ] Lists Data Physics as new feature
+- [ ] Lists Web3 Flow Validation patterns
+- [ ] Follows Keep a Changelog format
+
+**Content**:
+```markdown
+## [2.5.0] - 2026-01-20 "Web3 Flow Validation"
+
+### Added
+- **Data Physics Layer** (rule 19): Explicit data source selection for Web3
+- **Web3 Flow Patterns** (rule 20): Multi-step transaction patterns
+- **Run Mode Commands**: /run, /run-status, /run-halt, /run-resume, /snapshot, /test-flow
+- **/observe diagnose mode**: Blockchain state inspection
+
+### Changed
+- `/craft` analysis box shows Data Physics guidance for Web3 components
+
+### Fixed
+- BigInt falsy check patterns (`0n` is falsy in JavaScript)
+- Stale closure issues in transaction receipt callbacks
+```
+
+---
+
+### Task DS-3: Update README Physics Diagram
+
+**ID**: DS-T03
+**Priority**: P1
+**Effort**: S (10 min)
+**Status**: pending
+
+**Description**:
+Update README.md to show 5 physics layers instead of 3 (add Data Physics).
+
+**Acceptance Criteria**:
+- [ ] Physics model shows 5 layers: Behavioral, Animation, Material, Voice, Data
+- [ ] Data Physics brief description added
+- [ ] Links to rule 19 for details
+
+---
+
+### Task DS-4: Document Run Mode Commands
+
+**ID**: DS-T04
+**Priority**: P2
+**Effort**: S (15 min)
+**Status**: pending
+
+**Description**:
+Add Run Mode section to README.md documenting the 7 run mode commands.
+
+**Acceptance Criteria**:
+- [ ] Run Mode section added to README commands table
+- [ ] Brief description of autonomous execution
+- [ ] Links to relevant command files
+
+---
+
+### Task DS-5: Fix Ghost References
+
+**ID**: DS-T05
+**Priority**: P2
+**Effort**: XS (10 min)
+**Status**: pending
+
+**Description**:
+Address the 3 ghost items:
+1. Voice Physics: Document as embedded in /craft (no separate rule file)
+2. `loa install sigil`: Update to `git clone` as install method
+3. sigil-toolbar: Mark as "Planned" in CHANGELOG
+
+**Acceptance Criteria**:
+- [ ] Ghost items addressed or removed
+- [ ] No false documentation claims remain
+
+---
+
+### Task DS-6: Document Feature Flags
+
+**ID**: DS-T06
+**Priority**: P3
+**Effort**: XS (5 min)
+**Status**: pending
+
+**Description**:
+Verify constitution.yaml feature flags have explanatory comments.
+
+**Acceptance Criteria**:
+- [ ] Each feature flag has descriptive comment
+- [ ] Phase groupings labeled
+
+---
+
+## Documentation Sprint Summary
+
+| Task | Priority | Effort | Status |
+|------|----------|--------|--------|
+| DS-1 Create CODEOWNERS | P1 | XS | ✅ Complete |
+| DS-2 Add v2.5.0 CHANGELOG | P1 | S | ✅ Complete |
+| DS-3 Update README Physics | P1 | S | ✅ Already done |
+| DS-4 Document Run Mode | P2 | S | ✅ Complete |
+| DS-5 Fix Ghost References | P2 | XS | ✅ Complete |
+| DS-6 Document Feature Flags | P3 | XS | ✅ Complete |
+
+**Total Effort**: ~1 hour
+**Actual Effort**: ~15 minutes
+**Outcome**: All tasks completed
+
+### Implementation Summary (Run 2026-01-20)
+
+**Files Created**:
+- `CODEOWNERS` — GitHub code owners for PR reviews
+
+**Files Modified**:
+- `CHANGELOG.md` — Added v2.5.0 entry with Data Physics, Web3 Flow Patterns, Run Mode
+- `README.md` — Fixed install instructions (removed ghost `loa install`), added Run Mode commands
+- `grimoires/sigil/constitution.yaml` — Enhanced feature flag documentation
+
+**Ghosts Resolved**:
+- `loa install sigil` → Changed to `git clone` + `/mount` instructions
+- Voice Physics rule file → Already documented as embedded in /craft (no action needed)
+- sigil-toolbar → Noted as planned feature (no false claim)
+
+---
+
+## Success Criteria
+
+After completing documentation sprint:
+1. Run `/ride` - Should show 0 Ghosts, 0 Shadows
+2. CODEOWNERS present in governance audit
+3. v2.5.0 documented in CHANGELOG
+
+---
+
+## Implementation Command
+
+```
+/implement documentation-sync
+```
+
+---
+
+## ARCHIVED: Original v3 Implementation Plan
+
+> The following sprint plan was created before `/ride` analysis revealed
+> that v3 features are already implemented. Kept for reference.
+
+---
 
 ---
 

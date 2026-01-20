@@ -243,20 +243,31 @@ conventions:
 # =============================================================================
 # Enable/disable v3 operational features.
 # Gradual rollout: enable one at a time, validate, then enable next.
+#
+# See: grimoires/loa/prd-v3-operational-infrastructure.md for full details
 
 features:
+  # ─────────────────────────────────────────────────────────────────────────
   # Phase 1 (MVP) - Prevent Loops
-  lossless_state: true          # Truth hierarchy, grounding, recovery
-  notes_memory: true            # NOTES.md session memory
-  feedback_first: true          # Step -1 feedback check
-  anti_patterns: true           # Anti-pattern documentation (no runtime impact)
+  # Goal: Session recovery in <100 tokens, reduce loop triggers to <10%
+  # ─────────────────────────────────────────────────────────────────────────
+  lossless_state: true          # Truth hierarchy in CLAUDE.md, grounding enforcement
+  notes_memory: true            # NOTES.md for session continuity across context clears
+  feedback_first: true          # Step -1 checks taste.md before repeating work
+  anti_patterns: true           # "Never do" patterns in 00-sigil-core.md
 
+  # ─────────────────────────────────────────────────────────────────────────
   # Phase 2 - Ship Clean
-  subagent_validators: true     # Physics and codebase validators
-  attention_budget: true        # Context-aware response sizing
-  zone_architecture: true       # Zone documentation (no runtime impact)
+  # Goal: 95% first-pass validation, context-aware responses
+  # ─────────────────────────────────────────────────────────────────────────
+  subagent_validators: true     # Physics validator + codebase validator subagents
+  attention_budget: true        # Response length scaled to context usage (Green/Yellow/Orange/Red)
+  zone_architecture: true       # System/State/App zones with write permissions
 
+  # ─────────────────────────────────────────────────────────────────────────
   # Phase 3 - Self-Improve
-  continuous_learning: true     # Automatic learning extraction
-  trajectory_logging: true      # Decision trajectory logs
-  run_mode_safety: true         # Hammer mode circuit breaker
+  # Goal: 2 learnings/week extracted, safe autonomous execution
+  # ─────────────────────────────────────────────────────────────────────────
+  continuous_learning: true     # Extract discoveries to pending-learnings.md
+  trajectory_logging: true      # Log physics decisions for debugging
+  run_mode_safety: true         # Circuit breaker for /run autonomous execution
