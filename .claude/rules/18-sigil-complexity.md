@@ -692,3 +692,322 @@ Generate? (y/n)
 - After any REJECT signal → switch back to full
 
 </dx_analysis_box>
+
+<ecosystem_handler>
+## Ecosystem Handler
+
+Handles multi-repo relationships and cross-project awareness.
+
+### Handler Overview
+
+| Aspect | Value |
+|--------|-------|
+| Trigger | Multi-repo detection (MEDIUM confidence) |
+| Purpose | Map repository relationships |
+| Output | repos.yaml, contracts.yaml |
+| Cache | 7 days in grimoires/loa/context/ecosystem/ |
+
+### Gather Algorithm
+
+1. **Read Existing Ecosystem Map**
+   ```
+   existing = read("grimoires/loa/context/ecosystem/repos.yaml")
+   if not exists: existing = { repositories: [], relationships: [] }
+   ```
+
+2. **Discover New Relationships**
+   ```
+   for ref in triggerData.externalRefs:
+     if ref not in existing.repositories:
+       repoInfo = analyzeRepository(ref.path)
+       existing.repositories.push(repoInfo)
+   ```
+
+3. **Analyze Repository**
+   ```
+   function analyzeRepository(path):
+     type = "unknown"
+     if exists(path + "/contracts/"): type = "contracts"
+     if exists(path + "/envio.config.ts"): type = "indexer"
+     if exists(path + "/package.json"):
+       pkg = read(path + "/package.json")
+       if "react" in pkg.dependencies: type = "frontend"
+
+     return {
+       name: basename(path),
+       path: path,
+       type: type,
+       contracts: extractContracts(path),
+       discoveredAt: now()
+     }
+   ```
+
+4. **Update Ecosystem Map**
+   ```
+   write("grimoires/loa/context/ecosystem/repos.yaml", existing)
+   ```
+
+### Output Schema
+
+```yaml
+# grimoires/loa/context/ecosystem/repos.yaml
+repositories:
+  - name: "thj-contracts"
+    path: "../thj-contracts"
+    type: "contracts"
+    discoveredAt: "2026-01-19T14:30:00Z"
+    contracts:
+      - name: "StakingVault"
+        address: "0x..."
+        chainId: 80094
+
+relationships:
+  - from: "current-repo"
+    to: "thj-contracts"
+    type: "uses"
+    reason: "imports StakingVault ABI"
+```
+
+### Contracts Discovery
+
+```yaml
+# grimoires/loa/context/ecosystem/contracts.yaml
+contracts:
+  - address: "0x..."
+    name: "StakingVault"
+    chainId: 80094
+    source: "thj-contracts"
+    abi_path: "../thj-contracts/artifacts/StakingVault.json"
+    discoveredAt: "2026-01-19T14:30:00Z"
+```
+
+</ecosystem_handler>
+
+<domain_handler>
+## Domain Handler
+
+Handles contract research and Loa consultation for architectural questions.
+
+### Handler Overview
+
+| Aspect | Value |
+|--------|-------|
+| Trigger | Unknown contracts, architectural keywords |
+| Purpose | Generate domain documentation |
+| Output | {topic}.md in domain/ |
+| Cache | 30 days in grimoires/loa/context/domain/ |
+
+### Gather Algorithm
+
+1. **Check Existing Domain Knowledge**
+   ```
+   topic = identifyTopic(triggerData)
+   docPath = "grimoires/loa/context/domain/" + topic + ".md"
+
+   if exists(docPath):
+     existing = read(docPath)
+     age = now() - existing.frontmatter.discoveredAt
+     if age < 30 days:
+       return existing  // Use cached
+   ```
+
+2. **Research Unknown Contracts** (if applicable)
+   ```
+   for contract in triggerData.contracts:
+     // Try local ABI first
+     if exists("artifacts/" + contract.name + ".json"):
+       abi = read("artifacts/" + contract.name + ".json")
+     else:
+       // Fallback: prompt user or use block explorer
+       abi = promptForABI(contract.address)
+
+     analysis = analyzeContract(abi)
+     document = generateDocumentation(analysis)
+   ```
+
+3. **Consult Loa** (if architectural)
+   ```
+   if triggerData.requiresLoa:
+     // Surface architectural question
+     // Loa /architect or /understand handles this
+     consultation = {
+       type: "loa-required",
+       question: triggerData.question,
+       suggestedCommand: "/understand " + topic
+     }
+     return consultation
+   ```
+
+4. **Store Domain Knowledge**
+   ```
+   write("grimoires/loa/context/domain/" + topic + ".md", document)
+   ```
+
+### Output Schema
+
+```markdown
+---
+topic: staking-vault
+discoveredAt: 2026-01-19T14:30:00Z
+source: contract-analysis
+expiresAt: 2026-02-18T14:30:00Z
+chainId: 80094
+address: "0x..."
+---
+
+# Staking Vault
+
+## Overview
+The Staking Vault contract allows users to stake tokens and earn rewards.
+
+## Key Functions
+
+| Function | Description | Physics |
+|----------|-------------|---------|
+| stake(uint256) | Lock tokens in vault | Financial |
+| unstake(uint256) | Withdraw staked tokens | Financial |
+| claimRewards() | Claim accumulated rewards | Financial |
+
+## Events
+
+| Event | Parameters | Handler Hint |
+|-------|------------|--------------|
+| Staked | user, amount | Indexer - track stake history |
+| Unstaked | user, amount | Indexer - track withdrawals |
+| RewardsClaimed | user, amount | Indexer - track rewards |
+
+## Physics Implications
+
+- All state-changing functions are Financial effect
+- Use pessimistic sync with 800ms timing
+- Require confirmation for stake/unstake operations
+```
+
+### Contract Analysis
+
+```
+function analyzeContract(abi):
+  functions = []
+  events = []
+
+  for item in abi:
+    if item.type == "function" and item.stateMutability != "view":
+      physics = detectPhysics(item)
+      functions.push({
+        name: item.name,
+        inputs: item.inputs,
+        physics: physics
+      })
+
+    if item.type == "event":
+      events.push({
+        name: item.name,
+        inputs: item.inputs
+      })
+
+  return { functions, events }
+```
+
+</domain_handler>
+
+<handler_routing>
+## Handler Routing
+
+When multiple triggers are detected, route to handlers in priority order:
+
+### Priority Order
+1. **DX Physics** (indexer) — fastest, most actionable
+2. **Ecosystem** (multi-repo) — needed for context
+3. **Domain** (contracts/architectural) — deepest research
+
+### Parallel Execution
+If triggers are independent, gather in parallel:
+
+```
+triggers = detectComplexity(context)
+
+// Group by independence
+indexerTrigger = triggers.find(t => t.type == "indexer")
+ecosystemTrigger = triggers.find(t => t.type == "multi-repo")
+domainTrigger = triggers.find(t => t.type == "unknown-contract" || t.type == "architectural")
+
+// Execute in parallel where possible
+results = await Promise.all([
+  indexerTrigger ? dxPhysicsHandler.gather(indexerTrigger) : null,
+  ecosystemTrigger ? ecosystemHandler.gather(ecosystemTrigger) : null,
+  domainTrigger ? domainHandler.gather(domainTrigger) : null
+])
+
+// Merge results
+enrichedContext = mergeContexts(results)
+```
+
+### Sequential Requirement
+Domain handler may depend on Ecosystem:
+- If unknown contract is from external repo
+- First run Ecosystem to map repo
+- Then run Domain with repo context
+
+```
+if domainTrigger.needsEcosystem:
+  await ecosystemHandler.gather(ecosystemTrigger)
+  await domainHandler.gather(domainTrigger)
+```
+
+</handler_routing>
+
+<handoff_messages>
+## Handoff Message Templates
+
+### Initial Detection
+```
+┌─ Complexity Detected ──────────────────────────────────┐
+│                                                        │
+│  Triggers found:                                       │
+│  • indexer (HIGH) - Envio handler work detected        │
+│  • multi-repo (MEDIUM) - External references found     │
+│                                                        │
+│  Gathering context...                                  │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+```
+
+### Progress Updates
+```
+[GATHER] Querying RPC for block ranges...
+[GATHER] Mapping repository relationships...
+[STORE] Context saved to grimoires/loa/context/indexer/...
+[STORE] Context saved to grimoires/loa/context/ecosystem/...
+```
+
+### Enrichment Summary
+```
+┌─ Context Enriched ─────────────────────────────────────┐
+│                                                        │
+│  DX Physics:                                           │
+│  • Staked event: blocks 15899050-15899150 (~30s sync)  │
+│                                                        │
+│  Ecosystem:                                            │
+│  • Found: thj-contracts (contracts repo)               │
+│  • Contracts: StakingVault @ 0x...                     │
+│                                                        │
+│  Continuing with enriched context...                   │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+```
+
+### Loa Handoff (if needed)
+```
+┌─ Loa Consultation Required ────────────────────────────┐
+│                                                        │
+│  This requires architectural research.                 │
+│                                                        │
+│  Suggested: /understand "staking vault architecture"   │
+│                                                        │
+│  [y] Run /understand now                               │
+│  [n] Continue without domain context                   │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+```
+
+</handoff_messages>
