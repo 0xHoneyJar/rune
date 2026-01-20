@@ -1,8 +1,8 @@
 # Sigil
 
-[![Version](https://img.shields.io/badge/version-2.3.0--dev-orange.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.3.0-blue.svg)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-AGPL--3.0-green.svg)](LICENSE.md)
-[![Release](https://img.shields.io/badge/release-Develop-purple.svg)](CHANGELOG.md#230---unreleased)
+[![Release](https://img.shields.io/badge/release-Stable-brightgreen.svg)](CHANGELOG.md#230---2026-01-19--sigil--loa-synergy)
 
 > *"A sigil is a symbol that holds intention. You speak a desire, condense it into a mark, and the mark carries the meaning forward."*
 
@@ -398,18 +398,22 @@ Loa plans structure. Sigil tunes feel. They meet at the component boundary.
 
 ---
 
-## What's New in v2.2.0
+## What's New in v2.3.0
 
-This release introduces the **Sigil Feedback Loops System**:
+This release delivers **Sigil ↔ Loa Synergy** — bridging architecture and physics:
 
-- ✨ **`/observe`** — Capture user research observations during testing
-- ✨ **`/taste-synthesize`** — Analyze taste signals and extract patterns
-- ✨ **`/ward-all`** — Comprehensive physics audit across all components
-- 🔧 **Sigil Toolbar** — Browser extension for real-time physics detection
-- 📊 **Enhanced taste schema** — Diagnostics, source tracking, learning inference
+- ✨ **`/understand`** — Domain research before crafting, stores context for `/craft`
+- ✨ **Complexity Detection** — Automatic triggers for indexer work, multi-repo refs, unknown contracts
+- ✨ **DX Physics Handler** — Reduces indexer sync from 4-16h to ~30 seconds
+- ✨ **Shared Context Store** — `grimoires/loa/context/` bridges Sigil and Loa
+- ✨ **Web3 Testing Skill** — Three-layer wagmi/viem mocking (state, provider, fetch)
+- ✨ **`/snapshot`** — Screenshot capture with Web3 state injection
+- ✨ **`/test-flow`** — Multi-step Web3 user journey testing
+- 🔧 **Enhanced `/implement`** — Phase 0.5 complexity detection before implementation
+- 🔧 **Enhanced `/craft`** — Reads domain/ecosystem context for informed generation
 
 See [CHANGELOG.md](CHANGELOG.md) for full release notes.
 
 ---
 
-*v2.2.0 "Feedback Loops"*
+*v2.3.0 "Sigil ↔ Loa Synergy"*

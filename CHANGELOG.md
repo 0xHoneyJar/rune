@@ -7,11 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [2.3.0] - Unreleased
+## [2.3.0] - 2026-01-19 — "Sigil ↔ Loa Synergy"
 
 ### Summary
 
-v2.3.0 consolidates the **Web3 Testing** and **Observations System** features into a unified release. This version is currently in development on the `develop` branch for dogfooding before release to `main`.
+v2.3.0 delivers the **Sigil ↔ Loa Synergy** release — bridging the gap between architecture (Loa) and physics (Sigil). This version adds DX Physics for indexer workflows, the `/understand` command for domain research, and a shared context store that enables intelligent handoffs between frameworks.
+
+Also included: **Web3 Testing** skill and **Observations System** for comprehensive wagmi/viem mocking and user research capture.
 
 ### Added
 
@@ -46,6 +48,42 @@ v2.3.0 consolidates the **Web3 Testing** and **Observations System** features in
 - **`/taste-synthesize` command** — Pattern extraction from accumulated taste signals
 
 - **Wagmi v2 fixture app** for smoke testing
+
+- **`/understand` command** — Domain research before crafting
+  - Syntax: `/understand "topic"` to gather context before implementation
+  - Stores findings in `grimoires/loa/context/domain/`
+  - Integrates with complexity detection for automatic triggering
+
+- **Complexity Detection System** (`.claude/rules/18-sigil-complexity.md`)
+  - Automatic triggers: indexer work, multi-repo refs, unknown contracts, architectural questions
+  - Four specialized handlers: DX Physics, Ecosystem, Domain, Contract
+  - 5-step handoff protocol: Detect → Gather → Store → Enrich → Continue
+
+- **DX Physics Handler** — Blockchain indexer optimization
+  - Reduces Envio indexer sync from 4-16h to ~30 seconds
+  - RPC block discovery via `eth_getLogs` for "dead accurate" ranges
+  - Caches discovered ranges in `grimoires/loa/context/indexer/`
+  - Automatic test config generation
+
+- **Shared Context Store** (`grimoires/loa/context/`)
+  - Bridges Sigil physics with Loa architecture
+  - Four context types: `indexer/`, `ecosystem/`, `domain/`, `sessions/`
+  - Configuration via `.context-config.yaml`
+
+- **Enhanced `/implement` command** — Phase 0.5 complexity detection
+  - Checks for indexer work, multi-repo refs, unknown contracts before implementation
+  - Automatically gathers context via handlers
+  - Stores findings for `/craft` consumption
+
+- **Enhanced `/craft` command** — Context-aware generation
+  - Reads domain knowledge from `grimoires/loa/context/domain/`
+  - Reads ecosystem relationships from `grimoires/loa/context/ecosystem/`
+  - Physics informed by real-world contract and protocol data
+
+- **DX Physics taste signals** — Extended taste schema
+  - Captures indexer-specific preferences
+  - Tracks block range accuracy
+  - Logs sync time improvements
 
 ### Technical
 
@@ -1167,6 +1205,7 @@ Sigil 0.2 can coexist with Loa on the same repository:
 - Design context capture commands
 - Basic moodboard and rules structure
 
+[2.3.0]: https://github.com/0xHoneyJar/sigil/releases/tag/v2.3.0
 [2.2.0]: https://github.com/0xHoneyJar/sigil/releases/tag/v2.2.0
 [5.0.0]: https://github.com/0xHoneyJar/sigil/releases/tag/v5.0.0
 [4.1.0]: https://github.com/0xHoneyJar/sigil/releases/tag/v4.1.0
