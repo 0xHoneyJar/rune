@@ -189,8 +189,12 @@ window.__SIGIL_MOCK_STORE__.update({
 | `resources/injection-script.js` | Browser injection template |
 | `resources/scenarios.yaml` | Built-in state presets |
 | `resources/flows.yaml` | Built-in flow definitions |
+| `resources/flow-executor.js` | Flow step executor module |
 | `resources/fork-detector.sh` | Fork provider auto-detection |
+| `resources/tenderly-fork.sh` | Tenderly fork management |
+| `resources/anvil-fork.sh` | Anvil fork management |
 | `templates/flow-report.md` | Flow execution report template |
+| `templates/comparison.md` | Before/after comparison template |
 
 ## Dependencies
 
