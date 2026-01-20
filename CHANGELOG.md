@@ -7,6 +7,82 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.4.0] - 2026-01-19 — "Craft States"
+
+### Summary
+
+v2.4.0 introduces **Craft States** — the hammer vs chisel paradigm. `/craft` now intelligently detects when work requires full-stack architecture (hammer) versus fine-grained physics tuning (chisel). Hammer mode orchestrates Loa commands (`/plan-and-analyze`, `/architect`, `/sprint-plan`) to deliver complete features, while chisel mode maintains the precise physics control users expect.
+
+This release reflects how users actually work: `/craft` as the primary entry point, discovering complexity through the work itself, then seamlessly transitioning to full architecture when needed.
+
+### Added
+
+- **Scope Detection Algorithm** (Step 0.5 in `/craft`)
+  - Detects hammer signals: "feature", "system", "flow", "build", "implement", contract refs, API refs, indexer refs
+  - Detects chisel signals: "button", "modal", "animation", "improve", "fix", "polish", "tweak"
+  - Scoring: +1 per hammer signal, -1 per chisel signal, threshold ≥2 for hammer mode
+  - Supports `--hammer` and `--chisel` flags to force mode
+
+- **Hammer Workflow** (Steps H1-H5)
+  - **H1: Artifact Check** — Detects existing Loa artifacts (PRD, SDD, sprint), checks staleness and relevance
+  - **H2: Context Aggregation** — Seeds `/plan-and-analyze` with Sigil observations and taste patterns
+  - **H3: Architecture** — Invokes `/architect` to generate SDD
+  - **H4: Sprint Planning** — Invokes `/sprint-plan`, extracts components with physics hints
+  - **H5: Plan Summary** — Presents complete plan, hands off to `/run sprint-plan`
+
+- **Hammer State Management** (`grimoires/sigil/hammer-state.json`)
+  - Tracks active hammer sessions
+  - Enables resume from interrupted sessions
+  - Records phases completed, components identified, context seeded
+
+- **Context Seeding**
+  - Aggregates `grimoires/sigil/observations/` diagnostics
+  - Extracts taste patterns from `grimoires/sigil/taste.md`
+  - Pre-populates Loa commands with physics requirements
+
+- **Hammer Error Handling**
+  - Recovery paths for Loa command failures
+  - State corruption detection and auto-recovery
+  - Orphaned state detection (>24h old)
+
+- **4 New Examples** in `/craft`
+  - Example 8: Fresh hammer start
+  - Example 9: Hammer with existing artifacts
+  - Example 10: User chooses "Chisel anyway"
+  - Example 11: Resume interrupted hammer session
+
+### Changed
+
+- **`/craft` v2.0.0** — Major version bump for hammer/chisel paradigm
+  - Step 0.5 added before context discovery
+  - Hammer workflow branches after scope detection
+  - Chisel mode unchanged (backward compatible)
+
+- **Sigil as Loa Construct** — Clarified architecture
+  - Sigil invokes Loa commands via Skill tool, never modifies them
+  - Read-only access to Loa artifacts
+  - Context seeding passes observations and taste to planning
+
+### Philosophy
+
+**The craft-first workflow:**
+```
+User invokes /craft
+  → Scope detection runs
+  → Hammer? → Full architecture sequence → /run sprint-plan
+  → Chisel? → Physics analysis → Generate/refine
+```
+
+This reflects the actual workflow: start with craft, discover complexity, get architecture when needed.
+
+### Technical
+
+- `/distill` functionality absorbed into hammer mode (H4 component extraction)
+- Hammer mode uses Claude Code's Skill tool for Loa command invocation
+- State file enables cross-session resume
+
+---
+
 ## [2.3.0] - 2026-01-19 — "Sigil ↔ Loa Synergy"
 
 ### Summary
@@ -1205,6 +1281,7 @@ Sigil 0.2 can coexist with Loa on the same repository:
 - Design context capture commands
 - Basic moodboard and rules structure
 
+[2.4.0]: https://github.com/0xHoneyJar/sigil/releases/tag/v2.4.0
 [2.3.0]: https://github.com/0xHoneyJar/sigil/releases/tag/v2.3.0
 [2.2.0]: https://github.com/0xHoneyJar/sigil/releases/tag/v2.2.0
 [5.0.0]: https://github.com/0xHoneyJar/sigil/releases/tag/v5.0.0

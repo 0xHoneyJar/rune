@@ -1,172 +1,178 @@
 # Sigil
 
-[![Version](https://img.shields.io/badge/version-2.3.0-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-2.4.0-blue.svg)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-AGPL--3.0-green.svg)](LICENSE.md)
-[![Release](https://img.shields.io/badge/release-Stable-brightgreen.svg)](CHANGELOG.md#230---2026-01-19--sigil--loa-synergy)
+[![Release](https://img.shields.io/badge/release-Craft_States-purple.svg)](CHANGELOG.md#240---2026-01-19--craft-states)
 
 > *"A sigil is a symbol that holds intention. You speak a desire, condense it into a mark, and the mark carries the meaning forward."*
 
-**Design physics for AI code generation.** Sigil teaches AI to understand feel — timing, motion, surface — so generated UI matches your intent. Built to work alongside [Loa](https://github.com/0xHoneyJar/loa).
+**Taste for building products.** Sigil teaches AI to understand what users need to feel, then translates that into physics — timing, motion, surface, voice. Built as a [Loa Construct](https://github.com/0xHoneyJar/loa).
 
-```
-$ curl -fsSL https://sigil.dev/install | bash
-> /craft "claim button"
+```bash
+# Install via Loa Constructs
+loa install sigil
+
+# Start crafting
+/craft "claim button"
 ```
 
 ---
 
-## The Problem
+## The Model
 
-AI generates UI without understanding *feel*. Every generation is a guess.
-
-"Make a button" could mean:
-- Instant feedback (local toggle)
-- Optimistic update (social like)
-- Server confirmation (money transfer)
-
-And *look* is part of feel:
-- Clean and minimal (utility)
-- Elevated with depth (importance)
-- Textured with grit (character)
-
-These aren't style choices. They're **physics**.
-
----
-
-## Design Physics
-
-Physics is everything that determines feel.
+Everything starts with **User Truth** — who your users are, what moment they're in, what they need to feel. Physics is how you create that feel.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                                                                 │
-│   DESIGN PHYSICS                                                │
-│   ══════════════                                                │
+│   USER TRUTH                                                    │
+│   ══════════                                                    │
+│   Who is the user?     Power user, casual, first-time, mobile   │
+│   What's the moment?   High stakes, routine, discovery, error   │
+│   What should they     Trust, speed, delight, safety, control   │
+│   feel?                                                         │
 │                                                                 │
-│   ┌─ Behavioral ─────────────────────────────────────────────┐  │
-│   │  Sync, timing, confirmation                              │  │
-│   │  "Does clicking feel instant or deliberate?"             │  │
-│   └──────────────────────────────────────────────────────────┘  │
+│                            ↓                                    │
 │                                                                 │
-│   ┌─ Animation ──────────────────────────────────────────────┐  │
-│   │  Easing, springs, curves                                 │  │
-│   │  "Does movement feel mechanical or alive?"               │  │
-│   └──────────────────────────────────────────────────────────┘  │
+│                          FEEL                                   │
+│                    (the goal, not the input)                    │
 │                                                                 │
-│   ┌─ Material ───────────────────────────────────────────────┐  │
-│   │  Surface, fidelity, grit                                 │  │
-│   │  "Does it look trustworthy or playful?"                  │  │
-│   └──────────────────────────────────────────────────────────┘  │
+│                            ↓                                    │
 │                                                                 │
-│                         ↓                                       │
-│                       FEEL                                      │
+│   PHYSICS (tools to create feel)                                │
+│   ══════════════════════════════                                │
 │                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-**Taste** is your accumulated preferences across all three.
-
----
-
-## Behavioral Physics
-
-How interactions respond.
-
-```
-EFFECT              SYNC              TIMING          WHY
-────────────────────────────────────────────────────────────────────
-
-Financial           Pessimistic       800ms           Money can't be
-(claim, withdraw)   Server confirms   Deliberate      rolled back.
-
-Destructive         Pessimistic       600ms           Permanent actions
-(delete, revoke)    Server confirms   Deliberate      need deliberation.
-
-Standard            Optimistic        200ms           Low stakes.
-(like, save)        UI updates first  Snappy          Rolls back on error.
-
-Local               Immediate         100ms           No server.
-(toggle, expand)    No round-trip     Instant         Pure client state.
-```
-
----
-
-## Animation Physics
-
-How movement feels.
-
-```
-EFFECT              EASING            SPRING          WHY
-────────────────────────────────────────────────────────────────────
-
-Financial           ease-out          —               Deliberate weight
-                    800ms                             communicates gravity.
-
-Standard            spring            500, 30         Snappy, organic.
-                    200ms                             Feels alive.
-
-Local               spring            700, 35         Instant, direct.
-                    100ms                             No waiting.
-
-High-frequency      none              —               Best animation is
-                    0ms                               no animation.
-```
-
----
-
-## Material Physics
-
-How surfaces communicate.
-
-```
-SURFACE             SHADOW      BORDER      RADIUS      GRIT
-────────────────────────────────────────────────────────────────────
-
-Elevated            soft        subtle      8-12px      Clean
-(cards, dialogs)    1 layer     or none
-
-Glass               lg + blur   white/20    12-16px     Clean
-(overlays)          depth       subtle
-
-Flat                none        optional    4-8px       Clean
-(minimal)           —           or none
-
-Retro               hard        solid 2px   0px         Pixel
-(games)             offset      chunky      sharp
-```
-
-**Fidelity ceiling**: gradients ≤2 stops, shadows ≤1 layer, radius ≤16px.
-
----
-
-## The Mental Model
-
-```
-┌─────────────────────────────────────────────────────────────────┐
+│   ┌─ Behavioral ────────────────────────────────────────────┐   │
+│   │  Sync, timing, confirmation                             │   │
+│   │  "Does clicking feel instant or deliberate?"            │   │
+│   └─────────────────────────────────────────────────────────┘   │
 │                                                                 │
-│   What you say              Sigil infers            You get     │
-│   ─────────────             ────────────            ───────     │
+│   ┌─ Animation ─────────────────────────────────────────────┐   │
+│   │  Easing, springs, curves                                │   │
+│   │  "Does movement feel mechanical or alive?"              │   │
+│   └─────────────────────────────────────────────────────────┘   │
 │                                                                 │
-│   "claim button"       →    Behavioral: financial    →  800ms   │
-│                             Animation: ease-out         confirm │
-│                             Material: elevated          shadow  │
+│   ┌─ Material ──────────────────────────────────────────────┐   │
+│   │  Surface, shadow, radius, grit                          │   │
+│   │  "Does it look trustworthy or playful?"                 │   │
+│   └─────────────────────────────────────────────────────────┘   │
 │                                                                 │
-│   "snappy like         →    Behavioral: standard     →  200ms   │
-│    button"                  Animation: spring           bounce  │
-│                             Material: flat              minimal │
+│   ┌─ Voice ─────────────────────────────────────────────────┐   │
+│   │  Copy, tone, microcopy, empty states                    │   │
+│   │  "Does it sound helpful or clinical?"                   │   │
+│   └─────────────────────────────────────────────────────────┘   │
 │                                                                 │
-│   "retro pixel         →    Behavioral: local        →  100ms   │
-│    toggle"                  Animation: none             sharp   │
-│                             Material: retro             grit    │
+│                            ↓                                    │
+│                                                                 │
+│                         TASTE                                   │
+│              (accumulated understanding of                      │
+│               your users + physics that work)                   │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-One input. Three physics layers. Unified feel.
+**Taste** isn't just your preferences — it's your accumulated understanding of your users and what makes them feel right. Physics are the tools. User truth is the foundation.
 
 ---
 
-## Installation
+## The Feedback Loop
+
+Sigil learns through a continuous cycle. Each command feeds into the next.
+
+```
+┌──────────────────────────────────────────────────────────────────────────┐
+│                                                                          │
+│   UNDERSTAND                    CRAFT                      VALIDATE      │
+│   ───────────                   ─────                      ────────      │
+│                                                                          │
+│   /observe         ──→         /craft          ──→         /ward         │
+│   /understand                  /style                      /garden       │
+│                                /animate                    /review       │
+│   Capture user                 /behavior                                 │
+│   truth, context,              /distill                    Audit against │
+│   domain knowledge                                         physics,      │
+│                                Generate with               check feel    │
+│         │                      physics                                   │
+│         │                                                       │        │
+│         │                          │                            │        │
+│         │                          ▼                            │        │
+│         │                                                       │        │
+│         │                    USER FEEDBACK                      │        │
+│         │                    "Does this feel right?"            │        │
+│         │                                                       │        │
+│         │                      ┌─────┐                          │        │
+│         │                      │     │                          │        │
+│         │              ┌───────┴─────┴───────┐                  │        │
+│         │              │                     │                  │        │
+│         │              ▼                     ▼                  │        │
+│         │                                                       │        │
+│         │         ACCEPT (+1)          MODIFY (+5)              │        │
+│         │         "yes, ship it"       "feels heavy"            │        │
+│         │              │               "too clinical"           │        │
+│         │              │               "timing is off"          │        │
+│         │              │                     │                  │        │
+│         │              │                     │                  │        │
+│         │              ▼                     ▼                  │        │
+│         │                                                       │        │
+│         │                      TASTE                            │        │
+│         │              grimoires/sigil/taste.md                 │        │
+│         │              (accumulated learning)                   │        │
+│         │                          │                            │        │
+│         │                          │                            │        │
+│         │                          ▼                            │        │
+│         │                                                       │        │
+│         │                     /inscribe                         │        │
+│         │              (graduate to permanent rules)            │        │
+│         │                          │                            │        │
+│         │                          │                            │        │
+│         └──────────────────────────┴────────────────────────────┘        │
+│                                                                          │
+│                           CONTINUOUS REFINEMENT                          │
+│                                                                          │
+└──────────────────────────────────────────────────────────────────────────┘
+```
+
+### The Commands
+
+| Phase | Command | Purpose |
+|-------|---------|---------|
+| **Understand** | `/observe` | Capture user insights, behavior patterns, context |
+| | `/understand` | Research domain before crafting |
+| **Craft** | `/craft` | Apply physics to any UX change — primary entry point |
+| | `/style` | Material only (looks wrong) |
+| | `/animate` | Animation only (movement off) |
+| | `/behavior` | Behavioral only (timing wrong) |
+| | `/distill` | Break feature into craft-able components |
+| **Validate** | `/ward` | Audit codebase against physics |
+| | `/garden` | Component authority report |
+| | `/review-sprint` | Validate against acceptance criteria |
+| **Learn** | `/inscribe` | Graduate taste patterns to permanent rules |
+
+### The Signal Weights
+
+Every interaction teaches:
+
+| Signal | Weight | Trigger | What It Captures |
+|--------|--------|---------|------------------|
+| ACCEPT | +1 | User ships code as-is | "This felt right" |
+| MODIFY | +5 | User edits generated code | "This is what right looks like" |
+| REJECT | -3 | User says no, rewrites | "This felt wrong" |
+
+Modifications weight 5x because corrections teach more than silence. After 3+ similar signals, Sigil applies the pattern automatically.
+
+---
+
+## Prerequisites
+
+| Tool | Required | Purpose | Install |
+|------|----------|---------|---------|
+| [Claude Code](https://claude.ai/code) | Yes | AI runtime | `npm install -g @anthropic-ai/claude-code` |
+| [Loa](https://github.com/0xHoneyJar/loa) | Yes | Architecture framework | See Loa docs |
+| [agent-browser](https://github.com/anthropics/agent-browser) | No | Visual validation | `npm install -g agent-browser` |
+
+---
+
+## Quick Start
 
 ### Via Loa Construct Registry (Recommended)
 
@@ -185,207 +191,319 @@ constructs:
 ### Manual Installation
 
 ```bash
-curl -fsSL https://sigil.dev/install | bash
+git clone https://github.com/0xHoneyJar/sigil.git
+cd sigil && ./.claude/scripts/constructs-install.sh
 ```
-
-Adds rules to `.claude/rules/`, skills to `.claude/skills/`. Your `CLAUDE.md` stays untouched.
-
-### Optional: Visual Validation
-
-Install [agent-browser](https://github.com/vercel-labs/agent-browser) for automated visual checks:
-
-```bash
-npm install -g agent-browser
-agent-browser install          # Download Chromium
-# Linux: agent-browser install --with-deps
-```
-
-When installed, `/ward` validates protected capabilities visually:
-- Touch targets (≥44px minimum)
-- Focus rings (visible on keyboard nav)
-- Screenshots for physics comparison
-
-```bash
-/ward http://localhost:3000    # Runs visual + code checks
-```
-
----
-
-## Commands
-
-| Command | Purpose |
-|---------|---------|
-| `/craft` | Apply physics to any UX-affecting change (new, refine, configure, polish) |
-| `/ward` | Audit codebase against physics (violations, performance, protected capabilities) |
-| `/garden` | Health report on component authority (Gold/Silver/Draft tiers) |
-| `/style` | Material only (looks wrong, behavior fine) |
-| `/animate` | Animation only (movement feels off) |
-| `/behavior` | Behavioral only (timing/sync wrong) |
-| `/distill` | Break feature into craft-able components |
-| `/inscribe` | Promote patterns to rules |
 
 ---
 
 ## Usage
 
-```
-/craft "claim button"                    # Generate new component
-/craft "improve light mode readability"  # Refine configuration
-/craft "polish hover states"             # Batch polish across files
-/craft "optimize loading UX"             # Data pattern refinement
+```bash
+# Craft with physics
+/craft "claim button"                    # Chisel mode (component)
+/craft "build rewards feature"           # Hammer mode (full architecture)
+
+# Layer-specific adjustments
+/style "warmer, less corporate"          # Material only
+/animate "snappier"                      # Animation only
+/behavior "needs more deliberation"      # Behavioral only
+
+# Understand your users
+/observe                                 # Capture user insights
+/understand "DeFi claiming patterns"     # Research domain
+
+# Validate
 /ward                                    # Audit full codebase
-/ward physics                            # Audit physics only
-/garden                                  # Component authority report
+/ward http://localhost:3000              # Visual validation
+/garden                                  # Component authority
+
+# Learn
+/inscribe                                # Graduate patterns to rules
 ```
 
-Before generating, Sigil shows its analysis:
+Before generating, Sigil asks about **user truth**:
 
 ```
-┌─ Physics Analysis ─────────────────────────────────────┐
-│                                                        │
-│  Component:    ClaimButton                             │
-│  Effect:       Financial mutation                      │
-│                                                        │
-│  Behavioral    pessimistic, 800ms, confirmation        │
-│  Animation     ease-out, deliberate, non-interruptible │
-│  Material      elevated, soft shadow, 8px radius       │
-│                                                        │
-│  Protected:    ✓ cancel  ✓ error recovery  ✓ 44px     │
-│                                                        │
-└────────────────────────────────────────────────────────┘
-
-Proceed? (yes / or describe what's different)
+┌─ User Truth ───────────────────────────────────────┐
+│                                                    │
+│  Who is clicking this?   [power user / casual /   │
+│                           mobile / first-time]    │
+│                                                    │
+│  What's the moment?      [high stakes / routine / │
+│                           discovery / recovery]   │
+│                                                    │
+│  What should they feel?  [trust / speed /         │
+│                           delight / safety]       │
+│                                                    │
+└────────────────────────────────────────────────────┘
 ```
 
-If wrong, correct it. Sigil learns from your feedback.
+Then shows physics analysis:
+
+```
+┌─ Physics Analysis ─────────────────────────────────┐
+│                                                    │
+│  Component:    ClaimButton                         │
+│  Effect:       Financial mutation                  │
+│                                                    │
+│  Behavioral    pessimistic, 800ms, confirmation   │
+│  Animation     ease-out, deliberate               │
+│  Material      elevated, soft shadow, 8px         │
+│  Voice         "Claim rewards" → "Claiming..."    │
+│                → "Claimed!" / "Failed, retry?"    │
+│                                                    │
+│  Protected:    ✓ cancel  ✓ recovery  ✓ 44px      │
+│                                                    │
+└────────────────────────────────────────────────────┘
+
+Does this feel right for your user?
+```
+
+Your answer — even vague ("feels heavy", "too clinical") — trains the system.
 
 ---
 
-## Pair Design
+## The Craft-First Workflow
 
-Sigil works like two people at a whiteboard — one sketching, one reacting.
+`/craft` is the primary entry point. Sometimes you need a button. Sometimes you need an entire feature. Sigil detects the difference:
 
 ```
-/craft "claim button"
-→ "feels too corporate"
-→ [adjusts]
-→ "warmer, but the timing is off"
-→ /behavior
-→ "yes, that's it"
-→ [logs to taste, done]
+/craft "claim button"           → Chisel mode (fine-grained physics)
+/craft "build rewards feature"  → Hammer mode (full architecture)
 ```
 
-**The conversation is the loop.** You work on a component, iterate until it feels right, maybe notice something about another component along the way, work on that. Discoveries happen while doing.
+**Scope Detection:**
+- Hammer signals: "feature", "system", "flow", "build", "implement"
+- Chisel signals: "button", "modal", "animation", "improve", "polish"
+- Score ≥2 hammer signals → Hammer mode
 
-This isn't a queue you grind through overnight. It's a creative session where:
+**Hammer mode** orchestrates Loa for complete features:
 
-- **You** bring taste, context, persona, GTM instincts
-- **Sigil** brings physics vocabulary and memory
+```
+/craft "build rewards feature"
+  → Scope detection: HAMMER
+  → /plan-and-analyze (seeded with observations, taste)
+  → /architect
+  → /sprint-plan
+  → Review plan
+  → /run sprint-plan → Complete feature with physics
+```
 
-When Sigil asks "Does this feel right?", it's prompting you to think about your user:
-
-- Who is clicking this?
-- What's the moment?
-- What should they feel?
-
-Your answers — even vague ones like "feels heavy" or "too clinical" — teach the sigil.
-
-**When to start fresh:**
-- Context gets muddy
-- Drifted into unrelated territory
-- Just feels off
-
-That's just a new conversation. No ceremony needed.
+Force mode: `--hammer` or `--chisel`
 
 ---
 
-## Taste
+## Physics Reference
 
-Your accumulated preferences across all physics layers.
+### Behavioral Physics
 
-```
-Session 1:  You change 800ms → 500ms              (behavioral)
-Session 2:  You change ease-out → spring          (animation)
-Session 3:  You change soft shadow → none         (material)
-Session 4:  Sigil applies all three automatically
-```
+How interactions respond.
 
-Corrections weight 5x. Usage is feedback. Taste is physics personalized.
+| Effect | Sync | Timing | Confirmation | Why |
+|--------|------|--------|--------------|-----|
+| Financial | Pessimistic | 800ms | Required | Money can't roll back |
+| Destructive | Pessimistic | 600ms | Required | Permanent needs deliberation |
+| Soft Delete | Optimistic | 200ms | Toast + Undo | Reversible, be fast |
+| Standard | Optimistic | 200ms | None | Low stakes = snappy |
+| Local | Immediate | 100ms | None | No server = instant |
+| High-frequency | Immediate | 0ms | None | Animation = friction |
 
-**`/inscribe`** graduates patterns to permanent rules when they're solid enough.
+### Animation Physics
+
+How movement feels.
+
+| Effect | Easing | Spring | Why |
+|--------|--------|--------|-----|
+| Financial | ease-out, 800ms | — | Weight communicates gravity |
+| Standard | spring | 500, 30 | Snappy, organic |
+| Local | spring | 700, 35 | Instant, direct |
+| High-frequency | none | — | No animation is best |
+
+### Material Physics
+
+How surfaces communicate.
+
+| Surface | Shadow | Border | Radius | Grit |
+|---------|--------|--------|--------|------|
+| Elevated | soft, 1 layer | subtle | 8-12px | Clean |
+| Glass | lg + blur | white/20 | 12-16px | Clean |
+| Flat | none | optional | 4-8px | Clean |
+| Retro | hard offset | solid 2px | 0px | Pixel |
+
+**Fidelity ceiling:** gradients ≤2 stops, shadows ≤1 layer, radius ≤16px.
+
+### Voice Physics
+
+How products speak.
+
+| Moment | Tone | Pattern | Example |
+|--------|------|---------|---------|
+| Action | Direct, confident | Verb + object | "Claim rewards" |
+| Loading | Reassuring, active | Present participle | "Claiming..." |
+| Success | Celebratory, brief | Past tense + next | "Claimed! View balance" |
+| Error | Helpful, not alarming | What happened + fix | "Couldn't claim. Retry?" |
+| Empty | Guiding, not sad | Opportunity + action | "No rewards yet. Stake to earn" |
+| Confirmation | Clear stakes | What will happen | "Claim 100 HONEY to wallet?" |
+
+**Voice constraints:**
+- Buttons: 1-3 words (action-oriented)
+- Errors: What + Why + Fix
+- Empty states: Explain + Guide
+- Confirmations: Stakes + Escape
 
 ---
 
 ## Protected Capabilities
 
-Some things must always work:
+Non-negotiable. Sigil enforces these:
 
 | Capability | Rule |
 |------------|------|
 | Withdraw | Always reachable |
-| Cancel | Always visible |
+| Cancel | Always visible (even during loading) |
+| Balance | Always accurate |
 | Touch target | ≥44px minimum |
 | Focus ring | Always visible |
 | Error recovery | Always possible |
 
-Sigil enforces these. You can override with justification.
-
----
-
-## Philosophy
-
-**Effect is truth.** What the code *does* determines behavioral physics. What it *is* determines material physics. Both determine feel.
-
-**Feel over implementation.** You think in feel ("trustworthy", "snappy", "glassmorphism"). Sigil translates to physics.
-
-**Taste is personal physics.** Usage is feedback. Accept, modify, or reject. Corrections teach more than silence.
-
-**Visible reasoning.** Sigil shows its analysis before generating. You can correct before wasted effort.
-
-**Physics is unified.** Behavioral, animation, and material aren't separate concerns—they're three layers of the same thing: how products make people feel.
+Override requires explicit justification.
 
 ---
 
 ## Loa Integration
 
-Sigil is designed to work with [Loa](https://github.com/0xHoneyJar/loa).
-
-**The division of labor:**
+Sigil is a **Loa Construct** — extends Loa without modifying it.
 
 | Loa (Architecture) | Sigil (Physics) |
 |-------------------|-----------------|
 | "What to build" | "How it feels" |
-| PRD → SDD → Sprint | Craft → Iterate → Inscribe |
+| PRD → SDD → Sprint | Understand → Craft → Validate |
 | Spec'd upfront | Emerges through iteration |
-| Deterministic | Creative |
 
-**The handoff:**
+**Key principle:** Sigil **invokes** Loa commands — never modifies them. Context flows from Sigil (observations, taste) into Loa (planning), then Sigil applies physics during implementation.
 
 ```
-Loa workflow                     Sigil takes over
-────────────────────────────────────────────────────
-/plan-and-analyze → PRD
-/architect → SDD
-/sprint-plan → Tasks
-                    ↓
-              "implement checkout UI"
-                    ↓
-              /distill → components with physics hints
-                    ↓
-              /craft each component
-                    ↓
-              iterate until right
-                    ↓
-              /inscribe when patterns solidify
+/craft detects HAMMER
+     │
+     ▼
+Sigil invokes Loa:
+• /plan-and-analyze (seeded with user observations, taste)
+• /architect
+• /sprint-plan
+     │
+     ▼
+User reviews plan → /run sprint-plan
+     │
+     ▼
+Loa executes tasks, Sigil applies physics to UI work
 ```
 
-**Why the split:**
+---
 
-Architecture can be spec'd upfront — data models, APIs, dependencies. These are deterministic.
+## Repository Structure
 
-Feel cannot be fully spec'd. You know "trustworthy" when you see it, but you can't describe it completely in advance. Feel emerges through iteration — observe, tune, repeat.
+```
+.claude/
+├── commands/                 # Slash commands (47 total)
+│   ├── craft.md              # Primary entry point (v2.0.0)
+│   ├── ward.md               # Physics audit
+│   ├── observe.md            # Capture user truth
+│   ├── style.md              # Material only
+│   ├── animate.md            # Animation only
+│   ├── behavior.md           # Behavioral only
+│   ├── inscribe.md           # Graduate patterns
+│   └── ...
+│
+├── rules/                    # Physics laws (auto-loaded)
+│   ├── 00-sigil-core.md      # Priority, actions
+│   ├── 01-sigil-physics.md   # Behavioral
+│   ├── 02-sigil-detection.md # Effect detection
+│   ├── 03-sigil-patterns.md  # Golden patterns
+│   ├── 04-sigil-protected.md # Non-negotiables
+│   ├── 05-sigil-animation.md # Animation
+│   ├── 06-sigil-taste.md     # Taste system
+│   ├── 07-sigil-material.md  # Material
+│   ├── 08-sigil-lexicon.md   # Keywords
+│   └── 10-16-react-*.md      # Implementation
+│
+└── scripts/                  # Installation
 
-Loa plans structure. Sigil tunes feel. They meet at the component boundary.
+grimoires/sigil/
+├── taste.md                  # Accumulated learning
+├── hammer-state.json         # Resume interrupted work
+├── observations/             # User truth captures
+│   ├── user-insights.md      # Validated findings
+│   └── {user}-diagnostic.md  # Individual sessions
+├── context/                  # Project context
+└── moodboard/                # Visual references
+```
+
+---
+
+## Configuration
+
+### Taste File
+
+`grimoires/sigil/taste.md` — your accumulated understanding:
+
+```yaml
+---
+timestamp: "2026-01-19T14:32:00Z"
+signal: MODIFY
+component:
+  name: "ClaimButton"
+  effect: "Financial"
+diagnostic:
+  user_type: "mobile"
+  goal: "claim rewards while commuting"
+  expected_feel: "snappy"
+physics:
+  behavioral:
+    timing: "800ms"
+change:
+  from: "800ms"
+  to: "500ms"
+learning:
+  inference: "Mobile users prefer faster timing for financial actions"
+---
+```
+
+### Observations
+
+`grimoires/sigil/observations/user-insights.md` — validated user truths:
+
+```markdown
+## Mobile Users
+- Prefer faster timing (500ms vs 800ms for financial)
+- Need larger touch targets (48px minimum)
+- Expect haptic feedback on confirmation
+
+## Power Users
+- Skip confirmations for repeated actions
+- Prefer keyboard shortcuts
+- Want information density over whitespace
+```
+
+---
+
+## Why "Sigil"?
+
+A sigil is a symbol that holds intention. You speak a desire, condense it into a mark, and the mark carries the meaning forward.
+
+Sigil captures product intention as physics:
+
+- **User truth is foundation.** Who, moment, feeling needed.
+- **Feel is the goal.** Not features, not pixels — feel.
+- **Physics are tools.** Behavioral, animation, material, voice.
+- **Taste is memory.** Accumulated understanding of your users.
+- **Feedback refines everything.** Understand → Craft → Validate → Learn → Repeat.
+
+---
+
+## License
+
+AGPL-3.0. See [LICENSE.md](LICENSE.md).
 
 ---
 
@@ -394,26 +512,8 @@ Loa plans structure. Sigil tunes feel. They meet at the component boundary.
 - [GitHub](https://github.com/0xHoneyJar/sigil)
 - [Issues](https://github.com/0xHoneyJar/sigil/issues)
 - [Loa Framework](https://github.com/0xHoneyJar/loa)
-- [Loa Construct Registry](https://constructs.network)
+- [CHANGELOG](CHANGELOG.md)
 
 ---
 
-## What's New in v2.3.0
-
-This release delivers **Sigil ↔ Loa Synergy** — bridging architecture and physics:
-
-- ✨ **`/understand`** — Domain research before crafting, stores context for `/craft`
-- ✨ **Complexity Detection** — Automatic triggers for indexer work, multi-repo refs, unknown contracts
-- ✨ **DX Physics Handler** — Reduces indexer sync from 4-16h to ~30 seconds
-- ✨ **Shared Context Store** — `grimoires/loa/context/` bridges Sigil and Loa
-- ✨ **Web3 Testing Skill** — Three-layer wagmi/viem mocking (state, provider, fetch)
-- ✨ **`/snapshot`** — Screenshot capture with Web3 state injection
-- ✨ **`/test-flow`** — Multi-step Web3 user journey testing
-- 🔧 **Enhanced `/implement`** — Phase 0.5 complexity detection before implementation
-- 🔧 **Enhanced `/craft`** — Reads domain/ecosystem context for informed generation
-
-See [CHANGELOG.md](CHANGELOG.md) for full release notes.
-
----
-
-*v2.3.0 "Sigil ↔ Loa Synergy"*
+*v2.4.0 "Craft States"*

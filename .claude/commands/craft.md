@@ -1,6 +1,6 @@
 ---
 name: "craft"
-version: "1.4.0"
+version: "2.0.0"
 agent: "crafting-physics"
 description: |
   Apply design physics to any UX-affecting change.
@@ -314,6 +314,369 @@ Mark each in_progress then completed as you work.
 
 **Session health check first**: If drift is at red threshold, pause workflow and show warning before continuing.
 </step_0>
+
+<step_0_5>
+### Step 0.5: Scope Detection (Hammer vs Chisel)
+
+Before discovering context, determine if this work requires full-stack orchestration (hammer) or fine-grained crafting (chisel).
+
+**Check for existing hammer state first:**
+```
+If grimoires/sigil/hammer-state.json exists AND active == true:
+  Show: "Hammer mode in progress: '{feature}' at phase '{phase}'"
+  Options:
+    1. Resume from current phase
+    2. Abandon and start fresh
+    3. Switch to chisel mode for quick work
+```
+
+**Check for flag overrides:**
+- `--hammer` flag → Force hammer mode, skip detection
+- `--chisel` flag → Force chisel mode, skip detection
+
+**Scan for hammer signals** (+1 each):
+| Signal Type | Patterns |
+|-------------|----------|
+| Keywords | "feature", "system", "flow", "pipeline", "integrate", "build", "implement", "create" |
+| Contract refs | `/\b(contract|vault|pool|token|staking)\b/i` |
+| API refs | `/\b(endpoint|api|GET|POST|fetch.*backend)\b/i` |
+| Indexer refs | `/\b(indexer|index|sync|historical|events)\b/i` |
+| Multi-component | "feature", "flow", scope > 5 words |
+
+**Scan for chisel signals** (-1 each):
+| Signal Type | Patterns |
+|-------------|----------|
+| Keywords | "button", "modal", "animation", "hover", "style", "improve", "fix", "polish", "adjust", "tweak", "refine" |
+| Single component | Single noun target, existing file reference |
+| Physics-only | "timing", "motion", "color", "spacing" |
+
+**Scoring:**
+- Each hammer signal: +1
+- Each chisel signal: -1
+- Score >= 2: **HAMMER mode**
+- Score < 2: **CHISEL mode**
+
+**If HAMMER detected:**
+
+```
+┌─ Scope Detection ─────────────────────────────────────────┐
+│                                                           │
+│  This looks like HAMMER work:                             │
+│  • [list detected hammer signals]                         │
+│                                                           │
+│  Full-stack implementation requires architecture.         │
+│  I'll run the complete sequence:                          │
+│                                                           │
+│  1. /plan-and-analyze → Requirements (PRD)                │
+│  2. /architect → Design (SDD)                             │
+│  3. /sprint-plan → Tasks                                  │
+│  4. Review plan                                           │
+│  5. /run sprint-plan → Implementation                     │
+│                                                           │
+│  [Proceed with Hammer] [Chisel anyway (UI only)]          │
+│                                                           │
+└───────────────────────────────────────────────────────────┘
+```
+
+**If user chooses "Proceed with Hammer":**
+- Branch to Hammer Orchestrator (Step H1)
+- Skip regular craft workflow
+
+**If user chooses "Chisel anyway":**
+- Log decision to taste.md with warning
+- Continue with regular craft workflow (Step 1)
+- Note: "⚠ Proceeding chisel-only. Supporting infrastructure not included."
+
+**If CHISEL detected:**
+- Proceed directly to Step 1 (no prompt needed)
+- Optional: Show brief note if close to threshold (score = 1)
+</step_0_5>
+
+<hammer_workflow>
+## Hammer Workflow
+
+When user confirms hammer mode, execute this orchestrated sequence. Hammer mode invokes Loa commands to produce complete architecture before implementation.
+
+<step_h1>
+### Step H1: Check Existing Artifacts
+
+Check for existing Loa artifacts that may satisfy requirements:
+
+```
+Read grimoires/loa/prd.md (if exists)
+Read grimoires/loa/sdd.md (if exists)
+Read grimoires/loa/sprint.md (if exists)
+```
+
+**Staleness thresholds:**
+- PRD/SDD: Stale after 7 days
+- Sprint: Stale after 3 days
+
+**Relevance check:**
+- Does the artifact title/topic match the current feature request?
+- Parse first 50 lines for feature keywords
+
+**If relevant, fresh artifacts exist:**
+```
+┌─ Existing Artifacts Detected ────────────────────────────┐
+│                                                          │
+│  PRD: grimoires/loa/prd.md (2 days old) ✓ relevant      │
+│  SDD: grimoires/loa/sdd.md (2 days old) ✓ relevant      │
+│                                                          │
+│  Options:                                                │
+│  1. Use existing → Skip to sprint planning               │
+│  2. Regenerate PRD → Full sequence                       │
+│  3. Regenerate SDD only → Keep PRD, redo architecture    │
+│  4. Chisel anyway → UI only                              │
+│                                                          │
+└──────────────────────────────────────────────────────────┘
+```
+
+**If no artifacts or stale/irrelevant:**
+- Initialize hammer-state.json
+- Proceed to H2
+
+**State initialization:**
+```json
+{
+  "active": true,
+  "feature": "[user's feature description]",
+  "started_at": "[ISO timestamp]",
+  "phase": "initialized",
+  "phases_completed": [],
+  "context_seeded": { "observations": 0, "taste_patterns": 0 },
+  "components_identified": []
+}
+```
+Write to `grimoires/sigil/hammer-state.json`
+</step_h1>
+
+<step_h2>
+### Step H2: Context Aggregation & /plan-and-analyze
+
+**Aggregate Sigil context for seeding:**
+
+1. **Read observations** (if exist):
+   ```
+   Scan grimoires/sigil/observations/*.diagnostic.md
+   Scan grimoires/sigil/observations/user-insights.md
+   ```
+   Extract: user quotes, user types, gap classifications, physics implications
+
+2. **Read taste patterns** (if exist):
+   ```
+   Read grimoires/sigil/taste.md
+   ```
+   Extract: last 10 signals, timing patterns, animation preferences
+
+3. **Format context seed:**
+   ```markdown
+   ## Sigil Context (Pre-seeded)
+
+   ### User Observations
+   [If observations found:]
+   - @{user}: "{quote truncated to 50 chars}..."
+     → User type: {type}
+     → Physics implication: {implication}
+
+   [If no observations:]
+   (No user observations available)
+
+   ### Taste Patterns
+   [If patterns found:]
+   - {pattern}: {preference} ({count} signals)
+
+   [If no patterns:]
+   (No taste patterns established yet)
+
+   ### Physics Requirements
+   Based on Sigil's design physics:
+   - Financial operations: Pessimistic sync, 800ms timing, confirmation required
+   - Protected capabilities: Cancel always visible, error recovery available
+   - Touch targets: Minimum 44px
+   ```
+
+4. **Invoke /plan-and-analyze:**
+   ```
+   Use Skill tool:
+     skill: "plan-and-analyze"
+     args: "{feature description}
+
+     {formatted context seed}"
+   ```
+
+5. **Wait for PRD completion** (grimoires/loa/prd.md created)
+
+6. **Update state:**
+   ```json
+   {
+     "phase": "prd_complete",
+     "phases_completed": [
+       { "phase": "prd", "completed_at": "[timestamp]", "artifact": "grimoires/loa/prd.md" }
+     ],
+     "context_seeded": { "observations": [count], "taste_patterns": [count] }
+   }
+   ```
+
+7. **Proceed to H3**
+</step_h2>
+
+<step_h3>
+### Step H3: Invoke /architect
+
+1. **Invoke /architect:**
+   ```
+   Use Skill tool:
+     skill: "architect"
+   ```
+   (No args needed — reads PRD from grimoires/loa/prd.md)
+
+2. **Wait for SDD completion** (grimoires/loa/sdd.md created)
+
+3. **Update state:**
+   ```json
+   {
+     "phase": "sdd_complete",
+     "phases_completed": [
+       ...,
+       { "phase": "sdd", "completed_at": "[timestamp]", "artifact": "grimoires/loa/sdd.md" }
+     ]
+   }
+   ```
+
+4. **Proceed to H4**
+</step_h3>
+
+<step_h4>
+### Step H4: Invoke /sprint-plan & Extract Components
+
+1. **Invoke /sprint-plan:**
+   ```
+   Use Skill tool:
+     skill: "sprint-plan"
+   ```
+   (No args needed — reads PRD and SDD)
+
+2. **Wait for sprint.md completion** (grimoires/loa/sprint.md created)
+
+3. **Parse sprint.md for components:**
+   - Extract task list
+   - Identify UI components (frontend tasks)
+   - Classify physics type for each UI component:
+
+   | Component Keywords | Physics Type |
+   |-------------------|--------------|
+   | claim, withdraw, transfer, payment, stake | Financial |
+   | delete, remove, revoke, destroy | Destructive |
+   | archive, trash, dismiss | Soft Delete |
+   | save, update, create, like, follow | Standard |
+   | toggle, switch, theme, filter | Local |
+
+4. **Update state:**
+   ```json
+   {
+     "phase": "sprint_complete",
+     "phases_completed": [
+       ...,
+       { "phase": "sprint", "completed_at": "[timestamp]", "artifact": "grimoires/loa/sprint.md" }
+     ],
+     "components_identified": [
+       { "name": "ComponentName", "type": "frontend|backend|indexer", "physics": "financial|standard|..." }
+     ]
+   }
+   ```
+
+5. **Proceed to H5**
+</step_h4>
+
+<step_h5>
+### Step H5: Present Plan Summary & Handoff
+
+Display complete plan summary:
+
+```
+┌─ Hammer Plan Complete ────────────────────────────────────┐
+│                                                           │
+│  Feature: {feature description}                           │
+│                                                           │
+│  Artifacts:                                               │
+│  • PRD: grimoires/loa/prd.md                             │
+│  • SDD: grimoires/loa/sdd.md                             │
+│  • Sprint: grimoires/loa/sprint.md                       │
+│                                                           │
+│  Components to implement:                                 │
+│  [For each component_identified:]                         │
+│  {n}. [{type}] {name} {physics hint if frontend}          │
+│                                                           │
+│  Example:                                                 │
+│  1. [Backend] RewardsClaimed indexer handler              │
+│  2. [Backend] GET /rewards/:address endpoint              │
+│  3. [Frontend] useRewards hook                            │
+│  4. [Frontend] RewardsList (standard physics)             │
+│  5. [Frontend] ClaimButton (financial physics)            │
+│                                                           │
+│  ─────────────────────────────────────────────────────────│
+│                                                           │
+│  Ready to implement.                                      │
+│  Review the artifacts above, then run:                    │
+│                                                           │
+│    /run sprint-plan                                       │
+│                                                           │
+└───────────────────────────────────────────────────────────┘
+```
+
+**Update state:**
+```json
+{
+  "phase": "awaiting_execution"
+}
+```
+
+**Workflow stops here.**
+- User reviews artifacts (PRD, SDD, sprint)
+- User makes any manual adjustments
+- User runs `/run sprint-plan` when ready
+- Loa handles execution with Sigil physics applied to UI tasks
+
+**On /run sprint-plan completion:**
+- Clear hammer-state.json (delete or set active: false)
+- Log completion to taste.md
+</step_h5>
+
+<hammer_error_handling>
+### Hammer Error Handling
+
+**Loa command failures:**
+
+| Failure | Recovery |
+|---------|----------|
+| `/plan-and-analyze` fails | Offer: 1) Retry, 2) Chisel fallback |
+| `/architect` fails | Offer: 1) Retry, 2) Manual SDD creation guidance |
+| `/sprint-plan` fails | Offer: 1) Retry, 2) Manual task breakdown |
+
+**State corruption:**
+
+| Issue | Recovery |
+|-------|----------|
+| hammer-state.json invalid JSON | Delete file, start fresh |
+| Phase says "prd_complete" but no PRD exists | Trust artifacts, regenerate state |
+| Orphaned state (>24h old, no activity) | Prompt: 1) Resume, 2) Abandon |
+
+**Show clear recovery path:**
+```
+┌─ Hammer Error ────────────────────────────────────────────┐
+│                                                           │
+│  /architect failed: [error message]                       │
+│                                                           │
+│  Options:                                                 │
+│  1. Retry /architect                                      │
+│  2. Create SDD manually (I'll guide you)                  │
+│  3. Abandon hammer, switch to chisel                      │
+│                                                           │
+└───────────────────────────────────────────────────────────┘
+```
+</hammer_error_handling>
+</hammer_workflow>
 
 <step_1>
 ### Step 1: Discover Context
@@ -1010,6 +1373,192 @@ Proceed? (y/n)
 User: y
 
 [Generates component, logs SESSION_OVERRIDE to taste.md]
+```
+
+### Example 8: Hammer Mode — Fresh Start
+
+```
+User: /craft "build rewards claiming feature"
+
+[Scope Detection: Score = 4]
+• "build" (+1)
+• "feature" (+1)
+• "claiming" implies contract interaction (+1)
+• "rewards" implies financial (+1)
+
+┌─ Scope Detection ─────────────────────────────────────────┐
+│                                                           │
+│  This looks like HAMMER work:                             │
+│  • "build" — implementation keyword                       │
+│  • "feature" — multi-component scope                      │
+│  • "claiming" — contract interaction                      │
+│  • "rewards" — financial domain                           │
+│                                                           │
+│  Full-stack implementation requires architecture.         │
+│  I'll run the complete sequence:                          │
+│                                                           │
+│  1. /plan-and-analyze → Requirements (PRD)                │
+│  2. /architect → Design (SDD)                             │
+│  3. /sprint-plan → Tasks                                  │
+│  4. Review plan                                           │
+│  5. /run sprint-plan → Implementation                     │
+│                                                           │
+│  [Proceed with Hammer] [Chisel anyway (UI only)]          │
+│                                                           │
+└───────────────────────────────────────────────────────────┘
+
+User: Proceed with Hammer
+
+[Initializing hammer-state.json...]
+[Aggregating Sigil context...]
+
+Found 2 observations:
+- @papa_flavio: "Can't see my claimable amount before clicking"
+- @builder_dan: "Claim flow too slow for power users"
+
+Found 3 taste patterns:
+- Financial timing: 600ms preferred (3 MODIFY signals)
+- Spring animations preferred
+
+[Invoking /plan-and-analyze with seeded context...]
+
+... [PRD interview/synthesis runs] ...
+
+PRD complete: grimoires/loa/prd.md
+
+[Invoking /architect...]
+
+... [SDD design runs] ...
+
+SDD complete: grimoires/loa/sdd.md
+
+[Invoking /sprint-plan...]
+
+... [Sprint planning runs] ...
+
+Sprint complete: grimoires/loa/sprint.md
+
+┌─ Hammer Plan Complete ────────────────────────────────────┐
+│                                                           │
+│  Feature: Rewards claiming feature                        │
+│                                                           │
+│  Artifacts:                                               │
+│  • PRD: grimoires/loa/prd.md                             │
+│  • SDD: grimoires/loa/sdd.md                             │
+│  • Sprint: grimoires/loa/sprint.md                       │
+│                                                           │
+│  Components to implement:                                 │
+│  1. [Backend] RewardsClaimed indexer handler              │
+│  2. [Backend] GET /rewards/:address endpoint              │
+│  3. [Frontend] useRewards hook                            │
+│  4. [Frontend] RewardsList (standard physics)             │
+│  5. [Frontend] ClaimButton (financial physics)            │
+│                                                           │
+│  ─────────────────────────────────────────────────────────│
+│                                                           │
+│  Ready to implement.                                      │
+│  Review the artifacts above, then run:                    │
+│                                                           │
+│    /run sprint-plan                                       │
+│                                                           │
+└───────────────────────────────────────────────────────────┘
+```
+
+### Example 9: Hammer Mode — Existing Artifacts
+
+```
+User: /craft "implement notification system"
+
+[Scope Detection: HAMMER (score = 3)]
+
+[Checking existing artifacts...]
+
+┌─ Existing Artifacts Detected ────────────────────────────┐
+│                                                          │
+│  PRD: grimoires/loa/prd.md (2 days old) ✓ relevant      │
+│  SDD: grimoires/loa/sdd.md (2 days old) ✓ relevant      │
+│                                                          │
+│  Options:                                                │
+│  1. Use existing → Skip to sprint planning               │
+│  2. Regenerate PRD → Full sequence                       │
+│  3. Regenerate SDD only → Keep PRD, redo architecture    │
+│  4. Chisel anyway → UI only                              │
+│                                                          │
+└──────────────────────────────────────────────────────────┘
+
+User: 1
+
+[Using existing PRD and SDD...]
+[Invoking /sprint-plan...]
+
+... [Sprint planning runs] ...
+
+┌─ Hammer Plan Complete ────────────────────────────────────┐
+│  ...                                                      │
+└───────────────────────────────────────────────────────────┘
+```
+
+### Example 10: User Chooses Chisel Anyway
+
+```
+User: /craft "build portfolio dashboard"
+
+[Scope Detection: HAMMER (score = 2)]
+
+┌─ Scope Detection ─────────────────────────────────────────┐
+│                                                           │
+│  This looks like HAMMER work:                             │
+│  • "build" — implementation keyword                       │
+│  • "dashboard" — multi-component scope                    │
+│                                                           │
+│  [Proceed with Hammer] [Chisel anyway (UI only)]          │
+│                                                           │
+└───────────────────────────────────────────────────────────┘
+
+User: Chisel anyway
+
+⚠ Proceeding chisel-only. Supporting infrastructure not included.
+
+[Logging CHISEL_OVERRIDE to taste.md...]
+
+┌─ Craft Analysis ───────────────────────────────────────┐
+│  Target:       PortfolioDashboard (new)                │
+│  Craft Type:   Generate                                │
+│  Effect:       Query (data display)                    │
+│  Note:         Chisel override — no backend/data layer │
+│                                                        │
+│  ...                                                   │
+└────────────────────────────────────────────────────────┘
+
+Proceed? (y/n)
+```
+
+### Example 11: Resume Interrupted Hammer Session
+
+```
+User: /craft "claim button"
+
+[Checking hammer state...]
+
+┌─ Hammer Mode In Progress ─────────────────────────────────┐
+│                                                           │
+│  Feature: "rewards claiming feature"                      │
+│  Phase: sdd_complete                                      │
+│  Started: 2 hours ago                                     │
+│                                                           │
+│  Options:                                                 │
+│  1. Resume from current phase (sprint planning next)      │
+│  2. Abandon and start fresh                               │
+│  3. Switch to chisel mode for quick work                  │
+│                                                           │
+└───────────────────────────────────────────────────────────┘
+
+User: 1
+
+[Resuming hammer mode...]
+[Invoking /sprint-plan...]
+
+... [continues from where it left off] ...
 ```
 </examples>
 
