@@ -1,19 +1,25 @@
 # /observe Command
 
-Capture user feedback as structured diagnostic observations. Implements "Mom Test" style questioning to extract actionable truths.
+Capture user feedback as structured diagnostic observations OR perform blockchain state inspection for debugging.
 
 ---
 
 ## Purpose
 
-Transform raw user feedback into structured observations that inform design physics decisions. Goes beyond taste signals (which capture developer preferences) to capture actual user behavior, expectations, and gaps.
+Two modes:
+1. **Feedback Mode** - Transform raw user feedback into structured observations that inform design physics decisions
+2. **Diagnose Mode** - Inspect on-chain state to verify data source correctness in web3 components
 
 ---
 
 ## Usage
 
 ```
+# Feedback mode
 /observe "<user-quote>" [options]
+
+# Diagnose mode (web3 debugging)
+/observe diagnose [ComponentName]
 ```
 
 ### Arguments
@@ -268,6 +274,221 @@ Key insight: "I try to remember the number from before but I forget"
 - `/craft --experiment EXP-XXX` - Generate components for specific experiment
 - `/taste-synthesize` - Analyze taste patterns
 - `/plan-and-analyze` - Full PRD discovery (includes user research phase)
+
+---
+
+## Blockchain Diagnostics Mode
+
+When invoked as `/observe diagnose [ComponentName]`:
+
+### Overview
+
+Use this mode when debugging web3 components that show incorrect data. It compares on-chain state with indexed/cached data to identify mismatches.
+
+### Step D1: Identify Component Data Needs
+
+Read the component file and extract:
+- Contract addresses referenced
+- Data hooks (useReadContract, useQuery, useContractRead)
+- Data sources (Envio queries, on-chain reads)
+- User address context (from props or hooks)
+
+```
+Read component file
+Extract: contracts[], hooks[], data_sources[]
+Show:
+
+┌─ Component Analysis ───────────────────────────────────┐
+│                                                        │
+│  Component:    {ComponentName}                         │
+│  File:         {file_path}                             │
+│                                                        │
+│  Contracts found:                                      │
+│  • {contract_name}: {address}                          │
+│                                                        │
+│  Data hooks:                                           │
+│  • useReadContract: {function_name}                    │
+│  • useQuery: {query_name} (Envio)                      │
+│                                                        │
+│  Proceed with on-chain inspection? (y/n)               │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+```
+
+### Step D2: Execute On-Chain Reads
+
+Use blockchain-inspector skill or cast fallback to:
+1. Get current block number
+2. Read contract state for relevant addresses
+3. Query Envio for same data points (if applicable)
+
+**Implementation Options (in priority order):**
+
+1. **Viem** (if project has viem installed):
+```typescript
+const client = createPublicClient({
+  chain: targetChain,
+  transport: http(process.env.RPC_URL)
+})
+
+const balance = await client.readContract({
+  address: CONTRACT_ADDRESS,
+  abi: contractAbi,
+  functionName: 'balanceOf',
+  args: [userAddress]
+})
+```
+
+2. **Cast** (fallback - foundry CLI):
+```bash
+cast call $CONTRACT "balanceOf(address)(uint256)" $USER --rpc-url $RPC
+```
+
+3. **Raw JSON-RPC** (universal fallback):
+```bash
+curl -X POST "$RPC_URL" \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","method":"eth_call","params":[{"to":"'$CONTRACT'","data":"'$CALLDATA'"},"latest"],"id":1}'
+```
+
+### Step D3: Source Comparison
+
+Show diagnostic report with mismatch highlighting:
+
+```
+┌─ Diagnostic Report ────────────────────────────────────┐
+│                                                        │
+│  Component: StakeButton                                │
+│  File:      src/components/StakeButton.tsx             │
+│  User:      0x79092...                                 │
+│  Block:     15,899,150                                 │
+│                                                        │
+│  ┌─ Source Comparison ─────────────────────────────┐   │
+│  │                                                 │   │
+│  │  Field          On-Chain    Envio    Match?     │   │
+│  │  ────────────────────────────────────────────   │   │
+│  │  vaultShares    0           8.25e18  ❌ NO      │   │
+│  │  stakedShares   8.25e18     8.25e18  ✓ Yes      │   │
+│  │  allowance      MAX         MAX      ✓ Yes      │   │
+│  │                                                 │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                        │
+│  Diagnosis: User has STAKED shares (in MultiRewards)   │
+│  but component shows VAULT shares (Envio).             │
+│                                                        │
+│  Root Cause: Wrong contract address or field queried   │
+│                                                        │
+│  Suggested Fix:                                        │
+│  Query multiRewards.balanceOf() not vault.balanceOf()  │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+```
+
+### Step D4: Update craft-state.md
+
+Save diagnostic findings to `grimoires/sigil/craft-state.md` for next /craft iteration:
+
+```yaml
+diagnostics:
+  - timestamp: "{ISO8601}"
+    command: "/observe diagnose {ComponentName}"
+    block: 15899150
+    findings:
+      on_chain:
+        vault_shares: "0"
+        staked_shares: "8.25e18"
+      envio:
+        vault_shares: "8.25e18"
+      mismatch: ["vault_shares"]
+    diagnosis: "User has staked, but component queries vault"
+    suggested_fix: "Query multiRewards.balanceOf() not vault.balanceOf()"
+```
+
+### Step D5: Recommend Next Action
+
+Based on findings, suggest next step:
+
+```
+┌─ Recommended Action ───────────────────────────────────┐
+│                                                        │
+│  Findings saved to craft-state.md                      │
+│                                                        │
+│  Options:                                              │
+│  [f] /craft "fix {ComponentName}" - Apply fix          │
+│  [u] /understand "{topic}" - Research further          │
+│  [m] Manual fix - I'll handle it                       │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+```
+
+### Diagnostic Report YAML Output
+
+For machine parsing, save structured output:
+
+```yaml
+# grimoires/sigil/observations/{component}-diagnostic.yaml
+component: StakeButton
+file: src/components/StakeButton.tsx
+timestamp: "2026-01-20T15:45:00Z"
+block: 15899150
+
+contracts:
+  - name: vault
+    address: "0x3bEC4..."
+  - name: multiRewards
+    address: "0x8d15E..."
+
+reads:
+  - contract: "vault"
+    function: "balanceOf"
+    args: ["0x79092..."]
+    result: "0"
+    decoded: "0 shares"
+  - contract: "multiRewards"
+    function: "balanceOf"
+    args: ["0x79092..."]
+    result: "8250000000000000000"
+    decoded: "8.25 shares"
+
+comparison:
+  on_chain:
+    vault_shares: "0"
+    staked_shares: "8.25e18"
+  envio:
+    vault_shares: "8.25e18"
+    staked_shares: null
+  mismatch:
+    - field: "vault_shares"
+      on_chain: "0"
+      envio: "8.25e18"
+      severity: "critical"
+
+diagnosis:
+  summary: "User has staked, but component queries vault"
+  root_cause: "Wrong contract address queried"
+  confidence: "high"
+
+suggested_fix:
+  description: "Query multiRewards.balanceOf() instead of vault.balanceOf()"
+  affected_files:
+    - src/components/StakeButton.tsx
+  physics_impact: "Data source should be on-chain for button states"
+```
+
+### RPC Configuration
+
+Reads RPC URL from (in priority order):
+1. Environment variable: `RPC_URL`, `VITE_RPC_URL`, `NEXT_PUBLIC_RPC_URL`
+2. Project config: `envio.config.ts` networks section
+3. Package.json scripts (look for RPC references)
+4. Prompt user if not found
+
+### Limitations
+
+- Read-only (no state changes)
+- Requires ABI for complex decoding (or falls back to raw bytes)
+- Rate limited on public RPCs
+- May need user address context for per-user queries
 
 ---
 
