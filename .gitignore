@@ -71,40 +71,30 @@ grimoires/loa/analytics/pending-feedback.json
 grimoires/loa/deployment/SERVER-REALITY-AUDIT.md
 
 # =============================================================================
-# LOA TEMPLATE EXCLUSIONS
+# LOA GRIMOIRE (private development artifacts)
 # =============================================================================
-# These files are ALWAYS excluded from the template repository.
-# They are generated per-project and must never be committed to the main loa repo.
+# The grimoires/loa/ directory contains private development artifacts that
+# should remain local-only. This includes:
+# - PRDs, SDDs, sprint plans
+# - Security audit reports
+# - Agent-to-agent communication
+# - Analytics and deployment configs
+#
+# These are generated per-project and must never be committed.
 
-# Generated documentation artifacts
-grimoires/loa/prd.md
-grimoires/loa/sdd.md
-grimoires/loa/sprint.md
-grimoires/loa/NOTES.md
+# Exclude all loa grimoire content
+grimoires/loa/*
 
-# Agent-to-Agent communication (sprint-specific, generated)
-# README.md files are kept to explain the directory purpose
+# Keep directory structure with README files
+!grimoires/loa/README.md
+!grimoires/loa/a2a/
 grimoires/loa/a2a/*
 !grimoires/loa/a2a/README.md
-!grimoires/loa/a2a/trajectory/
-grimoires/loa/a2a/trajectory/*
-!grimoires/loa/a2a/trajectory/README.md
-
-# Deployment artifacts (project-specific)
-grimoires/loa/deployment/*
-!grimoires/loa/deployment/README.md
-
-# Reality extraction (codebase-specific)
-grimoires/loa/reality/*
-!grimoires/loa/reality/README.md
-
-# Analytics (usage tracking, developer-specific)
-grimoires/loa/analytics/*
-!grimoires/loa/analytics/README.md
-
-# Research files (project-specific discoveries)
-grimoires/loa/research/*
-!grimoires/loa/research/README.md
+!grimoires/loa/context/
+grimoires/loa/context/*
+!grimoires/loa/context/README.md
+!grimoires/loa/context/archive/
+grimoires/loa/context/archive/**
 
 # Public grimoires (project-specific outputs, not template content)
 # Only README.md files are tracked to preserve directory structure
@@ -246,3 +236,5 @@ sigil-mark/moodboard/**/*.fig
 !sigil-mark/moodboard/**/README.md
 !sigil-mark/moodboard/**/*.yaml
 !sigil-mark/moodboard/**/*.md
+.obsidian/
+.run/state.json
