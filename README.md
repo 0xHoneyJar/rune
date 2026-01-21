@@ -1,8 +1,8 @@
 # Sigil
 
-[![Version](https://img.shields.io/badge/version-3.2.0-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-4.0.0-blue.svg)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-AGPL--3.0-green.svg)](LICENSE.md)
-[![Release](https://img.shields.io/badge/release-Diagnostic_HUD_%26_Package_Architecture-purple.svg)](CHANGELOG.md#320---2026-01-21--diagnostic-hud--package-architecture)
+[![Release](https://img.shields.io/badge/release-Unified_Sigil_Architecture-purple.svg)](https://github.com/0xHoneyJar/sigil/releases/tag/v4.0.0)
 
 > *"A sigil holds the tension — creative intuition grounded in user truth. Move fast without losing sight of what actually matters."*
 
@@ -859,7 +859,7 @@ cd your-project
 Install just the Rust CLIs (anchor and lens):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/0xHoneyJar/sigil/main/scripts/install-cli.sh | bash
+curl -fsSL https://cdn.jsdelivr.net/gh/0xHoneyJar/sigil@main/scripts/install-cli.sh | bash
 ```
 
 ### Updating Sigil
