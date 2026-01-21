@@ -27,6 +27,8 @@ chrono.workspace = true
 fs2.workspace = true
 tracing.workspace = true
 tracing-subscriber.workspace = true
+alloy.workspace = true
+url.workspace = true
 
 # Shared IPC utilities
 sigil-ipc = { path = "../sigil-ipc" }
