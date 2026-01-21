@@ -81,15 +81,15 @@ impl AnchorError {
     /// - 6: SCHEMA (invalid input schema)
     pub fn exit_code(&self) -> i32 {
         match self {
-            Self::Io(_) | Self::Json(_) => 6,                    // SCHEMA
-            Self::Rpc(_) | Self::SpawnFailed(_) => 4,            // REVERT
-            Self::SnapshotRevertFailed(_) => 4,                  // REVERT
-            Self::StateCorruption => 5,                          // CORRUPT
+            Self::Io(_) | Self::Json(_) => 6,         // SCHEMA
+            Self::Rpc(_) | Self::SpawnFailed(_) => 4, // REVERT
+            Self::SnapshotRevertFailed(_) => 4,       // REVERT
+            Self::StateCorruption => 5,               // CORRUPT
             Self::InvalidZone(_)
             | Self::InvalidEffectType(_)
             | Self::InvalidSyncStrategy(_)
-            | Self::InvalidConfirmationType(_) => 6,             // SCHEMA
-            _ => 1,                                              // General error
+            | Self::InvalidConfirmationType(_) => 6, // SCHEMA
+            _ => 1,                                   // General error
         }
     }
 }

@@ -209,8 +209,13 @@ impl Task {
     }
 
     /// Check if all dependencies are in a given set of completed task IDs.
-    pub fn dependencies_satisfied(&self, completed_ids: &std::collections::HashSet<String>) -> bool {
-        self.dependencies.iter().all(|dep| completed_ids.contains(dep))
+    pub fn dependencies_satisfied(
+        &self,
+        completed_ids: &std::collections::HashSet<String>,
+    ) -> bool {
+        self.dependencies
+            .iter()
+            .all(|dep| completed_ids.contains(dep))
     }
 
     /// Get the task duration if completed.

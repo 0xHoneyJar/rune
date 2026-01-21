@@ -68,7 +68,11 @@ fn main() {
     };
 
     match cli.command {
-        Some(Commands::Fork { network, block, port }) => {
+        Some(Commands::Fork {
+            network,
+            block,
+            port,
+        }) => {
             let net = match Network::from_str(&network) {
                 Ok(n) => n,
                 Err(e) => {
@@ -79,7 +83,10 @@ fn main() {
 
             println!("Creating fork...");
             println!("  Network: {} (chain ID: {})", net.name(), net.chain_id());
-            println!("  Block: {}", block.map_or("latest".to_string(), |b| b.to_string()));
+            println!(
+                "  Block: {}",
+                block.map_or("latest".to_string(), |b| b.to_string())
+            );
             println!("  Port: {}", port);
             println!("  Zone: {}", zone);
 

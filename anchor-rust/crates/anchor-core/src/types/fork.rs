@@ -148,14 +148,7 @@ mod tests {
     use super::*;
 
     fn create_test_fork(id: &str, port: u16) -> Fork {
-        Fork::new(
-            id.to_string(),
-            Network::Mainnet,
-            1000000,
-            port,
-            12345,
-            None,
-        )
+        Fork::new(id.to_string(), Network::Mainnet, 1000000, port, 12345, None)
     }
 
     #[test]

@@ -90,10 +90,7 @@ impl Network {
 
     /// Check if this is a Layer 2 network.
     pub fn is_l2(&self) -> bool {
-        matches!(
-            self,
-            Network::Base | Network::Arbitrum | Network::Optimism
-        )
+        matches!(self, Network::Base | Network::Arbitrum | Network::Optimism)
     }
 }
 
