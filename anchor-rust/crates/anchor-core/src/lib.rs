@@ -22,6 +22,7 @@ pub mod error;
 pub mod lifecycle;
 pub mod rpc;
 pub mod types;
+pub mod warden;
 
 // Re-export commonly used types at crate root
 pub use error::AnchorError;
@@ -31,6 +32,10 @@ pub use types::{
     Checkpoint, CheckpointRegistry, ConfirmationType, EffectType, Fork, ForkRegistry, Network,
     PhysicsRule, PhysicsTable, Session, SessionMetadata, SessionRegistry, SessionStatus, Snapshot,
     SnapshotRegistry, SyncStrategy, Task, TaskStatus, TaskType, Zone,
+};
+pub use warden::{
+    get_default_physics, load_physics, load_physics_cached, resolve_effect_from_keywords,
+    KeywordCategory, PhysicsLoader, TypeOverride, Vocabulary, VocabularyLoader,
 };
 
 /// Result type alias for Anchor operations.

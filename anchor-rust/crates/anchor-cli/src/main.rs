@@ -16,11 +16,14 @@
 //! - `anchor sessions` - List all sessions
 //! - `anchor resume` - Resume a paused session
 //! - `anchor status` - Show current fork and task status
+//! - `anchor physics` - Show physics rules
+//! - `anchor vocabulary` - Show vocabulary/lexicon
+//! - `anchor resolve` - Resolve effect type from keywords
 
 use clap::{Parser, Subcommand};
 use sigil_anchor_core::{
-    CheckpointManager, ForkManager, Network, RpcClient, SessionManager, SessionStatus,
-    SnapshotManager, Zone, VERSION,
+    get_default_physics, CheckpointManager, ForkManager, Network, PhysicsLoader, RpcClient,
+    SessionManager, SessionStatus, SnapshotManager, Vocabulary, VocabularyLoader, Zone, VERSION,
 };
 use std::path::PathBuf;
 use std::str::FromStr;
@@ -227,6 +230,38 @@ enum Commands {
 
     /// Show version information
     Version,
+
+    /// Show physics rules
+    Physics {
+        /// Path to custom physics file (uses defaults if not specified)
+        #[arg(short, long)]
+        file: Option<PathBuf>,
+
+        /// Output as JSON
+        #[arg(long)]
+        json: bool,
+    },
+
+    /// Show vocabulary/lexicon
+    Vocabulary {
+        /// Path to custom vocabulary file (uses defaults if not specified)
+        #[arg(short, long)]
+        file: Option<PathBuf>,
+
+        /// Output as JSON
+        #[arg(long)]
+        json: bool,
+    },
+
+    /// Resolve effect type from keywords
+    Resolve {
+        /// Keywords to analyze (comma-separated or multiple args)
+        keywords: Vec<String>,
+
+        /// Optional type hint (e.g., Currency, Password)
+        #[arg(short, long)]
+        type_hint: Option<String>,
+    },
 }
 
 #[tokio::main]
@@ -960,6 +995,176 @@ async fn main() {
 
         Some(Commands::Version) => {
             println!("Anchor v{}", VERSION);
+        }
+
+        Some(Commands::Physics { file, json }) => {
+            let physics = if let Some(ref path) = file {
+                let loader = PhysicsLoader::new().with_path(path.to_string_lossy().to_string());
+                match loader.load().await {
+                    Ok(p) => p,
+                    Err(e) => {
+                        eprintln!("Error loading physics from {:?}: {}", path, e);
+                        std::process::exit(6);
+                    }
+                }
+            } else {
+                get_default_physics()
+            };
+
+            if json {
+                let rules: Vec<_> = physics.iter().collect();
+                match serde_json::to_string_pretty(&rules) {
+                    Ok(output) => println!("{}", output),
+                    Err(e) => {
+                        eprintln!("Error serializing physics: {}", e);
+                        std::process::exit(6);
+                    }
+                }
+            } else {
+                println!("Physics Rules");
+                if let Some(ref path) = file {
+                    println!("  Source: {:?}", path);
+                } else {
+                    println!("  Source: defaults");
+                }
+                println!();
+                println!(
+                    "{:<15} {:<12} {:<10} {:<15}",
+                    "Effect", "Sync", "Timing", "Confirmation"
+                );
+                println!("{}", "-".repeat(55));
+                for rule in physics.iter() {
+                    println!(
+                        "{:<15} {:<12} {:<10} {:<15}",
+                        rule.effect.to_string(),
+                        rule.sync.to_string(),
+                        format!("{}ms", rule.timing_ms),
+                        rule.confirmation.to_string()
+                    );
+                }
+            }
+        }
+
+        Some(Commands::Vocabulary { file, json }) => {
+            let vocabulary = if let Some(ref path) = file {
+                let loader = VocabularyLoader::new().with_path(path.to_string_lossy().to_string());
+                match loader.load().await {
+                    Ok(v) => v,
+                    Err(e) => {
+                        eprintln!("Error loading vocabulary from {:?}: {}", path, e);
+                        std::process::exit(6);
+                    }
+                }
+            } else {
+                Vocabulary::defaults()
+            };
+
+            if json {
+                // Build a JSON-friendly structure
+                let entries: Vec<_> = vocabulary.all_keywords().collect();
+                let overrides = vocabulary.type_overrides();
+                let output = serde_json::json!({
+                    "keywords": entries,
+                    "type_overrides": overrides,
+                    "keyword_count": vocabulary.keyword_count()
+                });
+                match serde_json::to_string_pretty(&output) {
+                    Ok(s) => println!("{}", s),
+                    Err(e) => {
+                        eprintln!("Error serializing vocabulary: {}", e);
+                        std::process::exit(6);
+                    }
+                }
+            } else {
+                println!("Vocabulary");
+                if let Some(ref path) = file {
+                    println!("  Source: {:?}", path);
+                } else {
+                    println!("  Source: defaults");
+                }
+                println!();
+
+                // Group keywords by effect
+                use std::collections::HashMap;
+                let mut by_effect: HashMap<String, Vec<String>> = HashMap::new();
+                for entry in vocabulary.all_keywords() {
+                    by_effect
+                        .entry(entry.effect.to_string())
+                        .or_default()
+                        .push(entry.keyword.clone());
+                }
+
+                for (effect, keywords) in by_effect {
+                    println!("{} ({} keywords):", effect, keywords.len());
+                    // Print keywords in rows of 6
+                    for chunk in keywords.chunks(6) {
+                        println!("  {}", chunk.join(", "));
+                    }
+                    println!();
+                }
+
+                // Show type overrides
+                println!("Type Overrides:");
+                for override_entry in vocabulary.type_overrides() {
+                    println!(
+                        "  {} -> {} ({})",
+                        override_entry.pattern, override_entry.effect, override_entry.reason
+                    );
+                }
+            }
+        }
+
+        Some(Commands::Resolve {
+            keywords,
+            type_hint,
+        }) => {
+            let vocabulary = Vocabulary::defaults();
+
+            // Flatten keywords (handle comma-separated) and join into a single text
+            let all_keywords: Vec<String> = keywords
+                .iter()
+                .flat_map(|k| k.split(',').map(|s| s.trim().to_string()))
+                .filter(|s| !s.is_empty())
+                .collect();
+
+            if all_keywords.is_empty() {
+                eprintln!("No keywords provided.");
+                std::process::exit(6);
+            }
+
+            let text = all_keywords.join(" ");
+            let type_hints: Vec<&str> = type_hint.iter().map(|s| s.as_str()).collect();
+            let effect = sigil_anchor_core::warden::resolve_effect_from_keywords(
+                &text,
+                &type_hints,
+                &vocabulary,
+            );
+
+            println!("Keywords: {}", all_keywords.join(", "));
+            if let Some(ref hint) = type_hint {
+                println!("Type hint: {}", hint);
+            }
+            println!();
+
+            match effect {
+                Some(e) => {
+                    println!("Resolved effect: {}", e);
+
+                    // Show physics for this effect
+                    let physics = get_default_physics();
+                    if let Some(rule) = physics.get(&e) {
+                        println!();
+                        println!("Physics:");
+                        println!("  Sync: {}", rule.sync);
+                        println!("  Timing: {}ms", rule.timing_ms);
+                        println!("  Confirmation: {}", rule.confirmation);
+                    }
+                }
+                None => {
+                    println!("No effect type resolved from keywords.");
+                    println!("Try adding more specific keywords or a type hint.");
+                }
+            }
         }
 
         None => {
