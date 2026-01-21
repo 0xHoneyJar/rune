@@ -5,7 +5,17 @@
  */
 
 // Lifecycle
-export { ForkManager, getForkManager, resetForkManager } from './lifecycle/index.js';
+export {
+  ForkManager,
+  getForkManager,
+  resetForkManager,
+  SnapshotManager,
+  getSnapshotManager,
+  resetSnapshotManager,
+} from './lifecycle/index.js';
+
+// Graph
+export { TaskGraph, generateTaskId, resetTaskCounter } from './graph/index.js';
 
 // Utils
 export {

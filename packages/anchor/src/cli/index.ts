@@ -8,6 +8,7 @@
 
 import { Command } from 'commander';
 import { ForkManager } from '../lifecycle/fork-manager.js';
+import { SnapshotManager } from '../lifecycle/snapshot-manager.js';
 import type { NetworkConfig } from '../types.js';
 
 const VERSION = '4.3.1';
@@ -232,6 +233,140 @@ program
     } catch (error) {
       console.error(error instanceof Error ? error.message : error);
       process.exit(1);
+    }
+  });
+
+// =============================================================================
+// Snapshot Commands
+// =============================================================================
+
+program
+  .command('snapshot')
+  .description('Create a new EVM snapshot')
+  .requiredOption('-f, --fork <id>', 'Fork ID to snapshot')
+  .requiredOption('-s, --session <id>', 'Session ID')
+  .option('-t, --task <id>', 'Task ID to associate with snapshot')
+  .option('-d, --description <text>', 'Description of the snapshot')
+  .action(async (options: {
+    fork: string;
+    session: string;
+    task?: string;
+    description?: string;
+  }) => {
+    const forkManager = new ForkManager();
+    await forkManager.init();
+
+    const fork = forkManager.get(options.fork);
+    if (!fork) {
+      console.error(`Fork not found: ${options.fork}`);
+      process.exit(1);
+    }
+
+    const snapshotManager = new SnapshotManager();
+    await snapshotManager.init(options.session);
+
+    try {
+      const snapshot = await snapshotManager.create(
+        {
+          forkId: options.fork,
+          sessionId: options.session,
+          taskId: options.task,
+          description: options.description,
+        },
+        fork.rpcUrl
+      );
+
+      console.log('Snapshot created:');
+      console.log('');
+      console.log(`  ID:          ${snapshot.id}`);
+      console.log(`  Block:       ${snapshot.blockNumber}`);
+      console.log(`  Session:     ${snapshot.sessionId}`);
+      if (snapshot.taskId) {
+        console.log(`  Task:        ${snapshot.taskId}`);
+      }
+      if (snapshot.description) {
+        console.log(`  Description: ${snapshot.description}`);
+      }
+    } catch (error) {
+      console.error('Failed to create snapshot:', error instanceof Error ? error.message : error);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('revert <snapshot-id>')
+  .description('Revert to a previous EVM snapshot')
+  .requiredOption('-f, --fork <id>', 'Fork ID to revert')
+  .requiredOption('-s, --session <id>', 'Session ID')
+  .action(async (snapshotId: string, options: { fork: string; session: string }) => {
+    const forkManager = new ForkManager();
+    await forkManager.init();
+
+    const fork = forkManager.get(options.fork);
+    if (!fork) {
+      console.error(`Fork not found: ${options.fork}`);
+      process.exit(1);
+    }
+
+    const snapshotManager = new SnapshotManager();
+    await snapshotManager.init(options.session);
+
+    const snapshot = snapshotManager.get(snapshotId);
+    if (!snapshot) {
+      console.error(`Snapshot not found: ${snapshotId}`);
+      process.exit(1);
+    }
+
+    try {
+      const success = await snapshotManager.revert(fork.rpcUrl, snapshotId);
+
+      if (success) {
+        console.log(`Reverted to snapshot ${snapshotId}`);
+        console.log(`  Block: ${snapshot.blockNumber}`);
+      } else {
+        console.error('Revert failed');
+        process.exit(1);
+      }
+    } catch (error) {
+      console.error('Failed to revert:', error instanceof Error ? error.message : error);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('snapshots')
+  .description('List all snapshots for a session')
+  .requiredOption('-s, --session <id>', 'Session ID')
+  .option('--json', 'Output as JSON')
+  .action(async (options: { session: string; json?: boolean }) => {
+    const snapshotManager = new SnapshotManager();
+    await snapshotManager.init(options.session);
+
+    const snapshots = snapshotManager.list();
+
+    if (options.json) {
+      console.log(JSON.stringify(snapshots, null, 2));
+      return;
+    }
+
+    if (snapshots.length === 0) {
+      console.log('No snapshots for this session.');
+      return;
+    }
+
+    console.log(`Snapshots for session ${options.session}:`);
+    console.log('');
+
+    for (const snap of snapshots) {
+      const age = Math.round((Date.now() - snap.createdAt.getTime()) / 1000 / 60);
+      console.log(`  ${snap.id}`);
+      console.log(`    Block: ${snap.blockNumber}`);
+      console.log(`    Fork:  ${snap.forkId}`);
+      console.log(`    Age:   ${age} minutes`);
+      if (snap.taskId) {
+        console.log(`    Task:  ${snap.taskId}`);
+      }
+      console.log('');
     }
   });
 
