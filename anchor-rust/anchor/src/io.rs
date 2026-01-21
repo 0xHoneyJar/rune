@@ -2,9 +2,12 @@
 //!
 //! All communication between constructs happens via the shared `grimoires/pub/` directory.
 
-use std::fs;
+use std::fs::{self, File};
+use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
+use std::time::{Duration, SystemTime};
 
+use fs2::FileExt;
 use serde::{de::DeserializeOwned, Serialize};
 use uuid::Uuid;
 
@@ -15,6 +18,9 @@ const MAX_REQUEST_SIZE: u64 = 1_048_576;
 
 /// Base path for shared pub directory
 const PUB_PATH: &str = "grimoires/pub";
+
+/// Default TTL for request/response files (1 hour)
+const DEFAULT_TTL_SECS: u64 = 3600;
 
 /// Get the path to a request file
 pub fn request_path(request_id: &str) -> Result<PathBuf> {
@@ -103,6 +109,133 @@ pub fn read_pub_file(filename: &str) -> Result<String> {
     let path = PathBuf::from(PUB_PATH).join(filename);
     let content = fs::read_to_string(&path)?;
     Ok(content)
+}
+
+/// Write a response with advisory locking
+pub fn write_response_locked<T: Serialize>(request_id: &str, response: &T) -> Result<()> {
+    let path = response_path(request_id)?;
+
+    // Ensure directory exists
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+
+    // Create/open file and acquire exclusive lock
+    let file = File::create(&path)?;
+    file.lock_exclusive()?;
+
+    // Write content
+    let content = serde_json::to_string_pretty(response)?;
+    let mut writer = std::io::BufWriter::new(&file);
+    writer.write_all(content.as_bytes())?;
+    writer.flush()?;
+
+    // Lock is released when file is dropped
+    Ok(())
+}
+
+/// Read a request with advisory locking
+pub fn read_request_locked<T: DeserializeOwned>(request_id: &str) -> Result<T> {
+    let path = request_path(request_id)?;
+
+    // Check if file exists
+    if !path.exists() {
+        return Err(AnchorError::RequestNotFound(request_id.to_string()));
+    }
+
+    // Open file and acquire shared lock
+    let file = File::open(&path)?;
+    file.lock_shared()?;
+
+    // Check file size
+    let metadata = file.metadata()?;
+    if metadata.len() > MAX_REQUEST_SIZE {
+        return Err(AnchorError::RequestTooLarge { size: metadata.len() });
+    }
+
+    // Read and parse
+    let mut content = String::new();
+    let mut reader = std::io::BufReader::new(&file);
+    reader.read_to_string(&mut content)?;
+    let request: T = serde_json::from_str(&content)?;
+
+    // Lock is released when file is dropped
+    Ok(request)
+}
+
+/// Clean up stale request and response files older than TTL
+pub fn cleanup_stale_files(ttl_secs: Option<u64>) -> Result<usize> {
+    let ttl = Duration::from_secs(ttl_secs.unwrap_or(DEFAULT_TTL_SECS));
+    let now = SystemTime::now();
+    let mut cleaned = 0;
+
+    // Clean requests
+    let requests_dir = PathBuf::from(PUB_PATH).join("requests");
+    if requests_dir.exists() {
+        cleaned += cleanup_directory(&requests_dir, now, ttl)?;
+    }
+
+    // Clean responses
+    let responses_dir = PathBuf::from(PUB_PATH).join("responses");
+    if responses_dir.exists() {
+        cleaned += cleanup_directory(&responses_dir, now, ttl)?;
+    }
+
+    Ok(cleaned)
+}
+
+/// Helper to clean up files in a directory older than TTL
+fn cleanup_directory(dir: &Path, now: SystemTime, ttl: Duration) -> Result<usize> {
+    let mut cleaned = 0;
+
+    for entry in fs::read_dir(dir)? {
+        let entry = entry?;
+        let path = entry.path();
+
+        // Only process .json files
+        if path.extension().map_or(true, |ext| ext != "json") {
+            continue;
+        }
+
+        // Check file age
+        if let Ok(metadata) = entry.metadata() {
+            if let Ok(modified) = metadata.modified() {
+                if let Ok(age) = now.duration_since(modified) {
+                    if age > ttl {
+                        // Try to remove the file
+                        if fs::remove_file(&path).is_ok() {
+                            cleaned += 1;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Ok(cleaned)
+}
+
+/// Initialize the pub directory with proper .gitignore
+pub fn init_pub_directory() -> Result<()> {
+    ensure_pub_directory()?;
+
+    // Create .gitignore for requests and responses
+    let gitignore_content = r#"# Transient request/response files (auto-cleaned after 1 hour)
+requests/
+responses/
+
+# Keep these tracked files
+!vocabulary.yaml
+!zones.yaml
+!constraints.yaml
+"#;
+
+    let gitignore_path = PathBuf::from(PUB_PATH).join(".gitignore");
+    if !gitignore_path.exists() {
+        fs::write(&gitignore_path, gitignore_content)?;
+    }
+
+    Ok(())
 }
 
 #[cfg(test)]

@@ -75,6 +75,89 @@ pub struct LintResponse {
     pub request_id: String,
 
     /// Whether linting passed (no errors)
+    pub pass: bool,
+
+    /// Individual constraint/heuristic results
+    pub results: Vec<super::constraint_result::ConstraintResult>,
+
+    /// Summary of results
+    pub summary: VerifySummary,
+
+    /// Component metrics from tree-sitter parsing (if code was provided)
+    #[serde(default)]
+    pub metrics: Option<crate::parser::ComponentMetrics>,
+
+    /// Correction context for retry loop (if violations found)
+    #[serde(default)]
+    pub correction: Option<CorrectionContext>,
+}
+
+/// Summary of verification/lint results
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct VerifySummary {
+    /// Total number of checks run
+    pub total: usize,
+    /// Number of checks that passed
+    pub passed: usize,
+    /// Number of checks that failed
+    pub failed: usize,
+    /// Number of error-level failures
+    pub errors: usize,
+    /// Number of warning-level failures
+    pub warnings: usize,
+}
+
+/// Correction context for retry loop
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CorrectionContext {
+    /// The violations found
+    pub violations: Vec<Violation>,
+    /// Suggested fixes
+    pub fixes: Vec<Fix>,
+    /// Current attempt number
+    pub attempt: u32,
+    /// Maximum attempts allowed
+    pub max_attempts: u32,
+    /// Original request for reference
+    #[serde(default)]
+    pub original_request: Option<serde_json::Value>,
+}
+
+/// A violation found during linting
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Violation {
+    /// Constraint or rule ID
+    pub constraint_id: String,
+    /// The rule that was violated
+    pub rule: String,
+    /// Actual value
+    pub actual: String,
+    /// Expected value or range
+    pub expected: String,
+    /// Human-readable message
+    pub message: String,
+}
+
+/// A suggested fix
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Fix {
+    /// Target path (e.g., "behavioral.timing")
+    pub target: String,
+    /// Current value
+    pub current_value: String,
+    /// Required value to pass
+    pub required_value: String,
+    /// Reason for the fix
+    pub reason: String,
+}
+
+/// Legacy lint response for backwards compatibility
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct LegacyLintResponse {
+    /// The request ID this responds to
+    pub request_id: String,
+
+    /// Whether linting passed (no errors)
     pub passed: bool,
 
     /// List of lint issues found
@@ -133,8 +216,8 @@ pub struct LintFix {
     pub new_value: String,
 }
 
-impl LintResponse {
-    /// Create a new lint response
+impl LegacyLintResponse {
+    /// Create a new legacy lint response
     pub fn new(request_id: String, issues: Vec<LintIssue>) -> Self {
         let passed = !issues.iter().any(|i| i.severity == "error");
 
@@ -215,7 +298,7 @@ mod tests {
     }
 
     #[test]
-    fn test_lint_response_new() {
+    fn test_legacy_lint_response_new() {
         let issues = vec![LintIssue {
             rule_id: "timing-hint".to_string(),
             severity: "warning".to_string(),
@@ -226,9 +309,21 @@ mod tests {
             fixable: true,
         }];
 
-        let response = LintResponse::new("req-001".to_string(), issues);
+        let response = LegacyLintResponse::new("req-001".to_string(), issues);
 
         assert!(response.passed); // Warnings don't fail
         assert_eq!(response.issues.len(), 1);
+    }
+
+    #[test]
+    fn test_verify_summary() {
+        let summary = VerifySummary {
+            total: 10,
+            passed: 7,
+            failed: 3,
+            errors: 1,
+            warnings: 2,
+        };
+        assert_eq!(summary.total, summary.passed + summary.failed);
     }
 }

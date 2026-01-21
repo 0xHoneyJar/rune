@@ -58,6 +58,10 @@ pub enum LensError {
     /// Response write error
     #[error("Failed to write response '{request_id}': {reason}")]
     ResponseWrite { request_id: String, reason: String },
+
+    /// Code parsing error
+    #[error("Parse error: {reason}")]
+    Parse { reason: String },
 }
 
 impl LensError {
@@ -102,6 +106,7 @@ impl LensError {
             LensError::ResponseWrite { request_id, reason } => {
                 format!("Failed to write response for '{}': {}", request_id, reason)
             }
+            LensError::Parse { reason } => format!("Code parse error: {}", reason),
         }
     }
 
@@ -125,6 +130,7 @@ impl LensError {
             LensError::ConstraintsNotFound { .. } => ExitCode::Revert as i32,
             LensError::Config(_) => ExitCode::Revert as i32,
             LensError::ResponseWrite { .. } => ExitCode::Revert as i32,
+            LensError::Parse { .. } => ExitCode::Schema as i32,
         }
     }
 }

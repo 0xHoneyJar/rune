@@ -41,6 +41,10 @@ pub struct LintRequest {
     /// The physics analysis to lint
     pub physics: PhysicsAnalysis,
 
+    /// Optional component source code for tree-sitter parsing
+    #[serde(default)]
+    pub component_code: Option<String>,
+
     /// Specific lint rules to run (all if empty)
     #[serde(default)]
     pub lint_rules: Vec<String>,

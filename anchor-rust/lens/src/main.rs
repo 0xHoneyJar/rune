@@ -12,6 +12,7 @@ use sigil_lens_core::{
     types::{
         constraint::ConstraintCategory,
         physics::PhysicsAnalysis,
+        request::VerifyRequest,
         response::VerifyResponse,
     },
     ConstraintResult,
@@ -142,8 +143,8 @@ async fn run_verify(
     let (physics, req_id) = match (request_id, file) {
         (Some(req_id), _) => {
             info!("Loading physics from request: {}", req_id);
-            let physics: PhysicsAnalysis = io::read_request(&req_id)?;
-            (physics, req_id)
+            let request: VerifyRequest = io::read_request(&req_id)?;
+            (request.physics, req_id)
         }
         (None, Some(file_path)) => {
             info!("Loading physics from file: {}", file_path);

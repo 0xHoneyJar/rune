@@ -30,6 +30,7 @@ uuid = { version = "1", features = ["v4", "serde"] }
 thiserror = "1"
 anyhow = "1"
 chrono = { version = "0.4", features = ["serde"] }
+fs2 = "0.4"
 
 # Logging
 tracing = "0.1"
@@ -41,3 +42,7 @@ url = "2"
 
 # CEL (Common Expression Language) for constraint evaluation
 cel-interpreter = "0.8"
+
+# Tree-sitter for code parsing
+tree-sitter = "0.24"
+tree-sitter-typescript = "0.23"

@@ -23,8 +23,11 @@
 
 pub mod cel;
 pub mod commands;
+pub mod correction;
 pub mod error;
+pub mod heuristics;
 pub mod io;
+pub mod parser;
 pub mod types;
 
 // Re-export commonly used types
@@ -35,6 +38,7 @@ pub use types::{
     request::{LintRequest, VerifyRequest},
     response::{LintResponse, VerifyResponse},
 };
+pub use parser::ComponentMetrics;
 
 /// Verify physics analysis against all constraints
 ///
