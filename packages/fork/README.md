@@ -1,17 +1,17 @@
-# @sigil/fork
+# @thehoneyjar/sigil-fork
 
 Fork chain state for local testing. Supports Anvil and Tenderly.
 
 ## Installation
 
 ```bash
-pnpm add @sigil/fork
+pnpm add @thehoneyjar/sigil-fork
 ```
 
 ## Usage
 
 ```typescript
-import { createAnvilForkService } from '@sigil/fork'
+import { createAnvilForkService } from '@thehoneyjar/sigil-fork'
 
 // Create a fork service
 const forkService = createAnvilForkService()

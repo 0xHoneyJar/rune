@@ -174,7 +174,7 @@ Detect what's being crafted before detecting effect:
 | "theme", "colors", "mode", config file | **Configure** | Edit config/theme |
 | "loading", "data", "fetch", "state" | **Pattern** | Hook or utility |
 | "hover", "focus", "states", multiple files | **Polish** | Batch edits |
-| "diagnostic", "HUD", "debug toolbar", "replace toolbar" | **Tooling** | @sigil/hud integration |
+| "diagnostic", "HUD", "debug toolbar", "replace toolbar" | **Tooling** | @thehoneyjar/sigil-hud integration |
 
 **Tooling Detection (v3.2.0):**
 When tooling keywords detected, load `23-sigil-hud.md` and check:

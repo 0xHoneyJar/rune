@@ -5,6 +5,6 @@ export default defineConfig({
   format: ['esm'],
   dts: true,
   clean: true,
-  external: ['react', '@sigil/anchor'],
+  external: ['react', '@thehoneyjar/sigil-anchor'],
   treeshake: true,
 })

@@ -1,5 +1,5 @@
 {
-  "name": "@sigil/toolbar",
+  "name": "@thehoneyjar/sigil-toolbar",
   "version": "0.1.0",
   "description": "Browser extension for Sigil physics detection and visual feedback",
   "private": true,

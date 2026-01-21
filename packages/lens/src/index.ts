@@ -1,5 +1,5 @@
 /**
- * @sigil/lens
+ * @thehoneyjar/sigil-lens
  *
  * Address impersonation for testing different user states.
  */

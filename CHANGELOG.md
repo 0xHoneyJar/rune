@@ -11,13 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Summary
 
-v3.2.0 delivers the **Diagnostic HUD** (`@sigil/hud`) — a composable React component library for diagnostic-first development. This release also includes critical bug fixes from Sprint 0 and establishes the modular package architecture with `@sigil/diagnostics`, `@sigil/fork`, `@sigil/lens`, and `@sigil/simulation`.
+v3.2.0 delivers the **Diagnostic HUD** (`@thehoneyjar/sigil-hud`) — a composable React component library for diagnostic-first development. This release also includes critical bug fixes from Sprint 0 and establishes the modular package architecture with `@thehoneyjar/sigil-diagnostics`, `@thehoneyjar/sigil-fork`, `@thehoneyjar/sigil-lens`, and `@thehoneyjar/sigil-simulation`.
 
 **Key achievement**: Complete HUD implementation with physics analysis, data source tracing, observation capture, and feedback loop integration.
 
 ### Added
 
-#### HUD Package (`@sigil/hud`)
+#### HUD Package (`@thehoneyjar/sigil-hud`)
 
 - **DiagnosticsPanel** — Inline physics compliance checking (TASK-201)
   - Real-time physics analysis display (Behavioral, Animation, Material)
@@ -66,21 +66,21 @@ v3.2.0 delivers the **Diagnostic HUD** (`@sigil/hud`) — a composable React com
 
 #### New Packages
 
-- **`@sigil/diagnostics`** — Physics compliance detection service
+- **`@thehoneyjar/sigil-diagnostics`** — Physics compliance detection service
   - Effect detection from component code
   - Compliance checking against physics rules
   - Issue generation with suggestions
 
-- **`@sigil/fork`** — Chain fork management
+- **`@thehoneyjar/sigil-fork`** — Chain fork management
   - Anvil provider with balance manipulation
   - Tenderly provider with fork creation
   - Snapshot/revert capabilities
 
-- **`@sigil/lens`** — User lens (impersonation) service
+- **`@thehoneyjar/sigil-lens`** — User lens (impersonation) service
   - Address impersonation for testing
   - Saved addresses management
 
-- **`@sigil/simulation`** — Transaction simulation service
+- **`@thehoneyjar/sigil-simulation`** — Transaction simulation service
   - Dry-run execution on forks
   - Balance and state change tracking
   - Event log capture
@@ -117,21 +117,21 @@ v3.2.0 delivers the **Diagnostic HUD** (`@sigil/hud`) — a composable React com
 
 | Package | Version |
 |---------|---------|
-| @sigil/hud | 0.1.0 |
-| @sigil/diagnostics | 0.1.0 |
-| @sigil/fork | 0.1.0 |
-| @sigil/lens | 0.1.0 |
-| @sigil/simulation | 0.1.0 |
+| @thehoneyjar/sigil-hud | 0.1.0 |
+| @thehoneyjar/sigil-diagnostics | 0.1.0 |
+| @thehoneyjar/sigil-fork | 0.1.0 |
+| @thehoneyjar/sigil-lens | 0.1.0 |
+| @thehoneyjar/sigil-simulation | 0.1.0 |
 | sigil-anchor | 0.2.0 |
 | sigil-lens | 0.2.0 |
 | sigil-ipc | 0.1.0 |
 
 ### Migration
 
-No breaking changes. New packages are additive. Install `@sigil/hud` to use the diagnostic HUD:
+No breaking changes. New packages are additive. Install `@thehoneyjar/sigil-hud` to use the diagnostic HUD:
 
 ```tsx
-import { HudProvider, HudPanel, HudTrigger } from '@sigil/hud'
+import { HudProvider, HudPanel, HudTrigger } from '@thehoneyjar/sigil-hud'
 
 function App() {
   return (

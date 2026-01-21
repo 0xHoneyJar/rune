@@ -1,5 +1,5 @@
 /**
- * @sigil/diagnostics
+ * @thehoneyjar/sigil-diagnostics
  *
  * Types for physics compliance checking and issue detection.
  */

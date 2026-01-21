@@ -137,7 +137,7 @@ export function DiagnosticsPanel({ className = '' }: DiagnosticsPanelProps) {
         <div style={styles.unavailable}>
           <p style={styles.unavailableText}>Diagnostics service not available.</p>
           <p style={styles.unavailableHint}>
-            Install @sigil/diagnostics to enable physics analysis.
+            Install @thehoneyjar/sigil-diagnostics to enable physics analysis.
           </p>
         </div>
       </div>

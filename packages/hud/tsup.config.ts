@@ -7,11 +7,11 @@ export default defineConfig({
   clean: true,
   external: [
     'react',
-    '@sigil/anchor',
-    '@sigil/fork',
-    '@sigil/simulation',
-    '@sigil/lens',
-    '@sigil/diagnostics',
+    '@thehoneyjar/sigil-anchor',
+    '@thehoneyjar/sigil-fork',
+    '@thehoneyjar/sigil-simulation',
+    '@thehoneyjar/sigil-lens',
+    '@thehoneyjar/sigil-diagnostics',
   ],
   treeshake: true,
 })

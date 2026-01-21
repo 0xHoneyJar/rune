@@ -7,5 +7,5 @@ export default defineConfig({
   splitting: false,
   sourcemap: true,
   clean: true,
-  external: ['viem', '@sigil/fork'],
+  external: ['viem', '@thehoneyjar/sigil-fork'],
 })

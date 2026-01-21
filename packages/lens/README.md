@@ -1,11 +1,11 @@
-# @sigil/lens
+# @thehoneyjar/sigil-lens
 
 Address impersonation for testing different user states. View your app as any address.
 
 ## Installation
 
 ```bash
-pnpm add @sigil/lens
+pnpm add @thehoneyjar/sigil-lens
 ```
 
 ## Usage
@@ -13,7 +13,7 @@ pnpm add @sigil/lens
 ### React Hooks
 
 ```tsx
-import { useLens, useIsImpersonating, useLensActions } from '@sigil/lens'
+import { useLens, useIsImpersonating, useLensActions } from '@thehoneyjar/sigil-lens'
 
 function MyComponent() {
   const { enabled, impersonatedAddress, realAddress } = useLens()
@@ -41,7 +41,7 @@ function MyComponent() {
 ### Wagmi Integration
 
 ```tsx
-import { useLensAwareAccount } from '@sigil/lens/wagmi'
+import { useLensAwareAccount } from '@thehoneyjar/sigil-lens/wagmi'
 
 function WalletInfo() {
   const { address, realAddress, isImpersonating } = useLensAwareAccount()
@@ -62,7 +62,7 @@ function WalletInfo() {
 ### Service API
 
 ```typescript
-import { createLensService } from '@sigil/lens'
+import { createLensService } from '@thehoneyjar/sigil-lens'
 
 const lensService = createLensService()
 

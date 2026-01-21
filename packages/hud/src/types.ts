@@ -1,5 +1,5 @@
 /**
- * @sigil/hud
+ * @thehoneyjar/sigil-hud
  *
  * Types for the diagnostic HUD.
  */

@@ -29,7 +29,7 @@ export function SimulationPanel({ className = '' }: SimulationPanelProps) {
       <div className={className} style={{ color: '#666' }}>
         <p>Simulation service not available.</p>
         <p style={{ fontSize: '10px', marginTop: '8px' }}>
-          Install @sigil/simulation to enable transaction simulation.
+          Install @thehoneyjar/sigil-simulation to enable transaction simulation.
         </p>
       </div>
     )

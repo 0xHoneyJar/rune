@@ -1,5 +1,5 @@
 {
-  "name": "@sigil/anchor",
+  "name": "@thehoneyjar/sigil-anchor",
   "version": "4.3.1",
   "description": "Ground truth enforcement layer for Sigil - validates AI-generated code against design physics",
   "type": "module",

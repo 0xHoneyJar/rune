@@ -1,5 +1,5 @@
 {
-  "name": "@sigil/dev-toolbar",
+  "name": "@thehoneyjar/sigil-dev-toolbar",
   "version": "0.1.0",
   "description": "Development toolbar for Sigil with User Lens, simulation, and diagnostics",
   "type": "module",

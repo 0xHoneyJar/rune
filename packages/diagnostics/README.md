@@ -1,11 +1,11 @@
-# @sigil/diagnostics
+# @thehoneyjar/sigil-diagnostics
 
 Physics compliance checking and issue detection for Sigil.
 
 ## Installation
 
 ```bash
-pnpm add @sigil/diagnostics
+pnpm add @thehoneyjar/sigil-diagnostics
 ```
 
 ## Usage
@@ -13,7 +13,7 @@ pnpm add @sigil/diagnostics
 ### Quick Diagnosis
 
 ```typescript
-import { createDiagnosticsService } from '@sigil/diagnostics'
+import { createDiagnosticsService } from '@thehoneyjar/sigil-diagnostics'
 
 const diagnosticsService = createDiagnosticsService()
 
@@ -28,7 +28,7 @@ console.log(diagnosis)
 ### Effect Detection
 
 ```typescript
-import { detectEffect, getExpectedPhysics } from '@sigil/diagnostics'
+import { detectEffect, getExpectedPhysics } from '@thehoneyjar/sigil-diagnostics'
 
 // Detect effect from keywords
 const effect = detectEffect(['claim', 'button'])
@@ -43,7 +43,7 @@ console.log(physics)
 ### Compliance Checking
 
 ```typescript
-import { checkCompliance, isFullyCompliant } from '@sigil/diagnostics'
+import { checkCompliance, isFullyCompliant } from '@thehoneyjar/sigil-diagnostics'
 
 const compliance = checkCompliance('financial', {
   behavioral: {
@@ -61,7 +61,7 @@ console.log(compliance.behavioral.reason)
 ### Pattern Matching
 
 ```typescript
-import { createDiagnosticsService } from '@sigil/diagnostics'
+import { createDiagnosticsService } from '@thehoneyjar/sigil-diagnostics'
 
 const diagnosticsService = createDiagnosticsService()
 

@@ -1,18 +1,18 @@
-# @sigil/simulation
+# @thehoneyjar/sigil-simulation
 
 Transaction simulation against forks. Dry-run transactions to see gas, balance changes, and revert reasons.
 
 ## Installation
 
 ```bash
-pnpm add @sigil/simulation @sigil/fork
+pnpm add @thehoneyjar/sigil-simulation @thehoneyjar/sigil-fork
 ```
 
 ## Usage
 
 ```typescript
-import { createForkService } from '@sigil/fork'
-import { createSimulationService } from '@sigil/simulation'
+import { createForkService } from '@thehoneyjar/sigil-fork'
+import { createSimulationService } from '@thehoneyjar/sigil-simulation'
 
 // Create services
 const forkService = createForkService('anvil')

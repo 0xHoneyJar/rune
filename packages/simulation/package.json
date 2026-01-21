@@ -1,5 +1,5 @@
 {
-  "name": "@sigil/simulation",
+  "name": "@thehoneyjar/sigil-simulation",
   "version": "0.1.0",
   "description": "Transaction simulation against fork chains",
   "type": "module",
@@ -24,7 +24,7 @@
     "lint": "eslint src --ext .ts"
   },
   "dependencies": {
-    "@sigil/fork": "workspace:*"
+    "@thehoneyjar/sigil-fork": "workspace:*"
   },
   "peerDependencies": {
     "viem": "^2.0.0"

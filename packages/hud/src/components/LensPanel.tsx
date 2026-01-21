@@ -71,7 +71,7 @@ export function LensPanel({ className = '' }: LensPanelProps) {
       <div className={className} style={{ color: '#666' }}>
         <p>Lens service not available.</p>
         <p style={{ fontSize: '10px', marginTop: '8px' }}>
-          Install @sigil/lens to enable address impersonation.
+          Install @thehoneyjar/sigil-lens to enable address impersonation.
         </p>
       </div>
     )

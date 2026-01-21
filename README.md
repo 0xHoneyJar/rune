@@ -525,12 +525,12 @@ See `anchor-rust/` for full documentation.
 
 ## Diagnostic HUD
 
-The `@sigil/hud` package provides composable React components for diagnostic-first development. Use individual components or the full HUD.
+The `@thehoneyjar/sigil-hud` package provides composable React components for diagnostic-first development. Use individual components or the full HUD.
 
 ### Quick Start
 
 ```tsx
-import { HudProvider, HudPanel, HudTrigger } from '@sigil/hud'
+import { HudProvider, HudPanel, HudTrigger } from '@thehoneyjar/sigil-hud'
 
 function App() {
   return (
@@ -569,16 +569,16 @@ The HUD is built from smaller packages you can use independently:
 
 | Package | Purpose | Install |
 |---------|---------|---------|
-| `@sigil/diagnostics` | Physics compliance checking | `pnpm add @sigil/diagnostics` |
-| `@sigil/fork` | Anvil/Tenderly fork management | `pnpm add @sigil/fork` |
-| `@sigil/lens` | Address impersonation | `pnpm add @sigil/lens` |
-| `@sigil/simulation` | Transaction dry-run | `pnpm add @sigil/simulation` |
+| `@thehoneyjar/sigil-diagnostics` | Physics compliance checking | `pnpm add @thehoneyjar/sigil-diagnostics` |
+| `@thehoneyjar/sigil-fork` | Anvil/Tenderly fork management | `pnpm add @thehoneyjar/sigil-fork` |
+| `@thehoneyjar/sigil-lens` | Address impersonation | `pnpm add @thehoneyjar/sigil-lens` |
+| `@thehoneyjar/sigil-simulation` | Transaction dry-run | `pnpm add @thehoneyjar/sigil-simulation` |
 
 ---
 
 ## Dev Toolbar
 
-The `@sigil/dev-toolbar` package provides browser-based tools for debugging Web3 applications during development. It integrates the HUD components with Web3-specific features.
+The `@thehoneyjar/sigil-dev-toolbar` package provides browser-based tools for debugging Web3 applications during development. It integrates the HUD components with Web3-specific features.
 
 ### Features
 
@@ -593,7 +593,7 @@ The `@sigil/dev-toolbar` package provides browser-based tools for debugging Web3
 ### Quick Start
 
 ```tsx
-import { DevToolbarProvider, DevToolbar, useLensAwareAccount } from '@sigil/dev-toolbar'
+import { DevToolbarProvider, DevToolbar, useLensAwareAccount } from '@thehoneyjar/sigil-dev-toolbar'
 
 function App() {
   return (
@@ -614,7 +614,7 @@ function WalletInfo() {
 ### Transaction Simulation
 
 ```tsx
-import { useTransactionSimulation } from '@sigil/dev-toolbar'
+import { useTransactionSimulation } from '@thehoneyjar/sigil-dev-toolbar'
 
 function ClaimButton() {
   const { simulate, result, isSimulating } = useTransactionSimulation({
@@ -643,7 +643,7 @@ function ClaimButton() {
 ### State Comparison
 
 ```tsx
-import { StateComparison, useStateSnapshots } from '@sigil/dev-toolbar'
+import { StateComparison, useStateSnapshots } from '@thehoneyjar/sigil-dev-toolbar'
 
 function DebugPanel() {
   const { captureSnapshot, leftSnapshot, rightSnapshot, setLeftId, setRightId, snapshots } = useStateSnapshots()

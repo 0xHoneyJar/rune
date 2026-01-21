@@ -1,5 +1,5 @@
 /**
- * @sigil/diagnostics
+ * @thehoneyjar/sigil-diagnostics
  *
  * Physics compliance checking and issue detection for Sigil.
  */

@@ -1,5 +1,5 @@
 {
-  "name": "@sigil/fork",
+  "name": "@thehoneyjar/sigil-fork",
   "version": "0.1.0",
   "description": "Fork chain state for local testing - Anvil and Tenderly integration",
   "type": "module",

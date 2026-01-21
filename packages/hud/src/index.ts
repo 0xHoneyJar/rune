@@ -1,5 +1,5 @@
 /**
- * @sigil/hud
+ * @thehoneyjar/sigil-hud
  *
  * Diagnostic HUD for Sigil - composable React components for development.
  */

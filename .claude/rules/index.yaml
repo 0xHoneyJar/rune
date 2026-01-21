@@ -386,12 +386,12 @@ rules:
         - "data source"
         - "observation"
       packages:
-        - "@sigil/hud"
-        - "@sigil/diagnostics"
-        - "@sigil/dev-toolbar"
-        - "@sigil/fork"
-        - "@sigil/lens"
-        - "@sigil/simulation"
+        - "@thehoneyjar/sigil-hud"
+        - "@thehoneyjar/sigil-diagnostics"
+        - "@thehoneyjar/sigil-dev-toolbar"
+        - "@thehoneyjar/sigil-fork"
+        - "@thehoneyjar/sigil-lens"
+        - "@thehoneyjar/sigil-simulation"
       file_patterns:
         - "debug-toolbar"
         - "dev-tools"

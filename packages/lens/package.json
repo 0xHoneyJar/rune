@@ -1,5 +1,5 @@
 {
-  "name": "@sigil/lens",
+  "name": "@thehoneyjar/sigil-lens",
   "version": "0.1.0",
   "description": "Address impersonation for testing different user states",
   "type": "module",

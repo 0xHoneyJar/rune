@@ -1,5 +1,5 @@
 /**
- * @sigil/fork
+ * @thehoneyjar/sigil-fork
  *
  * Fork chain state for local testing with Anvil and Tenderly integration.
  */

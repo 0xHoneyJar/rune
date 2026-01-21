@@ -1,5 +1,5 @@
 {
-  "name": "@sigil/diagnostics",
+  "name": "@thehoneyjar/sigil-diagnostics",
   "version": "0.1.0",
   "description": "Physics compliance checking and issue detection for Sigil",
   "type": "module",
@@ -23,7 +23,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@sigil/anchor": "workspace:*"
+    "@thehoneyjar/sigil-anchor": "workspace:*"
   },
   "devDependencies": {
     "tsup": "^8.0.0",
@@ -41,7 +41,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/thj/sigil.git",
+    "url": "https://github.com/0xHoneyJar/sigil.git",
     "directory": "packages/diagnostics"
   }
 }
