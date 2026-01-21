@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "anchor",
+    "lens",
 ]
 resolver = "2"
 
@@ -34,5 +35,9 @@ chrono = { version = "0.4", features = ["serde"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
-# Ethereum (for future state queries)
-# alloy = { version = "0.1", features = ["providers", "rpc"] }
+# Ethereum
+alloy = { version = "1.0", default-features = false, features = ["provider-http", "rpc-types", "transport-http"] }
+url = "2"
+
+# CEL (Common Expression Language) for constraint evaluation
+cel-interpreter = "0.8"
