@@ -1,8 +1,8 @@
 # Sigil
 
-[![Version](https://img.shields.io/badge/version-2.5.0-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-AGPL--3.0-green.svg)](LICENSE.md)
-[![Release](https://img.shields.io/badge/release-Web3_Flow_Validation-purple.svg)](CHANGELOG.md#250---2026-01-20--web3-flow-validation)
+[![Release](https://img.shields.io/badge/release-Anchor_Ground_Truth-purple.svg)](CHANGELOG.md#300---2026-01-21--anchor-ground-truth)
 
 > *"A sigil holds the tension — creative intuition grounded in user truth. Move fast without losing sight of what actually matters."*
 
@@ -414,6 +414,67 @@ Loa executes, Sigil applies physics to UI work
 
 ---
 
+## Anchor: Ground Truth Enforcement
+
+Anchor is Sigil's validation layer — it ensures AI-generated code actually follows the physics rules.
+
+### Why Anchor?
+
+When AI generates UI code, it might *claim* to follow physics ("800ms pessimistic for financial") but generate something different. Anchor validates grounding statements against actual physics requirements.
+
+### Quick Start
+
+```bash
+# Validate a grounding statement
+anchor warden --text "Component: ClaimButton\nZone: critical\nSync: pessimistic\nTiming: 800ms"
+
+# Check from file
+anchor warden --file grounding.txt
+
+# Show zone hierarchy
+anchor warden --hierarchy
+# Output: critical (most restrictive) > elevated > standard > local (least restrictive)
+```
+
+### Validation Status
+
+| Code | Status | Meaning |
+|------|--------|---------|
+| 0 | VALID | Grounding matches required physics |
+| 1 | DRIFT | Over-claiming (citing strict physics for simple components) |
+| 2 | DECEPTIVE | Under-claiming (citing lenient physics for critical operations) |
+
+### Zone Hierarchy
+
+| Zone | Components | Example |
+|------|------------|---------|
+| **critical** | Financial, transaction | ClaimButton, WithdrawModal |
+| **elevated** | Destructive, revoke | DeleteButton, RevokeAccess |
+| **standard** | CRUD, social | SaveButton, LikeButton |
+| **local** | UI state, preferences | ThemeToggle, FilterDropdown |
+
+### Advanced: Session Management
+
+Anchor can manage EVM state for testing Web3 flows:
+
+```bash
+# Create a session with fork
+anchor session mainnet --block 19000000
+
+# Take snapshots during testing
+anchor snapshot --description "Before claim"
+
+# Revert if needed
+anchor revert <snapshot-id>
+
+# Checkpoint for recovery
+anchor checkpoint <session-id>
+```
+
+See `packages/anchor/` for full documentation.
+
+---
+
 ## Repository Structure
 
 ```
@@ -458,6 +519,16 @@ grimoires/sigil/
 │   └── {user}-diagnostic.md  # Individual sessions
 ├── context/                  # Project context
 └── moodboard/                # Visual references
+
+packages/
+├── anchor/                   # Ground truth enforcement (v4.3.1)
+│   ├── src/
+│   │   ├── lifecycle/        # Fork, snapshot, checkpoint management
+│   │   ├── graph/            # Task dependency graph
+│   │   ├── warden/           # Grounding validation + adversarial detection
+│   │   └── cli/              # Command-line interface
+│   └── dist/                 # Built artifacts
+└── sigil-toolbar/            # Browser extension for visual feedback
 ```
 
 ---
@@ -574,4 +645,4 @@ AGPL-3.0. See [LICENSE.md](LICENSE.md).
 
 ---
 
-*v2.5.0 "Web3 Flow Validation"*
+*v3.0.0 "Anchor Ground Truth"*

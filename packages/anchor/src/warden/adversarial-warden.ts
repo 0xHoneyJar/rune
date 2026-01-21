@@ -7,7 +7,7 @@
 
 import type { Zone, WardenResult, CheckResult, LearnedRule } from '../types.js';
 import { ZONE_HIERARCHY } from '../types.js';
-import type { GroundingStatement, EffectType } from './types.js';
+import type { GroundingStatement } from './types.js';
 import { validateGrounding, parseGroundingStatement } from './grounding-gate.js';
 
 /** Component types that can use each zone */

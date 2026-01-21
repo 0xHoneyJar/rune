@@ -7,6 +7,72 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [3.0.0] - 2026-01-21 — "Anchor Ground Truth"
+
+### Summary
+
+v3.0.0 is a major release introducing **Anchor** — the ground truth enforcement layer for Sigil. Anchor validates that AI-generated code actually follows the physics rules it claims to follow, detecting both "drift" (over-claiming) and "deceptive" patterns (under-claiming).
+
+Also included: **v3 Operational Infrastructure** with craft modes (debug, explore, hammer), physics/codebase validators, and project constitution support.
+
+### Added
+
+- **Anchor Package** (`packages/anchor/`)
+  - Ground truth enforcement for Sigil design physics
+  - Validates agent grounding statements against physics rules
+  - Detects deceptive grounding claims (citing lenient physics for critical operations)
+  - Detects drift (citing strict physics for simple components)
+
+- **Anchor Components**
+  - `ForkManager` — Anvil fork lifecycle with network configs
+  - `SnapshotManager` — EVM state snapshots bound to tasks
+  - `TaskGraph` — Task dependencies and state bindings
+  - `CheckpointStrategy` — Periodic checkpointing with recovery
+  - `GroundingGate` — Physics validation against Sigil tables
+  - `AdversarialWarden` — Deception detection with learned rules
+
+- **Anchor CLI**
+  - `anchor warden` — Validate grounding statements
+  - `anchor validate` — Check physics compliance
+  - `anchor session/fork/snapshot` — EVM state management
+  - `anchor checkpoint/restore` — Recovery support
+
+- **Zone Hierarchy**
+  - `critical` — Financial, transactions (800ms pessimistic)
+  - `elevated` — Destructive, revoke (600ms pessimistic)
+  - `standard` — CRUD, social (200ms optimistic)
+  - `local` — UI state, preferences (100ms immediate)
+
+- **Exit Codes**
+  - `0` VALID — Grounding matches required physics
+  - `1` DRIFT — Over-claiming (strict physics for simple components)
+  - `2` DECEPTIVE — Under-claiming (lenient physics for critical operations)
+
+- **Craft Modes** (`.claude/skills/crafting-physics/modes/`)
+  - Debug mode — Systematic debugging workflow
+  - Explore mode — Codebase exploration
+  - Hammer mode — Full architecture orchestration
+
+- **Subagents** (`.claude/subagents/`)
+  - Physics validator — Validates physics compliance
+  - Codebase validator — Validates code patterns
+
+- **Project Constitution** (`grimoires/sigil/constitution.yaml`)
+  - Project-level physics configuration
+  - Custom timing and confirmation overrides
+
+### Changed
+
+- Repository structure now includes `packages/` directory
+- README updated with Anchor documentation
+- 153 tests across 10 test files
+
+### Migration
+
+No breaking changes to existing Sigil functionality. Anchor is an additive layer.
+
+---
+
 ## [2.5.0] - 2026-01-20 — "Web3 Flow Validation"
 
 ### Summary
