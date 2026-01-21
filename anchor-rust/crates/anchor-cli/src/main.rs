@@ -6,10 +6,18 @@
 //! - `anchor kill` - Terminate a fork
 //! - `anchor kill-all` - Terminate all forks
 //! - `anchor env` - Get environment variables for a fork
+//! - `anchor snapshot` - Create a snapshot of current state
+//! - `anchor snapshots` - List all snapshots
+//! - `anchor revert` - Revert to a snapshot
+//! - `anchor checkpoint` - Save full state checkpoint
+//! - `anchor checkpoints` - List all checkpoints
+//! - `anchor restore` - Restore from a checkpoint
 //! - `anchor status` - Show current fork and task status
 
 use clap::{Parser, Subcommand};
-use sigil_anchor_core::{ForkManager, Network, Zone, VERSION};
+use sigil_anchor_core::{
+    CheckpointManager, ForkManager, Network, RpcClient, SnapshotManager, Zone, VERSION,
+};
 use std::path::PathBuf;
 use std::str::FromStr;
 
@@ -89,6 +97,80 @@ enum Commands {
     Ground {
         /// Path to the file or directory to validate
         path: String,
+    },
+
+    /// Create a snapshot of current EVM state
+    Snapshot {
+        /// Fork ID to snapshot
+        fork_id: String,
+
+        /// Session ID to associate with the snapshot
+        #[arg(short, long)]
+        session: Option<String>,
+
+        /// Description for the snapshot
+        #[arg(short, long)]
+        description: Option<String>,
+    },
+
+    /// List all snapshots
+    Snapshots {
+        /// Fork ID to list snapshots for
+        fork_id: String,
+
+        /// Filter by session ID
+        #[arg(short, long)]
+        session: Option<String>,
+
+        /// Output as JSON
+        #[arg(long)]
+        json: bool,
+    },
+
+    /// Revert to a snapshot
+    Revert {
+        /// Fork ID
+        fork_id: String,
+
+        /// Snapshot ID to revert to
+        snapshot_id: String,
+    },
+
+    /// Save a full state checkpoint
+    Checkpoint {
+        /// Fork ID to checkpoint
+        fork_id: String,
+
+        /// Session ID (required for checkpoints)
+        #[arg(short, long)]
+        session: String,
+
+        /// Description for the checkpoint
+        #[arg(short, long)]
+        description: Option<String>,
+    },
+
+    /// List all checkpoints
+    Checkpoints {
+        /// Session ID to list checkpoints for
+        session: String,
+
+        /// Output as JSON
+        #[arg(long)]
+        json: bool,
+    },
+
+    /// Restore from a checkpoint
+    Restore {
+        /// Fork ID to restore to
+        fork_id: String,
+
+        /// Checkpoint ID to restore from
+        checkpoint_id: String,
+
+        /// Session ID
+        #[arg(short, long)]
+        session: String,
     },
 
     /// Show current fork and task status
@@ -241,6 +323,315 @@ async fn main() {
             println!("Grounding validation for: {}", path);
             println!("  Zone: {}", zone);
             println!("\nGrounding validation not yet implemented.");
+        }
+
+        Some(Commands::Snapshot {
+            fork_id,
+            session,
+            description,
+        }) => {
+            // Get fork to verify it exists and get RPC URL
+            let fork = match manager.get(&fork_id) {
+                Some(f) => f.clone(),
+                None => {
+                    eprintln!("Fork not found: {}", fork_id);
+                    std::process::exit(6);
+                }
+            };
+
+            // Create snapshot manager
+            let client = RpcClient::new(&fork.rpc_url);
+            let snapshot_registry_path = registry_path
+                .parent()
+                .unwrap_or(&registry_path)
+                .join("snapshots")
+                .join(format!("{}.json", fork_id));
+
+            let mut snapshot_manager =
+                SnapshotManager::new(client, &fork_id, &snapshot_registry_path);
+            if let Err(e) = snapshot_manager.load_registry().await {
+                eprintln!("Warning: Failed to load snapshot registry: {}", e);
+            }
+
+            match snapshot_manager.create(session, None, description).await {
+                Ok(snapshot) => {
+                    println!("Snapshot created successfully!");
+                    println!("  ID: {}", snapshot.id);
+                    println!("  Fork: {}", snapshot.fork_id);
+                    println!("  Block: {}", snapshot.block_number);
+                    if let Some(ref sess) = snapshot.session_id {
+                        println!("  Session: {}", sess);
+                    }
+                    if let Some(ref desc) = snapshot.description {
+                        println!("  Description: {}", desc);
+                    }
+                }
+                Err(e) => {
+                    eprintln!("Error creating snapshot: {}", e);
+                    std::process::exit(4);
+                }
+            }
+        }
+
+        Some(Commands::Snapshots {
+            fork_id,
+            session,
+            json,
+        }) => {
+            // Get fork to verify it exists
+            if manager.get(&fork_id).is_none() {
+                eprintln!("Fork not found: {}", fork_id);
+                std::process::exit(6);
+            }
+
+            // Create snapshot manager
+            let snapshot_registry_path = registry_path
+                .parent()
+                .unwrap_or(&registry_path)
+                .join("snapshots")
+                .join(format!("{}.json", fork_id));
+
+            let client = RpcClient::new("http://localhost:8545"); // Not used for listing
+            let mut snapshot_manager =
+                SnapshotManager::new(client, &fork_id, &snapshot_registry_path);
+            if let Err(e) = snapshot_manager.load_registry().await {
+                eprintln!("Warning: Failed to load snapshot registry: {}", e);
+            }
+
+            let snapshots: Vec<_> = if let Some(ref sess) = session {
+                snapshot_manager
+                    .list_by_session(sess)
+                    .into_iter()
+                    .cloned()
+                    .collect()
+            } else {
+                snapshot_manager.list().to_vec()
+            };
+
+            if json {
+                match serde_json::to_string_pretty(&snapshots) {
+                    Ok(output) => println!("{}", output),
+                    Err(e) => {
+                        eprintln!("Error serializing snapshots: {}", e);
+                        std::process::exit(6);
+                    }
+                }
+            } else if snapshots.is_empty() {
+                println!("No snapshots for fork {}.", fork_id);
+            } else {
+                println!("Snapshots for fork {}:", fork_id);
+                println!();
+                for snapshot in snapshots {
+                    println!("  {}", snapshot.id);
+                    println!("    Block: {}", snapshot.block_number);
+                    println!("    Created: {}", snapshot.created_at);
+                    if let Some(ref sess) = snapshot.session_id {
+                        println!("    Session: {}", sess);
+                    }
+                    if let Some(ref desc) = snapshot.description {
+                        println!("    Description: {}", desc);
+                    }
+                    println!();
+                }
+            }
+        }
+
+        Some(Commands::Revert {
+            fork_id,
+            snapshot_id,
+        }) => {
+            // Get fork to verify it exists and get RPC URL
+            let fork = match manager.get(&fork_id) {
+                Some(f) => f.clone(),
+                None => {
+                    eprintln!("Fork not found: {}", fork_id);
+                    std::process::exit(6);
+                }
+            };
+
+            // Create snapshot manager
+            let client = RpcClient::new(&fork.rpc_url);
+            let snapshot_registry_path = registry_path
+                .parent()
+                .unwrap_or(&registry_path)
+                .join("snapshots")
+                .join(format!("{}.json", fork_id));
+
+            let mut snapshot_manager =
+                SnapshotManager::new(client, &fork_id, &snapshot_registry_path);
+            if let Err(e) = snapshot_manager.load_registry().await {
+                eprintln!("Warning: Failed to load snapshot registry: {}", e);
+            }
+
+            match snapshot_manager.revert(&snapshot_id).await {
+                Ok(()) => {
+                    println!("Reverted to snapshot {}.", snapshot_id);
+                }
+                Err(e) => {
+                    eprintln!("Error reverting to snapshot: {}", e);
+                    std::process::exit(4);
+                }
+            }
+        }
+
+        Some(Commands::Checkpoint {
+            fork_id,
+            session,
+            description,
+        }) => {
+            // Get fork to verify it exists and get RPC URL
+            let fork = match manager.get(&fork_id) {
+                Some(f) => f.clone(),
+                None => {
+                    eprintln!("Fork not found: {}", fork_id);
+                    std::process::exit(6);
+                }
+            };
+
+            // Create checkpoint manager
+            let client = RpcClient::new(&fork.rpc_url);
+            let checkpoint_registry_path = registry_path
+                .parent()
+                .unwrap_or(&registry_path)
+                .join("checkpoints")
+                .join(format!("{}.json", session));
+            let checkpoints_dir = registry_path
+                .parent()
+                .unwrap_or(&registry_path)
+                .join("checkpoints")
+                .join("data");
+
+            let mut checkpoint_manager = CheckpointManager::new(
+                client,
+                &fork_id,
+                &session,
+                &checkpoint_registry_path,
+                &checkpoints_dir,
+            );
+            if let Err(e) = checkpoint_manager.load_registry().await {
+                eprintln!("Warning: Failed to load checkpoint registry: {}", e);
+            }
+
+            match checkpoint_manager.save(description).await {
+                Ok(checkpoint) => {
+                    println!("Checkpoint saved successfully!");
+                    println!("  ID: {}", checkpoint.id);
+                    println!("  Fork: {}", checkpoint.fork_id);
+                    println!("  Session: {}", checkpoint.session_id);
+                    println!("  Block: {}", checkpoint.block_number);
+                    println!("  Size: {} bytes", checkpoint.size_bytes);
+                    if let Some(ref desc) = checkpoint.description {
+                        println!("  Description: {}", desc);
+                    }
+                }
+                Err(e) => {
+                    eprintln!("Error saving checkpoint: {}", e);
+                    std::process::exit(4);
+                }
+            }
+        }
+
+        Some(Commands::Checkpoints { session, json }) => {
+            // Create checkpoint manager
+            let checkpoint_registry_path = registry_path
+                .parent()
+                .unwrap_or(&registry_path)
+                .join("checkpoints")
+                .join(format!("{}.json", session));
+            let checkpoints_dir = registry_path
+                .parent()
+                .unwrap_or(&registry_path)
+                .join("checkpoints")
+                .join("data");
+
+            let client = RpcClient::new("http://localhost:8545"); // Not used for listing
+            let mut checkpoint_manager = CheckpointManager::new(
+                client,
+                "unused",
+                &session,
+                &checkpoint_registry_path,
+                &checkpoints_dir,
+            );
+            if let Err(e) = checkpoint_manager.load_registry().await {
+                eprintln!("Warning: Failed to load checkpoint registry: {}", e);
+            }
+
+            let checkpoints = checkpoint_manager.list();
+
+            if json {
+                match serde_json::to_string_pretty(&checkpoints) {
+                    Ok(output) => println!("{}", output),
+                    Err(e) => {
+                        eprintln!("Error serializing checkpoints: {}", e);
+                        std::process::exit(6);
+                    }
+                }
+            } else if checkpoints.is_empty() {
+                println!("No checkpoints for session {}.", session);
+            } else {
+                println!("Checkpoints for session {}:", session);
+                println!();
+                for checkpoint in checkpoints {
+                    println!("  {}", checkpoint.id);
+                    println!("    Fork: {}", checkpoint.fork_id);
+                    println!("    Block: {}", checkpoint.block_number);
+                    println!("    Size: {} bytes", checkpoint.size_bytes);
+                    println!("    Created: {}", checkpoint.created_at);
+                    if let Some(ref desc) = checkpoint.description {
+                        println!("    Description: {}", desc);
+                    }
+                    println!();
+                }
+            }
+        }
+
+        Some(Commands::Restore {
+            fork_id,
+            checkpoint_id,
+            session,
+        }) => {
+            // Get fork to verify it exists and get RPC URL
+            let fork = match manager.get(&fork_id) {
+                Some(f) => f.clone(),
+                None => {
+                    eprintln!("Fork not found: {}", fork_id);
+                    std::process::exit(6);
+                }
+            };
+
+            // Create checkpoint manager
+            let client = RpcClient::new(&fork.rpc_url);
+            let checkpoint_registry_path = registry_path
+                .parent()
+                .unwrap_or(&registry_path)
+                .join("checkpoints")
+                .join(format!("{}.json", session));
+            let checkpoints_dir = registry_path
+                .parent()
+                .unwrap_or(&registry_path)
+                .join("checkpoints")
+                .join("data");
+
+            let mut checkpoint_manager = CheckpointManager::new(
+                client,
+                &fork_id,
+                &session,
+                &checkpoint_registry_path,
+                &checkpoints_dir,
+            );
+            if let Err(e) = checkpoint_manager.load_registry().await {
+                eprintln!("Warning: Failed to load checkpoint registry: {}", e);
+            }
+
+            match checkpoint_manager.restore(&checkpoint_id).await {
+                Ok(()) => {
+                    println!("Restored from checkpoint {}.", checkpoint_id);
+                }
+                Err(e) => {
+                    eprintln!("Error restoring from checkpoint: {}", e);
+                    std::process::exit(4);
+                }
+            }
         }
 
         Some(Commands::Status) => {

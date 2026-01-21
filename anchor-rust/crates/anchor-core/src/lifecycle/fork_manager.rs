@@ -272,7 +272,7 @@ mod tests {
         let port = manager.find_available_port();
         assert!(port.is_some());
         let port = port.unwrap();
-        assert!(port >= DEFAULT_PORT_START && port <= DEFAULT_PORT_END);
+        assert!((DEFAULT_PORT_START..=DEFAULT_PORT_END).contains(&port));
     }
 
     #[test]
@@ -284,7 +284,7 @@ mod tests {
         let port = manager.find_available_port_in_range(8545, 8550);
         assert!(port.is_some());
         let port = port.unwrap();
-        assert!(port >= 8547 && port <= 8550);
+        assert!((8547..=8550).contains(&port));
     }
 
     #[tokio::test]

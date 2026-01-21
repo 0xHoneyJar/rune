@@ -31,6 +31,7 @@ chrono = { workspace = true }
 thiserror = { workspace = true }
 anyhow = { workspace = true }
 once_cell = { workspace = true }
+hex = "0.4"
 
 # Logging
 tracing = { workspace = true }
