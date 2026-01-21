@@ -1,0 +1,38 @@
+[workspace]
+members = [
+    "anchor",
+]
+resolver = "2"
+
+[workspace.package]
+version = "1.0.0"
+edition = "2021"
+license = "MIT"
+authors = ["THJ Team"]
+repository = "https://github.com/thj/sigil"
+description = "Loa Constructs Triad - Ground truth enforcement for blockchain state"
+
+[workspace.dependencies]
+# CLI
+clap = { version = "4", features = ["derive"] }
+
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+
+# Utilities
+uuid = { version = "1", features = ["v4", "serde"] }
+thiserror = "1"
+anyhow = "1"
+chrono = { version = "0.4", features = ["serde"] }
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Ethereum (for future state queries)
+# alloy = { version = "0.1", features = ["providers", "rpc"] }

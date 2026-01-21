@@ -52,6 +52,7 @@ None - all dependencies are optional (jq, yq)
 <!-- Key context to restore on next session -->
 | Timestamp | Agent | Summary |
 |-----------|-------|---------|
+| 2026-01-20 | discovering-requirements | Created PRD v3.0.0 "Loa Constructs Triad" - Sigil, Anchor, Persona |
 | 2026-01-04 | implementing-tasks | Completed Sigil v11 (Sprints 13-19), security audit, drift fixes |
 | 2026-01-04 | auditing-security | Security audit APPROVED - 0 HIGH issues (all fixed) |
 | 2026-01-04 | - | Fixed mount-sigil.sh for v11 skills/commands, testing on S&F |
@@ -61,6 +62,8 @@ None - all dependencies are optional (jq, yq)
 <!-- Major decisions with rationale -->
 | Date | Decision | Rationale |
 |------|----------|-----------|
+| 2026-01-20 | Add Persona as third Loa Construct | SimCity-inspired user simulation completes Design→Validate→Simulate loop |
+| 2026-01-20 | Rename PRD to "Loa Constructs Triad" | Reflects three constructs: Sigil (Feel), Anchor (Reality), Persona (Simulate) |
 | 2026-01-01 | Skip legacy deprecation | Framework repo - docs are primary, not legacy |
 | 2026-01-01 | Mark PRD/SDD as reality-checked | Added grounding markers to existing docs |
 
