@@ -189,7 +189,7 @@ Check `grimoires/sigil/taste.md` for `output_mode` preference.
 ```
 [Target] | [Effect] | [Craft Type]
 Behavioral: [sync] [timing] | Animation: [easing] | Material: [surface]
-Protected: [pass/fail] | Codebase: [libs detected]
+Protected: [pass/fail] | Codebase: [libs] | Patterns: [source component]
 
 Apply? (y/n)
 ```
@@ -208,6 +208,10 @@ Apply? (y/n)
 │  Material      [Surface] | [Shadow] | [Radius]         │
 │                                                        │
 │  Codebase:     [styling] + [animation] + [data]        │
+│  Patterns:     [tokens from existing component]        │
+│    Source:     [component read for patterns]           │
+│    Colors:     bg-muted, text-muted-foreground         │
+│    Radius:     rounded-md                              │
 │                                                        │
 │  Output:       [file(s) to create/modify]              │
 │                                                        │
@@ -1721,6 +1725,36 @@ Extract from dependencies:
 - Data: `@tanstack/react-query` | `swr` | `fetch`
 - Toast: `sonner` | `react-hot-toast` | native
 - Styling: `tailwindcss` | `styled-components` | `@emotion`
+
+**1d-bis. Extract design patterns from existing components** (for Generate craft type):
+
+When generating a NEW component, read ONE existing similar component to extract patterns:
+
+```
+Find: src/components/ui/{similar-component}.tsx
+  OR: components/{similar-type}.tsx
+  OR: Any component with similar purpose (button → button, card → card, etc.)
+```
+
+Extract and note:
+- **Color tokens**: `bg-muted`, `text-muted-foreground`, `border` (not `bg-black`, `text-white`)
+- **Spacing tokens**: `p-4`, `gap-2`, `space-y-3` (note conventions)
+- **Border radius**: `rounded-md`, `rounded-lg`, `rounded-xl` (match existing)
+- **Shadow patterns**: `shadow-sm`, `shadow-md` (if used)
+- **State classes**: hover, focus, disabled patterns
+
+**CRITICAL**: Use discovered tokens, not generic defaults:
+| Generic (avoid) | Project Token (use) |
+|-----------------|---------------------|
+| `bg-black/20` | `bg-muted/50` |
+| `rounded-full` | `rounded-md` |
+| `text-white` | `text-foreground` |
+| `border-gray-200` | `border` |
+
+If no similar component found, check:
+- `tailwind.config.js` for custom theme tokens
+- `globals.css` for CSS variable definitions
+- Design system docs in `grimoires/sigil/context/brand/`
 
 **1e. If refining existing code:**
 - Read the file(s) being refined
