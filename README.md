@@ -8,13 +8,29 @@
 
 **Creative speed, grounded in truth.** Sigil lets you iterate fast on feel while staying anchored to what users actually need. It's taste for building products — the balance between intuition and evidence, between shipping and strategy. Built as a [Loa Construct](https://github.com/0xHoneyJar/loa).
 
+## Installation
+
 ```bash
-# Install via Loa Constructs
-loa install sigil
+# Install sigilup (the Sigil toolchain installer)
+curl -L https://cdn.jsdelivr.net/gh/0xHoneyJar/sigil@main/sigilup/install | bash
+
+# Install Sigil CLIs (anchor, lens)
+sigilup
+
+# Install Sigil rules in your project
+curl -L https://cdn.jsdelivr.net/gh/0xHoneyJar/sigil@main/scripts/mount-sigil.sh | bash
 
 # Start crafting
 /craft "claim button"
 ```
+
+<details>
+<summary>Alternative: Install via Loa Constructs</summary>
+
+```bash
+loa install sigil
+```
+</details>
 
 ---
 
