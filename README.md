@@ -212,6 +212,9 @@ Corrections weight 5x because they're specific. Silence is ambiguous.
 | **Validate** | `/ward` | Audit against physics — does it actually work? |
 | | `/garden` | Component authority report |
 | **Learn** | `/inscribe` | Graduate patterns to permanent rules |
+| **Run** | `/run` | Autonomous sprint execution |
+| | `/run-status` | Check autonomous progress |
+| | `/run-halt` | Emergency stop |
 
 ### By Speed
 
@@ -220,6 +223,7 @@ Corrections weight 5x because they're specific. Silence is ambiguous.
 | **Fast iteration** | `/craft`, `/style`, `/animate`, `/behavior` | You have intuition, test it |
 | **Strategic pause** | `/observe`, `/understand`, `/distill` | Step back, get grounded |
 | **Validation** | `/ward`, `/garden` | Check if reality matches intent |
+| **Autonomous** | `/run`, `/run-status`, `/run-halt` | Extended execution with safety |
 
 ---
 
@@ -513,25 +517,26 @@ learning:
 
 ## Quick Start
 
-### Via Loa Construct Registry (Recommended)
+### Installation
 
 ```bash
-loa install sigil
-```
-
-Or add to your `.claude/constructs.yaml`:
-
-```yaml
-constructs:
-  - name: sigil
-    version: "^2.0.0"
-```
-
-### Manual Installation
-
-```bash
+# Clone and install
 git clone https://github.com/0xHoneyJar/sigil.git
 cd sigil && ./.claude/scripts/constructs-install.sh
+
+# Or mount onto existing project
+cd your-project
+/mount  # from Claude Code
+```
+
+### Via Loa Framework
+
+If you have [Loa](https://github.com/0xHoneyJar/loa) installed:
+
+```bash
+# Sigil is a Loa Construct - install via mount
+cd your-project
+/mount sigil
 ```
 
 ---

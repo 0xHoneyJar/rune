@@ -243,3 +243,38 @@ Three reads total, not a cascade of searches.
 
 **Rule:** If it's a 1-3 line change, use Edit tool directly — don't invoke a command.
 </command_routing>
+
+<anti_patterns>
+## Craft Anti-Patterns (Never Do)
+
+### Code Generation Anti-Patterns
+
+| Anti-Pattern | Why It's Bad | Correct Approach |
+|--------------|--------------|------------------|
+| Generate partial code | User can't use it | Always complete, working code |
+| "Here's a skeleton..." | Forces user to finish | Include all logic |
+| Add explanatory comments | Clutters code | Self-documenting names |
+| Add type annotations to unchanged code | Unnecessary changes | Only touch what's needed |
+| Create utility for one-time use | Over-engineering | Inline the logic |
+| Import unlisted libraries | Breaks the build | Check package.json first |
+
+### User Interaction Anti-Patterns
+
+| Anti-Pattern | Why It's Bad | Correct Approach |
+|--------------|--------------|------------------|
+| "Would you like me to generate this?" | Wastes a turn | Just generate after confirmation |
+| Ask 3+ clarifying questions | Frustrating | Max 2 questions, then default |
+| Verbose analysis after 5+ accepts | User knows the flow | Switch to compact mode |
+| Repeat physics rules in explanation | User has seen them | Reference only |
+| Show analysis without action | User wants results | Analysis → confirm → apply |
+
+### State Management Anti-Patterns
+
+| Anti-Pattern | Why It's Bad | Correct Approach |
+|--------------|--------------|------------------|
+| Trust context over grimoire | Context can be wrong | Always read files |
+| Skip taste.md check | Miss preferences | Always check taste patterns |
+| Skip feedback-first check | Repeat mistakes | Always run Step -1 |
+| Continue after loop detection | Waste iterations | Offer escalation |
+| Modify taste.md without signal | Corrupts learning | Only append on signal |
+</anti_patterns>

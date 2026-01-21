@@ -1,0 +1,20 @@
+# Sigil CODEOWNERS
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners for everything
+* @0xHoneyJar/sigil-maintainers
+
+# Physics rules require physics expertise
+.claude/rules/ @0xHoneyJar/sigil-physics
+
+# Commands
+.claude/commands/ @0xHoneyJar/sigil-maintainers
+
+# Constitution changes need review
+grimoires/sigil/constitution.yaml @0xHoneyJar/sigil-maintainers
+
+# Skills
+.claude/skills/ @0xHoneyJar/sigil-maintainers
+
+# Protocols
+.claude/protocols/ @0xHoneyJar/sigil-maintainers

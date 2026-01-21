@@ -7,6 +7,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.5.0] - 2026-01-20 — "Web3 Flow Validation"
+
+### Summary
+
+v2.5.0 introduces **Data Physics** — the fifth physics layer for explicit data source selection in Web3 contexts. This release captures learnings from debugging blockchain transaction flows: BigInt safety patterns, receipt guards, stale closure prevention, and the critical distinction between indexed data (fast but stale) and on-chain data (slow but accurate).
+
+Also included: **Run Mode** for autonomous sprint execution with circuit breakers and safety controls.
+
+### Added
+
+- **Data Physics Layer** (`19-sigil-data-physics.md`)
+  - Explicit data source selection: on-chain vs indexed vs cached
+  - Decision tree for Web3 data freshness requirements
+  - Anti-patterns: fallback chains (`??`), BigInt falsy checks
+  - Staleness signals for financial displays
+
+- **Web3 Flow Patterns** (`20-sigil-web3-flows.md`)
+  - Multi-step transaction state machines (approve → execute)
+  - Receipt guard pattern (prevent re-execution)
+  - BigInt safety: `0n` is falsy in JavaScript
+  - Stale closure prevention in `useEffect` callbacks
+
+- **Run Mode Commands**
+  - `/run` — Start autonomous sprint implementation
+  - `/run-sprint-plan` — Auto-generate sprint from PRD+SDD
+  - `/run-status` — Check autonomous execution progress
+  - `/run-halt` — Emergency stop (circuit breaker)
+  - `/run-resume` — Continue from checkpoint
+  - `/snapshot` — Capture current state
+  - `/test-flow` — Test without committing
+
+- **Run Mode Safety**
+  - Circuit breaker: stops on repeated failures or no progress
+  - Rate limiting: respects API call limits
+  - Draft PR only: never auto-merges
+  - Deleted files tracking with tree view
+
+- **/observe diagnose mode**
+  - Blockchain state inspection
+  - Contract interaction analysis
+  - Transaction flow validation
+
+### Changed
+
+- **Physics Model** now includes 5 layers: Behavioral, Animation, Material, Voice, Data
+- `/craft` analysis box shows Data Physics guidance for Web3 components
+- README updated with Data Physics table and decision tree
+
+### Fixed
+
+- BigInt falsy check patterns (`if (amount)` fails for `0n`)
+- Stale closure issues in transaction receipt callbacks
+- Receipt processing re-execution bugs
+
+### Migration
+
+No breaking changes. Data Physics applies automatically when Web3 keywords detected.
+
+---
+
 ## [2.4.0] - 2026-01-19 — "Craft States"
 
 ### Summary
