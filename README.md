@@ -1,8 +1,8 @@
 # Sigil
 
-[![Version](https://img.shields.io/badge/version-3.1.0-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-3.2.0-blue.svg)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-AGPL--3.0-green.svg)](LICENSE.md)
-[![Release](https://img.shields.io/badge/release-Anchor_Rust_%26_craft_Evolution-purple.svg)](CHANGELOG.md#310---2026-01-20--anchor-rust--craft-evolution)
+[![Release](https://img.shields.io/badge/release-Diagnostic_HUD_%26_Package_Architecture-purple.svg)](CHANGELOG.md#320---2026-01-21--diagnostic-hud--package-architecture)
 
 > *"A sigil holds the tension — creative intuition grounded in user truth. Move fast without losing sight of what actually matters."*
 
@@ -515,9 +515,62 @@ See `packages/anchor/` for full documentation.
 
 ---
 
+## Diagnostic HUD
+
+The `@sigil/hud` package provides composable React components for diagnostic-first development. Use individual components or the full HUD.
+
+### Quick Start
+
+```tsx
+import { HudProvider, HudPanel, HudTrigger } from '@sigil/hud'
+
+function App() {
+  return (
+    <HudProvider>
+      <YourApp />
+      <HudPanel />
+      <HudTrigger />  {/* Floating button to toggle */}
+    </HudProvider>
+  )
+}
+```
+
+### Components
+
+| Component | Purpose |
+|-----------|---------|
+| **DiagnosticsPanel** | Real-time physics compliance with issue detection |
+| **DataSourceIndicator** | Visual staleness badges for on-chain/indexed/cached data |
+| **FeedbackPrompt** | "Does this feel right?" with signal capture |
+| **ObservationCaptureModal** | Capture User Truth, Issues, Insights |
+| **StateComparison** | Side-by-side diff with data source tracing |
+| **PhysicsAnalysis** | Effect badge and compliance display |
+
+### Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Cmd+Shift+D` | Toggle HUD panel |
+| `Cmd+Shift+O` | Capture observation |
+| `1-5` | Switch panel tabs |
+| `Escape` | Close panel |
+
+### Composable Packages
+
+The HUD is built from smaller packages you can use independently:
+
+| Package | Purpose | Install |
+|---------|---------|---------|
+| `@sigil/diagnostics` | Physics compliance checking | `pnpm add @sigil/diagnostics` |
+| `@sigil/fork` | Anvil/Tenderly fork management | `pnpm add @sigil/fork` |
+| `@sigil/lens` | Address impersonation | `pnpm add @sigil/lens` |
+| `@sigil/simulation` | Transaction dry-run | `pnpm add @sigil/simulation` |
+
+---
+
 ## Dev Toolbar
 
-The `@sigil/dev-toolbar` package provides browser-based tools for debugging Web3 applications during development.
+The `@sigil/dev-toolbar` package provides browser-based tools for debugging Web3 applications during development. It integrates the HUD components with Web3-specific features.
 
 ### Features
 
@@ -665,21 +718,33 @@ grimoires/sigil/
 └── moodboard/                # Visual references
 
 packages/
-├── anchor/                   # Ground truth enforcement (v4.3.1)
+├── anchor/                   # Ground truth enforcement (TypeScript bindings)
 │   ├── src/
-│   │   ├── lifecycle/        # Fork, snapshot, checkpoint management
-│   │   ├── graph/            # Task dependency graph
-│   │   ├── warden/           # Grounding validation + adversarial detection
-│   │   └── cli/              # Command-line interface
-│   └── dist/                 # Built artifacts
-└── sigil-dev-toolbar/        # Dev toolbar for Web3 debugging
+│   │   ├── cli/              # CLI interface
+│   │   └── warden/           # Lens validator integration
+│   └── dist/
+├── hud/                      # Diagnostic HUD components (v0.1.0)
+│   ├── src/
+│   │   ├── components/       # DiagnosticsPanel, FeedbackPrompt, StateComparison, etc.
+│   │   ├── hooks/            # useDataSource, useSignalCapture, useObservationCapture
+│   │   ├── providers/        # HudProvider
+│   │   └── styles/           # Theme tokens
+│   └── dist/
+├── diagnostics/              # Physics compliance detection (v0.1.0)
+│   └── src/                  # Effect detection, compliance checking
+├── fork/                     # Chain fork management (v0.1.0)
+│   └── src/providers/        # Anvil, Tenderly providers
+├── lens/                     # User address impersonation (v0.1.0)
+│   └── src/                  # Lens service, wagmi integration
+├── simulation/               # Transaction simulation (v0.1.0)
+│   └── src/                  # Dry-run execution
+└── sigil-dev-toolbar/        # Dev toolbar (uses above packages)
     ├── src/
-    │   ├── components/       # UserLens, DevToolbar, DiagnosticPanel, SimulationPanel, StateComparison
-    │   ├── hooks/            # useLensAwareAccount, useForkState, useTransactionSimulation
+    │   ├── components/       # UserLens, DevToolbar, DiagnosticPanel
+    │   ├── hooks/            # useForkState, useTransactionSimulation
     │   ├── services/         # Fork, simulation services
-    │   ├── providers/        # DevToolbarProvider
-    │   └── ipc/              # IPC client for Anchor communication
-    └── dist/                 # Built artifacts
+    │   └── ipc/              # IPC client for Anchor/Lens CLIs
+    └── dist/
 ```
 
 ---
@@ -796,4 +861,4 @@ AGPL-3.0. See [LICENSE.md](LICENSE.md).
 
 ---
 
-*v3.1.0 "Anchor Rust & /craft Evolution"*
+*v3.2.0 "Diagnostic HUD & Package Architecture"*
