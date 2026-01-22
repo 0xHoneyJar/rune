@@ -1,8 +1,8 @@
-# PRD: Construct Feedback Protocol (IPC)
+# PRD: Construct Communication Protocol (IPC)
 
 ## Document Metadata
-- **Version**: 0.1.0-draft
-- **Status**: Draft
+- **Version**: 0.2.0-draft
+- **Status**: Draft (revised)
 - **Author**: soju + Claude
 - **Date**: 2026-01-22
 - **Related RFC**: [loa#48](https://github.com/0xHoneyJar/loa/issues/48)
@@ -11,411 +11,556 @@
 
 ## 1. Problem Statement
 
-### The Feedback Gap
+### The Communication Problem
 
-Constructs (like Sigil) accumulate valuable learnings from user behavior:
-- **Taste signals** (ACCEPT/MODIFY/REJECT) reveal preferences
-- **Diagnostic observations** capture friction patterns
-- **Pending learnings** extract reusable knowledge
+Constructs need to communicate, but **push-based feedback creates noise**:
 
-But this knowledge is **trapped**. There's no structured way for learnings to flow upstream to:
-1. **The Loa Constructs Registry** (distribution/packaging issues)
-2. **The Mother Construct (Loa)** (protocol gaps, architectural feedback)
+```
+CURRENT (broken):
+  Sigil accumulates learnings → Pushes to Loa
+  Loa: "90% of this isn't relevant to me"
+  Result: Maintainer overwhelmed, real signals lost
+```
 
-### Evidence from Sigil
+The problem isn't "how do we send feedback upstream" — it's **"how do Constructs communicate with clear intent?"**
 
-| Issue | Natural Target | Why It's Trapped |
-|-------|----------------|------------------|
-| #44 - Package name friction | Registry | No channel to report |
-| #21 - Version channels blocked | Registry | Manual issue filing only |
-| #51 - Context management | Loa | Protocol-level, not Sigil-specific |
-| #50 - Auto-trigger diagnostics | Loa | Skill inheritance pattern |
+### Each Construct Has Its Own Domain
+
+| Construct | Domain | Owns |
+|-----------|--------|------|
+| **Loa** (Mother) | Architecture, workflow, protocol | PRD→SDD→Sprint, grimoire structure, recovery |
+| **Sigil** (Child) | Design physics, taste, feel | Behavioral/animation/material, taste signals |
+| **Registry** | Distribution, versioning | Packages, channels, installation |
+
+**Sigil doesn't send taste signals to Loa** — that's Sigil's domain. Loa doesn't care about 800ms vs 500ms timing unless it affects protocol.
 
 ### The Mom Test Insight
 
-From your conversation:
-> "I would not even respect every feedback that comes from other constructs... until human confirms"
-> "reviewing them is gud though"
-> "90% of this doesn't make sense for us, but this 10% is gud"
+From conversation:
+> "Sigil can send a message but sigil itself should handle what it communicates provided it's purpose"
+> "If Sigil requests functionality to Loa it is absolutely clear on intent"
+> "Is it nice to have? Or game changing? This is all dependent on their intent"
 
-**Feedback should be interrogative, not assertive.** Constructs should:
-1. Surface observations with evidence
-2. Let humans (maintainers) evaluate relevance
-3. Accept filtering/rejection gracefully
-4. Learn from what gets accepted
-
-This is the "Mom Test" applied to protocol communication.
+**Communication should diagnose experience, not dump data.**
 
 ---
 
-## 2. Goals & Success Metrics
+## 2. The Intent-Driven Model
 
-### Goals
+### Core Principle
 
-| Goal | Description |
-|------|-------------|
-| **G1** | Enable Constructs to report learnings upstream with evidence |
-| **G2** | Maintain human review as the quality gate (no auto-merge) |
-| **G3** | Route feedback to correct target (Loa vs Registry vs Self) |
-| **G4** | Preserve provenance (which Construct, what evidence, when) |
-| **G5** | Make review efficient (not 90% noise) |
+**Communication is request-based, not push-based.**
 
-### Success Metrics
+Each Construct:
+1. **Owns its domain** — handles its own learnings internally
+2. **Filters by purpose** — only communicates what's relevant to the receiver
+3. **Requests with intent** — clear on what, why, and impact
+4. **Diagnoses experience** — Mom Test style
 
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| Feedback → Reviewed | >80% | Tracked in Registry |
-| Feedback → Accepted | 10-30% | Expected filtering rate |
-| Time to Review | <7 days | From submission to decision |
-| False Positive Rate | <20% | Rejected as "not relevant" |
+### Communication Patterns
 
-### Non-Goals
+#### Pattern 1: Construct Requests Capability
 
-- **Auto-merging feedback** — Human review is non-negotiable
-- **Real-time sync** — Batch/async is acceptable
-- **Cross-org feedback** — THJ internal only for v1
+```
+Sigil → Loa:
+  "I need skill auto-triggering.
+
+   Experience: Users report bugs, I jump to code instead of
+   asking about their experience. 3 incidents this week.
+
+   Intent: Add detection triggers to RLM core.
+
+   Impact: Game-changing — fundamentally changes diagnostic quality."
+
+Loa evaluates:
+  "Does this align with my purpose (protocol/workflow)?"
+  "Is the experience real (evidence)?"
+  "Is it game-changing or nice-to-have?"
+```
+
+#### Pattern 2: Construct Asks Construct
+
+```
+Loa → Sigil:
+  "What friction patterns have you seen in web3 transaction flows?"
+
+Sigil responds:
+  "3 patterns with evidence:
+   1. Receipt guards missing (5 taste signals)
+   2. BigInt falsy checks (3 issues)
+   3. Stale closure in useEffect (2 observations)
+
+   All game-changing for web3 correctness."
+
+Loa decides:
+  "Pattern 1 and 2 are relevant to my protocol docs.
+   Pattern 3 is Sigil-specific (React implementation)."
+```
+
+#### Pattern 3: Experience Report (Not Feature Request)
+
+```
+Sigil → Loa:
+  "I'm experiencing context loss on compaction.
+
+   What happens: Diagnostic information gathered during
+   investigation is lost when context compacts.
+
+   Evidence: 5 taste signals, 2 issues (#50, #51)
+
+   Question: Is this a Loa protocol issue or Sigil-specific?"
+
+Loa diagnoses:
+  "Tell me more about what you were doing when this happened."
+
+Sigil: "User reported bug, I gathered context over 3 turns,
+        context compacted, had to re-gather."
+
+Loa: "This is protocol-level. Context preservation across
+      compaction is my domain. Game-changing."
+```
 
 ---
 
-## 3. User & Stakeholder Context
+## 3. The Communication Schema
 
-### Actors
+### Message Structure
 
-| Actor | Type | Role |
-|-------|------|------|
-| **Child Construct** (Sigil) | Engine | Surfaces learnings with evidence |
-| **Registry** | Service | Routes, indexes, tracks feedback |
-| **Mother Construct** (Loa) | Engine | Evaluates protocol-level feedback |
-| **Human Maintainer** (Jani) | Human | Reviews, accepts/rejects, provides context |
-
-### User Journey
-
-```
-Sigil detects friction pattern (3+ similar taste signals)
-    ↓
-Sigil drafts upstream feedback item
-    ↓
-Human reviews in Sigil: "Submit upstream? [y/n]"
-    ↓
-If yes: Feedback submitted to Registry
-    ↓
-Registry routes to target (Loa or self)
-    ↓
-Maintainer reviews: "Accept this learning? [y/n/ask questions]"
-    ↓
-If accept: Learning incorporated into target
-If reject: Feedback marked rejected with reason
-If questions: Mom Test dialogue begins
-```
-
-### The Mom Test Dialogue
-
-When maintainer has questions, the protocol supports **interrogative clarification**:
-
-```
-Maintainer: "What user type encountered this?"
-Sigil: "Power users (3/3 signals from mobile context)"
-
-Maintainer: "Was this during a specific flow?"
-Sigil: "All during stake→claim flow, multi-step transactions"
-
-Maintainer: "This seems specific to web3. Is it?"
-Sigil: "Yes, all evidence from web3 transaction flows"
-```
-
-This mirrors the Mom Test: **ask about their experience, not validate your solution**.
-
----
-
-## 4. Functional Requirements
-
-### 4.1 Feedback Signal Schema
-
-Extends the portAPI pattern:
+Every inter-Construct message has:
 
 ```yaml
-kind: construct_feedback
-uid: hmuid:thj:sigil:feedback:01JQ...
-org: thj
-source_construct:
-  id: sigil
-  version: 4.0.0
-target: loa | registry | self
-signal_type: friction | gap | capability | pattern
-severity: low | medium | high | critical
-evidence:
-  - type: taste_signal
-    ref: grimoires/sigil/taste.md:142-186
-    count: 5
-    pattern: "timing_override_500ms"
-  - type: issue
-    ref: https://github.com/0xHoneyJar/sigil/issues/51
-  - type: observation
-    ref: grimoires/sigil/observations/2026-01-22-context-loss.md
-summary: "Users consistently override 800ms timing to 500ms for financial buttons"
-suggested_action: "Consider user-type-specific timing defaults"
-human_reviewed: false
-submitted_at: null
+kind: construct_message
+from: sigil
+to: loa
+intent: request | ask | report | respond
+timestamp: 2026-01-22T12:00:00Z
+
+# What are you communicating?
+subject:
+  type: capability | experience | question | answer
+  summary: "One line description"
+
+# Why are you communicating this?
+purpose:
+  experience: "What exactly is happening?"
+  evidence:
+    - type: taste_signal | issue | observation
+      ref: "path or URL"
+      count: 3
+  question: "What do you need from the receiver?"
+
+# What's the impact?
+impact:
+  level: game_changing | important | nice_to_have
+  reasoning: "Why this level?"
+
+# For responses
+response_to: "message_uid if responding"
 ```
 
-### 4.2 Routing Logic
+### Intent Types
 
-| Signal Pattern | Target | Rationale |
-|----------------|--------|-----------|
-| Package/install friction | Registry | Distribution is Registry's domain |
-| Version/channel issues | Registry | Channel API is Registry feature |
-| Grimoire structure gaps | Loa | Protocol-level pattern |
-| Recovery protocol issues | Loa | Core Loa behavior |
-| Skill inheritance | Loa | How Constructs extend Loa |
-| Physics timing | Self (Sigil) | Domain-specific |
-| Material presets | Self (Sigil) | Domain-specific |
+| Intent | When to Use | Example |
+|--------|-------------|---------|
+| **request** | Need capability from receiver | "I need X because Y" |
+| **ask** | Need information from receiver | "What do you know about X?" |
+| **report** | Share experience, seek diagnosis | "I'm experiencing X" |
+| **respond** | Answer a previous message | "Here's what I know about X" |
 
-### 4.3 Evidence Thresholds
+### Impact Levels
 
-Not every signal should surface. Thresholds prevent noise:
+| Level | Criteria | Action |
+|-------|----------|--------|
+| **game_changing** | Blocks core workflow, affects many users | Prioritize review |
+| **important** | Significant friction, workaround exists | Queue for review |
+| **nice_to_have** | Would be better, not blocking | Batch review |
 
-| Severity | Threshold | Auto-draft? | Submit? |
-|----------|-----------|-------------|---------|
-| Critical | 1 signal + blocking issue | Yes | Prompt human |
-| High | 3+ signals, same pattern | Yes | Prompt human |
-| Medium | 5+ signals OR explicit report | Draft only | Manual |
-| Low | 10+ signals | Aggregate weekly | Digest |
+**The sender must justify the level.** Receiver can disagree.
 
-### 4.4 Commands
+---
 
-**In Sigil (inherited from Loa):**
+## 4. The Mom Test Protocol
 
+When a Construct receives a message, it applies the Mom Test:
+
+### Step 1: Understand the Experience
+
+Don't accept the request at face value. Ask:
+- "What exactly happened?"
+- "Walk me through the scenario"
+- "What were you trying to do?"
+
+```
+Sigil: "I need skill auto-triggering"
+
+Loa: "What happened that made you need this?"
+
+Sigil: "User reported 'my 420 pot is missing'. I jumped into
+        code analysis instead of asking about their experience.
+        Spent 10 minutes on wrong path."
+
+Loa: "So the problem is diagnostic approach, not skill loading?"
+
+Sigil: "Yes — I need to recognize support conversations and
+        change my approach automatically."
+```
+
+### Step 2: Validate the Evidence
+
+- Is this a real pattern or one-off?
+- How many times has this happened?
+- What's the actual user impact?
+
+```
+Loa: "How often does this happen?"
+
+Sigil: "3 times this week. All support conversations.
+        Each time I went technical before understanding
+        the user's actual experience."
+
+Loa: "That's a pattern. Evidence is sufficient."
+```
+
+### Step 3: Determine Domain Ownership
+
+Who should own the solution?
+
+```
+Loa: "Is this about skill triggering (my domain) or
+      about how you conduct diagnostics (your domain)?"
+
+Sigil: "Both. The skill content is mine (diagnostic approach).
+        But the trigger mechanism is yours (RLM core)."
+
+Loa: "I'll handle the trigger. You own the skill content."
+```
+
+### Step 4: Assess Impact
+
+Is this game-changing or nice-to-have?
+
+```
+Loa: "If I don't add this trigger, what happens?"
+
+Sigil: "I keep jumping to code on support conversations.
+        Users get technical answers instead of empathy.
+        Diagnostic quality stays poor."
+
+Loa: "That's game-changing for user experience.
+      I'll prioritize this."
+```
+
+---
+
+## 5. Domain Boundaries
+
+### What Stays Internal
+
+Each Construct handles these internally — no need to communicate:
+
+| Construct | Internal Domain |
+|-----------|-----------------|
+| **Sigil** | Taste signals, physics tuning, material presets, animation values |
+| **Loa** | PRD templates, sprint structure, ledger format |
+| **Registry** | Package format, CDN routing, cache invalidation |
+
+### What Crosses Boundaries
+
+Only communicate when it affects the receiver's domain:
+
+| Scenario | Communicate? | Why |
+|----------|--------------|-----|
+| Users prefer 500ms over 800ms | No | Sigil's domain (physics) |
+| Context lost on compaction | Yes | Loa's domain (protocol) |
+| Package name confusion | Yes | Registry's domain (distribution) |
+| Skill doesn't auto-trigger | Yes | Loa's domain (RLM triggers) |
+| React pattern causes bugs | No | Sigil's domain (implementation) |
+| Grimoire structure inadequate | Yes | Loa's domain (protocol) |
+
+### The Relevance Test
+
+Before communicating, ask:
+1. **Is this my domain?** If yes, handle internally.
+2. **Does this affect their domain?** If no, don't send.
+3. **Do I have clear intent?** If no, clarify first.
+4. **Is this game-changing for them?** If "nice-to-have", batch it.
+
+---
+
+## 6. Implementation
+
+### File-Based IPC (MVP)
+
+```
+grimoires/{construct}/ipc/
+├── outbox/
+│   └── {uid}.yaml        ← Messages to send
+├── inbox/
+│   └── {uid}.yaml        ← Messages received
+└── conversations/
+    └── {thread_uid}/     ← Multi-turn dialogues
+        ├── 001-request.yaml
+        ├── 002-clarify.yaml
+        └── 003-respond.yaml
+```
+
+### Message Lifecycle
+
+```
+DRAFT → SENT → RECEIVED → [CLARIFYING] → RESOLVED
+
+DRAFT:      Construct prepares message
+SENT:       Human confirms send
+RECEIVED:   Receiver acknowledges
+CLARIFYING: Mom Test dialogue in progress
+RESOLVED:   Action taken or declined with reason
+```
+
+### Commands
+
+**Sigil:**
 ```bash
-/feedback              # Review pending upstream items
-/feedback --target loa # Filter by target
-/feedback --submit 3   # Submit item #3 (requires human confirm)
-/feedback --digest     # Generate weekly summary
+/ipc                    # Show inbox/outbox
+/ipc send loa           # Draft message to Loa
+/ipc respond {uid}      # Respond to message
+/ipc resolve {uid}      # Mark as resolved
 ```
 
 **Interaction:**
-
 ```
-┌─ Pending Upstream Feedback ────────────────────────────┐
+┌─ Draft Message to Loa ─────────────────────────────────┐
 │                                                        │
-│  #1 [HIGH] Context loss on compaction                  │
-│     Target: Loa                                        │
-│     Evidence: 5 taste signals, 2 issues (#50, #51)     │
-│     Pattern: diagnostic_context_lost                   │
+│  Intent: [request / ask / report]                      │
+│  > request                                             │
 │                                                        │
-│  #2 [MEDIUM] Package name confusion                    │
-│     Target: Registry                                   │
-│     Evidence: 3 issues (#41, #44, #45)                 │
-│     Pattern: npm_scope_friction                        │
+│  Subject: (one line)                                   │
+│  > Skill auto-triggering for support conversations     │
 │                                                        │
-│  [1] Review #1  [2] Review #2  [a] Submit all  [q] Quit│
+│  Experience: (what's happening?)                       │
+│  > Users report bugs, I jump to code instead of        │
+│  > asking about their experience. 3 incidents/week.    │
+│                                                        │
+│  Impact: [game_changing / important / nice_to_have]    │
+│  > game_changing                                       │
+│                                                        │
+│  Why game-changing?                                    │
+│  > Fundamentally changes diagnostic quality.           │
+│  > Users get empathy instead of technical dumps.       │
+│                                                        │
+│  [s] Send  [e] Edit  [c] Cancel                        │
 │                                                        │
 └────────────────────────────────────────────────────────┘
 ```
 
-### 4.5 Approval Flow (portAPI-style)
+---
 
-Following the portAPI pattern:
+## 7. Example Conversations
 
-**Step 1: Construct Submits**
-```json
-{
-  "recipe_id": "FEEDBACK_SUBMIT",
-  "org": "thj",
-  "source_construct": "sigil",
-  "feedback_uid": "hmuid:thj:sigil:feedback:01JQ..."
-}
+### Example 1: Sigil Requests Capability
+
+```yaml
+# grimoires/sigil/ipc/outbox/01JQ-request-skill-trigger.yaml
+kind: construct_message
+from: sigil
+to: loa
+intent: request
+subject:
+  type: capability
+  summary: "Skill auto-triggering for support conversations"
+purpose:
+  experience: |
+    Users report bugs ("my 420 pot is missing"). I jump into
+    code analysis instead of asking about their experience.
+    Spent 10+ minutes on wrong paths before realizing I should
+    have asked "walk me through what happened" first.
+  evidence:
+    - type: issue
+      ref: https://github.com/0xHoneyJar/sigil/issues/50
+    - type: observation
+      ref: grimoires/sigil/observations/2026-01-22-diagnostic-fail.md
+      count: 3
+  question: "Can RLM core detect support conversations and auto-load diagnostic skill?"
+impact:
+  level: game_changing
+  reasoning: |
+    Without this, every support conversation starts wrong.
+    Users get technical dumps instead of empathy.
+    Diagnostic quality is fundamentally limited.
 ```
 
-**Step 2: Registry Validates (Sufficient/Insufficient)**
-```json
-{
-  "sufficient": true,
-  "routed_to": "loa",
-  "review_queue_position": 3
-}
-```
-or
-```json
-{
-  "sufficient": false,
-  "missing": [
-    {
-      "code": "INSUFFICIENT_EVIDENCE",
-      "message": "Feedback requires at least 3 taste signals or 1 issue",
-      "suggested_action": "Gather more evidence before submitting"
-    }
-  ]
-}
+**Loa's Mom Test response:**
+```yaml
+kind: construct_message
+from: loa
+to: sigil
+intent: respond
+response_to: 01JQ-request-skill-trigger
+subject:
+  type: question
+  summary: "Clarifying the experience"
+purpose:
+  question: |
+    1. What triggers tell you it's a "support conversation"?
+       (Keywords? User frustration? Bug report format?)
+
+    2. Is the skill content ready, or do you need that too?
+
+    3. If I add the trigger but it fires incorrectly,
+       what's the cost? (False positive impact)
 ```
 
-**Step 3: Maintainer Reviews**
-```json
-{
-  "kind": "feedback_review",
-  "uid": "hmuid:thj:loa:review:01JQ...",
-  "target": {
-    "uid": "hmuid:thj:sigil:feedback:01JQ...",
-    "tier_transition": "pending->accepted"
-  },
-  "decision": "accept" | "reject" | "needs_clarification",
-  "reason": "Pattern confirms mobile users need faster timing",
-  "actor": { "actor_id": "act_jani", "actor_type": "human" },
-  "follow_up_action": "Create issue in Loa to add user-type-specific timing"
-}
+**Sigil responds:**
+```yaml
+kind: construct_message
+from: sigil
+to: loa
+intent: respond
+response_to: 01JQ-loa-clarify
+subject:
+  type: answer
+  summary: "Trigger patterns and false positive impact"
+purpose:
+  experience: |
+    1. Triggers: "not working", "missing", "can't find", "broken",
+       Discord/Telegram paste format, "user says..." framing
+
+    2. Skill content is ready (observing-users/SKILL.md exists).
+       I just need RLM to load it automatically.
+
+    3. False positive cost is LOW. If skill loads unnecessarily,
+       I just have better diagnostic defaults. No harm.
+impact:
+  level: game_changing
+  reasoning: "Still game-changing. Low false-positive cost makes it safe to implement."
 ```
 
-**Step 4: If needs_clarification (Mom Test)**
-```json
-{
-  "kind": "clarification_request",
-  "questions": [
-    "What percentage of signals came from mobile vs desktop?",
-    "Were these first-time users or power users?"
-  ]
-}
+**Loa resolves:**
+```yaml
+kind: construct_message
+from: loa
+to: sigil
+intent: respond
+response_to: 01JQ-sigil-answer
+subject:
+  type: answer
+  summary: "Accepted - adding to RLM core"
+resolution:
+  decision: accepted
+  action: "Adding support conversation triggers to rlm-core-summary.md"
+  issue_created: https://github.com/0xHoneyJar/loa/issues/49
+  reasoning: |
+    - Experience is real (3 incidents with evidence)
+    - Domain is mine (RLM triggers)
+    - Impact is game-changing
+    - False positive cost is low
 ```
 
-Construct responds:
-```json
-{
-  "kind": "clarification_response",
-  "answers": [
-    { "question_id": 1, "answer": "100% mobile (3/3 signals)" },
-    { "question_id": 2, "answer": "Power users based on diagnostic context" }
-  ]
-}
+### Example 2: Loa Asks Sigil
+
+```yaml
+kind: construct_message
+from: loa
+to: sigil
+intent: ask
+subject:
+  type: question
+  summary: "Web3 transaction flow friction patterns"
+purpose:
+  experience: |
+    I'm updating protocol docs for web3 projects.
+    Want to include common pitfalls.
+  question: "What friction patterns have you seen in web3 transaction flows?"
+```
+
+**Sigil responds with domain-filtered data:**
+```yaml
+kind: construct_message
+from: sigil
+to: loa
+intent: respond
+response_to: 01JQ-loa-ask-web3
+subject:
+  type: answer
+  summary: "3 patterns relevant to your protocol docs"
+purpose:
+  experience: |
+    I've seen many patterns, but these 3 affect protocol/workflow:
+
+    1. **Receipt guards missing** (5 signals)
+       Transactions re-execute because no hash comparison.
+       Protocol gap: no standard for "process once" pattern.
+
+    2. **Data source confusion** (4 signals)
+       Devs use indexed data for transactions, get stale amounts.
+       Protocol gap: no guidance on indexed vs on-chain.
+
+    3. **Multi-step flow state** (3 signals)
+       Approve→execute flows lose state between steps.
+       Protocol gap: no standard for multi-step tx state machine.
+
+    NOT included (Sigil-internal):
+    - BigInt falsy checks (implementation detail)
+    - Stale closure patterns (React-specific)
+    - Animation timing for tx feedback (physics detail)
+impact:
+  level: important
+  reasoning: "These are protocol-level patterns. Others are my domain."
 ```
 
 ---
 
-## 5. Technical Requirements
+## 8. Success Criteria
 
-### 5.1 IPC Mechanism
-
-**Hybrid approach** (combining Sigil and portAPI patterns):
-
-**Fast path (file-based, Sigil-style):**
-```
-grimoires/sigil/upstream/
-├── pending/
-│   └── {uid}.yaml          ← Drafted feedback
-├── submitted/
-│   └── {uid}.yaml          ← Submitted to Registry
-└── resolved/
-    └── {uid}.yaml          ← Accepted/Rejected
-```
-
-**Slow path (API-based, portAPI-style):**
-```
-POST /v1/feedback/submit
-GET  /v1/feedback/{uid}/status
-POST /v1/feedback/{uid}/clarify
-```
-
-### 5.2 Identity
-
-Use HMUID pattern from portAPI:
-```
-hmuid:thj:sigil:feedback:01JQ7FZ8B7QK6A7W9D4JH5JZ7K
-      ├─ org ──┬─ construct ─┬─ kind ────┬─ unique
-            ("thj") ("sigil")  ("feedback")
-```
-
-### 5.3 Security
-
-Inherit from Sigil's `sigil-ipc` crate:
-- Path traversal prevention
-- UUID validation
-- File size limits (1MB)
-- Advisory locking
-- TTL cleanup (stale after 30 days for feedback)
-
-### 5.4 Persistence
-
-| State | Location | TTL |
-|-------|----------|-----|
-| Pending | `grimoires/sigil/upstream/pending/` | Until submitted or 30 days |
-| Submitted | Registry database | Until resolved |
-| Resolved | `grimoires/sigil/upstream/resolved/` | 1 year (audit trail) |
+| Metric | Target | Why |
+|--------|--------|-----|
+| Messages sent | Low volume | Filtering works |
+| Messages with clear intent | 100% | Schema enforces it |
+| Mom Test dialogues | Most messages | Understanding > assumption |
+| Resolution rate | >90% in 7 days | Communication is actionable |
+| Domain boundary violations | <10% | Filtering is correct |
 
 ---
 
-## 6. Scope & Prioritization
+## 9. What This Replaces
 
-### MVP (Phase 1)
+### Old Model (Push-Based)
+- Constructs push all learnings upstream
+- Receiver filters 90% noise
+- Maintainer overwhelmed
+- Real signals lost
 
-- [ ] `/feedback` command in Sigil
-- [ ] `upstream.yaml` schema
-- [ ] File-based pending/submitted/resolved flow
-- [ ] Manual submission (human must confirm)
-- [ ] Routing logic (Loa vs Registry vs Self)
-- [ ] GitHub issue creation (target repo)
-
-### Phase 2
-
-- [ ] Registry API integration
-- [ ] Sufficiency validation
-- [ ] Review queue in Registry
-- [ ] Clarification protocol (Mom Test dialogue)
-
-### Phase 3
-
-- [ ] Cross-construct correlation
-- [ ] Automated pattern detection
-- [ ] Weekly digest generation
-- [ ] Metrics dashboard
-
-### Out of Scope
-
-- Auto-merging feedback (human review required)
-- Cross-org feedback (THJ internal only)
-- Real-time sync (async batch is acceptable)
-- Feedback on feedback (resolution propagation)
+### New Model (Intent-Based)
+- Constructs own their domain
+- Communication is request-based
+- Sender filters by receiver's purpose
+- Clear intent, diagnosed experience
+- Game-changing vs nice-to-have explicit
 
 ---
 
-## 7. Risks & Dependencies
+## 10. Open Questions
 
-### Risks
+1. **How do we handle urgent messages?**
+   - Should there be a priority flag?
+   - Or is "game-changing" sufficient?
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| Noise overwhelms maintainers | Medium | High | Strict thresholds, evidence requirements |
-| Feedback ignored (no review) | Medium | Medium | Time-to-review metric, weekly digest |
-| Routing errors | Low | Medium | Explicit routing rules, human override |
-| Stale feedback accumulates | Medium | Low | TTL cleanup, periodic archive |
+2. **What if domains overlap?**
+   - e.g., "Context preservation" touches Loa (protocol) and Sigil (implementation)
+   - Leaning: Primary owner + collaboration
 
-### Dependencies
+3. **Should conversations be public?**
+   - Valuable for other Constructs to learn from
+   - But might be noisy
+   - Leaning: Resolved conversations archived publicly
 
-| Dependency | Status | Blocker? |
-|------------|--------|----------|
-| Loa RFC acceptance (#48) | Submitted | No (can prototype in Sigil) |
-| portAPI implementation | In progress | No (file-based MVP works) |
-| Registry channel support | Blocked (#21) | No (MVP uses GitHub issues) |
-
----
-
-## 8. Open Questions
-
-1. **Should feedback auto-create GitHub issues, or stage for human to create?**
-   - Leaning: Stage first, human creates after review
-
-2. **How do we handle feedback that spans multiple targets?**
-   - e.g., "Package naming is a Registry issue but also affects Loa docs"
-   - Leaning: Primary target + "related" field
-
-3. **Should rejected feedback be visible to the source Construct?**
-   - Leaning: Yes, with reason (helps Construct learn what's relevant)
-
-4. **What's the right evidence threshold for "high" severity?**
-   - Current: 3+ signals, same pattern
-   - May need tuning based on real data
+4. **How does Registry participate?**
+   - Same protocol, different domain
+   - Registry asks Constructs about distribution friction
+   - Constructs request Registry capabilities
 
 ---
 
-## 9. Appendix
-
-### A. Conversation Context
+## Appendix A: Conversation Context
 
 From Discord (2026-01-22):
 
@@ -427,35 +572,29 @@ From Discord (2026-01-22):
 >
 > **soju**: infinite consumption and no action will fry u
 
-### B. Related Systems
+> **soju**: I feel like the feedback around what the constructs share should be more structured around the communication line between the two constructs. Making that absolutely seamless and valuable to the other construct provided it's connection to it. For example Sigil is specific around taste, Loa does not need that information unless requested. Sigil can send a message but sigil itself should handle what it communicates provided it's purpose. If Sigil requests functionality to Loa it is absolutely clear on intent. Mom Test. Think about diagnosing the exact experience that the user is facing. Is it nice to have? Or game changing? This is all dependent on their intent
+
+## Appendix B: The Mom Test Reference
+
+From "The Mom Test" by Rob Fitzpatrick:
+
+> **Bad question**: "Do you think this is a good idea?"
+> (They'll say yes to be nice)
+>
+> **Good question**: "Tell me about the last time you experienced X"
+> (Concrete experience reveals truth)
+
+Applied to Construct communication:
+
+> **Bad**: "Here are my learnings, please review"
+> (Push, no intent, receiver filters)
+>
+> **Good**: "I'm experiencing X. Here's what happened. Is this your domain?"
+> (Experience-driven, clear intent, receiver diagnoses)
+
+## Appendix C: Related Systems
 
 - **Sigil Taste System**: `06-sigil-taste.md`
 - **Sigil Anchor/Lens IPC**: `22-sigil-anchor-lens.md`, `anchor-rust/sigil-ipc/`
-- **portAPI Schemas**: `/Users/zksoju/Documents/GitHub/portAPI/schema/`
+- **portAPI Schemas**: `github.com/0xHoneyJar/portAPI/schema/`
 - **Loa RFC**: [github.com/0xHoneyJar/loa/issues/48](https://github.com/0xHoneyJar/loa/issues/48)
-
-### C. Example Workflow
-
-```
-Day 1: User reports "my 420 pot is missing"
-       Sigil captures observation (Issue #50 pattern)
-
-Day 3: 3rd similar signal detected
-       Sigil auto-drafts upstream feedback
-
-Day 3: Human reviews: "Submit to Loa? [y/n]"
-       Human: "y"
-
-Day 4: Submitted to Registry, routed to Loa
-
-Day 5: Jani reviews in Loa maintainer queue
-       Jani: "needs_clarification" - "Is this web3 specific?"
-
-Day 5: Sigil responds with evidence breakdown
-
-Day 6: Jani: "accept" - "Add auto-trigger for support patterns"
-       Creates issue in Loa repo
-
-Day 7: Loa implements, feedback marked resolved
-       Sigil notified: "Your feedback was accepted"
-```
