@@ -1,8 +1,8 @@
 # Loa
 
-[![Version](https://img.shields.io/badge/version-1.6.0-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.7.0-blue.svg)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-AGPL--3.0-green.svg)](LICENSE.md)
-[![Release](https://img.shields.io/badge/release-Codebase%20Grounding%20%26%20Security%20Hardening-purple.svg)](CHANGELOG.md#160---2026-01-23--codebase-grounding--security-hardening)
+[![Release](https://img.shields.io/badge/release-Goal%20Traceability%20%26%20Guided%20Workflow-purple.svg)](CHANGELOG.md#170---2026-01-24--goal-traceability--guided-workflow)
 
 > *"The Loa are pragmatic entities... They're not worshipped for salvation—they're worked with for practical results."*
 
@@ -90,8 +90,10 @@ Loa uses a **managed scaffolding** architecture inspired by AWS Projen, Copier, 
 
 | Command | Purpose |
 |---------|---------|
+| `/loa` | Guided workflow navigator (v0.21.0) |
 | `/audit` | Full codebase security audit |
 | `/audit-deployment` | Infrastructure security review |
+| `/validate` | Run validation subagents |
 | `/translate @doc for audience` | Executive summaries |
 | `/update-loa` | Pull framework updates |
 | `/contribute` | Create upstream PR |
@@ -169,6 +171,20 @@ uv run simstim start -- /implement sprint-1
 - Extended credential redaction (30+ patterns)
 
 See **[simstim/README.md](simstim/README.md)** for full documentation.
+
+### Goal Traceability (v0.21.0)
+
+Prevents silent goal failures by ensuring PRD goals are tracked through implementation:
+
+- **Goal IDs**: PRD goals identified as G-1, G-2, G-3
+- **Appendix C**: Sprint plan maps goals to contributing tasks
+- **E2E Validation**: Auto-generated task in final sprint validates all goals
+- **Goal Validator**: Subagent verifies goals are achieved
+
+```bash
+/validate goals          # Check goal achievement status
+/loa                     # Guided workflow showing progress
+```
 
 ### Continuous Learning (v0.17.0)
 
