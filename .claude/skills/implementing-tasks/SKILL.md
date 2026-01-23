@@ -1,4 +1,18 @@
 ---
+name: implementing-tasks
+description: Execute sprint tasks with production-quality code and tests - addresses audit feedback iteratively
+allowed-tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Glob
+  - Grep
+  - Task
+  - TaskCreate
+  - TaskUpdate
+  - TaskList
+# Custom config
 parallel_threshold: 3000
 timeout_minutes: 120
 zones:
@@ -376,54 +390,17 @@ Key sections:
 </workflow>
 
 <parallel_execution>
-## When to Split
+## Parallel Execution
 
+See `patterns.md` for detailed parallel execution strategies including:
+- Parallel feedback checking (Phase 0)
+- Parallel task implementation (Phase 2)
+- Consolidation procedures
+
+**Quick reference:**
 - SMALL (<3,000 lines): Sequential
 - MEDIUM (3,000-8,000 lines) with >3 independent tasks: Consider parallel
 - LARGE (>8,000 lines): MUST split
-
-## Option A: Parallel Feedback Checking (Phase 0)
-
-When multiple feedback sources exist:
-
-```
-Spawn 2 parallel Explore agents:
-
-Agent 1: "Read grimoires/loa/a2a/sprint-N/auditor-sprint-feedback.md:
-1. Does file exist?
-2. If yes, verdict (CHANGES_REQUIRED or APPROVED)?
-3. If CHANGES_REQUIRED, list all CRITICAL/HIGH issues with file paths
-Return: structured summary"
-
-Agent 2: "Read grimoires/loa/a2a/sprint-N/engineer-feedback.md:
-1. Does file exist?
-2. If yes, verdict (All good or changes requested)?
-3. If changes, list all feedback items with file paths
-Return: structured summary"
-```
-
-## Option B: Parallel Task Implementation (Phase 2)
-
-When sprint has multiple independent tasks:
-
-```
-1. Read sprint.md and identify all tasks
-2. Analyze task dependencies
-3. Group into parallel batches:
-   - Batch 1: Tasks with no dependencies (parallel)
-   - Batch 2: Tasks depending on Batch 1 (after Batch 1)
-
-For independent tasks, spawn parallel agents:
-Agent 1: "Implement Task 1.2 - read acceptance criteria, review patterns, implement, write tests, return summary"
-Agent 2: "Implement Task 1.3 - read acceptance criteria, review patterns, implement, write tests, return summary"
-```
-
-## Consolidation
-
-1. Collect results from all parallel agents
-2. Verify no conflicts between implementations
-3. Run integration tests across all changes
-4. Generate unified report
 </parallel_execution>
 
 <output_format>
@@ -447,147 +424,17 @@ Key sections:
 - **Time-bound**: Report generated for review
 </success_criteria>
 
-<semver_requirements>
-## Version Format: MAJOR.MINOR.PATCH
+<extended_references>
+## Extended References
 
-- **MAJOR**: Breaking changes (incompatible API changes)
-- **MINOR**: New features (backwards-compatible additions)
-- **PATCH**: Bug fixes (backwards-compatible fixes)
+For detailed patterns and checklists, see:
 
-### When to Update Version
+- **`patterns.md`** - Parallel execution, task planning, beads workflow
+- **`checklist.md`** - SemVer requirements, quality checklists, red flags
 
-| Change | Bump | Example |
-|--------|------|---------|
-| New feature implementation | MINOR | 0.1.0 → 0.2.0 |
-| Bug fix | PATCH | 0.2.0 → 0.2.1 |
-| Breaking API change | MAJOR | 0.2.1 → 1.0.0 |
-
-### Version Update Process
-
-1. Determine bump type based on changes
-2. Update package.json version
-3. Update CHANGELOG.md with sections: Added, Changed, Fixed, Removed, Security
-4. Reference version in completion comments
-</semver_requirements>
-
-<task_planning>
-## Task Planning (Required for Complex Tasks) (v0.19.0)
-
-### What is a Complex Task?
-
-A task is complex if ANY of these apply:
-- Touches 3+ files/modules
-- Involves architectural decisions
-- Implementation path is unclear
-- Estimated at >2 hours
-- Has multiple acceptance criteria
-- Involves security-sensitive code
-
-### Planning Requirement
-
-For complex tasks, create a plan BEFORE writing code:
-
-```markdown
-## Task Plan: [Task Name]
-
-### Objective
-[What this task accomplishes]
-
-### Approach
-1. [Step 1]
-2. [Step 2]
-3. [Step 3]
-
-### Files to Modify
-- `path/to/file.ts` - [what changes]
-- `path/to/other.ts` - [what changes]
-
-### Dependencies
-- [What must exist before this task]
-- [External services needed]
-
-### Risks
-- [What could go wrong]
-- [Mitigation approach]
-
-### Verification
-- [How we'll know it works]
-- [Specific tests to write]
-
-### Acceptance Criteria
-- [ ] [Criterion 1]
-- [ ] [Criterion 2]
-```
-
-### Plan Review
-
-Before implementing:
-1. Review plan for completeness
-2. Identify any blockers
-3. Confirm approach aligns with SDD
-4. Get human approval if high-risk
-
-### Simple Tasks
-
-For simple tasks (documentation updates, config changes, small fixes), planning is optional. Use judgment.
-
-### Plan as Artifact
-
-Task plans are stored in `grimoires/loa/a2a/sprint-N/task-{N}-plan.md` and become part of the review artifact.
-</task_planning>
-
-<checklists>
-See `resources/REFERENCE.md` for complete checklists:
-- Pre-Implementation Checklist
-- Code Quality Checklist
-- Testing Checklist
-- Documentation Checklist
-- Versioning Checklist
-
-**Red Flags (immediate action required):**
-- No tests for new code
-- Hardcoded secrets
-- Skipped error handling
-- Ignored existing patterns
-</checklists>
-
-<beads_workflow>
-## Beads Workflow (beads_rust)
-
-When beads_rust (`br`) is installed, the full task lifecycle:
-
-### Session Start
-```bash
-br sync --import-only  # Import latest state from JSONL
-```
-
-### Task Lifecycle
-```bash
-# Get ready work
-.claude/scripts/beads/get-ready-work.sh 1 --ids-only
-
-# Update task status
-br update <task-id> --status in_progress
-
-# Log discovered issues during implementation
-.claude/scripts/beads/log-discovered-issue.sh "<parent-id>" "Issue description" bug 2
-
-# Complete task
-br close <task-id> --reason "Implemented per acceptance criteria"
-```
-
-### Semantic Labels for Tracking
-| Label | Purpose | Example |
-|-------|---------|---------|
-| `discovered-during:<id>` | Traceability | Auto-added by log-discovered-issue.sh |
-| `needs-review` | Review gate | `br label add <id> needs-review` |
-| `review-approved` | Passed review | `br label add <id> review-approved` |
-| `security` | Security concern | `br label add <id> security` |
-
-### Session End
-```bash
-br sync --flush-only  # Export SQLite → JSONL before commit
-```
-
-**Protocol Reference**: See `.claude/protocols/beads-integration.md`
-</beads_workflow>
+**Quick Links:**
+- Task planning templates → `patterns.md#task-planning`
+- Beads workflow → `patterns.md#beads-workflow`
+- Version bumping → `checklist.md#semver-requirements`
+- Pre-implementation checklist → `checklist.md#pre-implementation-checklist`
+</extended_references>

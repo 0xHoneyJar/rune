@@ -4,6 +4,12 @@ description: |
   Autonomous skill extraction from debugging discoveries. Activates when agents
   find non-obvious solutions through investigation, experimentation, or trial-and-error.
   Captures these discoveries as reusable skills for future sessions.
+allowed-tools:
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
 author: Loa Framework
 version: 1.0.0
 loa-agent-scope:

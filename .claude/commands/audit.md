@@ -5,7 +5,11 @@ description: |
   Comprehensive security and quality audit of the application codebase.
   OWASP Top 10, secrets, architecture, code quality review.
 
-arguments: []
+arguments:
+  - name: "scope"
+    description: "Limit audit to specific area (security, architecture, quality, devops, or path pattern)"
+    required: false
+    default: "all"
 
 agent: "auditing-security"
 agent_path: "skills/auditing-security/"
@@ -50,9 +54,14 @@ Comprehensive security and quality audit of the application codebase by the Para
 
 ## Invocation
 
-```
-/audit
-/audit background
+```bash
+/audit                          # Full audit (all areas)
+/audit --scope security         # Security audit only
+/audit --scope architecture     # Architecture audit only
+/audit --scope quality          # Code quality audit only
+/audit --scope devops           # DevOps/infrastructure audit only
+/audit --scope "src/auth/**"    # Audit specific path pattern
+/audit background               # Run as background subagent
 ```
 
 ## Agent
@@ -92,9 +101,21 @@ grimoires/loa/a2a/audits/
 
 ## Arguments
 
-| Argument | Description | Required |
-|----------|-------------|----------|
-| `background` | Run as subagent for parallel execution | No |
+| Argument | Description | Required | Default |
+|----------|-------------|----------|---------|
+| `--scope` | Limit audit to specific area or path | No | `all` |
+| `background` | Run as subagent for parallel execution | No | - |
+
+### Scope Values
+
+| Value | Description |
+|-------|-------------|
+| `all` | Full comprehensive audit (default) |
+| `security` | Security vulnerabilities, secrets, auth |
+| `architecture` | Design patterns, complexity, scalability |
+| `quality` | Code quality, testing, documentation |
+| `devops` | Infrastructure, deployment, monitoring |
+| `<path>` | Audit specific file/directory pattern |
 
 ## Outputs
 
@@ -133,6 +154,44 @@ grimoires/loa/a2a/audits/
 - Monitoring & observability
 - Backup & recovery
 - Access control
+
+## Severity Criteria
+
+| Severity | Definition | SLA | Examples |
+|----------|------------|-----|----------|
+| **CRITICAL** | Active exploitation possible, data breach imminent | Fix within 24h, block deployment | Hardcoded secrets, SQL injection, auth bypass, RCE |
+| **HIGH** | Significant security risk, exploitation likely | Fix before production | XSS, CSRF, insecure deserialization, missing auth checks |
+| **MEDIUM** | Moderate risk, exploitation requires effort | Fix within sprint | Information disclosure, weak crypto, missing rate limits |
+| **LOW** | Minor risk, defense in depth | Track in backlog | Verbose errors, missing headers, outdated non-vulnerable deps |
+| **INFO** | Best practice recommendations | Optional | Code style, documentation, optimization opportunities |
+
+### Severity Decision Tree
+
+```
+Can attacker gain unauthorized access to data/systems?
+├─ YES → Does it require authentication?
+│        ├─ NO → CRITICAL (public exploit path)
+│        └─ YES → HIGH (authenticated exploit path)
+└─ NO → Can attacker disrupt service?
+         ├─ YES → HIGH (DoS/availability impact)
+         └─ NO → Can attacker gain information?
+                  ├─ YES → MEDIUM (info disclosure)
+                  └─ NO → LOW or INFO
+```
+
+### Risk Score Calculation
+
+```
+Risk = Likelihood × Impact
+
+Likelihood: 1 (unlikely) to 5 (trivial to exploit)
+Impact: 1 (minimal) to 5 (catastrophic)
+
+Score 15-25: CRITICAL
+Score 10-14: HIGH
+Score 5-9: MEDIUM
+Score 1-4: LOW
+```
 
 ## Report Format
 
