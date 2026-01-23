@@ -205,6 +205,17 @@ Or use the slash command:
 5. **Restore**: Your `.claude/overrides/` are preserved
 6. **Commit**: Creates single atomic commit with version tag
 
+### Project File Protection (v1.5.0+)
+
+Your `README.md` and `CHANGELOG.md` are automatically preserved during updates via `.gitattributes`.
+
+**One-time setup** (required for `/update-loa`):
+```bash
+git config merge.ours.driver true
+```
+
+This tells Git to always keep your version of these files when merging from upstream. The `/update-loa` command runs this automatically, but you can also set it manually.
+
 ### Clean Upgrade (v1.4.0+)
 
 Both `mount-loa.sh` and `update.sh` create a single atomic git commit, preventing history pollution:
