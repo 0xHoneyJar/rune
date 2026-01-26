@@ -1,6 +1,6 @@
 {
   "name": "@thehoneyjar/sigil-hud",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Diagnostic HUD for Sigil - composable React components for development",
   "type": "module",
   "main": "./dist/index.js",
@@ -48,10 +48,10 @@
   },
   "optionalDependencies": {
     "@thehoneyjar/sigil-anchor": "^4.3.0",
-    "@thehoneyjar/sigil-fork": "^0.2.0",
-    "@thehoneyjar/sigil-simulation": "^0.2.0",
-    "@thehoneyjar/sigil-lens": "^0.2.0",
-    "@thehoneyjar/sigil-diagnostics": "^0.2.0"
+    "@thehoneyjar/sigil-fork": "^0.1.0",
+    "@thehoneyjar/sigil-simulation": "^0.1.0",
+    "@thehoneyjar/sigil-lens": "^0.1.0",
+    "@thehoneyjar/sigil-diagnostics": "^0.1.0"
   },
   "devDependencies": {
     "@thehoneyjar/sigil-anchor": "workspace:*",
@@ -84,6 +84,8 @@
     "diagnostic",
     "devtools",
     "react",
-    "web3"
+    "web3",
+    "agentation",
+    "user-lens"
   ]
 }
