@@ -1,0 +1,6 @@
+name: validating
+command: validate
+description: Run physics and rigor validation on sprint components
+subcommands:
+  - physics
+  - rigor

@@ -54,8 +54,9 @@
           "local_id": 5,
           "global_id": 5,
           "name": "Workflow Integration",
-          "status": "planned",
-          "created": "2026-01-25T00:00:00Z"
+          "status": "in_progress",
+          "created": "2026-01-25T00:00:00Z",
+          "started": "2026-01-26T00:00:00Z"
         },
         {
           "local_id": 6,

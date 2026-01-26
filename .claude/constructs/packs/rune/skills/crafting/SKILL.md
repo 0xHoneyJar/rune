@@ -184,6 +184,7 @@ See `rules/glyph/09-glyph-modes.md` for detection logic.
 - `rules/rigor/*.md` - If web3 detected
 
 ### On Explanation (L4)
+- `rules/glyph/17-glyph-disclosure-l4.md` - L4 content structure
 - `physics-reference` skill - Full rationale
 - `patterns-reference` skill - Implementation details
 
@@ -199,8 +200,10 @@ See `rules/glyph/09-glyph-modes.md` for detection logic.
 - `rules/glyph/14-glyph-auto-repair.md` - Auto-repair logic
 - `rules/glyph/15-glyph-validation-summary.md` - Summary display
 
-### Logging
+### Logging & Continuity
 - `rules/glyph/08-glyph-notes-logging.md` - NOTES.md protocol
+- `rules/glyph/16-glyph-feedback-taste.md` - Feedback loop taste capture
+- `rules/glyph/18-glyph-session-continuity.md` - Session state preservation
 
 ## Reference Skills (on-demand)
 
