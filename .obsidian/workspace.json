@@ -4,70 +4,74 @@
     "type": "split",
     "children": [
       {
-        "id": "e68a98f8d2a9f129",
-        "type": "split",
+        "id": "5b63d431d45b59a0",
+        "type": "tabs",
         "children": [
           {
-            "id": "95fa6057f2cb1a90",
-            "type": "tabs",
-            "children": [
-              {
-                "id": "09de3c648ade55d2",
-                "type": "leaf",
-                "state": {
-                  "type": "markdown",
-                  "state": {
-                    "file": "CHANGELOG.md",
-                    "mode": "source",
-                    "source": false
+            "id": "49ea221108e380d1",
+            "type": "leaf",
+            "pinned": true,
+            "state": {
+              "type": "terminal:terminal",
+              "state": {
+                "terminal:terminal": {
+                  "cwd": "/Users/zksoju/Documents/GitHub/sigil/",
+                  "focus": false,
+                  "profile": {
+                    "followTheme": true,
+                    "name": "",
+                    "restoreHistory": false,
+                    "rightClickAction": "copyPaste",
+                    "successExitCodes": [
+                      "0",
+                      "SIGINT",
+                      "SIGTERM"
+                    ],
+                    "terminalOptions": {
+                      "documentOverride": null
+                    },
+                    "type": "developerConsole"
                   },
-                  "icon": "lucide-file",
-                  "title": "CHANGELOG"
+                  "serial": null
                 }
-              }
-            ]
+              },
+              "pinned": true,
+              "icon": "terminal",
+              "title": "Terminal: Developer console"
+            }
           },
           {
-            "id": "5b63d431d45b59a0",
-            "type": "tabs",
-            "children": [
-              {
-                "id": "49ea221108e380d1",
-                "type": "leaf",
-                "pinned": true,
-                "state": {
-                  "type": "terminal:terminal",
-                  "state": {
-                    "terminal:terminal": {
-                      "cwd": "/Users/zksoju/Documents/GitHub/sigil/",
-                      "focus": false,
-                      "profile": {
-                        "followTheme": true,
-                        "name": "",
-                        "restoreHistory": false,
-                        "rightClickAction": "copyPaste",
-                        "successExitCodes": [
-                          "0",
-                          "SIGINT",
-                          "SIGTERM"
-                        ],
-                        "terminalOptions": {
-                          "documentOverride": null
-                        },
-                        "type": "developerConsole"
-                      },
-                      "serial": null
-                    }
-                  },
-                  "pinned": true,
-                  "icon": "terminal",
-                  "title": "Terminal: Developer console"
+            "id": "a024a258e005d170",
+            "type": "leaf",
+            "state": {
+              "type": "show-hidden-files:documentation",
+              "state": {
+                "show-hidden-files:documentation": {
+                  "data": "# Show Hidden Files for Obsidian [![release](https://img.shields.io/github/v/release/polyipseity/obsidian-show-hidden-files)][latest release] [![Obsidian downloads](https://img.shields.io/badge/dynamic/json?logo=Obsidian&color=%238b6cef&label=downloads&query=$[\"show-hidden-files\"].downloads&url=https://raw.githubusercontent.com/obsidianmd/obsidian-releases/master/community-plugin-stats.json)][community plugin]\n\n[Buy Me a Coffee]: https://buymeacoffee.com/polyipseity\n[Buy Me a Coffee/embed]: https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoji=&slug=polyipseity&button_colour=40DCA5&font_colour=ffffff&font_family=Lato&outline_colour=000000&coffee_colour=FFDD00\n[Obsidian]: https://obsidian.md/\n[changelog]: https://github.com/polyipseity/obsidian-show-hidden-files/blob/main/CHANGELOG.md\n[community plugin]: https://obsidian.md/plugins?id=show-hidden-files\n[latest release]: https://github.com/polyipseity/obsidian-show-hidden-files/releases/latest\n[other things]: https://github.com/polyipseity/obsidian-monorepo\n[plugin library]: https://github.com/polyipseity/obsidian-plugin-library\n[repository]: https://github.com/polyipseity/obsidian-show-hidden-files\n[trailer]: https://raw.githubusercontent.com/polyipseity/obsidian-show-hidden-files/main/assets/trailer.png\n\nShow hidden files, like dotfiles, in [Obsidian].\n\n[![Buy Me a Coffee/embed]][Buy Me a Coffee]\n\n__[Repository] · [Changelog] · [Community plugin] · [Other things] · [Features](#features) · [Installation](#installation) · [Usage](#usage) · [Contributing](#contributing) · [Security](#security)__\n\n![Trailer]\n\nFor first time users, read the [installation](#installation) section first!\n\nThis file is automatically opened on first install. You can reopen it in settings or command palette.\n\n## Features\n\n- Show files that are forcefully hidden in vanilla Obsidian.\n- Toggle visibility of hidden files.\n- Interact with hidden files normally like normal files.\n\n## Installation\n\n1. Install plugin.\n    - ~~Community plugins~~\n        1. ~~Install the [plugin][community plugin] from community plugins directly.~~\n    - Manual\n        1. Create directory `show-hidden-files` under `.obsidian/plugins` of your vault.\n        2. Place `manifest.json`, `main.js`, and `styles.css` from the [latest release] into the directory.\n    - Building (latest)\n        1. Clone this repository, including its submodules.\n        2. Install [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).\n        3. Run `npm install` in the root directory.\n        4. Run `npm run obsidian:install <vault directory>` in the root directory.\n    - [Obsidian42 - BRAT](https://obsidian.md/plugins?id=obsidian42-brat) (latest)\n        - See [their readme](https://github.com/TfTHacker/obsidian42-brat#readme).\n2. Enable plugin. _Before you enable, please check [§ Usage](#usage)._\n3. (optional) Configure plugin settings.\n\n## Usage\n\n- Before enabling the plugin, check if your vault contains dot folders with a lot of files \\(e.g. 100+ files\\). If yes, Obsidian will likely freeze \\(for a long time\\) when you enable the plugin, as Obsidian scans all files in the dot folders.\n\n    By default, the plugin excludes folders and files named `.git` or `.venv` at any level of the vault file tree. If your dot folders are excluded by the defaults, you can simply enable the plugin without freezing Obsidian. The defaults can be edited in plugin settings.\n\n    If not, you should manually create `.obsidian/plugins/show-hidden-files/data.json`, with the following contents as an example \\(excluding the comments\\):\n\n    ```JSON5\n    {\n        \"showingRules\": [\n            \"+/\", // Needed to include all hidden files and folders.\n            // Add dot folders with a lot of files, e.g.:\n            \"-/\\\\.git(?:\\\\/|$)/u\",\n            \"-/\\\\.venv(?:\\\\/|$)/u\",\n            \"-/\\\\.aDotFolderWithManyFiles(?:\\\\/|$)/u\",\n        ]\n    }\n    ```\n\n    The example excludes folders and files named `.git`, `.venv`, or `.aDotFolderWithManyFiles` at any level of the vault file tree. You can instead use `\"-.aDotFolderWithManyFiles/\"` to exclude a folder or file named `.aDotFolderWithManyFiles` at the vault root only.\n\n- Enable the plugin.\n- Please also enable `Files & links > Detect all file extensions` for the plugin to work properly.\n- Other plugins will treat visible hidden files as normal files. This may cause issues such as treating plugin JavaScript files as user scripts. To resolve such issues, exclude those hidden files in the other plugins' settings or hide those hidden files in this plugin's settings.\n\n## Contributing\n\nContributions are welcome!\n\nThis project uses [`changesets`](https://github.com/changesets/changesets) to manage the changelog. When creating a pull request, please [add a changeset](https://github.com/changesets/changesets/blob/main/docs/intro-to-using-changesets.md#adding-changesets) describing the changes. Add multiple changesets if your pull request changes several things. End each changeset with `([PR number](PR link) by [author username](author link))`. For example, the newly created file under the directory `.changeset` should look like:\n\n```Markdown\n---\n\"example\": patch\n---\n\nThis is an example change. ([GH#1](https://github.com/ghost/example/pull/1) by [@ghost](https://github.com/ghost))\n```\n\n### Todos\n\nThe todos here, ordered alphabetically, are things planned for the plugin. There are no guarantees that they will be completed. However, we are likely to accept contributions for them.\n\n- (none)\n\n### Translating\n\nTranslation files are under [`assets/locales/`](assets/locales/). Each locale has its own directory named with its corresponding __[IETF language tag](https://wikipedia.org/wiki/IETF_language_tag)__. Some translation keys are missing here and instead located at [`obsidian-plugin-library`][plugin library].\n\nTo contribute translation for an existing locale, modify the files in the corresponding directory.\n\nFor a new locale, create a new directory named with its language tag and copy [`assets/locales/en/translation.json`](assets/locales/en/translation.json) into it. Then, add an entry to [`assets/locales/en/language.json`](assets/locales/en/language.json) in this format:\n\n```JSONc\n{\n    // ...\n    \"en\": \"English\",\n    \"(your-language-tag)\": \"(Native name of your language)\",\n    \"uwu\": \"Uwuish\",\n    // ...\n}\n```\n\nSort the list of languages by the alphabetical order of their language tags. Then modify the files in the new directory. There will be errors in [`assets/locales.ts`](assets/locales.ts), which you can ignore and we will fix them for you. You are welcome to fix them yourself if you know TypeScript.\n\nWhen translating, keep in mind the following things:\n\n- Do not translate anything between `{{` and `}}` (`{{example}}`). They are __interpolations__ and will be replaced by localized strings at runtime.\n- Do not translate anything between `$t(` and `)` (`$t(example)`). They refer to other localized strings. To find the localized string being referred to, follow the path of the key, which is separated by dots (`.`). For example, the key [`youtu.be./dQw4w9WgXcQ`](https://youtu.be./dQw4w9WgXcQ) refers to:\n\n```JSONc\n{\n    // ...\n    \"youtu\": {\n        // ...\n        \"be\": {\n            // ...\n            \"/dQw4w9WgXcQ\": \"I am 'youtu.be./dQw4w9WgXcQ'!\",\n            // ...\n        },\n        // ...\n    },\n    // ...\n}\n```\n\n- The keys under `generic` are vocabularies. They can be referred in translation strings by `$t(generic.key)`. Refer to them as much as possible to standardize translations for vocabularies that appear in different places.\n- It is okay to move interpolations and references to other localized strings around to make the translation natural. It is also okay to not use some references used in the original translation. However, it is NOT okay to not use all interpolations.\n\n## Security\n\nWe hope that there will never be any security vulnerabilities, but unfortunately it does happen. Please [report](#reporting-a-vulnerability) them!\n\n### Supported versions\n\n| Version | Supported |\n|-|-|\n| latest | ✅ |\n| outdated | ❌ |\n\n### Reporting a vulnerability\n\nPlease report a vulnerability by opening an new issue. We will get back to you as soon as possible.\n",
+                  "displayTextI18nKey": "translation:generic.documentations.readme",
+                  "iconI18nKey": "asset:generic.documentations.readme-icon"
                 }
-              }
-            ]
+              },
+              "icon": "file-question",
+              "title": "Readme"
+            }
+          },
+          {
+            "id": "7ae25d3cb9855e36",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "grimoires/rune/wyrd.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "wyrd"
+            }
           }
         ],
-        "direction": "horizontal"
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -99,7 +103,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "brat",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -140,6 +144,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "grimoires/rune/wyrd.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -149,7 +154,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks"
+              "title": "Backlinks for wyrd"
             }
           },
           {
@@ -212,47 +217,48 @@
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
       "bases:Create new base": false,
-      "terminal:Open terminal": false
+      "terminal:Open terminal": false,
+      "obsidian42-brat:BRAT": false
     }
   },
-  "active": "6d40896eb6d6d958",
+  "active": "7ae25d3cb9855e36",
   "lastOpenFiles": [
-    "tests/unit/zone-compliance.bats",
-    "tests/unit/thj-detection.bats",
-    "tests/unit/subagent-reports.bats",
-    "tests/unit/subagent-loader.bats",
-    "tests/unit/settings-permissions.bats",
-    "tests/unit/semantic-recovery.bats",
-    "tests/unit/schema-validator.bats",
-    "tests/unit/schema-validator-assert.bats",
-    "tests/unit/run-mode-ice.bats",
-    "tests/unit/rlm-benchmark.bats",
-    "tests/unit/quality-gates.bats",
-    "simstim/SECURITY.md",
-    "simstim/README.md",
-    "simstim/CHANGELOG.md",
-    "grimoires/loa/sprint-simstim-security.md",
-    "grimoires/loa/sprint-security-remediation.md",
-    "grimoires/loa/archive/2026-01-18-rlm-inspired-context-improvements/a2a/sprint-9/reviewer.md",
-    "grimoires/loa/archive/2026-01-18-rlm-inspired-context-improvements/a2a/sprint-9/engineer-feedback.md",
-    "grimoires/loa/archive/2026-01-18-rlm-inspired-context-improvements/a2a/sprint-9/auditor-sprint-feedback.md",
-    "grimoires/loa/archive/2026-01-18-rlm-inspired-context-improvements/a2a/sprint-8/reviewer.md",
-    "grimoires/loa/archive/2026-01-18-rlm-inspired-context-improvements/a2a/sprint-8/engineer-feedback.md",
-    "grimoires/loa/archive/2026-01-18-rlm-inspired-context-improvements/a2a/sprint-8/auditor-sprint-feedback.md",
-    "grimoires/loa/archive/2026-01-18-rlm-inspired-context-improvements/a2a/sprint-7/reviewer.md",
-    "grimoires/loa/archive/2026-01-18-rlm-inspired-context-improvements/a2a/sprint-7/engineer-feedback.md",
-    "grimoires/loa/archive/2026-01-18-rlm-inspired-context-improvements/a2a/sprint-7/auditor-sprint-feedback.md",
-    "grimoires/loa/archive/2026-01-18-rlm-inspired-context-improvements/a2a/sprint-12/reviewer.md",
-    "grimoires/loa/archive/2026-01-18-rlm-inspired-context-improvements/a2a/sprint-12/engineer-feedback.md",
-    "grimoires/loa/archive/2026-01-18-rlm-inspired-context-improvements/a2a/sprint-12/auditor-sprint-feedback.md",
-    "grimoires/loa/archive/2026-01-18-rlm-inspired-context-improvements/a2a/sprint-11/reviewer.md",
-    "grimoires/loa/archive/2026-01-18-rlm-inspired-context-improvements/a2a/sprint-11/engineer-feedback.md",
-    "grimoires/loa/archive/2026-01-18-rlm-inspired-context-improvements/a2a/sprint-11/auditor-sprint-feedback.md",
-    "grimoires/loa/archive/2026-01-18-rlm-inspired-context-improvements/a2a/sprint-10/reviewer.md",
-    "grimoires/loa/archive/2026-01-18-rlm-inspired-context-improvements/a2a/sprint-10/engineer-feedback.md",
-    "grimoires/loa/archive/2026-01-18-rlm-inspired-context-improvements/a2a/sprint-10/auditor-sprint-feedback.md",
-    "grimoires/loa/archive/2026-01-17-skills-housekeeping/a2a/sprint-6/engineer-feedback.md",
-    "grimoires/loa/archive/2026-01-17-skills-housekeeping/a2a/sprint-6/reviewer.md",
+    "grimoires/loa/a2a/index.md",
+    "grimoires/loa/a2a/sprint-10/COMPLETED",
+    "grimoires/loa/a2a/sprint-10/auditor-sprint-feedback.md",
+    "grimoires/loa/a2a/sprint-10/engineer-feedback.md",
+    "grimoires/loa/a2a/sprint-10/reviewer.md",
+    "grimoires/loa/a2a/sprint-10",
+    "packages/agentation/README.md",
+    "grimoires/loa/a2a/sprint-9/COMPLETED",
+    "grimoires/loa/a2a/sprint-9/auditor-sprint-feedback.md",
+    "grimoires/loa/a2a/sprint-9/engineer-feedback.md",
+    "grimoires/loa/a2a/sprint-9/reviewer.md",
+    "grimoires/loa/a2a/sprint-9",
+    "packages/agentation/dist/index.d.ts",
+    "packages/agentation/dist/service-DllSRUWF.d.ts",
+    "packages/agentation/dist/wagmi.d.ts",
+    "packages/agentation/src/inspector/index.ts",
+    "packages/agentation/src/inspector/AnnotationMarker.tsx",
+    "packages/agentation/src/inspector/ElementInspector.tsx",
+    "grimoires/loa/a2a/sprint-8/auditor-sprint-feedback.md",
+    "grimoires/loa/a2a/sprint-8/engineer-feedback.md",
+    "grimoires/loa/a2a/sprint-8/reviewer.md",
+    "grimoires/loa/a2a/sprint-7/auditor-sprint-feedback.md",
+    "grimoires/loa/a2a/sprint-7/engineer-feedback.md",
+    "grimoires/loa/a2a/sprint-7/reviewer.md",
+    "node_modules/.pnpm/dompurify@3.0.0/node_modules/dompurify/README.md",
+    "node_modules/.pnpm/@types+dompurify@3.0.0/node_modules/@types/dompurify/README.md",
+    ".claude/references/vercel-react/rules/rerender-memo.md",
+    ".claude/references/vercel-react/rules/server-cache-react.md",
+    ".claude/references/vercel-react/rules/async-parallel.md",
+    ".claude/references/vercel-react/rules/rerender-lazy-state-init.md",
+    ".claude/references/vercel-react/rules/bundle-dynamic-imports.md",
+    ".claude/references/vercel-react/rules/bundle-barrel-imports.md",
+    ".claude/references/vercel-react/rules/async-defer-await.md",
+    ".claude/references/vercel-react/SKILL.md",
+    ".claude/references/skill-creator/SKILL.md",
+    ".agents/skills/vercel-react-best-practices/AGENTS.md",
     "packages/sigil-dev-toolbar/node_modules/date-fns/docs/logotype.svg",
     "packages/sigil-dev-toolbar/node_modules/date-fns/docs/logo.svg",
     "packages/sigil-dev-toolbar/node_modules/lit/logo.svg",

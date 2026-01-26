@@ -2,6 +2,34 @@ lockfileVersion: '6.0'
 
 importers:
 
+  packages/agentation:
+    dependencies:
+      zustand:
+        specifier: ^4.5.0
+        version: 4.5.0(@types/react@18.2.45)(react@18.2.0)
+    devDependencies:
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.11.0
+      '@types/react':
+        specifier: ^18.0.0
+        version: 18.2.45
+      react:
+        specifier: ^18.0.0
+        version: 18.2.0
+      tsup:
+        specifier: ^8.0.0
+        version: 8.0.1(typescript@5.3.3)
+      typescript:
+        specifier: ^5.0.0
+        version: 5.3.3
+      viem:
+        specifier: ^2.0.0
+        version: 2.0.0(typescript@5.3.3)
+      wagmi:
+        specifier: ^2.0.0
+        version: 2.0.0(@tanstack/react-query@5.0.0-beta.23)(@types/react@18.2.45)(react@18.2.0)(typescript@5.3.3)(viem@2.0.0)
+
   packages/anchor:
     dependencies:
       commander:
@@ -75,6 +103,9 @@ importers:
 
   packages/hud:
     dependencies:
+      dompurify:
+        specifier: ^3.0.0
+        version: 3.0.0
       zustand:
         specifier: ^4.5.0
         version: 4.5.0(@types/react@18.2.45)(react@18.2.0)
@@ -82,7 +113,22 @@ importers:
       '@thehoneyjar/sigil-anchor':
         specifier: ^4.3.0
         version: link:../anchor
+      '@thehoneyjar/sigil-diagnostics':
+        specifier: ^0.1.0
+        version: link:../diagnostics
+      '@thehoneyjar/sigil-fork':
+        specifier: ^0.1.0
+        version: link:../fork
+      '@thehoneyjar/sigil-lens':
+        specifier: ^0.1.0
+        version: link:../lens
+      '@thehoneyjar/sigil-simulation':
+        specifier: ^0.1.0
+        version: link:../simulation
     devDependencies:
+      '@types/dompurify':
+        specifier: ^3.0.0
+        version: 3.0.0
       '@types/node':
         specifier: ^20.0.0
         version: 20.11.0
@@ -2554,6 +2600,12 @@ packages:
       '@types/ms': 2.1.0
     dev: true
 
+  /@types/dompurify@3.0.0:
+    resolution: {integrity: sha512-EcSqmgm/xJwH8CcJPy9AHNypp/j58CYga3nWdl93/wLxX6OH+rSD3aAj75NQazcZd1YKHJ/pjNZ9qmgVajggwQ==}
+    dependencies:
+      '@types/trusted-types': 2.0.7
+    dev: true
+
   /@types/estree@1.0.8:
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
     dev: true
@@ -4247,6 +4299,10 @@ packages:
     dependencies:
       domelementtype: 2.3.0
     dev: true
+
+  /dompurify@3.0.0:
+    resolution: {integrity: sha512-0g/yr2IJn4nTbxwL785YxS7/AvvgGFJw6LLWP+BzWzB1+BYOqPUT9Hy0rXrZh5HLdHnxH72aDdzvC9SdTjsuaA==}
+    dev: false
 
   /domutils@3.2.2:
     resolution: {integrity: sha512-6kZKyUajlDuqlHKVX1w7gyslj9MPIXzIFiz/rGu35uC1wMi+kMhQwGhl4lt9unC9Vb9INnY9Z3/ZA3+FhASLaw==}

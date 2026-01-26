@@ -1,0 +1,78 @@
+{
+  "name": "@thehoneyjar/agentation",
+  "version": "0.1.0",
+  "description": "Visual UI feedback toolbar for AI coding agents - address mocking and element annotation",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./wagmi": {
+      "types": "./dist/wagmi.d.ts",
+      "import": "./dist/wagmi.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "wagmi": ["./dist/wagmi.d.ts"]
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "pnpm run build"
+  },
+  "dependencies": {
+    "zustand": "^4.5.0"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "wagmi": {
+      "optional": true
+    },
+    "viem": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0",
+    "react": "^18.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0",
+    "wagmi": "^2.0.0",
+    "viem": "^2.0.0"
+  },
+  "sideEffects": false,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/0xHoneyJar/rune.git",
+    "directory": "packages/agentation"
+  },
+  "homepage": "https://agentation.dev",
+  "bugs": {
+    "url": "https://github.com/0xHoneyJar/rune/issues"
+  },
+  "keywords": [
+    "agentation",
+    "ai",
+    "devtools",
+    "react",
+    "web3",
+    "address-mocking",
+    "element-annotation",
+    "toolbar"
+  ]
+}
