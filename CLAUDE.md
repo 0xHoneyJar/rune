@@ -1,306 +1,129 @@
-# Sigil Repository
+# Sigil
 
-You are working on the Sigil framework — the grimoire that teaches AI to understand design physics. This repo is the source of truth. What you write here propagates to every project that installs Sigil.
+You are working on Sigil — design physics for AI-generated UI.
 
-<role>
-## Your Role
+## Three Constructs
 
-You are the keeper of this grimoire. Your job is to:
+Sigil follows UNIX philosophy: one tool per job.
 
-1. **Preserve the physics** — The tables, timings, and rationale are battle-tested. Don't change them without strong evidence.
-2. **Evolve the language** — How we explain physics can always improve. Clearer prompts = better inference.
-3. **Guard the philosophy** — Sigil believes feel comes from physics, not preferences. Protect this.
-4. **Expand thoughtfully** — New physics layers (audio? haptics?) may come. They must integrate, not bolt on.
-</role>
+| Construct | Command | Purpose | Rules |
+|-----------|---------|---------|-------|
+| **Sigil** | `/sigil` | Taste (WHY) | `rules/sigil/` |
+| **Glyph** | `/glyph` | Craft (HOW) | `rules/glyph/` |
+| **Rigor** | `/rigor` | Correctness (WHAT) | `rules/rigor/` |
 
-<philosophy>
-## The Sigil Philosophy
+## Sigil (Taste)
 
-**Effect is truth.** What the code *does* determines its physics. Not adjectives. Not wishes. Effect.
+Captures human insights. Learns preferences from usage.
 
-**Physics over preferences.** "Make it feel trustworthy" is not a physics instruction. "800ms pessimistic with confirmation" is.
+**When to use**: After user modifies generated code, or when observing feedback.
 
-**Three layers, one feel.** Behavioral, animation, and material are not separate concerns. They're three expressions of the same physics.
+**Key files**:
+- `rules/sigil/00-sigil-core.md` — Philosophy
+- `rules/sigil/01-sigil-taste.md` — How taste is read and applied
+- `skills/observing/SKILL.md` — Task skill for capturing insights
 
-**Taste is personal physics.** When users modify generated code, they're tuning their physics. Capture it. Learn from it.
+**Output**: `grimoires/sigil/taste.md` (append-only, human-readable)
 
-**Visible reasoning.** Show the analysis before generating. Let users correct the physics, not the code.
-</philosophy>
+## Glyph (Craft)
 
-<architecture>
+Generates UI with correct design physics.
+
+**When to use**: Creating or modifying interactive components.
+
+**Key files**:
+- `rules/glyph/00-glyph-core.md` — Priority, permissions, action default
+- `rules/glyph/01-glyph-physics.md` — THE physics table
+- `rules/glyph/02-glyph-detection.md` — Effect detection + keywords
+- `rules/glyph/03-glyph-protected.md` — Non-negotiable capabilities
+- `rules/glyph/04-glyph-patterns.md` — Golden implementation patterns
+- `rules/glyph/05-glyph-animation.md` — Animation physics
+- `rules/glyph/06-glyph-material.md` — Material physics
+- `rules/glyph/07-glyph-practices.md` — React best practices
+
+**Physics table** (memorize this):
+
+| Effect | Sync | Timing | Confirmation |
+|--------|------|--------|--------------|
+| Financial | Pessimistic | 800ms | Required |
+| Destructive | Pessimistic | 600ms | Required |
+| Soft Delete | Optimistic | 200ms | Toast + Undo |
+| Standard | Optimistic | 200ms | None |
+| Navigation | Immediate | 150ms | None |
+| Local State | Immediate | 100ms | None |
+
+## Rigor (Correctness)
+
+Validates data correctness in web3 components. Catches bugs that lose money.
+
+**When to use**: Any transaction flow (stake, claim, bridge, swap, approve).
+
+**Key files**:
+- `rules/rigor/00-rigor-core.md` — Philosophy, Rigor vs Glyph
+- `rules/rigor/01-rigor-data.md` — Indexed vs on-chain decision table
+- `rules/rigor/02-rigor-web3.md` — BigInt safety, receipt guards, stale closures
+
+**Critical patterns**:
+- BigInt: `0n` is falsy — use `amount != null && amount > 0n`
+- Receipt guard: Check hash changed before processing
+- Data source: Transaction amounts MUST come from on-chain
+
+## Philosophy
+
+**Effect is truth.** What the code does determines its physics.
+
+**Physics over preferences.** "Make it feel trustworthy" is not physics. "800ms pessimistic with confirmation" is physics.
+
+**Correctness over feel.** A beautiful button that sends the wrong amount is worse than an ugly one that's accurate.
+
+## Protected Capabilities (Non-Negotiable)
+
+| Capability | Rule |
+|------------|------|
+| Withdraw | Always reachable (never hide behind loading) |
+| Cancel | Always visible (every flow needs escape) |
+| Balance | Always accurate (invalidate on mutation) |
+| Touch target | ≥44px |
+| Focus ring | Always visible |
+
+## Action Default
+
+After user confirms analysis, generate/apply changes immediately.
+
+**DO**: Write complete, working code. Match codebase conventions.
+
+**DON'T**: Describe what you would build. Ask "would you like me to generate this?"
+
 ## Repository Structure
 
 ```
 .claude/
-├── rules/                    # The physics laws (auto-loaded by Claude Code)
-│   ├── 00-sigil-core.md      # Priority hierarchy, action behavior
-│   ├── 01-sigil-physics.md   # Behavioral physics
-│   ├── 02-sigil-detection.md # Effect → Physics mapping
-│   ├── 03-sigil-patterns.md  # Golden implementations
-│   ├── 04-sigil-protected.md # Non-negotiable capabilities
-│   ├── 05-sigil-animation.md # Animation physics
-│   ├── 06-sigil-taste.md     # Taste accumulation system
-│   └── 07-sigil-material.md  # Material physics
-│
-├── commands/                 # Slash commands
-│   ├── craft.md              # /craft — generate with physics
-│   └── surface.md            # /surface — material only
-│
-└── scripts/                  # Installation, utilities
+├── rules/
+│   ├── sigil/          # Taste rules (2 files)
+│   ├── glyph/          # Craft rules (8 files)
+│   └── rigor/          # Correctness rules (3 files)
+├── skills/
+│   ├── observing/      # /sigil task skill
+│   ├── crafting/       # /glyph task skill
+│   ├── enforcing/      # /rigor task skill
+│   ├── physics-reference/   # Reference skill
+│   └── patterns-reference/  # Reference skill
+└── commands/
+    ├── sigil.md        # Invokes observing
+    ├── glyph.md        # Invokes crafting
+    └── rigor.md        # Invokes enforcing
 
-grimoires/sigil/
-├── taste.md                  # Taste log (append-only)
-└── moodboard/                # Research, references
-
-README.md                     # Public-facing philosophy
-CLAUDE.md                     # You are here
-```
-</architecture>
-
-<working_on_rules>
-## When Editing Rules
-
-The `.claude/rules/` files are the core of Sigil. They're loaded automatically when Sigil is installed.
-
-**Structure matters.** Use XML tags for section boundaries. Claude parses these reliably:
-```xml
-<section_name>
-Content here
-</section_name>
+grimoires/
+└── sigil/
+    └── taste.md        # Accumulated preferences
 ```
 
-**Context over commands.** Explain WHY, not just WHAT:
-- Bad: `800ms`
-- Good: `800ms because users need time to verify amounts before irreversible transfer`
-
-**Examples are critical.** Use the `<example>` pattern:
-```xml
-<example>
-<input>/craft "claim button"</input>
-<detection>Effect: Financial — keyword "claim"</detection>
-<physics>Pessimistic, 800ms, confirmation</physics>
-</example>
-```
-
-**Priority hierarchy.** Protected capabilities > Physics > Material > Taste > Conventions. This order is intentional.
-</working_on_rules>
-
-<what_not_to_change>
-## What Not to Change
-
-These are load-bearing walls:
-
-| Element | Why It's Fixed |
-|---------|----------------|
-| Physics timings (800/600/200/100ms) | Battle-tested. Users have calibrated to these. |
-| Pessimistic for financial | Money can't roll back. This is physics, not preference. |
-| Protected capabilities | These prevent user harm. Non-negotiable. |
-| Taste weighting (1/5/-3) | Corrections teach more than acceptance. Proven ratio. |
-| Three-layer model | Behavioral + Animation + Material = Feel. Don't separate them. |
-
-If you need to change these, document the evidence and reasoning extensively.
-</what_not_to_change>
-
-<what_can_evolve>
-## What Can Evolve
-
-These can and should improve:
-
-- **Prompt clarity** — Better explanations, clearer examples
-- **Detection keywords** — New domains may have new keywords
-- **Material presets** — New surface treatments (neumorphism, etc.)
-- **Animation values** — Spring stiffness can be tuned
-- **Grit signatures** — New aesthetic profiles
-- **Tooling** — Installation, diagnostics, taste analysis
-</what_can_evolve>
-
-<testing_changes>
-## Testing Changes
-
-Before committing changes to rules:
-
-1. **Read the rule aloud** — Does it sound like something Claude would follow literally?
-2. **Check XML structure** — Are tags properly nested and closed?
-3. **Verify examples** — Do they show input → detection → output clearly?
-4. **Test with /craft** — Does the analysis box show correct physics?
-5. **Check taste logging** — Do signals get recorded properly?
-</testing_changes>
-
-<commit_conventions>
 ## Commit Conventions
 
 ```
-feat(physics): add audio physics layer
-fix(detection): handle "purchase" as financial keyword
-refactor(prompts): improve XML structure for Claude 4.x
-docs(README): update philosophy section
+feat(glyph): add new pattern for staking flows
+fix(rigor): handle BigInt edge case
+refactor(sigil): simplify taste schema
 ```
 
-Always include `Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>` when Claude contributes.
-</commit_conventions>
-
-<truth_hierarchy>
-## Truth Hierarchy
-
-When information conflicts, trust sources in this order:
-
-1. **Code** — What's actually in files (immutable truth)
-   - If code says X and memory says Y, code wins
-   - Verify claims by reading actual files
-
-2. **taste.md** — Accumulated signals (verified by diffs)
-   - Signals are append-only, can be audited
-   - Patterns are derived from signals, trust signals over patterns
-
-3. **craft-state.md** — Current session state
-   - Iteration history is reliable
-   - Loop detection patterns are trustworthy
-
-4. **NOTES.md** — Session memory
-   - Human-readable summary, may be stale
-   - Use as recovery starting point, verify before trusting
-
-5. **Context window** — Ephemeral
-   - Don't trust conversation history for state
-   - Always read files to verify claims
-</truth_hierarchy>
-
-<grounding>
-## Grounding Enforcement
-
-Claims must cite sources:
-
-| Claim Type | Required Citation |
-|------------|-------------------|
-| Physics rule | Rule file and section: `01-sigil-physics.md:financial` |
-| User preference | taste.md signal: `taste.md:signal-15` |
-| Code behavior | File and line: `src/hooks/useStake.ts:45` |
-| Codebase pattern | Example file: `src/components/Button.tsx` |
-| Detection result | Detection signals: `Keywords: "claim"` |
-
-**Format**: "X because Y (source: Z)"
-
-**Example**:
-"Using 500ms timing because taste.md shows 3 MODIFY signals for faster timing (source: taste.md signals 12-14)"
-</grounding>
-
-<recovery_protocol>
-## Recovery Protocol
-
-When resuming after context clear:
-
-1. **Read NOTES.md** (~50 tokens)
-   - Get: component, craft type, last action, next action
-   - Get: physics decisions, blockers
-
-2. **Read craft-state.md** (~30 tokens)
-   - Get: session ID, iteration count, loop detection state
-   - Get: rules loaded in previous iterations
-
-3. **Read target file** (variable)
-   - Verify current state matches NOTES.md description
-   - Identify what actually exists vs. what was planned
-
-4. **Resume from last action**
-   - Continue workflow from NOTES.md "Next Action"
-   - Don't re-do completed steps
-
-**Token Budget**: <100 tokens for state recovery
-</recovery_protocol>
-
-<zone_architecture>
-## Zone Architecture
-
-Sigil organizes files into three zones with distinct ownership:
-
-### System Zone (.claude/)
-
-**Owner**: Sigil Framework
-**Write Access**: Via `/update` command only
-**Read Access**: Always allowed
-
-**Contents**:
-- `rules/` — Physics laws (loaded by RLM)
-- `commands/` — Slash command definitions
-- `skills/` — Agent skill implementations
-- `subagents/` — Validation subagents
-- `scripts/` — Utility scripts
-- `settings.json` — Permissions config
-
-**Customization**: Use `.claude/overrides/` for local modifications
-
-### State Zone (grimoires/)
-
-**Owner**: Project (tracked in git)
-**Write Access**:
-- Sigil writes: NOTES.md, craft-state.md, taste.md, trajectory/, pending-learnings.md
-- User writes: moodboard/, context/, constitution.yaml
-
-**Read Access**: Always allowed
-
-**Contents**:
-- `sigil/` — Sigil-specific state
-- `loa/` — Loa framework state (if Loa installed)
-
-### App Zone (src/, components/, lib/, etc.)
-
-**Owner**: Developer
-**Write Access**: Requires user confirmation
-**Read Access**: Always allowed
-
-**Sigil Behavior**:
-- Reads to discover conventions
-- Generates into this zone on confirmation
-- Never modifies without explicit approval
-- Never deletes without explicit request
-
-### Override Mechanism
-
-Create `.claude/overrides/{rule-number}-override.md` to customize:
-
-```markdown
-# Override: 01-sigil-physics
-
-## Custom Timings
-
-For this project, use faster timings:
-
-| Effect | Default | Override |
-|--------|---------|----------|
-| Financial | 800ms | 500ms |
-| Destructive | 600ms | 400ms |
-
-## Rationale
-Power user audience prefers snappier interactions.
-```
-
-Overrides are loaded after base rules and take precedence.
-</zone_architecture>
-
-<attention_budget>
-## Attention Budget
-
-Context usage determines response behavior:
-
-| Zone | Usage | Behavior |
-|------|-------|----------|
-| 🟢 Green | 0-60% | Full exploration, verbose analysis, include examples |
-| 🟡 Yellow | 60-80% | Compact mode, skip optional context, no examples |
-| 🟠 Orange | 80-90% | Essential physics only, single-line confirmations |
-| 🔴 Red | 90-100% | Direct action, no analysis, trust prior decisions |
-
-**Response Length Targets**:
-
-| Output | Target |
-|--------|--------|
-| Analysis box | 15-20 lines max |
-| Confirmation prompt | 1 line |
-| Error message | 3 lines max |
-| Explanation | Only when asked |
-| Code comments | Only for physics overrides |
-
-**Detection**:
-- Claude Code provides token usage
-- Map to percentage of 200k context
-- Adjust behavior accordingly
-</attention_budget>
+Include `Co-Authored-By: Claude <noreply@anthropic.com>` when Claude contributes.
