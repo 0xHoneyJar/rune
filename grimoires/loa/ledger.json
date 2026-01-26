@@ -64,8 +64,11 @@
           "local_id": 6,
           "global_id": 6,
           "name": "Reality Anchoring & Polish",
-          "status": "planned",
-          "created": "2026-01-25T00:00:00Z"
+          "status": "complete",
+          "created": "2026-01-25T00:00:00Z",
+          "started": "2026-01-26T00:35:00Z",
+          "completed": "2026-01-26T01:00:00Z",
+          "commit": "76e3b0fa"
         }
       ]
     }
