@@ -44,9 +44,11 @@
           "local_id": 4,
           "global_id": 4,
           "name": "Learning & Patterns",
-          "status": "in_progress",
+          "status": "complete",
           "created": "2026-01-25T00:00:00Z",
-          "started": "2026-01-25T23:35:00Z"
+          "started": "2026-01-25T23:35:00Z",
+          "completed": "2026-01-25T23:55:00Z",
+          "commit": "87e319d1"
         },
         {
           "local_id": 5,
