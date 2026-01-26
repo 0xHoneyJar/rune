@@ -1,46 +1,80 @@
 # Rune
 
-Build with AI. Direct with precision.
+Constructs for AI-assisted craftsmanship. Activate what the task demands.
 
-Rune is a toolkit of stackable constructs for AI-assisted development. Toggle on what you need. Stay in creative flow.
+```
+Build a claim button /glyph
+```
 
-```bash
-# Try a construct
-/glyph "claim button"
+```
+Build the staking flow /glyph /rigor
+```
+
+```
+/glyph for the UI, /rigor for the data — build a withdraw panel
 ```
 
 ---
 
-## The Mental Model
+## Constructs
 
-Think of constructs like prayers you activate based on the task at hand. Stack what you need. Stay in flow.
+Runes you activate and string together. Each one brings specialized knowledge to the task.
 
-| Construct | Command | Captures |
-|-----------|---------|----------|
-| **Sigil** | `/sigil` | Taste — why users prefer what they prefer |
+| Construct | Activates | Purpose |
+|-----------|-----------|---------|
+| **Sigil** | `/sigil` | Taste — captures why users prefer what they prefer |
 | **Glyph** | `/glyph` | Craft — design physics for UI generation |
-| **Rigor** | `/rigor` | Correctness — data safety for web3 |
+| **Rigor** | `/rigor` | Correctness — data safety for web3 flows |
 | *Voice* | coming | Copy — UI text that matches product tone |
 | *Ward* | coming | Security — patterns that prevent vulnerabilities |
 
 ---
 
-## The Constructs
+## Activation Examples
 
-### Sigil — Taste
+**Single construct:**
+```
+/glyph create a like button
+```
 
-Captures human insights. Learns preferences from usage.
+**Chained constructs:**
+```
+/glyph /rigor build the claim rewards flow
+```
 
-**When to use:** After user modifies generated code, or when observing feedback.
+**Inline activation:**
+```
+Build a staking panel. Use /glyph for the component and /rigor to validate the data handling.
+```
 
-```bash
-/sigil "they prefer 500ms for financial operations, power traders find default sluggish"
+**Sequential work:**
+```
+/sigil "they prefer inline confirmations over modals"
+```
+Then later:
+```
+/glyph delete button
+```
+Glyph reads what Sigil captured and applies it.
+
+---
+
+## Sigil — Taste
+
+Captures insights about user preferences. Glyph reads these when generating.
+
+```
+/sigil "power traders find 800ms sluggish, they prefer 500ms for financial ops"
+```
+
+```
+/sigil "they hate modals — always use inline confirmation patterns"
 ```
 
 <details>
 <summary>How it works</summary>
 
-Sigil appends insights to `grimoires/sigil/taste.md`. When Glyph runs, it reads this file and applies relevant preferences.
+Sigil appends to `grimoires/sigil/taste.md`. When Glyph runs, it reads this file and adjusts physics accordingly.
 
 **Key files:**
 - `rules/sigil/00-sigil-core.md` — Philosophy
@@ -50,14 +84,15 @@ Sigil appends insights to `grimoires/sigil/taste.md`. When Glyph runs, it reads 
 
 ---
 
-### Glyph — Craft
+## Glyph — Craft
 
-Generates UI with correct design physics. Effect determines timing, sync, and confirmation.
+Generates UI with correct design physics. Detects what the action *does* and applies appropriate timing, sync, and confirmation.
 
-**When to use:** Creating or modifying interactive components.
+```
+/glyph withdraw button
+```
 
-```bash
-/glyph "withdraw button"
+```
 /glyph validate StakePanel.tsx
 ```
 
@@ -75,9 +110,9 @@ Generates UI with correct design physics. Effect determines timing, sync, and co
 <details>
 <summary>Why these physics?</summary>
 
-**Effect is truth.** What the code *does* determines its physics. A "claim" button is Financial—doesn't matter what you call it.
+**Effect is truth.** A "claim" button is Financial — doesn't matter what you call it.
 
-**800ms for financial:** Minimum time for users to read amount, mentally commit, feel weight of irreversible decision.
+**800ms for financial:** Time for users to read amount, mentally commit, feel the weight of irreversible decision.
 
 **Pessimistic sync:** Server confirms before UI updates. Money can't roll back.
 
@@ -90,14 +125,16 @@ Generates UI with correct design physics. Effect determines timing, sync, and co
 
 ---
 
-### Rigor — Correctness
+## Rigor — Correctness
 
-Validates data correctness in web3 components. Catches bugs that lose money.
+Validates data handling in web3 components. Catches bugs that lose money.
 
-**When to use:** Any transaction flow (stake, claim, bridge, swap, approve).
-
-```bash
+```
 /rigor ClaimButton.tsx
+```
+
+```
+/glyph /rigor build the bridge flow
 ```
 
 **Critical patterns:**
@@ -123,40 +160,34 @@ Validates data correctness in web3 components. Catches bugs that lose money.
 
 ---
 
-## How They Stack
+## Stringing Constructs
 
-**Glyph alone** — Simple UI generation with correct physics.
-```bash
-/glyph "like button"
+The power is in combination. Activate what the moment demands.
+
+| Task | Activate | Why |
+|------|----------|-----|
+| Simple UI | `/glyph` | Just need correct physics |
+| Web3 UI | `/glyph /rigor` | Physics + data correctness |
+| After feedback | `/sigil` then `/glyph` | Capture taste, apply on next generation |
+| Full flow | `/sigil /glyph /rigor` | Learning + craft + correctness |
+
+**Example — building a staking feature:**
+
+```
+/sigil "users here are degens, they want speed over hand-holding"
 ```
 
-**Glyph + Rigor** — Web3 UI with data correctness.
-```bash
-/glyph "stake panel"
-/rigor StakePanel.tsx
+```
+/glyph /rigor build the stake and unstake panels with real-time balance updates
 ```
 
-**Sigil + Glyph** — Learning loop. Capture feedback, generate with taste.
-```bash
-/sigil "they hate modals, use inline confirmations"
-/glyph "delete button"  # Uses inline confirmation
-```
-
----
-
-## For Different Builders
-
-**Developers:** Start with `/glyph`. The physics table is your reference. Stack `/rigor` for web3.
-
-**Designers:** Focus on Sigil. Record taste insights. Glyph will apply them.
-
-**Product:** Use `/sigil` to capture user feedback patterns. The constructs learn from you.
+The constructs work together: Sigil's taste influences Glyph's physics, Rigor validates the data handling.
 
 ---
 
 ## Protected Capabilities
 
-Non-negotiable. These take priority over all other rules.
+Non-negotiable. These override everything else.
 
 | Capability | Rule |
 |------------|------|
@@ -170,7 +201,7 @@ Non-negotiable. These take priority over all other rules.
 
 ## Philosophy
 
-**Effect is truth.** What the code does determines its physics. Not what you call it.
+**Effect is truth.** What the code does determines its physics.
 
 **Physics over preferences.** "Make it feel trustworthy" is not physics. "800ms pessimistic with confirmation" is physics.
 
@@ -179,27 +210,7 @@ Non-negotiable. These take priority over all other rules.
 ---
 
 <details>
-<summary><strong>Reference: Full Physics Tables</strong></summary>
-
-### Behavioral Physics
-
-| Effect | Sync | Timing | Confirmation | Why |
-|--------|------|--------|--------------|-----|
-| Financial | Pessimistic | 800ms | Required | Money can't roll back |
-| Destructive | Pessimistic | 600ms | Required | Permanent needs deliberation |
-| Soft Delete | Optimistic | 200ms | Toast + Undo | Reversible, be fast |
-| Standard | Optimistic | 200ms | None | Low stakes = snappy |
-| Local | Immediate | 100ms | None | No server = instant |
-
-### Animation Physics
-
-| Effect | Easing | Spring |
-|--------|--------|--------|
-| Financial | ease-out, 800ms | stiffness: 200, damping: 30 |
-| Standard | spring | stiffness: 500, damping: 30 |
-| Local | spring | stiffness: 700, damping: 35 |
-
-### Detection Keywords
+<summary><strong>Reference: Detection Keywords</strong></summary>
 
 **Financial:** claim, deposit, withdraw, transfer, swap, send, pay, mint, burn, stake, unstake, bridge, approve
 
@@ -219,7 +230,3 @@ Non-negotiable. These take priority over all other rules.
 
 - [GitHub](https://github.com/0xHoneyJar/rune)
 - [Issues](https://github.com/0xHoneyJar/rune/issues)
-
----
-
-*Rune v5.0.0*
