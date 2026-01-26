@@ -145,12 +145,55 @@ If user modifies file within 30 minutes:
 | Touch target | >= 44px |
 | Focus ring | Always visible |
 
+## Progressive Disclosure (L0-L4)
+
+Reveal complexity gradually. Don't dump all physics upfront.
+
+| Level | Trigger | Content | Token Budget |
+|-------|---------|---------|--------------|
+| L0 | User types `/glyph` | Nothing yet | ~10 |
+| L1 | Description provided | Hypothesis box | ~100 |
+| L2 | Ambiguous/low confidence | Clarifying question | ~50 |
+| L3 | Confirmed | Generated code | Variable |
+| L4 | "Why?" asked | Full physics explanation | ~500 |
+
+See `rules/glyph/10-glyph-progressive-disclosure.md` for details.
+
+## Mode Detection
+
+| Mode | Trigger | Output |
+|------|---------|--------|
+| Generate | `/glyph "description"` | Hypothesis + Code |
+| Analyze | `/glyph --analyze "description"` | Physics analysis only |
+| Validate | `/glyph validate file.tsx` | Validation report |
+| Diagnose | `/glyph --diagnose file.tsx` | Issues + suggested fixes |
+
+See `rules/glyph/09-glyph-modes.md` for detection logic.
+
 ## Rules Loaded
 
-- `.claude/constructs/packs/rune/rules/glyph/*.md` (always)
-- `.claude/rules/glyph/*.md` (local overrides)
-- `.claude/constructs/packs/rune/rules/sigil/01-sigil-taste.md` (for reading taste)
-- `.claude/constructs/packs/rune/rules/wyrd/01-wyrd-hypothesis.md` (for confidence)
+### Always Loaded (L1+)
+- `rules/glyph/00-glyph-core.md` - Priority, permissions
+- `rules/glyph/01-glyph-physics.md` - Physics table
+- `rules/glyph/02-glyph-detection.md` - Effect detection
+- `rules/sigil/01-sigil-taste.md` - Reading taste
+
+### On Generation (L3)
+- `rules/glyph/03-glyph-protected.md` - Protected capabilities
+- `rules/glyph/04-glyph-patterns.md` - Golden patterns
+- `rules/rigor/*.md` - If web3 detected
+
+### On Explanation (L4)
+- `physics-reference` skill - Full rationale
+- `patterns-reference` skill - Implementation details
+
+### Wyrd Integration
+- `rules/wyrd/01-wyrd-hypothesis.md` - Hypothesis format
+- `rules/wyrd/03-wyrd-confidence.md` - Confidence calculation
+- `rules/wyrd/04-wyrd-rejection-capture.md` - Rejection handling
+
+### Logging
+- `rules/glyph/08-glyph-notes-logging.md` - NOTES.md protocol
 
 ## Reference Skills (on-demand)
 

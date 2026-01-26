@@ -14,16 +14,19 @@
           "local_id": 1,
           "global_id": 1,
           "name": "Foundation — Pack Structure & Wyrd Core",
-          "status": "in_progress",
+          "status": "complete",
           "created": "2026-01-25T00:00:00Z",
-          "started": "2026-01-25T12:00:00Z"
+          "started": "2026-01-25T12:00:00Z",
+          "completed": "2026-01-25T22:20:00Z",
+          "commit": "9eb94b79"
         },
         {
           "local_id": 2,
           "global_id": 2,
           "name": "Hypothesis & Confidence",
-          "status": "planned",
-          "created": "2026-01-25T00:00:00Z"
+          "status": "in_progress",
+          "created": "2026-01-25T00:00:00Z",
+          "started": "2026-01-25T22:25:00Z"
         },
         {
           "local_id": 3,
