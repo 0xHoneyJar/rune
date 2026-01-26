@@ -25,7 +25,7 @@ RUNE_HOME="${RUNE_HOME:-$HOME/.rune}"
 RUNE_REPO="${RUNE_REPO:-https://github.com/0xHoneyJar/rune.git}"
 RUNE_BRANCH="${RUNE_BRANCH:-main}"
 VERSION_FILE=".rune-version.json"
-RUNE_VERSION="1.0.0"
+RUNE_VERSION="1.1.0"
 AUTO_YES=false
 MINIMAL=false
 
@@ -75,6 +75,7 @@ What this installs:
     enforcing/          — /rigor command
     fating/             — /wyrd command
     validating/         — /validate command
+    enhancing/          — /enhance command
     physics-reference/  — Reference skill
     patterns-reference/ — Reference skill
 
@@ -131,6 +132,29 @@ preflight() {
   command -v git >/dev/null || err "git is required"
 
   log "Pre-flight checks passed"
+}
+
+# === Cleanup Deprecated Artifacts ===
+cleanup_deprecated() {
+  step "Cleaning up deprecated artifacts..."
+
+  local cleaned=0
+
+  # Remove old Rune command files (now handled by skills)
+  local deprecated_commands=(glyph sigil rigor enhance)
+  for cmd in "${deprecated_commands[@]}"; do
+    if [[ -f ".claude/commands/${cmd}.md" ]]; then
+      rm -f ".claude/commands/${cmd}.md"
+      log "  Removed deprecated: .claude/commands/${cmd}.md"
+      cleaned=$((cleaned + 1))
+    fi
+  done
+
+  if [[ $cleaned -gt 0 ]]; then
+    log "Cleaned up $cleaned deprecated files"
+  else
+    log "No deprecated artifacts found"
+  fi
 }
 
 # === Clone or Update Rune Home ===
@@ -199,6 +223,7 @@ install_skills() {
     "enforcing"
     "fating"
     "validating"
+    "enhancing"
     "physics-reference"
     "patterns-reference"
   )
@@ -291,6 +316,14 @@ EOF
 create_version_file() {
   step "Creating version manifest..."
 
+  # Build skills list based on minimal flag
+  local skills_json
+  if [[ "$MINIMAL" == "true" ]]; then
+    skills_json='[]'
+  else
+    skills_json='["crafting", "observing", "enforcing", "fating", "validating", "enhancing", "physics-reference", "patterns-reference"]'
+  fi
+
   cat > "$VERSION_FILE" << EOF
 {
   "version": "$RUNE_VERSION",
@@ -303,7 +336,9 @@ create_version_file() {
     "glyph": "Craft (HOW)",
     "rigor": "Correctness (WHAT)",
     "wyrd": "Learning (FEEDBACK)"
-  }
+  },
+  "skills_installed": $skills_json,
+  "migration": "1.0.0 -> 1.1.0: Commands merged into skills"
 }
 EOF
 
@@ -341,6 +376,7 @@ main() {
 
   preflight
   setup_rune_home
+  cleanup_deprecated
   install_rules
   install_skills
   install_hooks
@@ -359,7 +395,7 @@ main() {
   info "  .claude/rules/rigor/   — Correctness (3 rules)"
   info "  .claude/rules/wyrd/    — Learning (11 rules)"
   if [[ "$MINIMAL" != "true" ]]; then
-    info "  .claude/skills/        — 7 skills"
+    info "  .claude/skills/        — 8 skills"
     info "  .claude/hooks/         — Workflow hooks"
   fi
   info "  grimoires/rune/        — State directory"
@@ -378,6 +414,7 @@ main() {
   info "  /sigil \"insight\"       — Record taste preference"
   info "  /rigor file.tsx        — Validate web3 safety"
   info "  /wyrd                  — Check learning state"
+  info "  /enhance               — Slot external knowledge"
   echo ""
 
   info "Effect detection:"

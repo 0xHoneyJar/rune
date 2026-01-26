@@ -1,14 +1,20 @@
-# Enhance
+---
+name: enhancing
+description: Slot external knowledge into Rune constructs
+user-invocable: true
+disable-model-invocation: true
+allowed-tools:
+  - Read
+  - Write
+  - Glob
+  - Bash
+---
+
+# Enhancing
 
 Slot external knowledge into Rune constructs.
 
----
-
-## Purpose
-
-Add external expertise (courses, best practices, patterns) to enhance a Rune construct. Unlike continuous-learning (which captures organic discoveries), enhance imports curated external knowledge.
-
-## Invocation
+## Usage
 
 ```bash
 # Interactive mode
@@ -23,7 +29,9 @@ Add external expertise (courses, best practices, patterns) to enhance a Rune con
 /enhance --construct glyph
 ```
 
----
+## Purpose
+
+Add external expertise (courses, best practices, patterns) to enhance a Rune construct. Unlike continuous-learning (which captures organic discoveries), enhance imports curated external knowledge.
 
 ## Workflow
 
@@ -73,8 +81,6 @@ See `references/design-engineering/animations.md` for:
 - Performance (transform + opacity only)
 ```
 
----
-
 ## Example: animations.dev
 
 **Source**: Emil Kowalski's Design Engineering course
@@ -83,26 +89,24 @@ See `references/design-engineering/animations.md` for:
 curl -s "https://animations.dev/api/activate-design-engineering?email=..." | bash
 ```
 
-**Mapping**: → Glyph (animation, material, practices)
+**Mapping**: -> Glyph (animation, material, practices)
 
 **Installed to**: `.claude/references/design-engineering/`
 
 **Files**:
-- `SKILL.md` — Overview, quick reference, review checklist
-- `animations.md` — Easing, timing, springs
-- `ui-polish.md` — Typography, shadows, gradients
-- `forms-controls.md` — Inputs, buttons, validation
-- `touch-accessibility.md` — Mobile, keyboard, a11y
-- `component-design.md` — Composition, compound components
-- `marketing.md` — Landing pages, CTAs
-- `performance.md` — Virtualization, preloading
+- `SKILL.md` - Overview, quick reference, review checklist
+- `animations.md` - Easing, timing, springs
+- `ui-polish.md` - Typography, shadows, gradients
+- `forms-controls.md` - Inputs, buttons, validation
+- `touch-accessibility.md` - Mobile, keyboard, a11y
+- `component-design.md` - Composition, compound components
+- `marketing.md` - Landing pages, CTAs
+- `performance.md` - Virtualization, preloading
 
 **Wired to**:
 - `rules/glyph/05-glyph-animation.md`
 - `rules/glyph/06-glyph-material.md`
 - `rules/glyph/07-glyph-practices.md`
-
----
 
 ## Reference Index
 
@@ -114,15 +118,13 @@ curl -s "https://animations.dev/api/activate-design-engineering?email=..." | bas
 | `vercel-react/` | Glyph | vercel-labs/agent-skills | 2026-01 |
 | `skill-creator/` | Meta | anthropics/skills | 2026-01 |
 
----
-
 ## Conflict Resolution
 
 When external knowledge conflicts with existing rules:
 
-1. **Physics table wins** — Core timing/sync from `01-glyph-physics.md` is authoritative
-2. **External refines** — External knowledge provides implementation detail
-3. **Note overrides** — If external contradicts, note in rules with rationale
+1. **Physics table wins** - Core timing/sync from `01-glyph-physics.md` is authoritative
+2. **External refines** - External knowledge provides implementation detail
+3. **Note overrides** - If external contradicts, note in rules with rationale
 
 Example:
 ```markdown
@@ -133,10 +135,8 @@ Example:
 Physics table: 200ms for Standard effects.
 Emil recommends: 150-250ms for user-initiated.
 
-**Resolution**: Use 200ms (physics), within Emil's range. ✓
+**Resolution**: Use 200ms (physics), within Emil's range.
 ```
-
----
 
 ## Updating References
 

@@ -1,0 +1,27 @@
+name: enhancing
+description: Slot external knowledge into Rune constructs
+user-invocable: true
+disable-model-invocation: true
+
+allowed-tools:
+  - Read
+  - Write
+  - Glob
+  - Bash
+
+triggers:
+  commands:
+    - enhance
+  keywords:
+    - reference
+    - external
+    - install
+    - slot
+
+zones:
+  system:
+    path: .claude
+    permission: read-write
+  references:
+    path: .claude/references
+    permission: read-write

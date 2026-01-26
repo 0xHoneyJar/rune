@@ -296,25 +296,21 @@ Global sprint numbering across multiple development cycles:
 │   ├── rigor/          # Correctness rules (3 files)
 │   └── wyrd/           # Learning rules (11 files)
 ├── skills/
-│   ├── observing/      # /sigil task skill
-│   ├── crafting/       # /glyph task skill
-│   ├── enforcing/      # /rigor task skill
-│   ├── fating/         # /wyrd task skill
-│   ├── validating/     # /validate task skill
+│   ├── observing/      # /sigil command
+│   ├── crafting/       # /glyph command
+│   ├── enforcing/      # /rigor command
+│   ├── fating/         # /wyrd command
+│   ├── validating/     # /validate command
+│   ├── enhancing/      # /enhance command
 │   ├── physics-reference/
 │   └── patterns-reference/
 ├── references/         # External knowledge sources
 │   └── design-engineering/  # Emil's animations.dev
-├── hooks/
-│   ├── sprint-plan-hook.md
-│   ├── implement-hook.md
-│   ├── review-sprint-hook.md
-│   └── audit-sprint-hook.md
-└── commands/
-    ├── sigil.md
-    ├── glyph.md
-    ├── rigor.md
-    └── enhance.md      # Slot external knowledge
+└── hooks/
+    ├── sprint-plan-hook.md
+    ├── implement-hook.md
+    ├── review-sprint-hook.md
+    └── audit-sprint-hook.md
 
 grimoires/
 ├── loa/                # Loa state (ledger, notes)
