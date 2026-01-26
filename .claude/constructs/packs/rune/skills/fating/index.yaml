@@ -1,0 +1,29 @@
+name: fating
+description: Hypothesis validation and closed-loop learning
+user-invocable: true
+disable-model-invocation: true
+
+allowed-tools:
+  - Read
+  - Write
+  - Glob
+
+triggers:
+  commands:
+    - wyrd
+  keywords:
+    - confidence
+    - hypothesis
+    - calibrate
+    - learn
+    - fate
+
+zones:
+  system:
+    path: .claude
+    permission: read
+  state:
+    paths:
+      - grimoires/rune
+      - grimoires/loa/NOTES.md
+    permission: read-write

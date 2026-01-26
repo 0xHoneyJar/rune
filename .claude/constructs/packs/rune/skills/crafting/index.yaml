@@ -1,0 +1,36 @@
+name: crafting
+description: Generate or validate UI with design physics (Wyrd-integrated)
+user-invocable: true
+disable-model-invocation: true
+
+allowed-tools:
+  - Read
+  - Write
+  - Glob
+
+triggers:
+  commands:
+    - glyph
+  keywords:
+    - component
+    - button
+    - modal
+    - form
+    - ui
+
+zones:
+  system:
+    path: .claude
+    permission: read
+  state:
+    paths:
+      - grimoires/rune
+      - grimoires/loa/NOTES.md
+    permission: read-write
+  app:
+    paths:
+      - src
+      - lib
+      - app
+      - components
+    permission: read-write

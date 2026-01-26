@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "current_cycle": 1,
+  "cycles": [
+    {
+      "id": 1,
+      "name": "rune-construct-pack",
+      "created": "2026-01-25T00:00:00Z",
+      "prd": "grimoires/loa/prd-rune-construct-pack.md",
+      "sdd": "grimoires/loa/sdd-rune-construct-pack.md",
+      "sprint_plan": "grimoires/loa/sprint-rune-construct-pack.md",
+      "sprints": [
+        {
+          "local_id": 1,
+          "global_id": 1,
+          "name": "Foundation — Pack Structure & Wyrd Core",
+          "status": "in_progress",
+          "created": "2026-01-25T00:00:00Z",
+          "started": "2026-01-25T12:00:00Z"
+        },
+        {
+          "local_id": 2,
+          "global_id": 2,
+          "name": "Hypothesis & Confidence",
+          "status": "planned",
+          "created": "2026-01-25T00:00:00Z"
+        },
+        {
+          "local_id": 3,
+          "global_id": 3,
+          "name": "Self-Validation",
+          "status": "planned",
+          "created": "2026-01-25T00:00:00Z"
+        },
+        {
+          "local_id": 4,
+          "global_id": 4,
+          "name": "Learning & Patterns",
+          "status": "planned",
+          "created": "2026-01-25T00:00:00Z"
+        },
+        {
+          "local_id": 5,
+          "global_id": 5,
+          "name": "Workflow Integration",
+          "status": "planned",
+          "created": "2026-01-25T00:00:00Z"
+        },
+        {
+          "local_id": 6,
+          "global_id": 6,
+          "name": "Reality Anchoring & Polish",
+          "status": "planned",
+          "created": "2026-01-25T00:00:00Z"
+        }
+      ]
+    }
+  ],
+  "global_sprint_counter": 6
+}

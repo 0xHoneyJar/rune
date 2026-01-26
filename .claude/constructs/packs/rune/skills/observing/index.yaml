@@ -1,0 +1,22 @@
+name: observing
+description: Capture taste observations for design preferences
+user-invocable: true
+disable-model-invocation: true
+
+allowed-tools:
+  - Read
+  - Write
+
+triggers:
+  commands:
+    - sigil
+  keywords:
+    - taste
+    - preference
+    - observation
+
+zones:
+  state:
+    paths:
+      - grimoires/rune/taste.md
+    permission: read-write

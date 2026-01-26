@@ -1,0 +1,29 @@
+name: enforcing
+description: Validate data correctness in web3 components
+user-invocable: true
+disable-model-invocation: true
+
+allowed-tools:
+  - Read
+  - Glob
+
+triggers:
+  commands:
+    - rigor
+  keywords:
+    - bigint
+    - web3
+    - transaction
+    - receipt
+
+zones:
+  system:
+    path: .claude
+    permission: read
+  app:
+    paths:
+      - src
+      - lib
+      - app
+      - components
+    permission: read
