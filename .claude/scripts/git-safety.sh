@@ -12,8 +12,6 @@
 
 set -euo pipefail
 
-set -euo pipefail
-
 # Known Loa template repositories
 KNOWN_TEMPLATES="(0xHoneyJar|thj-dev)/loa"
 
