@@ -1,106 +1,165 @@
 # Rune
 
-[![Version](https://img.shields.io/badge/version-1.7.0-blue.svg)](CHANGELOG.md)
-[![License](https://img.shields.io/badge/license-AGPL--3.0-green.svg)](LICENSE.md)
-[![Release](https://img.shields.io/badge/release-Goal%20Traceability%20%26%20Guided%20Workflow-purple.svg)](CHANGELOG.md#170---2026-01-24--goal-traceability--guided-workflow)
+Design physics for AI-generated UI.
 
-## Constructs
+> "Effect is truth. What the code does determines its physics."
 
-**Run Mode AI** — Agent-driven development framework using 9 specialized AI agents to orchestrate the complete product lifecycle. From requirements through production deployment.
-
-## Quick Start
+## Install
 
 ```bash
-# One-liner install onto any repo
-curl -fsSL https://raw.githubusercontent.com/0xHoneyJar/loa/main/.claude/scripts/mount-loa.sh | bash
-
-# Start Claude Code and begin
-claude
-/plan-and-analyze
+curl -fsSL https://raw.githubusercontent.com/0xHoneyJar/rune/main/.claude/scripts/mount-rune.sh | bash
 ```
 
-See **[INSTALLATION.md](INSTALLATION.md)** for detailed setup options and prerequisites.
+Or with options:
+```bash
+# Auto-confirm updates
+curl ... | bash -s -- -y
 
-## The Workflow
+# Minimal install (rules only, no skills/hooks)
+curl ... | bash -s -- --minimal
+```
 
-| Phase | Command | Output |
-|-------|---------|--------|
-| 1 | `/plan-and-analyze` | Product Requirements (PRD) |
-| 2 | `/architect` | Software Design (SDD) |
-| 3 | `/sprint-plan` | Sprint Plan |
-| 4 | `/implement sprint-N` | Code + Tests |
-| 5 | `/review-sprint sprint-N` | Approval or Feedback |
-| 5.5 | `/audit-sprint sprint-N` | Security Approval |
-| 6 | `/deploy-production` | Infrastructure |
+## Physics Table
 
-**Ad-hoc**: `/audit`, `/translate`, `/validate`, `/loa` (guided workflow)
+| Effect | Sync | Timing | Confirmation |
+|--------|------|--------|--------------|
+| Financial | Pessimistic | 800ms | Required |
+| Destructive | Pessimistic | 600ms | Required |
+| Soft Delete | Optimistic | 200ms | Toast + Undo |
+| Standard | Optimistic | 200ms | None |
+| Navigation | Immediate | 150ms | None |
+| Local State | Immediate | 100ms | None |
 
-See **[PROCESS.md](PROCESS.md)** for complete workflow documentation.
+## Four Constructs
 
-## The Agents
+| Construct | Command | Purpose |
+|-----------|---------|---------|
+| ᛊ **Sigil** | `/sigil` | Taste (WHY) — Capture human preferences |
+| ᚷ **Glyph** | `/glyph` | Craft (HOW) — Generate with correct physics |
+| ᚱ **Rigor** | `/rigor` | Correctness (WHAT) — Validate web3 safety |
+| ᚹ **Wyrd** | `/wyrd` | Fate (VALIDATION) — Confidence calibration |
 
-Nine specialized agents that ride alongside you:
+## Usage
 
-| Agent | Role |
-|-------|------|
-| discovering-requirements | Senior Product Manager |
-| designing-architecture | Software Architect |
-| planning-sprints | Technical PM |
-| implementing-tasks | Senior Engineer |
-| reviewing-code | Tech Lead |
-| auditing-security | Security Auditor |
-| deploying-infrastructure | DevOps Architect |
-| translating-for-executives | Developer Relations |
-| run-mode | Autonomous Executor |
+### Generate a Component
 
-## Architecture
+```
+/glyph "claim rewards button"
+```
 
-Loa uses a **three-zone model** inspired by AWS Projen and Google's ADK:
+Output:
+```
+## Hypothesis
 
-| Zone | Path | Description |
-|------|------|-------------|
-| **System** | `.claude/` | Framework-managed (never edit directly) |
-| **State** | `grimoires/`, `.beads/` | Project memory |
-| **App** | `src/`, `lib/` | Your code |
+**Effect**: Financial (detected: "claim" keyword)
+**Physics**: Pessimistic sync, 800ms timing, confirmation required
+**Confidence**: 0.90
 
-**Key principle**: Customize via `.claude/overrides/` and `.loa.config.yaml`, not by editing `.claude/` directly.
+[y/n/adjust]
+```
 
-## Key Features
+On accept, generates complete React component with correct physics.
 
-| Feature | Description | Documentation |
-|---------|-------------|---------------|
-| **Run Mode** | Autonomous sprint execution with draft PRs | [CLAUDE.md](CLAUDE.md#run-mode) |
-| **Simstim** | Telegram bridge for remote monitoring | [simstim/README.md](simstim/README.md) |
-| **Goal Traceability** | PRD goals tracked through implementation | [CLAUDE.md](CLAUDE.md#goal-traceability) |
-| **Continuous Learning** | Extract discoveries into reusable skills | [CLAUDE.md](CLAUDE.md#key-protocols) |
-| **Loa Constructs** | Commercial skill packs from registry | [INSTALLATION.md](INSTALLATION.md#loa-constructs-commercial-skills) |
-| **Sprint Ledger** | Global sprint numbering across cycles | [CLAUDE.md](CLAUDE.md#sprint-ledger) |
-| **Structured Memory** | Persistent working memory in NOTES.md | [PROCESS.md](PROCESS.md#structured-agentic-memory) |
-| **beads_rust** | Persistent task graph across sessions | [INSTALLATION.md](INSTALLATION.md) |
-| **ck Search** | Semantic code search | [INSTALLATION.md](INSTALLATION.md#optional-enhancements) |
-| **Quality Gates** | Two-phase review: Tech Lead + Security Auditor | [PROCESS.md](PROCESS.md#agent-to-agent-communication) |
+### Record a Preference
 
-<details>
-<summary>How it works</summary>
+```
+/sigil "500ms feels more responsive for power users"
+```
 
-| Document | Purpose |
-|----------|---------|
-| **[INSTALLATION.md](INSTALLATION.md)** | Setup, prerequisites, configuration, updates |
-| **[PROCESS.md](PROCESS.md)** | Complete workflow, agents, commands, protocols |
-| **[CLAUDE.md](CLAUDE.md)** | Technical reference for Claude Code |
-| **[CHANGELOG.md](CHANGELOG.md)** | Version history |
+Future generations apply this preference.
 
-**Key files:**
-- `rules/sigil/00-sigil-core.md` — Philosophy
-- `rules/sigil/01-sigil-taste.md` — How taste is read and applied
+### Validate Web3 Code
 
-In William Gibson's Sprawl trilogy, Loa are AI entities that "ride" humans through neural interfaces. These agents don't replace you—they **ride with you**, channeling expertise through the interface.
+```
+/rigor src/components/VaultWithdraw.tsx
+```
 
----
+Checks for BigInt safety, data source correctness, receipt guards.
 
-[AGPL-3.0](LICENSE.md) — Use, modify, distribute freely. Network service deployments must release source code.
+### Check Confidence State
+
+```
+/wyrd
+```
+
+Shows confidence calibration and learning metrics.
+
+## What Gets Installed
+
+```
+.claude/
+├── rules/
+│   ├── glyph/    (21 files) — Craft rules
+│   ├── sigil/    (4 files)  — Taste rules
+│   ├── rigor/    (3 files)  — Correctness rules
+│   └── wyrd/     (11 files) — Learning rules
+├── skills/
+│   ├── crafting/           — /glyph
+│   ├── observing/          — /sigil
+│   ├── enforcing/          — /rigor
+│   ├── fating/             — /wyrd
+│   └── validating/         — /validate
+└── hooks/                  — Workflow integration
+
+grimoires/rune/
+├── taste.md    — Accumulated preferences
+└── wyrd.md     — Learning state
+```
+
+## Protected Capabilities
+
+Non-negotiable rules that Rune enforces:
+
+| Capability | Rule |
+|------------|------|
+| Withdraw | Always reachable |
+| Cancel | Always visible |
+| Balance | Always accurate |
+| Touch target | ≥ 44px |
+| Focus ring | Always visible |
+
+## Learning Loop
+
+```
+Generate → Hypothesis → User Feedback → Learn → Improve
+
+           ↓                    ↓
+       Accept/Reject      Record as taste
+           ↓                    ↓
+     Self-validate        Update confidence
+           ↓                    ↓
+     Write file          Detect patterns
+```
+
+## Effect Detection
+
+Rune detects effect from keywords and types:
+
+| Keywords | Effect |
+|----------|--------|
+| claim, deposit, withdraw, stake, swap | Financial |
+| delete, remove, destroy, revoke | Destructive |
+| archive, hide, trash (with undo) | Soft Delete |
+| save, update, edit, create | Standard |
+| toggle, switch, expand, theme | Local State |
+
+Types override keywords: `Currency`, `Wei`, `Token`, `BigInt` → always Financial.
+
+## Philosophy
+
+**Effect is truth.** What the code does determines its physics. "Claim" means financial. "Delete" means destructive.
+
+**Physics over preferences.** "Make it feel trustworthy" is not physics. "800ms pessimistic with confirmation" is physics.
+
+**Correctness over feel.** A beautiful button that sends the wrong amount is worse than an ugly one that's accurate.
+
+**Learn from rejection.** Every "no" teaches the system. Three similar rejections become a pattern.
 
 ## Links
 
 - [GitHub](https://github.com/0xHoneyJar/rune)
 - [Issues](https://github.com/0xHoneyJar/rune/issues)
+
+---
+
+*Co-Authored-By: Claude <noreply@anthropic.com>*
