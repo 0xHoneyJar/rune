@@ -170,10 +170,11 @@ check_loa() {
     if [[ -f ".loa-version.json" ]]; then
         local version
         if command -v jq &>/dev/null; then
-            version=$(jq -r '.version // "unknown"' .loa-version.json 2>/dev/null || echo "unknown")
+            version=$(jq -r '.framework_version // .version // "unknown"' .loa-version.json 2>/dev/null || echo "unknown")
         else
-            # Fallback without jq
-            version=$(grep -o '"version"[[:space:]]*:[[:space:]]*"[^"]*"' .loa-version.json 2>/dev/null | sed 's/.*"\([^"]*\)"$/\1/' || echo "unknown")
+            # Fallback without jq - try framework_version first, then version
+            version=$(grep -o '"framework_version"[[:space:]]*:[[:space:]]*"[^"]*"' .loa-version.json 2>/dev/null | sed 's/.*"\([^"]*\)"$/\1/' || \
+                      grep -o '"version"[[:space:]]*:[[:space:]]*"[^"]*"' .loa-version.json 2>/dev/null | sed 's/.*"\([^"]*\)"$/\1/' || echo "unknown")
         fi
         RESULT_loa_version="$version"
         if [[ "$version" != "unknown" ]] && version_ge "$version" "$MIN_LOA_VERSION"; then
